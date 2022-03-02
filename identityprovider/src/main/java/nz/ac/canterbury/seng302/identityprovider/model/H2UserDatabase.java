@@ -23,7 +23,7 @@ public class H2UserDatabase {
 
             // Create User Database
             String sql =  "CREATE TABLE USERS " +
-                    "(username VARCHAR(6) not NULL, " +
+                    "(username VARCHAR(20) not NULL, " +
                     " first VARCHAR(20) not NULL, " +
                     " last VARCHAR(20) not NULL, " +
                     " nickname VARCHAR(20), " +
