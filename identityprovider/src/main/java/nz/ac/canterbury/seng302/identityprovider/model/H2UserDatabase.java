@@ -16,15 +16,10 @@ public class H2UserDatabase {
 
     public H2UserDatabase()
     {
-        Connection conn = null;
-        Statement stmt = null;
 
-        try{
+        try (Statement stmt = null; Connection conn = DriverManager.getConnection(DB_URL,USER,PASS)){
             // Registering JDBC driver
             Class.forName(JDBC_DRIVER);
-
-            // Opening Connection
-            conn = DriverManager.getConnection(DB_URL,USER,PASS);
 
             // Create User Database
             String sql =  "CREATE TABLE USERS " +
@@ -39,7 +34,6 @@ public class H2UserDatabase {
                     " salt varchar(10) not NULL" +
                     " PRIMARY KEY (username))";
             stmt.executeUpdate(sql);
-
             // STEP 4: Clean-up environment
             stmt.close();
             conn.close();
@@ -49,18 +43,10 @@ public class H2UserDatabase {
         } catch(Exception e) {
             // Handle errors for Class.forName
             e.printStackTrace();
-        } finally {
-            // finally block used to close resources
-            try {
-                if(stmt!=null) stmt.close();
-            } catch(SQLException se2) {
-            } // nothing we can do
-            try {
-                if(conn!=null) conn.close();
-            } catch(SQLException se) {
-                se.printStackTrace();
-            } // end finally try
-        } // end try
+        }
+    }
+    public static void main(String[] args) {
+
     }
 
 }
