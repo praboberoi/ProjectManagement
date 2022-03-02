@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.Base64;
 
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
@@ -19,7 +21,7 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
 
     private final int VALID_USER_ID = 1;
     private final String VALID_USER = "abc123";
-    private final String VALID_PASSWORD = "[B@a51df8b";
+    private final String VALID_PASSWORD = "A9r8gjI/EB/S1PIcR03nU/6VhKQnP/LFyWjOlQ6oOJ8="; // Hashed Password123! with salt FEDFST
     private final String SALT = "FEDFST";
     private final String FIRST_NAME_OF_USER = "Valid";
     private final String LAST_NAME_OF_USER = "User";
@@ -36,7 +38,7 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
         AuthenticateResponse.Builder reply = AuthenticateResponse.newBuilder();
 
         String username = request.getUsername();
-        String password = request.getUsername();
+        String password = request.getPassword();
 
         if (username.equals(VALID_USER) && validatePassword(username, password)) {
             String token = jwtTokenService.generateTokenForUser(VALID_USER, VALID_USER_ID, FULL_NAME_OF_USER, ROLE_OF_USER);
@@ -68,20 +70,17 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
      */
     private boolean validatePassword(String username, String password) {
         MessageDigest digest;
-        String hashedPassword = "";
-        System.out.println("test");
+        byte[] hashedPassword = null;
 
 		try {
             String salt = SALT;
 			digest = MessageDigest.getInstance("SHA-256");
-            hashedPassword = digest.digest((password + salt).getBytes()).toString();
-            System.out.println(hashedPassword.toString());
-
+            hashedPassword = digest.digest((password + salt).getBytes(StandardCharsets.UTF_8));
 		} catch (NoSuchAlgorithmException e) {
-			e.printStackTrace();
+            System.out.println("Unable to find SHA-256 algorithm");
 		}
-
-        return hashedPassword.toString() == VALID_PASSWORD;
+        
+        return Base64.getEncoder().encodeToString(hashedPassword).equals(VALID_PASSWORD);
 	}
 
 
