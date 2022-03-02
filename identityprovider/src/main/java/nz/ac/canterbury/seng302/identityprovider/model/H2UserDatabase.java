@@ -8,7 +8,7 @@ import java.sql.Statement;
 public class H2UserDatabase {
     // JDBC driver name and database URL, JDBC means Java database connectivity
     static final String JDBC_DRIVER = "org.h2.Driver";
-    static final String DB_URL = "jdbc:h2:~/test";
+    static final String DB_URL = "jdbc:h2:~/UserDatabase";
 
     //  Database credentials
     static final String USER = "sa";
@@ -17,21 +17,21 @@ public class H2UserDatabase {
     public H2UserDatabase()
     {
 
-        try (Statement stmt = null; Connection conn = DriverManager.getConnection(DB_URL,USER,PASS)){
+        try (Connection conn = DriverManager.getConnection(DB_URL,USER,PASS); Statement stmt = conn.createStatement()){
             // Registering JDBC driver
             Class.forName(JDBC_DRIVER);
 
             // Create User Database
             String sql =  "CREATE TABLE USERS " +
-                    "(username VARCHAR(6) not NULL, " +
+                    "(username VARCHAR(20) not NULL, " +
                     " first VARCHAR(20) not NULL, " +
                     " last VARCHAR(20) not NULL, " +
                     " nickname VARCHAR(20), " +
                     " bio VARCHAR(255), " +
                     " pronouns VARCHAR(10), " +
                     " email VARCHAR(255) not NULL, " +
-                    " password VARCHAR(63) not NULL" +
-                    " salt varchar(10) not NULL" +
+                    " password VARCHAR(63) not NULL," +
+                    " salt varchar(10) not NULL," +
                     " PRIMARY KEY (username))";
             stmt.executeUpdate(sql);
             // STEP 4: Clean-up environment
@@ -45,8 +45,6 @@ public class H2UserDatabase {
             e.printStackTrace();
         }
     }
-    public static void main(String[] args) {
 
-    }
 
 }
