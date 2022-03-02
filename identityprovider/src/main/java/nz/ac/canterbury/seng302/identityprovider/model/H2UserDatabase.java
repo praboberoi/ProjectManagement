@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class H2Database {
+public class H2UserDatabase {
     // JDBC driver name and database URL, JDBC means Java database connectivity
     static final String JDBC_DRIVER = "org.h2.Driver";
     static final String DB_URL = "jdbc:h2:~/test";
@@ -14,7 +14,7 @@ public class H2Database {
     static final String USER = "sa";
     static final String PASS = "";
 
-    public H2Database()
+    public H2UserDatabase()
     {
         Connection conn = null;
         Statement stmt = null;
@@ -35,6 +35,8 @@ public class H2Database {
                     " bio VARCHAR(255), " +
                     " pronouns VARCHAR(10), " +
                     " email VARCHAR(255) not NULL, " +
+                    " password VARCHAR(63) not NULL" +
+                    " salt varchar(10) not NULL" +
                     " PRIMARY KEY (username))";
             stmt.executeUpdate(sql);
 
