@@ -1,5 +1,8 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -16,7 +19,8 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
 
     private final int VALID_USER_ID = 1;
     private final String VALID_USER = "abc123";
-    private final String VALID_PASSWORD = "Password123!";
+    private final String VALID_PASSWORD = "[B@a51df8b";
+    private final String SALT = "FEDFST";
     private final String FIRST_NAME_OF_USER = "Valid";
     private final String LAST_NAME_OF_USER = "User";
     private final String FULL_NAME_OF_USER = FIRST_NAME_OF_USER + " " + LAST_NAME_OF_USER;
@@ -30,9 +34,11 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
     @Override
     public void authenticate(AuthenticateRequest request, StreamObserver<AuthenticateResponse> responseObserver) {
         AuthenticateResponse.Builder reply = AuthenticateResponse.newBuilder();
-        
-        if (request.getUsername().equals(VALID_USER) && request.getPassword().equals(VALID_PASSWORD)) {
 
+        String username = request.getUsername();
+        String password = request.getUsername();
+
+        if (username.equals(VALID_USER) && validatePassword(username, password)) {
             String token = jwtTokenService.generateTokenForUser(VALID_USER, VALID_USER_ID, FULL_NAME_OF_USER, ROLE_OF_USER);
             reply
                 .setEmail("validuser@email.com")
@@ -55,6 +61,32 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
     }
 
     /**
+     * Validates the given password using a salt and SHA-256 hash
+     * @param username
+     * @param password
+     * @return If the hashed password matches the stored password
+     */
+    private boolean validatePassword(String username, String password) {
+        MessageDigest digest;
+        String hashedPassword = "";
+        System.out.println("test");
+
+		try {
+            String salt = SALT;
+			digest = MessageDigest.getInstance("SHA-256");
+            hashedPassword = digest.digest((password + salt).getBytes()).toString();
+            System.out.println(hashedPassword.toString());
+
+		} catch (NoSuchAlgorithmException e) {
+			e.printStackTrace();
+		}
+
+        return hashedPassword.toString() == VALID_PASSWORD;
+	}
+
+
+
+	/**
      * The AuthenticationInterceptor already handles validating the authState for us, so here we just need to
      * retrieve that from the current context and return it in the gRPC body
      */
