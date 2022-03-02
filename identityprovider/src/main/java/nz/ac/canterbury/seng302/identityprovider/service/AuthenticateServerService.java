@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 
 import com.google.protobuf.Empty;
@@ -11,6 +13,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 
 import nz.ac.canterbury.seng302.identityprovider.authentication.AuthenticationServerInterceptor;
 import nz.ac.canterbury.seng302.identityprovider.authentication.JwtTokenUtil;
+import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
@@ -19,14 +22,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticationServiceGrp
 @GrpcService
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
 
-    private final int VALID_USER_ID = 1;
-    private final String VALID_USER = "abc123";
-    private final String VALID_PASSWORD = "A9r8gjI/EB/S1PIcR03nU/6VhKQnP/LFyWjOlQ6oOJ8="; // Hashed Password123! with salt FEDFST
-    private final String SALT = "FEDFST";
-    private final String FIRST_NAME_OF_USER = "Valid";
-    private final String LAST_NAME_OF_USER = "User";
-    private final String FULL_NAME_OF_USER = FIRST_NAME_OF_USER + " " + LAST_NAME_OF_USER;
-    private final String ROLE_OF_USER = "student"; // Puce teams may want to change this to "teacher" to test some functionality
+    User user = new User(1, "abc123", "Valid", "User", null, null, null, null, "A9r8gjI/EB/S1PIcR03nU/6VhKQnP/LFyWjOlQ6oOJ8=", "FEDFST", new ArrayList<>(Arrays.asList("student")));
 
     private JwtTokenUtil jwtTokenService = JwtTokenUtil.getInstance();
 
@@ -40,17 +36,17 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
         String username = request.getUsername();
         String password = request.getPassword();
 
-        if (username.equals(VALID_USER) && validatePassword(username, password)) {
-            String token = jwtTokenService.generateTokenForUser(VALID_USER, VALID_USER_ID, FULL_NAME_OF_USER, ROLE_OF_USER);
+        if (username.equals(user.username) && validatePassword(user, password)) {
+            String token = jwtTokenService.generateTokenForUser(user.username, user.userId, user.firstName + user.lastName, user.roles);
             reply
                 .setEmail("validuser@email.com")
-                .setFirstName(FIRST_NAME_OF_USER)
-                .setLastName(LAST_NAME_OF_USER)
+                .setFirstName(user.firstName)
+                .setLastName(user.lastName)
                 .setMessage("Logged in successfully!")
                 .setSuccess(true)
                 .setToken(token)
                 .setUserId(1)
-                .setUsername(VALID_USER);
+                .setUsername(user.username);
         } else {
             reply
             .setMessage("Log in attempt failed: username or password incorrect")
@@ -68,19 +64,19 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
      * @param password
      * @return If the hashed password matches the stored password
      */
-    private boolean validatePassword(String username, String password) {
+    private boolean validatePassword(User user, String password) {
         MessageDigest digest;
         byte[] hashedPassword = null;
 
 		try {
-            String salt = SALT;
+            String salt = user.salt;
 			digest = MessageDigest.getInstance("SHA-256");
             hashedPassword = digest.digest((password + salt).getBytes(StandardCharsets.UTF_8));
 		} catch (NoSuchAlgorithmException e) {
             System.out.println("Unable to find SHA-256 algorithm");
 		}
         
-        return Base64.getEncoder().encodeToString(hashedPassword).equals(VALID_PASSWORD);
+        return Base64.getEncoder().encodeToString(hashedPassword).equals(user.password);
 	}
 
 
