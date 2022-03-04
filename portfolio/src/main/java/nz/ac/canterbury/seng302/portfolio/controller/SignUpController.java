@@ -3,15 +3,23 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import io.grpc.StatusRuntimeException;
 import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
+import nz.ac.canterbury.seng302.shared.enums.Roles;
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
+import nz.ac.canterbury.seng302.shared.model.User;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @Controller
 public class SignUpController {
@@ -66,6 +74,17 @@ public class SignUpController {
 
         model.addAttribute("loginMessage", signUpReply.getMessage());
         return "signUp";
+    }
+
+    @PostMapping("/createUser")
+    public String createUser(
+            @AuthenticationPrincipal AuthState principal,
+            @RequestParam(value="favouriteColour") String favouriteColour,
+            Model model
+    ) {
+        User user = new User(0, "username", "firstName", "lastName", "nickname", "bio", "pronouns", "email", "password", "salt", new ArrayList<>(Arrays.asList(Roles.STUDENT)));
+
+        return "redirect:/Users/" + user.userId;
     }
 
 }

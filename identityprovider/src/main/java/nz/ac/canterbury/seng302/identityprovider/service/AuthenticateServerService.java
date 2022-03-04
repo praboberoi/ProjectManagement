@@ -13,16 +13,17 @@ import net.devh.boot.grpc.server.service.GrpcService;
 
 import nz.ac.canterbury.seng302.identityprovider.authentication.AuthenticationServerInterceptor;
 import nz.ac.canterbury.seng302.identityprovider.authentication.JwtTokenUtil;
-import nz.ac.canterbury.seng302.identityprovider.model.User;
+import nz.ac.canterbury.seng302.shared.enums.Roles;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticationServiceGrpc.AuthenticationServiceImplBase;
+import nz.ac.canterbury.seng302.shared.model.User;
 
 @GrpcService
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
 
-    User user = new User(1, "abc123", "Valid", "User", null, null, null, null, "A9r8gjI/EB/S1PIcR03nU/6VhKQnP/LFyWjOlQ6oOJ8=", "FEDFST", new ArrayList<>(Arrays.asList("student")));
+    User user = new User(1, "abc123", "Valid", "User", null, null, null, null, "A9r8gjI/EB/S1PIcR03nU/6VhKQnP/LFyWjOlQ6oOJ8=", "FEDFST", new ArrayList<>(Arrays.asList(Roles.STUDENT)));
 
     private JwtTokenUtil jwtTokenService = JwtTokenUtil.getInstance();
 
