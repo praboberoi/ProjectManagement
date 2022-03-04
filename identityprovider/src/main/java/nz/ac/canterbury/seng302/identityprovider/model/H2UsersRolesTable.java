@@ -25,7 +25,7 @@ public class H2UsersRolesTable {
                     "CREATE TABLE UsersRoles" +
                     "(userId varchar(20) not NULL, " +
                     "roleId int DEFAULT 1, " +
-                    "FOREIGN KEY (userId) REFERENCES Users(userIdd), " +
+                    "FOREIGN KEY (userId) REFERENCES Users(userId), " +
                     "FOREIGN KEY (roleId) REFERENCES Roles(roleId), " +
                     "PRIMARY KEY (userId, roleId))";
             stmt.executeUpdate(sql);
