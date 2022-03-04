@@ -22,9 +22,9 @@ public class H2UserTable {
             Class.forName(JDBC_DRIVER);
 
             // Create User Database
-            String sql = "DROP TABLE IF EXISTS USERS; " +
-                    "CREATE TABLE USERS " +
-                    "(username VARCHAR(20) not NULL, " +
+            String sql = "DROP TABLE IF EXISTS Users; " +
+                    "CREATE TABLE Users " +
+                    "(username VARCHAR(20) not NULL UNIQUE, " +
                     " first VARCHAR(20) not NULL, " +
                     " last VARCHAR(20) not NULL, " +
                     " nickname VARCHAR(20), " +
@@ -33,7 +33,8 @@ public class H2UserTable {
                     " email VARCHAR(255) not NULL, " +
                     " password VARCHAR(63) not NULL," +
                     " salt varchar(10) not NULL," +
-                    " PRIMARY KEY (username))";
+                    "id int IDENTITY (1,1) " +
+                    " PRIMARY KEY (id))";
             stmt.executeUpdate(sql);
             // STEP 4: Clean-up environment
             stmt.close();

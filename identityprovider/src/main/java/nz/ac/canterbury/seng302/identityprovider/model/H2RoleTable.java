@@ -20,9 +20,9 @@ public class H2RoleTable {
             // Registering JDBC driver
             Class.forName(JDBC_DRIVER);
             // Create User Database
-            String sql = "DROP TABLE IF EXISTS ROLES; " +
-                    "CREATE TABLE ROLES " +
-                    "(id int not NULL, " +
+            String sql = "DROP TABLE IF EXISTS Roles; " +
+                    "CREATE TABLE Roles " +
+                    "(id int IDENTITY (1,1), " +
                     " name VARCHAR(20) not NULL, " +
                     " PRIMARY KEY (id))";
             stmt.executeUpdate(sql);

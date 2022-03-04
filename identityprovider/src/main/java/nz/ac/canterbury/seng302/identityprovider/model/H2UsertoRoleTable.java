@@ -21,13 +21,13 @@ public class H2UsertoRoleTable {
             Class.forName(JDBC_DRIVER);
 
             // Create UserToRole Database
-            String sql = "DROP TABLE IF EXISTS USERTOROLES; " +
-                    "CREATE TABLE USERTOROLES" +
-                    "(username varchar(20) not NULL, " +
-                    "role_id int DEFAULT 1, " +
-                    "FOREIGN KEY (username) REFERENCES USERS(username), " +
-                    "FOREIGN KEY (role_id) REFERENCES ROLES(id), " +
-                    "PRIMARY KEY (username, role_id))";
+            String sql = "DROP TABLE IF EXISTS UsersRoles; " +
+                    "CREATE TABLE UsersRoles" +
+                    "(userId varchar(20) not NULL, " +
+                    "roleId int DEFAULT 1, " +
+                    "FOREIGN KEY (userId) REFERENCES USERS(id), " +
+                    "FOREIGN KEY (roleId) REFERENCES ROLES(id), " +
+                    "PRIMARY KEY (userId, roleId))";
             stmt.executeUpdate(sql);
             stmt.close();
             conn.close();
