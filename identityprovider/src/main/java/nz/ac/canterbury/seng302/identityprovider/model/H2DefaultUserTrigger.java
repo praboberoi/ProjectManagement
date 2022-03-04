@@ -29,7 +29,7 @@ public class H2DefaultUserTrigger {
                         "AFTER INSERT " +
                         "AS " +
                         "BEGIN " +
-                        " INSERT INTO USERTOROLES " +
+                        " INSERT INTO UsersRoles" +
                         "VALUES ( SELECT i.username from inserted i ) "
                         +"END;";
                 stmt.executeUpdate(sql);
