@@ -24,7 +24,7 @@ public class H2UsertoRoleTable {
             String sql = "DROP TABLE IF EXISTS USERTOROLES; " +
                     "CREATE TABLE USERTOROLES" +
                     "(username varchar(20) not NULL, " +
-                    "role_id int not NULL, " +
+                    "role_id int DEFAULT 1, " +
                     "FOREIGN KEY (username) REFERENCES USERS(username), " +
                     "FOREIGN KEY (role_id) REFERENCES ROLES(id), " +
                     "PRIMARY KEY (username, role_id))";
