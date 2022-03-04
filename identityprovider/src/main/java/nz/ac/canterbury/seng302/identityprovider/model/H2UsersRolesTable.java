@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class H2UsertoRoleTable {
+public class H2UsersRolesTable {
     // JDBC driver name and database URL, JDBC means Java database connectivity
     static final String JDBC_DRIVER = "org.h2.Driver";
     static final String DB_URL = "jdbc:h2:~/Team15Database";
@@ -14,7 +14,7 @@ public class H2UsertoRoleTable {
     static final String USER = "sa";
     static final String PASS = "";
 
-    public H2UsertoRoleTable()
+    public H2UsersRolesTable()
     {
         try (Connection conn = DriverManager.getConnection(DB_URL,USER,PASS); Statement stmt = conn.createStatement()) {
             // Registering JDBC driver
@@ -25,8 +25,8 @@ public class H2UsertoRoleTable {
                     "CREATE TABLE UsersRoles" +
                     "(userId varchar(20) not NULL, " +
                     "roleId int DEFAULT 1, " +
-                    "FOREIGN KEY (userId) REFERENCES USERS(id), " +
-                    "FOREIGN KEY (roleId) REFERENCES ROLES(id), " +
+                    "FOREIGN KEY (userId) REFERENCES Users(userIdd), " +
+                    "FOREIGN KEY (roleId) REFERENCES Roles(roleId), " +
                     "PRIMARY KEY (userId, roleId))";
             stmt.executeUpdate(sql);
             stmt.close();

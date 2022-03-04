@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-public class H2UserTable {
+public class H2UsersTable {
     // JDBC driver name and database URL, JDBC means Java database connectivity
     static final String JDBC_DRIVER = "org.h2.Driver";
     static final String DB_URL = "jdbc:h2:~/Team15Database";
@@ -14,7 +14,7 @@ public class H2UserTable {
     static final String USER = "sa";
     static final String PASS = "";
 
-    public H2UserTable()
+    public H2UsersTable()
     {
 
         try (Connection conn = DriverManager.getConnection(DB_URL,USER,PASS); Statement stmt = conn.createStatement()){
@@ -24,16 +24,16 @@ public class H2UserTable {
             // Create User Database
             String sql = "DROP TABLE IF EXISTS Users; " +
                     "CREATE TABLE Users " +
-                    "(username VARCHAR(20) not NULL UNIQUE, " +
-                    " first VARCHAR(20) not NULL, " +
-                    " last VARCHAR(20) not NULL, " +
+                    "(userId int IDENTITY (1,1), " +
+                    "username VARCHAR(20) not NULL UNIQUE, " +
+                    " firstName VARCHAR(20) not NULL, " +
+                    " lastName VARCHAR(20) not NULL, " +
                     " nickname VARCHAR(20), " +
                     " bio VARCHAR(255), " +
                     " pronouns VARCHAR(10), " +
                     " email VARCHAR(255) not NULL, " +
                     " password VARCHAR(63) not NULL," +
                     " salt varchar(10) not NULL," +
-                    "id int IDENTITY (1,1) " +
                     " PRIMARY KEY (id))";
             stmt.executeUpdate(sql);
             // STEP 4: Clean-up environment

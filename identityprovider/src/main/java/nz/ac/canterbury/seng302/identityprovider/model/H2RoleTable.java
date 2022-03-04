@@ -22,11 +22,11 @@ public class H2RoleTable {
             // Create User Database
             String sql = "DROP TABLE IF EXISTS Roles; " +
                     "CREATE TABLE Roles " +
-                    "(id int IDENTITY (1,1), " +
-                    " name VARCHAR(20) not NULL, " +
+                    "(roleId int IDENTITY (1,1), " +
+                    " roleName VARCHAR(20) not NULL, " +
                     " PRIMARY KEY (id))";
             stmt.executeUpdate(sql);
-            sql = "INSERT INTO ROLES " +
+            sql = "INSERT INTO Roles " +
                     "VALUES (1, 'Student'), " +
                     "(2, 'Teacher'), " +
                     "(3, 'Course Administrator')";

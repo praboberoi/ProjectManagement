@@ -30,7 +30,7 @@ public class H2DefaultUserTrigger {
                         "AS " +
                         "BEGIN " +
                         " INSERT INTO UsersRoles" +
-                        "VALUES ( SELECT i.username from inserted i ) "
+                        "VALUES ( SELECT i.userId from inserted i ) "
                         +"END;";
                 stmt.executeUpdate(sql);
                 // STEP 4: Clean-up environment
