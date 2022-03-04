@@ -25,7 +25,7 @@ public class H2DefaultUserTrigger {
 
                 // Create User Database
                 String sql = "CREATE TRIGGER DefaultUserRole " +
-                        "on USERS  " +
+                        "on Users  " +
                         "AFTER INSERT " +
                         "AS " +
                         "BEGIN " +
