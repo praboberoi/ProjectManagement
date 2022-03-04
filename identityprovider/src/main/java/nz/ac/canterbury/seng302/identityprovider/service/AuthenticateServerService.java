@@ -36,7 +36,7 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
         String username = request.getUsername();
         String password = request.getPassword();
 
-        if (username.equals(user.username) && validatePassword(user, password)) {
+        if (username.equals(user.username) && encryptPassword(user.salt, password).equals(user.password)) {
             String token = jwtTokenService.generateTokenForUser(user.username, user.userId, user.firstName + user.lastName, user.roles);
             reply
                 .setEmail("validuser@email.com")
@@ -64,19 +64,18 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
      * @param password
      * @return If the hashed password matches the stored password
      */
-    private boolean validatePassword(User user, String password) {
+    private String encryptPassword(String salt, String password) {
         MessageDigest digest;
         byte[] hashedPassword = null;
 
 		try {
-            String salt = user.salt;
 			digest = MessageDigest.getInstance("SHA-256");
             hashedPassword = digest.digest((password + salt).getBytes(StandardCharsets.UTF_8));
 		} catch (NoSuchAlgorithmException e) {
             System.out.println("Unable to find SHA-256 algorithm");
 		}
         
-        return Base64.getEncoder().encodeToString(hashedPassword).equals(user.password);
+        return Base64.getEncoder().encodeToString(hashedPassword);
 	}
 
 
