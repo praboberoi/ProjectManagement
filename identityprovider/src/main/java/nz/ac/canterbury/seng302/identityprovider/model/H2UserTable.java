@@ -22,7 +22,8 @@ public class H2UserTable {
             Class.forName(JDBC_DRIVER);
 
             // Create User Database
-            String sql =  "CREATE TABLE USERS " +
+            String sql = "DROP TABLE IF EXISTS USERS; " +
+                    "CREATE TABLE USERS " +
                     "(username VARCHAR(20) not NULL, " +
                     " first VARCHAR(20) not NULL, " +
                     " last VARCHAR(20) not NULL, " +

@@ -20,12 +20,13 @@ public class H2UsertoRoleTable {
             // Registering JDBC driver
             Class.forName(JDBC_DRIVER);
 
-            // Create Role Database
-            String sql = "CREATE TABLE ROLES" +
-                    "(username varchar(20) not NULL," +
-                    "role_id int not NULL," +
-                    "FOREIGN KEY (username) REFERENCES USERS(username)," +
-                    "FOREIGN KEY (role_id) REFERENCES ROLES(id)" +
+            // Create UserToRole Database
+            String sql = "DROP TABLE IF EXISTS USERTOROLES; " +
+                    "CREATE TABLE USERTOROLES" +
+                    "(username varchar(20) not NULL, " +
+                    "role_id int not NULL, " +
+                    "FOREIGN KEY (username) REFERENCES USERS(username), " +
+                    "FOREIGN KEY (role_id) REFERENCES ROLES(id), " +
                     "PRIMARY KEY (username, role_id))";
             stmt.executeUpdate(sql);
             stmt.close();
@@ -37,6 +38,8 @@ public class H2UsertoRoleTable {
             e.printStackTrace();
         }
     }
+
+
 }
 
 

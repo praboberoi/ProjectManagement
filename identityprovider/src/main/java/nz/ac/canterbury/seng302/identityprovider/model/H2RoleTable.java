@@ -19,24 +19,17 @@ public class H2RoleTable {
         try (Connection conn = DriverManager.getConnection(DB_URL,USER,PASS); Statement stmt = conn.createStatement()){
             // Registering JDBC driver
             Class.forName(JDBC_DRIVER);
-
             // Create User Database
-            String sql =  "CREATE TABLE ROLES " +
+            String sql = "DROP TABLE IF EXISTS ROLES; " +
+                    "CREATE TABLE ROLES " +
                     "(id int not NULL, " +
                     " name VARCHAR(20) not NULL, " +
                     " PRIMARY KEY (id))";
             stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO ROLES" +
-                    "VALUES (1, 'Student')";
-            stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO ROLES" +
-                    "VALUES (2, 'Teacher')";
-            stmt.executeUpdate(sql);
-
-            sql = "INSERT INTO ROLES" +
-                    "VALUES (3, 'Course Administrator')";
+            sql = "INSERT INTO ROLES " +
+                    "VALUES (1, 'Student'), " +
+                    "(2, 'Teacher'), " +
+                    "(3, 'Course Administrator')";
             stmt.executeUpdate(sql);
             // STEP 4: Clean-up environment
             stmt.close();
@@ -49,5 +42,7 @@ public class H2RoleTable {
             e.printStackTrace();
         }
     }
+
+
 
 }
