@@ -59,10 +59,10 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
     }
 
     /**
-     * Validates the given password using a salt and SHA-256 hash
-     * @param username
+     * Encrypts the given password using the salt and an SHA-256 hash
+     * @param salt a random string that is appended to the password before hashing
      * @param password
-     * @return If the hashed password matches the stored password
+     * @return The encrypted password
      */
     private String encryptPassword(String salt, String password) {
         MessageDigest digest;
