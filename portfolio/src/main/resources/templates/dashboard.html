@@ -1,0 +1,29 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>Getting Started: Serving Web Content</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!-- Custom css for body-->
+    <link rel="stylesheet" type="text/css" th:href="@{/body.css}" href="/static/body.css"/>
+
+    <!--fragments-->
+    <head th:replace="fragments :: header"></head>
+    <head th:replace="fragments :: menu"></head>
+    <!-- do not include fragments that are not in use PARSING ERROR -->
+    <!--<head th:replace="fragments :: content"></head>-->
+</head>
+
+<body>
+    <div class="main">
+        <h2>Current Projects</h2>
+        <p>Here are your current projects</p>
+        <div class="current_projects">
+            <p><a href="./project">Project 1</a></p>
+        </div>
+
+    </div>
+
+</body>
+</html>
