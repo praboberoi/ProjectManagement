@@ -11,12 +11,13 @@
     <!-- Custom css for body-->
     <link rel="stylesheet" type="text/css" th:href="@{/body.css}" href="/static/body.css"/>
 
-    <!--fragments-->
-    <head th:replace="fragments :: header"></head>
-    <head th:replace="fragments :: menu"></head>
     <!-- do not include fragments that are not in use PARSING ERROR -->
     <!--<head th:replace="fragments :: content"></head>-->
 </head>
+
+<!--fragments-->
+<div th:replace="fragments :: header"></div>
+<div th:replace="fragments :: menu"></div>
 
 <body>
     <div class="main">
@@ -27,13 +28,25 @@
                 Create Project
             </button>
         </div>
-        <p>Here are your current projects</p>
+        <!--<p>Here are your current projects</p>-->
+        <br>
         <div class="current_projects">
-            <p><a href="./project">Project 1</a></p>
-            <p th:text="'name:'  + ${newProject.name}"/>
-            <p th:text="'start date:'  + ${newProject.startDate}"/>
-            <p th:text="'end date:'  + ${newProject.endDate}"/>
-            <p th:text="'description:'  + ${newProject.description}"/>
+            <div class="project_card">
+                <h5 class="card-header">Default Project</h5>
+                <div class="card-body">
+                    <!--<h5 class="card-title">Special title treatment</h5>-->
+                    <!--<p class="card-text">With supporting text below a.</p>-->
+
+                    <p th:text="'Name:  '  + ${newProject.name}"/>
+                    <p th:text="'Start date:  '  + ${newProject.startDate}"/>
+                    <p th:text="'End date:  '  + ${newProject.endDate}"/>
+                    <p th:text="'Description:  '  + ${newProject.description}"/>
+
+                    <a href="./project" class="btn btn-primary">Go to details</a>
+                </div>
+            </div>
+
+            <!--<p><a href="./project">Default Project</a></p>-->
         </div>
 
 
