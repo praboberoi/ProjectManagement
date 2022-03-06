@@ -4,19 +4,28 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class Project{
-//   @Id
- //   @ManyToOne(optional = false)
- //  @JoinColumn(nullable = false)
- //   private Sprint name;
-
+    //TODO: Add the relationship below to connect the tables. Tidy up the code. And Implement the date and time datatype
     @Id
     @Column(nullable = false)
     private String name;
+
+    @OneToMany(fetch = FetchType.EAGER)
+    @JoinColumn
+    private Set<Sprint> sprints;
 
     @Column
     private String description;
@@ -27,39 +36,6 @@ public class Project{
     @Column(nullable = false)
     private String endDate;
 
-    public String getName() {
-        return name;
-    }
 
-    public String getDescription() {
-        return description;
-    }
-
-    public String getStartDate() {
-        return startDate;
-    }
-
-    public String getEndDate() {
-        return endDate;
-    }
-
-    public Project() {
-    }
-
-    public Project(String name, String description, String startDate, String endDate) {
-        this.name = name;
-        this.description = description;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
-    @Override
-    public String toString() {
-        return "Project{" +
-                "name='" + name + '\'' +
-                ", description='" + description + '\'' +
-                ", startDate='" + startDate + '\'' +
-                ", endDate='" + endDate + '\'' +
-                '}';
-    }
 }
 
