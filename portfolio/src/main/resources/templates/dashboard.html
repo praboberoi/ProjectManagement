@@ -21,14 +21,22 @@
 <body>
     <div class="main">
         <h2>Current Projects</h2>
+        <div>
+            <!-- Button trigger modal - Create Project -->
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticProjectModal">
+                Create Project
+            </button>
+        </div>
         <p>Here are your current projects</p>
         <div class="current_projects">
             <p><a href="./project">Project 1</a></p>
+            <p th:text="'name:'  + ${newProject.name}"/>
+            <p th:text="'start date:'  + ${newProject.startDate}"/>
+            <p th:text="'end date:'  + ${newProject.endDate}"/>
+            <p th:text="'description:'  + ${newProject.description}"/>
         </div>
-        <!-- Button trigger modal - Create Project -->
-        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticProjectModal">
-            Create Project
-        </button>
+
+
     </div>
 
     <!-- Modal - Create Project-->
@@ -40,20 +48,22 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
-                    <form>
+                    <form id="createProjectForm" action="#" th:action="@{/dashboard}" th:object="${newProject}" method="post">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="col-md-4">
-                                    <input style="font-size:20px;" type="text" class="form-control" placeholder="Project Name"> <!---maxlength="30" minlength="1" add min and max input length?--->
+                                    <input style="font-size:20px;" type="text" class="form-control" placeholder="Project Name" th:field="*{name}"> <!---maxlength="30" minlength="1" add min and max input length?--->
                                 </div>
                             </div>
                             <div style="height:30px;" class="row">
                                 <div class="col-md-4"></div>
                                 <div class="col-md-2 ms-auto"></div>
                                 <div class="col-md-3 ms-auto">
-                                    <label style="font-size:15px;" for="startDate" class="form-label">Start Date</label>                                </div>
+                                    <label style="font-size:15px;" for="startDate" class="form-label">Start Date</label>
+                                </div>
                                 <div class="col-md-3 ms-auto">
-                                    <label style="font-size:15px;" for="endDate" class="form-label">End Date</label>                                </div>
+                                    <label style="font-size:15px;" for="endDate" class="form-label">End Date</label>
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col-md-4">
@@ -61,23 +71,32 @@
                                 </div>
                                 <div class="col-md-2 ms-auto"></div>
                                 <div class="col-md-3 ms-auto">
-                                    <input style="font-size:15px;" type="date" class="form-control" id="startDate">
+                                    <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}">
                                 </div>
                                 <div class="col-md-3 ms-auto">
-                                    <input style="font-size:15px;" type="date" class="form-control" id="endDate">
+                                    <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}">
                                 </div>
                             </div>
                             <div style="height:10px;" class="row"></div>
                             <div class="row">
-                                <textarea class="form-control" id="inputProjectDescription" rows="5"></textarea>
+                                <textarea class="form-control mt-50" id="inputProjectDescription" rows="5" th:field="*{description}"></textarea>
+                            </div>
+                            <div style="height:20px;" class="row"></div>
+                            <div class="row ">
+                                <div class="col-md-4"></div>
+                                <div class="col-md-4 ms-auto"></div>
+                                <div class="col-md-2 ms-auto text-center">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                </div>
+                                <div class="col-md-2 ms-auto text-center">
+                                    <button type="submit" value="Submit" class="btn btn-primary">Create</button>
+                                </div>
                             </div>
                         </div>
                     </form>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary">Create</button>
-                </div>
+<!--                <div class="modal-footer">-->
+<!--                </div>-->
             </div>
         </div>
     </div>
