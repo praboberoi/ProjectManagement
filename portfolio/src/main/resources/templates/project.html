@@ -18,9 +18,14 @@
 
 <body>
     <div class="main">
-        <h2>Project Name</h2>
+        <h2 id="name">Project Name</h2>
         <!--<p>Project Description</p>-->
         <!--<h1 th:text="${newproject}"/>-->
+        <div class="btn-group" role="group" aria-label="Basic example">
+            <button type="button" class="btn btn-secondary">Details</button>
+            <button type="button" class="btn btn-secondary">Calender</button>
+        </div>
+        <h2></h2>
         <br>
 
         <div class="card">
@@ -34,46 +39,80 @@
                     rutrum at arcu. Maecenas finibus blandit erat tincidunt venenatis. Curabitur cursus sed neque molestie ornare.
                     Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus quis lacus libero. Nullam mattis tempor dui,
                     semper fringilla felis ullamcorper ut. Mauris laoreet laoreet lacus a volutpat.  </p>
-                <a href="#" class="btn btn-primary">Go to Calender</a>
+                <a href="./calender" class="btn btn-primary">Edit details</a>
             </div>
         </div>
 
         <br>
         <br>
-        <h3>Sprints</h3>
+        <div class = "sprint_header">
+            <!-- use span to make header and button on same line-->
+            <h3>Sprints <span class="pull-right">
+            <!-- Button trigger modal for new sprints-->
+            <button type="button" class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                +
+            </button></span></h3>
+        </div>
+
+        <!-- Form to create new sprints -->
+        <div class="modal fade" id ="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Create new sprint</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p>Form for creating new sprint</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary">Save changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <br>
-        <table class="table table-striped">
-            <thead>
-            <tr>
-                <th scope="col">Sprint Number</th>
-                <th scope="col">Description</th>
-                <th scope="col">Start Date</th>
-                <th scope="col">End Date</th>
-            </tr>
-            </thead>
-            <tbody>
-            <tr>
-                <th scope="row">Sprint 1</th>
-                <td>focus on gui</td>
-                <td>02/02/2022</td>
-                <td>03/02/2022</td>
-            </tr>
-            <tr>
-                <th scope="row">Sprint 2</th>
-                <td>combine with database</td>
-                <td>05/02/2022</td>
-                <td>06/02/2022</td>
-            </tr>
-            <tr>
-                <th scope="row">Sprint 3</th>
-                <td>review product</td>
-                <td>02/03/2022</td>
-                <td>02/03/2022</td>
-            </tr>
-            </tbody>
-        </table>
+
+        <!-- Table for sprints -->
+        <div class="table-border bdr">
+            <table class="table table-bordered table-hover">
+                <thead class = "table-light">
+                <tr>
+                    <th scope="col">Sprint Number</th>
+                    <th scope="col">Description</th>
+                    <th scope="col">Start Date</th>
+                    <th scope="col">End Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <th scope="row">Sprint 1</th>
+                    <td>focus on gui</td>
+                    <td>02/02/2022</td>
+                    <td>03/02/2022</td>
+                </tr>
+                <tr>
+                    <th scope="row">Sprint 2</th>
+                    <td>combine with database</td>
+                    <td>05/02/2022</td>
+                    <td>06/02/2022</td>
+                </tr>
+                <tr>
+                    <th scope="row">Sprint 3</th>
+                    <td>review product</td>
+                    <td>02/03/2022</td>
+                    <td>02/03/2022</td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
 
     </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 
 </body>
 </html>
