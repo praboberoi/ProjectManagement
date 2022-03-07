@@ -50,7 +50,7 @@ public class LoginController {
             loginReply = authenticateClientService.authenticate(username, password);
         } catch (StatusRuntimeException e){
             model.addAttribute("loginMessage", "Error connecting to Identity Provider...");
-            return "login";
+            return "header";
         }
         if (loginReply.getSuccess()) {
             var domain = request.getHeader("host");
@@ -65,7 +65,7 @@ public class LoginController {
         }
 
         model.addAttribute("loginMessage", loginReply.getMessage());
-        return "login";
+        return "header";
     }
 
 }

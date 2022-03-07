@@ -1,86 +1,131 @@
-/* Default styles for the browser */
-*{
-    margin: 0;
+
+* {
     padding: 0;
-    list-style: none;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #CEDCE6;
+    color: white;
+    font-family: "Helvetica Neue";
+}
+
+header a {
     text-decoration: none;
 }
 
-header{
-    width: 100vw;
-    height: 64px;
+header {
+    padding: 0 64px;
     background-color: #07173B;
-    display: block;
+    height: 64px;
+    display: flex;
+    justify-content: space-between;
 }
 
-header .inner{
-    width: 1000px; /* This is the inner width of the content inside of your header (80%, etc) */
+#brand {
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+#brand a {
+    color: #ffff;
+
+}
+
+ul {
+    list-style: none;
     height: 100%;
-    display: block;
-    margin: 0 auto;
-    background-color: red;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
 }
 
-header .logo{
-    display: table;
-    height: 100%;
-    float: left;
-}
-
-header .logo h1 {
+ul a {
     color: white;
-    height: 100%;
-    display: table-cell;
+}
+
+ul li {
+    padding: 5px;
+    margin-left: 10px;
+}
+
+ul li:hover {
+    transform: scale(1.1);
+    transition: 0.3s;
+}
+
+.username{
+    display: inline-block;
+    position: relative;
     vertical-align: middle;
-    font-family: "Helvetica Neue";
-    font-size: 36px;
-}
-
-
-
-header .logo div{
-    height: 100%;
-    display: table-cell;
-    vertical-align: middle;
-}
-
-header .logo img{
-    height: 50px;
-    margin-top: 5px; /* Optical alignment of the logo */
-}
-
-header nav{
-    float: right;
-    height: 100%;
-}
-
-header nav li{
-    display: table;
-    height: 100%;
     float: left;
-    margin-right: 30px;
+    padding-right: 10px;
+    padding-top: 5px;
 }
 
-header nav li:last-of-type{
-    margin-right: 0;
+.icon{
+
+    display: inline-block;
+
 }
 
-header nav span {
-    display: table-cell;
-    vertical-align: middle;
+#hamburger-icon {
+    margin: auto 0;
+    display: none;
+    cursor: pointer;
 }
 
-header nav a{
-    color: #101010;
+#hamburger-icon div {
+    width: 35px;
+    height: 3px;
+    background-color: white;
+    margin: 6px 0;
+    transition: 0.4s;
 }
 
-header nav .button{
-    background-color: #1ab26b; /* This HEX is the color of the button */
-    color: #FFF;
-    padding: 10px 20px;
-    border-radius: 4px;
+.open .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-6px, 6px);
+    transform: rotate(-45deg) translate(-6px, 6px);
 }
 
-header nav .button:hover{
-    filter: brightness(1.05);
+.open .bar2 {
+    opacity: 0;
+}
+
+.open .bar3 {
+    -webkit-transform: rotate(45deg) translate(-6px, -8px);
+    transform: rotate(45deg) translate(-6px, -8px);
+}
+
+.open .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.mobile-menu {
+    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    height: calc(100vh - 50px);
+    width: 100%;
+    color: black;
+}
+
+.mobile-menu li {
+    margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+    header nav {
+        display: none;
+    }
+
+    #hamburger-icon {
+        display: block;
+    }
 }
