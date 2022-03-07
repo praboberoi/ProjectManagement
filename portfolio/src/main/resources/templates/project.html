@@ -63,7 +63,7 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form id="createScriptForm" action="#" th:action="@{/project}" th:object="${newSprint}" method="post">
+                        <form id="createSprintForm" action="#" th:action="@{/project}" th:object="${newSprint}" method="post">
                             <div class="mb-3">
                                 <label for="recipient-name" class="col-form-label">Sprint Label</label>
                                 <input type="text" class="form-control" id="recipient-name" placeholder="Sprint 1" readonly>
@@ -92,15 +92,20 @@
 
                             <br>
                             <div class="mb-3">
-                                <label for="message-text" class="col-form-label">Sprint Description</label>
-                                <textarea class="form-control" id="message-text"></textarea>
+                                <label for="message-text" class="col-form-label" >Sprint Description</label>
+                                <textarea class="form-control" id="message-text" th:field="*{description}"></textarea>
                             </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" value="Submit" class="btn btn-primary">Add sprint</button>
+                            </div>
+
                         </form>
                     </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" value="Submit" class="btn btn-primary">Add sprint</button>
-                    </div>
+
+
+
+
                 </div>
             </div>
         </div>
@@ -133,9 +138,9 @@
                 </tr>
                 <tr>
                     <th scope="row">Sprint 3</th>
-                    <td>review product</td>
-                    <td>02/03/2022</td>
-                    <td>02/03/2022</td>
+                    <td th:text="${newSprint.description}"></td>
+                    <td th:text="${newSprint.startDate}"></td>
+                    <td th:text="${newSprint.endDate}"></td>
                 </tr>
                 </tbody>
             </table>

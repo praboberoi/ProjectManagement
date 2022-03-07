@@ -20,13 +20,13 @@ import javax.servlet.http.HttpServletResponse;
 public class ProjectController {
 
     @GetMapping("/project")
-    public String scriptForm(Model model) {
+    public String sprintForm(Model model) {
         model.addAttribute("newSprint", new Sprint());
         return "project";
     }
 
     @PostMapping("/project")
-    public String scriptSubmit(@ModelAttribute Sprint sprint, Model model) {
+    public String sprintSubmit(@ModelAttribute Sprint sprint, Model model) {
         model.addAttribute("newSprint", sprint);
         return "project";
     }
