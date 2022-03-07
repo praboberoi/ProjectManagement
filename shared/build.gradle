@@ -12,7 +12,7 @@ wrapper {
 
 group "nz.ac.canterbury.seng302"
 version "1.0"
-sourceCompatibility = '17'
+sourceCompatibility = "17"
 
 repositories {
     mavenLocal()
@@ -69,3 +69,4 @@ publishing {
         }
     }
 }
+targetCompatibility = JavaVersion.VERSION_17
