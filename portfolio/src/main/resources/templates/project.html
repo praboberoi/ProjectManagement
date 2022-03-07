@@ -63,7 +63,39 @@
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <p>Form for creating new sprint</p>
+                        <form id="createScriptForm" action="#" th:action="@{/project}" th:object="${newSprint}" method="post">
+                            <div class="mb-3">
+                                <label for="recipient-name" class="col-form-label">Sprint Label</label>
+                                <input type="text" class="form-control" id="recipient-name" placeholder="Sprint 1" readonly>
+                            </div>
+
+                            <div style="height:30px;" class="row">
+                                <!--<div class="col-md-4"></div>
+                                <div class="col-md-2 ms-auto"></div>-->
+                                <div class="col-md-6 ms-auto">
+                                    <label style="font-size:15px;" for="startDate" class="form-label">Start Date</label>
+                                </div>
+                                <div class="col-md-6 ms-auto">
+                                    <label style="font-size:15px;" for="endDate" class="form-label">End Date</label>
+                                </div>
+                            </div>
+                            <div class="row">
+
+                                <!--<div class="col-md-2 ms-auto"></div>-->
+                                <div class="col-md-6 ms-auto">
+                                    <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}">
+                                </div>
+                                <div class="col-md-6 ms-auto">
+                                    <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}">
+                                </div>
+                            </div>
+
+                            <br>
+                            <div class="mb-3">
+                                <label for="message-text" class="col-form-label">Sprint Description</label>
+                                <textarea class="form-control" id="message-text"></textarea>
+                            </div>
+                        </form>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
