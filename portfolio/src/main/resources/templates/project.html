@@ -49,7 +49,7 @@
         <!-- use span to make header and button on same line-->
         <h3>Sprints <span class="pull-right">
             <!-- Button trigger modal for new sprints-->
-            <a class="btn btn-primary" th:href="@{/project/newSprint}"> + </a>
+            <a class="btn btn-primary" th:href="@{'/project/newSprint'}"> + </a>
 
             </span></h3>
     </div>
@@ -71,6 +71,7 @@
             </tr>
             </thead>
             <tbody>
+            <!-- placeholders
             <tr>
                 <th scope="row">Sprint 1</th>
                 <td>focus on gui</td>
@@ -83,7 +84,7 @@
                 <td>05/02/2022</td>
                 <td>06/02/2022</td>
             </tr>
-
+            -->
             <th:block th:each="sprint : ${listSprints}">
                 <tr>
                     <td>[[${sprint.id}]]</td>
@@ -91,7 +92,7 @@
                     <td>[[${sprint.startDate}]]</td>
                     <td>[[${sprint.endDate}]]</td>
                     <td>
-                        <a class="btn btn-primary" th:href="@{'project/editSprint/' + ${sprint.id}}">Edit</a>
+                        <a class="btn btn-primary" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.id}}">Edit</a>
                         <a class="btn btn-primary" th:href="@{'project/deleteSprint/' + ${sprint.id}}">Delete</a>
                     </td>
 

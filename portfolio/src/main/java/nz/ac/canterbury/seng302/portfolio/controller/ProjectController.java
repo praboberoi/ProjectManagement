@@ -45,11 +45,11 @@ public class ProjectController {
 
 
     /*make sure to update project.html for path*/
-    @GetMapping("/project/newSprint/{id}")
-    public String sprintEditForm(@PathVariable("id") Long id, Model model){
-        Sprint sprint = sprintService.getSprint(id);
+    @GetMapping("/project/{projectId}/editSprint/{sprintId}")
+    public String sprintEditForm(@PathVariable("sprintId") Long sprintId, Model model){
+        Sprint sprint = sprintService.getSprint(sprintId);
         model.addAttribute("sprint", sprint);
-        model.addAttribute("pageTitle", "Edit Sprint (Name: " + id + ")");
+        model.addAttribute("pageTitle", "Edit Sprint (Name: " + sprintId + ")");
         return "sprint_form";
 
 
