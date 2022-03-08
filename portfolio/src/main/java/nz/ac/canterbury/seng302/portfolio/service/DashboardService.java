@@ -14,4 +14,8 @@ public class DashboardService {
     public List<Project> listAll() {
         return (List<Project>) projectRepo.findAll();
     }
+
+    public void saveProject(Project project) {
+        projectRepo.save(project);
+    }
 }

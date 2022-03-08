@@ -33,9 +33,7 @@
                     <tr>
                         <th>
                             <h2>Current Projects</h2>
-                            <button type="button" class="btn btn-primary">
-                                Create Project
-                            </button>
+                            <a class="btn btn-primary" th:href="@{/dashboard/newProject}">Create Project</a>
                         </th>
                     </tr>
                 </thead>
@@ -60,8 +58,9 @@
                                 <div class="card-body">
                                     <h4>Description</h4>
                                     <p th:text="${project.description}"/>
-                                    <a href="./calender" class="btn btn-primary">Edit details</a>
-                                    <a href="./project" class="btn btn-primary">Go to details</a>
+                                    <a class="btn btn-primary" th:href="@{'dashboard/editProject/' + ${project.projectName}}">Edit details</a>
+                                    <a class="btn btn-primary" th:href="@{'dashboard/deleteProject/' + ${project.projectName}}">Delete</a>
+<!--                                    <a href="./project" class="btn btn-primary">Go to details</a>-->
                                 </div>
                             </div>
                         </td>

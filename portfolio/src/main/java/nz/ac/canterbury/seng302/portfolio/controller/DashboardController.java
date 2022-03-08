@@ -29,4 +29,15 @@ public class DashboardController {
         return "dashboard";
     }
 
+    @GetMapping("/dashboard/newProject")
+    public String showNewForm(Model model) {
+        model.addAttribute("project", new Project());
+        return "project_form";
+    }
+
+    @PostMapping("/dashboard/saveProject")
+     String saveProject(Project project) {
+        dashboardService.saveProject(project);
+        return "redirect:/dashboard";
+    }
 }
