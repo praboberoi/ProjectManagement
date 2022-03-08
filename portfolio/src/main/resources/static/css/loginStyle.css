@@ -8,6 +8,7 @@ body {
     background-color: #CEDCE6;
     color: white;
     font-family: 'Poppins', sans-serif;
+    text-align: center;
 }
 
 header a {
@@ -20,6 +21,7 @@ header {
     height: 64px;
     display: flex;
     justify-content: space-between;
+    width:100%;
 }
 
 #brand {
@@ -42,6 +44,7 @@ header {
     background-color: white;
     margin: 10px auto;
     border-radius: 40px;
+
 }
 
 .box1 {
@@ -49,16 +52,82 @@ header {
     height:188px;
     background:#efb83c;
     border-radius: 40px 40px 0px 0px;
+    padding: 40px 10px;
 }
 
 
-.page-title {
+.page-title, .page-instruction {
     font-family: 'Poppins', sans-serif;
     color: #07173b;
-    font-size: 36px;
+}
+
+.page-title {
+    font-size: 24px;
+    margin: 20px auto;
+    align-items: center;
+    display: flex;
+    justify-content: center;
+
+}
+
+.login-container {
+    align-items: center;
+    margin: 40px auto;
+    text-align: left;
+    padding-left: 60px;
+    width:80%;
+    align-items: center;
+}
+
+.page-instruction {
+    margin: 20px auto;
+    font-size: 18px;
 }
 
 form {
-    align-content: center;
+    margin: 0 auto;
     color: #2b4a5c;
+    display: inline-block;
+    padding-bottom: 30px;
+    width:80%;
 }
+
+label {
+    text-align: left;
+}
+
+input[type=text], input[type=password]{
+    border-radius: 64px;
+    color: #2b4a5c;
+    width:100%;
+    height: 24px;
+    border-color: #2b4a5c;
+    padding-left: 8px;
+    border-style: solid;
+}
+
+input[type=submit]{
+    width: 100%;
+    height: 28px;
+    background: #2b4a5c;
+    border-radius: 40px;
+    font-size: 18px;
+    color: white;
+    border-color: #2b4a5c;
+    border-style: solid;
+}
+
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 950px) {
+    .login_square, .login-container{
+        width: 90%;
+    }
+    .login-container{ padding-left:10px;}
+
+    .box1 {
+        padding: 10px 10px;
+    }
+}
+
+

@@ -5,6 +5,7 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/css/loginStyle.css" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
 <!--        <p th:text="${loginMessage}" />-->
@@ -15,18 +16,27 @@
             </div>
         </header>
         <div class="login_square">
-            <div class="box1">
-                <div class-="page-title">
-                    <h2>Welcome back to LENSfolio</h2>
+
+                    <div class="box1">
+                        <div class="page-title">
+                            <h2>Welcome back to LENSfolio</h2>
+                        </div>
+                    </div>
+
+                    <div class="login-container">
+                        <div class="page-instruction">
+                            <h2>Log in</h2>
+                        </div>
+                        <form>
+                            <label for="username">Username:</label><br>
+                            <input type="text" id="username" name="username"><br><br>
+                            <label for="password">Password:</label><br>
+                            <input type="password" id="password" name="password"><br><br>
+                            <input type="submit" value="Sign In">
+                        </form>
+                    </div>
                 </div>
             </div>
-            <form>
-                <label for="username">Username:</label><br>
-                <input type="text" id="username" name="username"><br>
-                <label for="password">Password:</label><br>
-                <input type="password" id="password" name="password">
-                <input type="submit" value="Sign In">
-            </form>
         </div>
     </body>
 </html>
