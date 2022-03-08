@@ -1,0 +1,21 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Sign-up</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+</head>
+<body>
+<main>
+    <nav id="sidebar" class="sidebar"></nav>
+    <div id="content">
+        <h3>Username: <span th:text="${username}"></span></h3>
+        <h3>First Name: <span th:text="${firstName}"></span></h3>
+        <h3>Last Name: <span th:text="${lastName}"></span></h3>
+        <h3>Nickname/s: <span th:text="${nickname}"></span></h3>
+        <h3>Email Address: <span th:text="${email}"></span></h3>
+        <h3>Biography: <span th:text="${bio}"></span></h3>
+        <h3>Pronouns: <span th:text="${pronouns}"></span></h3>
+    </div>
+</main>
+</body>
+</html>

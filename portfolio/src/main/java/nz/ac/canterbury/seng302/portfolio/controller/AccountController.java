@@ -25,7 +25,6 @@ public class AccountController {
             Model model
     ) {
         Datastore db = new Datastore();
-        System.out.println(principal.getClaims(1).getValue());
         User user = UserDAL.getUserByUsername(db, principal.getClaims(1).getValue());
         model.addAttribute("username", user.username);
         model.addAttribute("firstName", user.firstName);
@@ -37,12 +36,4 @@ public class AccountController {
         return "account";
     }
 
-//    @PostMapping("/favouriteColour")
-//    public String favouriteColour(
-//            @AuthenticationPrincipal AuthState principal,
-//            @RequestParam(value="favouriteColour") String favouriteColour,
-//            Model model
-//    ) {
-//        return "redirect:/greeting?name=" + favouriteColour;
-//    }
 }
