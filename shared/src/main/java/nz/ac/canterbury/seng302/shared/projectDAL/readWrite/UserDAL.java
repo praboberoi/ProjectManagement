@@ -41,7 +41,7 @@ public class UserDAL {
         User user = null;
         try (Connection conn = db.getNewConnection();
              Statement stmt = conn.createStatement()) {
-            var reader = stmt.executeQuery("SELECT UserId, Username, FirstName, LastName, Nickname, Bio, Pronouns, Email, Password, Salt FROM USERS WHERE Username = " + username);
+            var reader = stmt.executeQuery("SELECT UserId, Username, FirstName, LastName, Nickname, Bio, Pronouns, Email, Password, Salt FROM USERS WHERE Username = '" + username +"'");
             while (reader.next()) {
                 user = new User(
                         reader.getInt("UserId"),

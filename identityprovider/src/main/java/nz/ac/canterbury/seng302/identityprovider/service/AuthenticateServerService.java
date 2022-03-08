@@ -18,13 +18,15 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticationServiceGrpc.AuthenticationServiceImplBase;
+import nz.ac.canterbury.seng302.shared.projectDAL.Datastore;
 import nz.ac.canterbury.seng302.shared.projectDAL.model.User;
+import nz.ac.canterbury.seng302.shared.projectDAL.readWrite.UserDAL;
+
 
 @GrpcService
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
 
     User user = new User(1, "abc123", "Valid", "User", null, null, null, null, "A9r8gjI/EB/S1PIcR03nU/6VhKQnP/LFyWjOlQ6oOJ8=", "FEDFST", new ArrayList<>(Arrays.asList(Roles.STUDENT)));
-
     private JwtTokenUtil jwtTokenService = JwtTokenUtil.getInstance();
 
     /**
@@ -48,6 +50,8 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
                 .setToken(token)
                 .setUserId(1)
                 .setUsername(user.username);
+            Datastore db = new Datastore();
+            UserDAL.addUser(db, user.username, user.firstName, user.lastName, user.nickname, user.bio, user.pronouns, user.email, user.password, user.salt, user.roles);
         } else {
             reply
             .setMessage("Log in attempt failed: username or password incorrect")

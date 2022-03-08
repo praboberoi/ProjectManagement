@@ -21,7 +21,7 @@ public class H2UsersTable {
 
             // Create User Database
             String sql = "CREATE TABLE IF NOT EXISTS Users " +
-                    "(userId int IDENTITY (1,1), " +
+                    "(userId int primary key auto_increment, " +
                     " username VARCHAR(20) not NULL UNIQUE, " +
                     " firstName VARCHAR(20) not NULL, " +
                     " lastName VARCHAR(20) not NULL, " +
