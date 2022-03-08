@@ -13,11 +13,12 @@
 
     <!-- do not include fragments that are not in use PARSING ERROR -->
     <!--<head th:replace="fragments :: content"></head>-->
-    <title>Add New Project</title>
+    <title>[[${pageTitle}]]</title>
 </head>
 <body>
     <div>
         <form id="createProjectForm" action="#" th:action="@{/dashboard/saveProject}" method="post" th:object="${project}" >
+            <input type="hidden" th:field="*{projectName}">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4">
