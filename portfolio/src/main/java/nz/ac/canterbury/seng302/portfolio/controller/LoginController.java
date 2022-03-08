@@ -78,7 +78,6 @@ public class LoginController {
             Model model)
         {
         AuthenticateResponse loginReply;
-            System.out.println(username );
         try {
             loginReply = authenticateClientService.authenticate(username, password);
         } catch (StatusRuntimeException e){
