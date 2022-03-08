@@ -1,35 +1,68 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import io.grpc.StatusRuntimeException;
-import nz.ac.canterbury.seng302.portfolio.Sprint;
-import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
-import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
-import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
+
+import nz.ac.canterbury.seng302.portfolio.entity.Project;
+import nz.ac.canterbury.seng302.portfolio.entity.Sprint;
+import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 @Controller
 public class ProjectController {
+    @Autowired private SprintService sprintService;
 
     @GetMapping("/project")
-    public String sprintForm(Model model) {
-        model.addAttribute("newSprint", new Sprint());
+    public String showSprintList(Model model) {
+        List<Sprint> listSprints = sprintService.listAll();
+        model.addAttribute("listSprints", listSprints);
         return "project";
     }
 
-    @PostMapping("/project")
-    public String sprintSubmit(@ModelAttribute Sprint sprint, Model model) {
-        model.addAttribute("newSprint", sprint);
-        return "project";
+    @GetMapping("/project/newSprint")
+    public String newSprint(Model model) {
+        model.addAttribute("sprint", new Sprint());
+        model.addAttribute("pageTitle","Add new sprint");
+        return "sprint_form";
     }
+
+    @PostMapping("/project/saveSprint")
+    public String saveSprint(Sprint sprint) {
+        sprintService.saveSprint(sprint);
+        /*model.addAttribute("sprint", sprint);*/
+        return "redirect:/project";
+    }
+
+
+
+    /*make sure to update project.html for path*/
+    @GetMapping("/project/newSprint/{id}")
+    public String sprintEditForm(@PathVariable("id") Long id, Model model){
+        Sprint sprint = sprintService.getSprint(id);
+        model.addAttribute("sprint", sprint);
+        model.addAttribute("pageTitle", "Edit Sprint (Name: " + id + ")");
+        return "sprint_form";
+
+
+    }
+
+    /* Deleting sprints */
+    @GetMapping("/project/deleteSprint/{id}")
+    public String deleteSprint(@PathVariable("id") Long sprintId, Model model){
+        sprintService.deleteSprint(sprintId);
+        return "redirect:/project";
+    }
+
+
+
 
     /*
     @GetMapping
