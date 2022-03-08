@@ -22,10 +22,14 @@ public class Sprint implements Serializable {
     private long id;
 
     @ManyToOne
+    @JoinColumn(
+            name = "projectName",
+            referencedColumnName = "projectName"
+    )
     private Project project;
 
     @Column(nullable = false)
-    private String name;
+    private String sprintName;
 
     @Column
     private String description;

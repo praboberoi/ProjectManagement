@@ -9,9 +9,9 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, String> {
 
-    public List<Project> findByName(String projectName);
+    //public List<Project> findByProjectName(String projectName);
 
-    public List<Project> findByNameContaining(String name);
+    public List<Project> findByProjectNameContaining(String name);
 
     public List<Project> findByDescription(String description);
 
