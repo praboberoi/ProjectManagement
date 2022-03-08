@@ -130,11 +130,38 @@ label {
     text-align: justify;
     margin: 0;
     padding: 5px;
-    font-size: 12px;
-    font-weight: bold;
+    font-size: 14px;
     color: #8a0000;
 }
 
+.no-account-warning{
+
+    color: #2b4a5c;
+    width:100%;
+}
+
+.no-account-question {
+    float: left;
+    font-weight: 200;
+    font-size: 18px;
+    display: inline-block;
+}
+
+.signup-button{
+    text-decoration: none;
+    border-color: #2b4a5c;
+    border-style: solid;
+    border-radius: 40px;
+    border-width: 1px;
+    width: 120px;
+    height: 28px;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+    margin-left: 5%;
+    color: #2b4a5c;
+
+}
 
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 950px) {
