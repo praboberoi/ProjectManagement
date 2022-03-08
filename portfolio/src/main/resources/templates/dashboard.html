@@ -13,6 +13,7 @@
 
     <!-- do not include fragments that are not in use PARSING ERROR -->
     <!--<head th:replace="fragments :: content"></head>-->
+    <title>Dashboard</title>
 </head>
 
 <!--fragments-->
@@ -21,96 +22,66 @@
 
 <body>
     <div class="main">
-        <h2>Current Projects</h2>
         <div>
             <!-- Button trigger modal - Create Project -->
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticProjectModal">
-                Create Project
-            </button>
         </div>
         <!--<p>Here are your current projects</p>-->
         <br>
         <div class="current_projects">
-            <div class="project_card">
-                <h5 class="card-header">Default Project</h5>
-                <div class="card-body">
-                    <!--<h5 class="card-title">Special title treatment</h5>-->
-                    <!--<p class="card-text">With supporting text below a.</p>-->
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>
+                            <h2>Current Projects</h2>
+                            <button type="button" class="btn btn-primary">
+                                Create Project
+                            </button>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                <th:block th:each="project : ${listProjects}">
+                    <tr>
+                        <td>
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-8">
+                                                <h2 th:text="'Name:  '  + ${project.projectName}"/>
+                                            </div>
+                                            <div class="col-md-4">
+                                                <p th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
+                                            </div>
+                                        </div>
 
-                    <p th:text="'Name:  '  + ${newProject.name}"/>
-                    <p th:text="'Start date:  '  + ${newProject.startDate}"/>
-                    <p th:text="'End date:  '  + ${newProject.endDate}"/>
-                    <p th:text="'Description:  '  + ${newProject.description}"/>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <h4>Description</h4>
+                                    <p th:text="${project.description}"/>
+                                    <a href="./calender" class="btn btn-primary">Edit details</a>
+                                    <a href="./project" class="btn btn-primary">Go to details</a>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </th:block>
+                </tbody>
 
-                    <a href="./project" class="btn btn-primary">Go to details</a>
-                </div>
-            </div>
+            </table>
+
+<!--            <div class="project_card">-->
+<!--                <h5 class="card-header">Default Project</h5>-->
+<!--                <div class="card-body">-->
+<!--                    &lt;!&ndash;<h5 class="card-title">Special title treatment</h5>&ndash;&gt;-->
+<!--                    &lt;!&ndash;<p class="card-text">With supporting text below a.</p>&ndash;&gt;-->
+
+<!--                    <a href="./project" class="btn btn-primary">Go to details</a>-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!--<p><a href="./project">Default Project</a></p>-->
-        </div>
-
-
-    </div>
-
-    <!-- Modal - Create Project-->
-    <div class="modal fade" id="staticProjectModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h4 class="modal-title" id="staticBackdropLabel">Create Project</h4>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="createProjectForm" action="#" th:action="@{/dashboard}" th:object="${newProject}" method="post">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <input style="font-size:20px;" type="text" class="form-control" placeholder="Project Name" th:field="*{name}"> <!---maxlength="30" minlength="1" add min and max input length?--->
-                                </div>
-                            </div>
-                            <div style="height:30px;" class="row">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-2 ms-auto"></div>
-                                <div class="col-md-3 ms-auto">
-                                    <label style="font-size:15px;" for="startDate" class="form-label">Start Date</label>
-                                </div>
-                                <div class="col-md-3 ms-auto">
-                                    <label style="font-size:15px;" for="endDate" class="form-label">End Date</label>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-4">
-                                    <label style="font-size:20px;" for="inputProjectDescription" class="form-label">Project Description</label>
-                                </div>
-                                <div class="col-md-2 ms-auto"></div>
-                                <div class="col-md-3 ms-auto">
-                                    <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}">
-                                </div>
-                                <div class="col-md-3 ms-auto">
-                                    <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}">
-                                </div>
-                            </div>
-                            <div style="height:10px;" class="row"></div>
-                            <div class="row">
-                                <textarea class="form-control mt-50" id="inputProjectDescription" rows="5" th:field="*{description}"></textarea>
-                            </div>
-                            <div style="height:20px;" class="row"></div>
-                            <div class="row ">
-                                <div class="col-md-4"></div>
-                                <div class="col-md-4 ms-auto"></div>
-                                <div class="col-md-2 ms-auto text-center">
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                </div>
-                                <div class="col-md-2 ms-auto text-center">
-                                    <button type="submit" value="Submit" class="btn btn-primary">Create</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-<!--                <div class="modal-footer">-->
-<!--                </div>-->
-            </div>
         </div>
     </div>
 
