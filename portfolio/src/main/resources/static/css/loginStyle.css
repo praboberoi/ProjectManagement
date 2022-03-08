@@ -84,7 +84,7 @@ header {
     font-size: 18px;
 }
 
-form {
+#login-form {
     margin: 0 auto;
     color: #2b4a5c;
     display: inline-block;
@@ -96,7 +96,7 @@ label {
     text-align: left;
 }
 
-input[type=text], input[type=password]{
+#username-field, #password-field{
     border-radius: 64px;
     color: #2b4a5c;
     width:100%;
@@ -106,7 +106,7 @@ input[type=text], input[type=password]{
     border-style: solid;
 }
 
-input[type=submit]{
+#login-form-submit{
     width: 100%;
     height: 28px;
     background: #2b4a5c;
@@ -115,6 +115,24 @@ input[type=submit]{
     color: white;
     border-color: #2b4a5c;
     border-style: solid;
+}
+
+#login-error-msg-holder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+}
+
+#login-error-msg {
+    width: 80%;
+    text-align: justify;
+    margin: 0;
+    padding: 5px;
+    font-size: 12px;
+    font-weight: bold;
+    color: #8a0000;
 }
 
 

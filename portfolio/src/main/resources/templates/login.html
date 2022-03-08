@@ -27,13 +27,16 @@
                         <div class="page-instruction">
                             <h2>Log in</h2>
                         </div>
-                        <form>
-                            <label for="username">Username:</label><br>
-                            <input type="text" id="username" name="username"><br><br>
-                            <label for="password">Password:</label><br>
-                            <input type="password" id="password" name="password"><br><br>
-                            <input type="submit" value="Sign In">
+                        <form id="login-form" method="post">
+                            <label for="username-field">Username:</label><br>
+                            <input type="text" id="username-field" name="username"><br><br>
+                            <label for="password-field">Password:</label><br>
+                            <input type="password" id="password-field" name="password"><br><br>
+                            <input type="submit" value="Log In" id="login-form-submit">
                         </form>
+                        <div id="login-error-msg-holder">
+                            <p th:text="${error}" id="login-error-msg">Invalid username and/or password</p>
+                        </div>
                     </div>
                 </div>
             </div>

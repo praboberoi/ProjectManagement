@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -45,26 +46,60 @@ public class LoginController {
             @RequestParam(name="password", required=false, defaultValue="Password123!") String password,
             Model model
     ) {
+//        AuthenticateResponse loginReply;
+//        try {
+//            loginReply = authenticateClientService.authenticate(username, password);
+//        } catch (StatusRuntimeException e){
+//            model.addAttribute("loginMessage", "Error connecting to Identity Provider...");
+//            return "login";
+//        }
+//        if (loginReply.getSuccess()) {
+//            var domain = request.getHeader("host");
+//            CookieUtil.create(
+//                response,
+//                "lens-session-token",
+//                    loginReply.getToken(),
+//                true,
+//                5 * 60 * 60, // Expires in 5 hours
+//                domain.startsWith("localhost") ? null : domain
+//            );
+//        }
+//
+//        model.addAttribute("error", loginReply.getMessage());
+        return "login";
+    }
+
+    @PostMapping("/login")
+    public String submitLogin (
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam(name="username", required=false, defaultValue="abc123") String username,
+            @RequestParam(name="password", required=false, defaultValue="Password123!") String password,
+            Model model)
+        {
         AuthenticateResponse loginReply;
+            System.out.println(username );
         try {
             loginReply = authenticateClientService.authenticate(username, password);
         } catch (StatusRuntimeException e){
-            model.addAttribute("loginMessage", "Error connecting to Identity Provider...");
+            model.addAttribute("error", "Error connecting to Identity Provider...");
             return "login";
         }
-        if (loginReply.getSuccess()) {
+            System.out.println(loginReply.getMessage());
+            if (loginReply.getSuccess()) {
             var domain = request.getHeader("host");
             CookieUtil.create(
-                response,
-                "lens-session-token",
+                    response,
+                    "lens-session-token",
                     loginReply.getToken(),
-                true,
-                5 * 60 * 60, // Expires in 5 hours
-                domain.startsWith("localhost") ? null : domain
+                    true,
+                    5 * 60 * 60, // Expires in 5 hours
+                    domain.startsWith("localhost") ? null : domain
             );
+            return "redirect:/account";
         }
 
-        model.addAttribute("loginMessage", loginReply.getMessage());
+        model.addAttribute("error", loginReply.getMessage());
         return "login";
     }
 
