@@ -13,7 +13,7 @@ public class Project{
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, updatable = false)
-    private long projectId;
+    private Integer projectId;
 
     /**
      * Name of the project
@@ -58,7 +58,7 @@ public class Project{
         this.endDate = endDate;
     }
 
-    public long getProjectId() {
+    public Integer getProjectId() {
         return projectId;
     }
     /**

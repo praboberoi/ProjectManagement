@@ -22,7 +22,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4">
-                        <input style="font-size:20px;" type="text" class="form-control" placeholder="Project Name" th:field="*{projectName}"> <!---maxlength="30" minlength="1" add min and max input length?--->
+                        <input style="font-size:20px;" type="text" class="form-control" placeholder="Project Name" th:field="*{projectName}" required> <!---maxlength="30" minlength="1" add min and max input length?--->
                     </div>
                 </div>
                 <div style="height:30px;" class="row">
@@ -41,10 +41,10 @@
                     </div>
                     <div class="col-md-2 ms-auto"></div>
                     <div class="col-md-3 ms-auto">
-                        <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}">
+                        <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
                     </div>
                     <div class="col-md-3 ms-auto">
-                        <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}">
+                        <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
                     </div>
                 </div>
                 <div style="height:10px;" class="row"></div>
