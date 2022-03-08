@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.io.Console;
 import java.util.List;
 
 @Controller
@@ -43,5 +44,15 @@ public class DashboardController {
         return "project_form";
     }
 
+    @GetMapping("/dashboard/deleteProject/{projectName}")
+    public String showEditForm(@PathVariable("projectName") String projectName) throws Exception {
+        dashboardService.deleteProject(projectName);
 
+        try {
+            dashboardService.deleteProject(projectName);
+        } catch (Exception e) { // Change exception to ProjectNotFoundException
+            System.out.println(e.getMessage());
+        }
+        return "redirect:/dashboard";
+    }
 }

@@ -23,8 +23,15 @@ public class DashboardService {
     public Project getProject(String projectName) {
         Optional<Project> result = projectRepo.findById(projectName);
         return result.get();
+    }
 
-
+    public void deleteProject(String projectName) throws Exception {
+        Long count = projectRepo.countByProjectName(projectName);
+        if (count == null || count == 0) {
+            throw new Exception("Could not find any projects with projectName" + projectName);
+//          throw new ProjectNotFoundException("Could not find any projects with projectName" + projectName);
+        }
+        projectRepo.deleteById(projectName);
     }
 }
 
