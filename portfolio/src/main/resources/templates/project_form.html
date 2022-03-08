@@ -18,7 +18,7 @@
 <body>
     <div>
         <form id="createProjectForm" action="#" th:action="@{/dashboard/saveProject}" method="post" th:object="${project}" >
-            <input type="hidden" th:field="*{projectName}">
+            <input type="hidden" th:field="*{projectId}">
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-md-4">
