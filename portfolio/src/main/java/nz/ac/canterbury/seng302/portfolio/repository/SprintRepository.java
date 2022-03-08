@@ -10,9 +10,9 @@ public interface SprintRepository extends CrudRepository<Sprint, Long> {
 
     public List<Sprint> findById(String id);
 
-    public List<String> findByName(String name);
+    public List<String> findBySprintName(String sprintName);
 
-    public List<String> findByNameContaining(String name);
+    public List<String> findBySprintNameContaining(String name);
 
     public List<Sprint> findByDescription(String description);
 

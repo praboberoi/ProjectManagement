@@ -21,11 +21,7 @@ public class Project{
     //TODO: Add the relationship below to connect the tables. Tidy up the code. And Implement the date and time datatype
     @Id
     @Column(nullable = false)
-    private String name;
-
-    @OneToMany(fetch = FetchType.EAGER)
-    @JoinColumn
-    private Set<Sprint> sprints;
+    private String projectName;
 
     @Column
     private String description;
