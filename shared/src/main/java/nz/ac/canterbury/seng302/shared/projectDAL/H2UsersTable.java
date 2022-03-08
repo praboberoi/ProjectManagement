@@ -30,7 +30,7 @@ public class H2UsersTable {
                     " pronouns VARCHAR(10), " +
                     " email VARCHAR(255) not NULL, " +
                     " password VARCHAR(63) not NULL," +
-                    " salt varchar(10) not NULL)";
+                    " salt VARCHAR(40) not NULL)";
             stmt.execute(sql);
         } catch(SQLException sqlException) {
             System.out.println(LocalDateTime.now() + sqlException.getMessage());

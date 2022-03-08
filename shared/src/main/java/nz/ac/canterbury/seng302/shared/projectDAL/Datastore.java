@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Datastore {
 
     // Database URL
-    static final String DB_URL = "jdbc:h2:~/Team15Database2";
+    static final String DB_URL = "jdbc:h2:~/Team15ProjectDatabase";
 
     //  Database credentials
     static final String USER = "sa";
