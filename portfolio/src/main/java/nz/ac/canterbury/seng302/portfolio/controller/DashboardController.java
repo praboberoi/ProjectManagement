@@ -36,20 +36,20 @@ public class DashboardController {
         return "redirect:/dashboard";
     }
 
-    @GetMapping("/dashboard/editProject/{projectName}")
-    public String showEditForm(@PathVariable("projectName") String projectName, Model model) {
-        Project project = dashboardService.getProject(projectName);
+    @GetMapping("/dashboard/editProject/{projectId}")
+    public String showEditForm(@PathVariable("projectId") Long projectId, Model model) {
+        Project project = dashboardService.getProject(projectId);
         model.addAttribute("project", project);
-        model.addAttribute("pageTitle", "Edit Project (Name: " + projectName + ")");
+        model.addAttribute("pageTitle", "Edit Project (Name: " + String.valueOf(projectId) + ")");
         return "project_form";
     }
 
-    @GetMapping("/dashboard/deleteProject/{projectName}")
-    public String showEditForm(@PathVariable("projectName") String projectName) throws Exception {
-        dashboardService.deleteProject(projectName);
+    @GetMapping("/dashboard/deleteProject/{projectId}")
+    public String showEditForm(@PathVariable("projectId") Long projectId) throws Exception {
+        dashboardService.deleteProject(projectId);
 
         try {
-            dashboardService.deleteProject(projectName);
+            dashboardService.deleteProject(projectId);
         } catch (Exception e) { // Change exception to ProjectNotFoundException
             System.out.println(e.getMessage());
         }

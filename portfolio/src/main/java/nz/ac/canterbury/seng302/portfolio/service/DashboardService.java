@@ -20,18 +20,19 @@ public class DashboardService {
         projectRepo.save(project);
     }
     
-    public Project getProject(String projectName) {
-        Optional<Project> result = projectRepo.findById(projectName);
+    public Project getProject(Long projectId) {
+        Optional<Project> result = projectRepo.findById(projectId);
+        System.out.print(result.get().getProjectName());
         return result.get();
     }
 
-    public void deleteProject(String projectName) throws Exception {
-        Long count = projectRepo.countByProjectName(projectName);
+    public void deleteProject(Long projectId) throws Exception {
+        Long count = projectRepo.countByProjectName(projectId);
         if (count == null || count == 0) {
-            throw new Exception("Could not find any projects with projectName" + projectName);
+            throw new Exception("Could not find any projects with project Id" + projectId);
 //          throw new ProjectNotFoundException("Could not find any projects with projectName" + projectName);
         }
-        projectRepo.deleteById(projectName);
+        projectRepo.deleteById(projectId);
     }
 }
 

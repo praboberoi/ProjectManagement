@@ -7,9 +7,9 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface ProjectRepository extends CrudRepository<Project, String> {
+public interface ProjectRepository extends CrudRepository<Project, Long> {
 
-    //public List<Project> findByProjectName(String projectName);
+    public List<Project> findByProjectName(String projectName);
 
     public List<Project> findByProjectNameContaining(String name);
 
@@ -21,6 +21,6 @@ public interface ProjectRepository extends CrudRepository<Project, String> {
 
     public List<Project> findByEndDate(String endDate);
 
-    public Long countByProjectName(String projectName);
+    public Long countByProjectName(Long projectId);
 
 }

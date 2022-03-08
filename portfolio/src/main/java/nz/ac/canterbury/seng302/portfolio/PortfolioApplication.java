@@ -28,6 +28,7 @@ public class PortfolioApplication {
             insertJavaAdvocates(projectRepository, sprintRepository);
             System.out.println(projectRepository.findAll());
             System.out.println(sprintRepository.findAll());
+            //projectRepository.deleteById(66L);
         });
     }
 
@@ -36,7 +37,7 @@ public class PortfolioApplication {
     private void insertJavaAdvocates(ProjectRepository projectRepository, SprintRepository sprintRepository) {
 
         //Project project1 =  new Project("Project 2020", new java.util.ArrayList<>(),"First Attempt", "1-1-2020", "1-8-2020");
-        Project project1 = Project.builder()
+        Project project1 = new Project.Builder()
                         .projectName("Project 2020")
                         .description("First Attempt")
                         .startDate("1-1-2020")
@@ -44,7 +45,7 @@ public class PortfolioApplication {
                         .build();
         projectRepository.save(project1);
 
-        sprintRepository.save(Sprint.builder()
+        sprintRepository.save(new Sprint.Builder()
                 .sprintName("First Sprint")
                 .project(project1)
                 .description("This is first sprint")
