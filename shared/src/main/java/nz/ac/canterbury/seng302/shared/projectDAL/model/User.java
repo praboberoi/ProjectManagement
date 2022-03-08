@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.shared.model;
+package nz.ac.canterbury.seng302.shared.projectDAL.model;
 
 import nz.ac.canterbury.seng302.shared.enums.Roles;
 

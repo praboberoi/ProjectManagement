@@ -18,7 +18,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticationServiceGrpc.AuthenticationServiceImplBase;
-import nz.ac.canterbury.seng302.shared.model.User;
+import nz.ac.canterbury.seng302.shared.projectDAL.model.User;
 
 @GrpcService
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
@@ -62,7 +62,7 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
     /**
      * Encrypts the given password using the salt and an SHA-256 hash
      * @param salt a random string that is appended to the password before hashing
-     * @param password
+     * @param password teh password to be encrypted
      * @return The encrypted password
      */
     private String encryptPassword(String salt, String password) {
