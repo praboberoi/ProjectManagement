@@ -17,7 +17,7 @@ public class H2RoleTable {
             Class.forName(JDBC_DRIVER);
             // Create User Database
             String command = "CREATE TABLE IF NOT EXISTS Roles " +
-                    "(roleId int IDENTITY (1,1), " +
+                    "(roleId integer primary key auto_increment, " +
                     " roleName VARCHAR(20) not NULL UNIQUE)";
             stmt.execute(command);
             command = "MERGE INTO Roles (roleId, roleName) " +
