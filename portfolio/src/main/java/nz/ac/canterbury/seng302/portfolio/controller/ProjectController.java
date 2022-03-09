@@ -1,11 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 
-import nz.ac.canterbury.seng302.portfolio.entity.Project;
 import nz.ac.canterbury.seng302.portfolio.entity.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.web.JsonPath;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -47,8 +45,6 @@ public class ProjectController {
      * @param sprint
      * @return
      */
-    @PostMapping("/project/saveSprint")
-    public String saveSprint(Sprint sprint) {
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(@PathVariable Long projectId, Sprint sprint) {
         sprintService.saveSprint(sprint);
