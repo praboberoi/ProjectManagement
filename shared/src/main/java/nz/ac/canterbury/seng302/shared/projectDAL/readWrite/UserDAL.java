@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class UserDAL {
     public static User getUser(Datastore db, int userId) {
@@ -54,7 +55,7 @@ public class UserDAL {
                         reader.getString("email"),
                         reader.getString("password"),
                         reader.getString("salt"),
-                        new ArrayList<Roles>()
+                        new ArrayList<Roles>(Arrays.asList(Roles.STUDENT))
                 );
             }
         } catch (SQLException e) {
