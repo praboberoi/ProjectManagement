@@ -11,10 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.*;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 @Controller
@@ -29,6 +26,12 @@ public class ProjectController {
         return "project";
     }
 */
+
+    /**
+     * Displays page for adding a new sprint
+     * @param model
+     * @return
+     */
     @GetMapping("/project/{projectId}/newSprint")
     public String newSprint(Model model, @PathVariable Long projectId) {
         int sprintNo = sprintService.countByProjectId(projectId) + 1;
@@ -39,6 +42,13 @@ public class ProjectController {
         return "sprint_form";
     }
 
+    /**
+     * Saves a sprint and redirects to project page
+     * @param sprint
+     * @return
+     */
+    @PostMapping("/project/saveSprint")
+    public String saveSprint(Sprint sprint) {
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(@PathVariable Long projectId, Sprint sprint) {
         sprintService.saveSprint(sprint);
@@ -47,7 +57,12 @@ public class ProjectController {
     }
 
 
-
+    /**
+     * Directs to page for editing a sprint
+     * @param sprintId ID for sprint being edited
+     * @param model
+     * @return
+     */
     /*make sure to update project.html for path*/
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(@PathVariable("sprintId") Long sprintId, Model model){
@@ -59,6 +74,12 @@ public class ProjectController {
 
     }
 
+    /**
+     * Deletes a sprint and redirects back to project page
+     * @param sprintId ID of sprint being deleted
+     * @param model
+     * @return
+     */
     /* Deleting sprints */
     @GetMapping("/project/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(@PathVariable("sprintId") Long sprintId, Model model){
