@@ -6,13 +6,41 @@
         <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/css/style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script src="/javascript/header.js"></script>
     </head>
     <body>
-        <header>
-            <div id="brand">
-                <h1>LENSfolio</h1>
-            </div>
-        </header>
+    <header>
+        <div id="brand">
+            <h1>LENSfolio</h1>
+        </div>
+        <nav>
+            <ul>
+                <a href=""><li><img src="/icons/home-icon.svg" alt="Home" height=28 width=28></li></a>
+                <a href="">
+                    <li>
+                        <div class="container">
+                            <div class="username">
+                                <p>Username</p>
+                            </div>
+                            <div class="icon">
+                                <img src="/icons/user-icon.svg" alt="Account" height="28 width=28">
+                            </div>
+                        </div>
+                    </li>
+                </a>
+            </ul>
+        </nav>
+        <div id="hamburger-icon" onclick="toggleMobileMenu(this)">
+            <div class="bar1"></div>
+            <div class="bar2"></div>
+            <div class="bar3"></div>
+            <ul class="mobile-menu">
+                <li><a href="" style="color: #07173B">Home</a></li>
+                <li><a href="" style="color: #07173B">Account</a></li>
+
+            </ul>
+        </div>
+    </header>
         <main class="content_square">
             <div class="box1">
                 <div class="page-title">
