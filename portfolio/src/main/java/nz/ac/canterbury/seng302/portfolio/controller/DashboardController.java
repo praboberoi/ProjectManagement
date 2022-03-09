@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.io.Console;
+import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -19,6 +19,27 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String showProjectList(Model model) {
         List<Project> listProjects = dashboardService.listAll();
+        // Sets a default project if there are no projects
+        if (listProjects.isEmpty()) {
+            int year = LocalDate.now().getYear();
+            int month = LocalDate.now().getMonthValue();
+            int day = LocalDate.now().getDayOfMonth();
+            System.out.println(day + "CURRENT DAY");
+            Project defaultProject = new Project();
+            defaultProject.setProjectName("Project " + year); // Project {year}
+            String currentDate =  (year + "-" + month + "-" + day);
+            defaultProject.setStartDate(currentDate); // Current date
+
+            month += 8;
+            if (month > 12) { // Changes year if month goes over 12
+                month -= 12;
+                year += 1;
+            }
+
+            defaultProject.setEndDate(year + "-" + month + "-" + day); // 8 months from start date
+            dashboardService.saveProject(defaultProject);
+            listProjects.add(defaultProject);
+        }
         model.addAttribute("listProjects", listProjects);
         return "dashboard";
     }
