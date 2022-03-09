@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,9 +29,9 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String showProjectList(Model model) {
         List<Project> listProjects = dashboardService.listAll();
-
         // Sets a default project if there are no projects
         if (listProjects.isEmpty()) {
+
             int year = LocalDate.now().getYear();
             int month = LocalDate.now().getMonthValue();
             int day = LocalDate.now().getDayOfMonth();
@@ -115,8 +116,13 @@ public class DashboardController {
 
     @GetMapping("/project/{projectId}")
     public String showSprintList(@PathVariable("projectId") Long projectId, Model model) {
-        List<Sprint> listSprints = sprintService.listAll(); //update list to only show list for project
-        //List<Sprint> listSprints = sprintService.listByProjectId(projectId);
+            List<Sprint> listSprints;
+        try{
+            listSprints = sprintService.listAll();
+        } catch (NullPointerException e) {
+            listSprints = new ArrayList<>();
+        }
+
         model.addAttribute("listSprints", listSprints);
         return "project";
     }
