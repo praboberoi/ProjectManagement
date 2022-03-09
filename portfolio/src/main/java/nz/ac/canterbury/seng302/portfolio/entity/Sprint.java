@@ -8,12 +8,18 @@ import java.util.Objects;
 
 @Entity
 public class Sprint implements Serializable {
-
+    /**
+     * ID for the sprint
+     */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, updatable = false)
     private long sprintId;
 
+    /**
+     * Project ID that sprint is contained in
+     * Foreign key
+     */
     @ManyToOne
     @JoinColumn(
             name = "projectId",
@@ -21,15 +27,26 @@ public class Sprint implements Serializable {
     )
     private Project project;
 
+    /**
+     * Name of Sprint
+     */
     @Column(nullable = false)
     private String sprintName;
 
+    /**
+     * Description of sprint
+     */
     @Column
     private String description;
 
+    /**
+     * Start date of sprint
+     */
     @Column(nullable = false)
     private String startDate;
-
+    /**
+     * End date of sprint
+     */
     @Column(nullable = false)
     private String endDate;
 
@@ -101,7 +118,9 @@ public class Sprint implements Serializable {
         return Objects.hash(sprintId, project, sprintName, description, startDate, endDate);
     }
 
-
+    /**
+     * Builder class to build the sprint
+     */
     public static class Builder {
         private String sprintName;
         private String description = "";
