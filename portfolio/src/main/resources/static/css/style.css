@@ -38,7 +38,7 @@ header {
 
 }
 
-.login_square, .registration_square {
+.content_square {
     width: 50%;
     height: auto;
     background-color: white;
@@ -69,7 +69,7 @@ header {
 
 }
 
-.login-container, .registration_container {
+.login-container, .content_container {
     align-items: center;
     margin: 40px auto;
     text-align: left;
@@ -82,7 +82,7 @@ header {
     font-size: 18px;
 }
 
-#login-form, #registration_form {
+#login-form, #registration_form, #content {
     margin: 0 auto;
     color: #2b4a5c;
     display: inline-block;
