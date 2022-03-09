@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.service.GreeterClientService;
+import nz.ac.canterbury.seng302.shared.enums.Roles;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
@@ -14,6 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import static java.util.stream.Collectors.toList;
 
 @Controller
 public class AccountController {
@@ -33,6 +36,7 @@ public class AccountController {
         model.addAttribute("pronouns", user.pronouns);
         model.addAttribute("email", user.email);
         model.addAttribute("bio", user.bio);
+        model.addAttribute("roles", String.join(",", user.roles.stream().map(Roles::getRole).collect(toList())));
         return "account";
     }
 
