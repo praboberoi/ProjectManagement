@@ -11,6 +11,7 @@ import java.util.Optional;
 @Service
 public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
+    private Project currentProject = null;
 
     /**
      * Returns list of all Project objecs in the database
@@ -25,7 +26,17 @@ public class DashboardService {
      * @param project
      */
     public void saveProject(Project project) {
-        projectRepo.save(project);
+        if (currentProject == null) {
+            projectRepo.save(project);
+        } else {
+            currentProject.setProjectName(project.getProjectName());
+            currentProject.setDescription(project.getDescription());
+            currentProject.setStartDate(project.getStartDate());
+            currentProject.setEndDate(project.getEndDate());
+            projectRepo.save(currentProject);
+            currentProject = null;
+        }
+
     }
 
     /**
@@ -33,10 +44,10 @@ public class DashboardService {
      * @param projectId
      * @return
      */
-    public Project getProject(Integer projectId) {
+    public Project getProject(Long projectId) {
         Optional<Project> result = projectRepo.findById(projectId);
-        System.out.print(result.get().getProjectId() + " " + result.get().getProjectName() + " " + result.get().getDescription());
-        return result.get();
+        currentProject = result.get();
+        return currentProject;
     }
 
     /**
@@ -44,7 +55,7 @@ public class DashboardService {
      * @param projectId
      * @throws Exception
      */
-    public void deleteProject(Integer projectId) throws Exception {
+    public void deleteProject(Long projectId) throws Exception {
 /*
         Long count = projectRepo.countByProjectName(projectId);
         if (count == null || count == 0) {

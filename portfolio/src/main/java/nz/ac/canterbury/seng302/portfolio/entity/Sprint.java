@@ -61,7 +61,7 @@ public class Sprint implements Serializable {
         this.endDate = endDate;
     }
 
-    public long getId() {
+    public long getSprintId() {
         return sprintId;
     }
 

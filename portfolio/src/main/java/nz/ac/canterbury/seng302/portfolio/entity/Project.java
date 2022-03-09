@@ -2,16 +2,17 @@ package nz.ac.canterbury.seng302.portfolio.entity;
 
 import javax.persistence.*;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 /**
  * Creates a Project class required that maps to a table in the database
  */
 @Entity
-public class Project{
+public class Project implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false, updatable = false)
     private Long projectId;
 
