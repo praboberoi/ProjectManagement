@@ -56,6 +56,13 @@ public class RegisterController {
             return "redirect:/login";
         } else {
             model.addAttribute("error", idpResponse.getMessage());
+            model.addAttribute("username", username);
+            model.addAttribute("firstName", firstName);
+            model.addAttribute("lastName", lastName);
+            model.addAttribute("nickname", nickname);
+            model.addAttribute("bio", bio);
+            model.addAttribute("pronouns", pronouns);
+            model.addAttribute("email", email);
             return "/register";
         }
     }

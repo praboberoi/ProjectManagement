@@ -27,7 +27,6 @@ import nz.ac.canterbury.seng302.shared.projectDAL.readWrite.UserDAL;
 @GrpcService
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
 
-    User user = new User(1, "abc123", "Valid", "User", null, null, null, null, "A9r8gjI/EB/S1PIcR03nU/6VhKQnP/LFyWjOlQ6oOJ8=", "FEDFST", new ArrayList<>(Arrays.asList(Roles.STUDENT)));
     private JwtTokenUtil jwtTokenService = JwtTokenUtil.getInstance();
 
     /**
@@ -36,9 +35,10 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
     @Override
     public void authenticate(AuthenticateRequest request, StreamObserver<AuthenticateResponse> responseObserver) {
         AuthenticateResponse.Builder reply = AuthenticateResponse.newBuilder();
-
+        Datastore db = new Datastore();
         String username = request.getUsername();
         String password = request.getPassword();
+        User user = UserDAL.getUserByUsername(db, username);
 
         if (!username.equals("") && username.equals(user.username) && EncryptionUtilities.encryptPassword(user.salt, password).equals(user.password)) {
             String token = jwtTokenService.generateTokenForUser(user.username, user.userId, user.firstName + user.lastName, user.roles);
@@ -51,8 +51,6 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
                 .setToken(token)
                 .setUserId(1)
                 .setUsername(user.username);
-            Datastore db = new Datastore();
-            UserDAL.addUser(db, user.username, user.firstName, user.lastName, user.nickname, user.bio, user.pronouns, user.email, user.password, user.salt, user.roles);
         } else {
             reply
             .setMessage("Log in attempt failed: username or password incorrect")

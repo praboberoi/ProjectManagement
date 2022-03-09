@@ -54,7 +54,7 @@ public class UserDAL {
                         reader.getString("email"),
                         reader.getString("password"),
                         reader.getString("salt"),
-                        null
+                        new ArrayList<Roles>()
                 );
             }
         } catch (SQLException e) {
