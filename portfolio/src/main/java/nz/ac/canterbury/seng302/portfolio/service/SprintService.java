@@ -31,7 +31,7 @@ public class SprintService {
     }
 
     public void deleteSprint(Long sprintId){
-        Long count = sprintRepo.countBySprintName(sprintId); //change
+        //Long count = sprintRepo.countBySprintName(sprintId); //change
         /*if (count != null || count == 0){
             throw new Exception("error" + id);
         }
@@ -40,11 +40,11 @@ public class SprintService {
     }
 
     // new function to get list by project id
-    /*
-    public List<Sprint> listByProjectId(Integer projectId) {
-        //projectRepo.findById(projectId);
-        sprintRepo.findByProject();
+
+    public Integer countByProjectId(Long projectId) {
+        Optional<Project> current = projectRepo.findById(projectId);
+        return sprintRepo.countByProject(current.get());
     }
 
-     */
+
 }

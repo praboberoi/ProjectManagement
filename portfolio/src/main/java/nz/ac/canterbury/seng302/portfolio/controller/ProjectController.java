@@ -20,7 +20,7 @@ import java.util.List;
 @Controller
 public class ProjectController {
     @Autowired private SprintService sprintService;
-
+/*
     @GetMapping("/project/{projectId}")
     public String showSprintList(@PathVariable("projectId") Long projectId, Model model) {
          List<Sprint> listSprints = sprintService.listAll(); //update list to only show list for project
@@ -28,19 +28,22 @@ public class ProjectController {
         model.addAttribute("listSprints", listSprints);
         return "project";
     }
-
+*/
     @GetMapping("/project/{projectId}/newSprint")
-    public String newSprint(Model model) {
-        model.addAttribute("sprint", new Sprint());
+    public String newSprint(Model model, @PathVariable Long projectId) {
+        int sprintNo = sprintService.countByProjectId(projectId) + 1;
+        Sprint newSprint = new Sprint();
+        newSprint.setSprintName("Sprint " + sprintNo);
+        model.addAttribute("sprint", newSprint);
         model.addAttribute("pageTitle","Add new sprint");
         return "sprint_form";
     }
 
-    @PostMapping("/project/saveSprint")
-    public String saveSprint(Sprint sprint) {
+    @PostMapping("/project/{projectId}/saveSprint")
+    public String saveSprint(@PathVariable Long projectId, Sprint sprint) {
         sprintService.saveSprint(sprint);
         /*model.addAttribute("sprint", sprint);*/
-        return "redirect:/project";
+        return "redirect:/project/{projectId}";
     }
 
 
@@ -57,10 +60,10 @@ public class ProjectController {
     }
 
     /* Deleting sprints */
-    @GetMapping("/project/deleteSprint/{id}")
-    public String deleteSprint(@PathVariable("id") Long sprintId, Model model){
+    @GetMapping("/project/{projectId}/deleteSprint/{sprintId}")
+    public String deleteSprint(@PathVariable("sprintId") Long sprintId, Model model){
         sprintService.deleteSprint(sprintId);
-        return "redirect:/project";
+        return "redirect:/project/{projectId}";
     }
 
 

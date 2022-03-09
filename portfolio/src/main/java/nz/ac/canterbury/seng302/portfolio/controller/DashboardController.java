@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.entity.Project;
+import nz.ac.canterbury.seng302.portfolio.entity.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
+import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -10,11 +12,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
+
 
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
+    @Autowired private SprintService sprintService;
 
     @GetMapping("/dashboard")
     public String showProjectList(Model model) {
@@ -53,20 +58,23 @@ public class DashboardController {
 
     @PostMapping("/dashboard/saveProject")
     public String saveProject(Project project) {
+        System.out.println(project.getProjectId() +" " + project.getProjectName());
         dashboardService.saveProject(project);
         return "redirect:/dashboard";
     }
 
     @GetMapping("/dashboard/editProject/{projectId}")
-    public String showEditForm(@PathVariable("projectId") Integer projectId, Model model) {
-        Project project = dashboardService.getProject(projectId);
+    public String showEditForm(@PathVariable(value = "projectId") Long projectId, Model model) {
+        Project project  = dashboardService.getProject(projectId);
         model.addAttribute("project", project);
         model.addAttribute("pageTitle", "Edit Project (Name: " + projectId + ")");
+        System.out.println(project.getProjectId());
+        System.out.println(project.getProjectName());
         return "project_form";
     }
 
     @GetMapping("/dashboard/deleteProject/{projectId}")
-    public String showEditForm(@PathVariable("projectId") Integer projectId) throws Exception {
+    public String showEditForm(@PathVariable("projectId") Long projectId) throws Exception {
         dashboardService.deleteProject(projectId);
 /*
         try {
@@ -77,5 +85,13 @@ public class DashboardController {
 
  */
         return "redirect:/dashboard";
+    }
+
+    @GetMapping("/project/{projectId}")
+    public String showSprintList(@PathVariable("projectId") Long projectId, Model model) {
+        List<Sprint> listSprints = sprintService.listAll(); //update list to only show list for project
+        //List<Sprint> listSprints = sprintService.listByProjectId(projectId);
+        model.addAttribute("listSprints", listSprints);
+        return "project";
     }
 }

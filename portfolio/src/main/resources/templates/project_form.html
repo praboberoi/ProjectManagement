@@ -14,10 +14,10 @@
     <!-- do not include fragments that are not in use PARSING ERROR -->
     <!--<head th:replace="fragments :: content"></head>-->
     <title>[[${pageTitle}]]</title>
-</head>
+ </head>
 <body>
     <div>
-        <form id="createProjectForm" action="#" th:action="@{/dashboard/saveProject}" method="post" th:object="${project}" >
+        <form id="createProjectForm" th:action="@{/dashboard/saveProject}" method="post" th:object="${project}" >
             <input type="hidden" th:field="*{projectId}">
             <div class="container-fluid">
                 <div class="row">
