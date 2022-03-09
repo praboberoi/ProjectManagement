@@ -43,7 +43,6 @@ public class ProjectController {
      * @param sprint
      * @return
      */
-
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(@PathVariable Long projectId, Sprint sprint) {
         sprintService.saveSprint(sprint);

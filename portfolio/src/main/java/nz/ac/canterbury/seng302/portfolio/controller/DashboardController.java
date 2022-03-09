@@ -29,7 +29,6 @@ public class DashboardController {
             int year = LocalDate.now().getYear();
             int month = LocalDate.now().getMonthValue();
             int day = LocalDate.now().getDayOfMonth();
-            System.out.println(day + "CURRENT DAY");
             Project defaultProject = new Project();
             defaultProject.setProjectName("Project " + year); // Project {year}
             String currentDate =  (year + "-" + month + "-" + day);
@@ -58,7 +57,6 @@ public class DashboardController {
 
     @PostMapping("/dashboard/saveProject")
     public String saveProject(Project project) {
-        System.out.println(project.getProjectId() +" " + project.getProjectName());
         dashboardService.saveProject(project);
         return "redirect:/dashboard";
     }
@@ -68,8 +66,6 @@ public class DashboardController {
         Project project  = dashboardService.getProject(projectId);
         model.addAttribute("project", project);
         model.addAttribute("pageTitle", "Edit Project (Name: " + projectId + ")");
-        System.out.println(project.getProjectId());
-        System.out.println(project.getProjectName());
         return "project_form";
     }
 
