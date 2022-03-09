@@ -22,13 +22,14 @@ public class ProjectController {
     @Autowired private SprintService sprintService;
 
     @GetMapping("/project/{projectId}")
-    public String showSprintList(@PathVariable("projectId") Integer projectId, Model model) {
-        List<Sprint> listSprints = sprintService.listAll();
+    public String showSprintList(@PathVariable("projectId") Long projectId, Model model) {
+         List<Sprint> listSprints = sprintService.listAll(); //update list to only show list for project
+        //List<Sprint> listSprints = sprintService.listByProjectId(projectId);
         model.addAttribute("listSprints", listSprints);
         return "project";
     }
 
-    @GetMapping("/project/newSprint")
+    @GetMapping("/project/{projectId}/newSprint")
     public String newSprint(Model model) {
         model.addAttribute("sprint", new Sprint());
         model.addAttribute("pageTitle","Add new sprint");
