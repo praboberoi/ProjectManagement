@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.entity.Project;
 import nz.ac.canterbury.seng302.portfolio.entity.Sprint;
+import nz.ac.canterbury.seng302.portfolio.repository.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.repository.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,6 +12,8 @@ import java.util.Optional;
 
 @Service
 public class SprintService {
+    @Autowired private ProjectRepository projectRepo;
+
     @Autowired
     private SprintRepository sprintRepo;
 
@@ -35,4 +38,13 @@ public class SprintService {
          */
         sprintRepo.deleteById(sprintId);
     }
+
+    // new function to get list by project id
+    /*
+    public List<Sprint> listByProjectId(Integer projectId) {
+        //projectRepo.findById(projectId);
+        sprintRepo.findByProject();
+    }
+
+     */
 }
