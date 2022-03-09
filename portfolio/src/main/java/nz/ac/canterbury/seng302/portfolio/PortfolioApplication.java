@@ -22,38 +22,4 @@ public class PortfolioApplication {
 
     }
 
-    @Bean
-    public CommandLineRunner run(ProjectRepository projectRepository, SprintRepository sprintRepository) {
-        return (args -> {
-            insertJavaAdvocates(projectRepository, sprintRepository);
-            System.out.println(projectRepository.findAll());
-            System.out.println(sprintRepository.findAll());
-        });
-    }
-
-    //TODO: Resolve the UTC for TimeDates
-
-    private void insertJavaAdvocates(ProjectRepository projectRepository, SprintRepository sprintRepository) {
-
-        //Project project1 =  new Project("Project 2020", new java.util.ArrayList<>(),"First Attempt", "1-1-2020", "1-8-2020");
-        Project project1 = Project.builder()
-                        .projectName("Project 2020")
-                        .description("First Attempt")
-                        .startDate("1-1-2020")
-                        .endDate("1-8-2020")
-                        .build();
-        projectRepository.save(project1);
-
-        sprintRepository.save(Sprint.builder()
-                .sprintName("First Sprint")
-                .project(project1)
-                .description("This is first sprint")
-                .startDate("1-1-2020")
-                .endDate("20-1-2020")
-                .build());
-
-
-
-
-    }
 }

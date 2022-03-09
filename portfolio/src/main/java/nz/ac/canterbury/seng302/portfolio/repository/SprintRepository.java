@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface SprintRepository extends CrudRepository<Sprint, Long> {
 
-    public List<Sprint> findById(String id);
+    public List<Sprint> findBySprintId(String sprintId);
 
     public List<String> findBySprintName(String sprintName);
 
@@ -23,5 +23,9 @@ public interface SprintRepository extends CrudRepository<Sprint, Long> {
     public List<Sprint> findByEndDate(String endDate);
 
     public List<Sprint> findByProject(Project project);
+
+    public int countBySprintName(Long sprintId);
+
+    public int countByProject(Project project);
 
 }
