@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 
@@ -21,9 +20,15 @@ public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private SprintService sprintService;
 
+    /**
+     * Adds project list to model and opens dashboard.html
+     * @param model
+     * @return
+     */
     @GetMapping("/dashboard")
     public String showProjectList(Model model) {
         List<Project> listProjects = dashboardService.listAll();
+
         // Sets a default project if there are no projects
         if (listProjects.isEmpty()) {
             int year = LocalDate.now().getYear();
@@ -48,6 +53,11 @@ public class DashboardController {
         return "dashboard";
     }
 
+    /**
+     * Opens project_form.html and populates it with a new Project object
+     * @param model
+     * @return
+     */
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model) {
         model.addAttribute("project", new Project());
@@ -55,12 +65,23 @@ public class DashboardController {
         return "project_form";
     }
 
+    /**
+     * Saves project object to the database and redirects to dashboard page
+     * @param project
+     * @return
+     */
     @PostMapping("/dashboard/saveProject")
     public String saveProject(Project project) {
         dashboardService.saveProject(project);
         return "redirect:/dashboard";
     }
 
+    /**
+     * Opens edit page (project_form.html) and populates with given project
+     * @param projectId ID of project selected
+     * @param model
+     * @return
+     */
     @GetMapping("/dashboard/editProject/{projectId}")
     public String showEditForm(@PathVariable(value = "projectId") Long projectId, Model model) {
         Project project  = dashboardService.getProject(projectId);
@@ -69,17 +90,26 @@ public class DashboardController {
         return "project_form";
     }
 
+    /**
+     * Deletes project from the database using projectId
+     * @param projectId ID for selected project
+     * @return
+     * @throws Exception If project is not found in the database
+     */
     @GetMapping("/dashboard/deleteProject/{projectId}")
     public String showEditForm(@PathVariable("projectId") Long projectId) throws Exception {
-        dashboardService.deleteProject(projectId);
-/*
         try {
-            dashboardService.deleteProject(projectId);
-        } catch (Exception e) { // Change exception to ProjectNotFoundException
-            System.out.println(e.getMessage());
+            List<Sprint> sprintList = SprintService.listAll();
+            for (Sprint i: sprintList) {
+                if (i.getProject().getProjectId() == projectId) {
+                    SprintService.deleteSprint(i.getSprintId());
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
- */
+        dashboardService.deleteProject(projectId);
         return "redirect:/dashboard";
     }
 

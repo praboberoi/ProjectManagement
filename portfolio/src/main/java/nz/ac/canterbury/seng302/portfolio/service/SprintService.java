@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
+import nz.ac.canterbury.seng302.portfolio.entity.Project;
 import nz.ac.canterbury.seng302.portfolio.entity.Sprint;
 import nz.ac.canterbury.seng302.portfolio.repository.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.repository.SprintRepository;
@@ -14,13 +15,13 @@ public class SprintService {
     @Autowired private ProjectRepository projectRepo;
 
     @Autowired
-    private SprintRepository sprintRepo;
+    private static SprintRepository sprintRepo;
 
     /**
      * Returns a list containing all sprint objects in the database
      * @return
      */
-    public List<Sprint> listAll() {
+    public static List<Sprint> listAll() {
         return (List<Sprint>) sprintRepo.findAll();
     }
 
@@ -46,7 +47,7 @@ public class SprintService {
      * Deletes a sprint from the database
      * @param sprintId Key used to find the sprint object
      */
-    public void deleteSprint(Long sprintId){
+    public static void deleteSprint(Long sprintId){
         //Long count = sprintRepo.countBySprintName(sprintId); //change
         /*if (count != null || count == 0){
             throw new Exception("error" + id);
@@ -57,7 +58,7 @@ public class SprintService {
 
     // new function to get list by project id
 
-    public Integer countByProjectId(Long projectId) {
+    public int countByProjectId(Long projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         return sprintRepo.countByProject(current.get());
     }

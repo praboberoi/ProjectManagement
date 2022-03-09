@@ -24,8 +24,8 @@ public interface SprintRepository extends CrudRepository<Sprint, Long> {
 
     public List<Sprint> findByProject(Project project);
 
-    public Integer countByProject(Project project);
+    public int countBySprintName(Long sprintId);
 
-    public long countBySprintName(Long sprintId);
+    public int countByProject(Project project);
 
 }

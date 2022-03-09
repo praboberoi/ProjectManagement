@@ -21,6 +21,4 @@ public interface ProjectRepository extends CrudRepository<Project, Long> {
 
     public List<Project> findByEndDate(String endDate);
 
-    public Long countByProjectName(Long projectId);
-
 }
