@@ -38,7 +38,7 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
         String username = request.getUsername();
         String password = request.getPassword();
 
-        if (username.equals(user.username) && EncryptionUtilities.encryptPassword(user.salt, password).equals(user.password)) {
+        if (!username.equals("") && username.equals(user.username) && EncryptionUtilities.encryptPassword(user.salt, password).equals(user.password)) {
             String token = jwtTokenService.generateTokenForUser(user.username, user.userId, user.firstName + user.lastName, user.roles);
             reply
                 .setEmail("validuser@email.com")
