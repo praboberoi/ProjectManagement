@@ -13,10 +13,18 @@ public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
     private Project currentProject = null;
 
+    /**
+     * Returns list of all Project objecs in the database
+     * @return list of project objects
+     */
     public List<Project> listAll() {
         return (List<Project>) projectRepo.findAll();
     }
 
+    /**
+     * Saves a project object to the database
+     * @param project
+     */
     public void saveProject(Project project) {
         if (currentProject == null) {
             projectRepo.save(project);
@@ -30,13 +38,23 @@ public class DashboardService {
         }
 
     }
-    
+
+    /**
+     * Gets project object from the database
+     * @param projectId
+     * @return
+     */
     public Project getProject(Long projectId) {
         Optional<Project> result = projectRepo.findById(projectId);
         currentProject = result.get();
         return currentProject;
     }
 
+    /**
+     * Deletes a project object from the database
+     * @param projectId
+     * @throws Exception
+     */
     public void deleteProject(Long projectId) throws Exception {
 /*
         Long count = projectRepo.countByProjectName(projectId);
