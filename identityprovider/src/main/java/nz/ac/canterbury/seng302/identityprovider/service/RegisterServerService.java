@@ -11,6 +11,7 @@ import nz.ac.canterbury.seng302.shared.projectDAL.readWrite.UserDAL;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -25,21 +26,27 @@ public class RegisterServerService extends UserAccountServiceGrpc.UserAccountSer
         UserRegisterResponse.Builder reply = UserRegisterResponse.newBuilder();
         Datastore db = new Datastore();
         String userSalt = EncryptionUtilities.createSalt();
-        if (UserDAL.addUser(
-                db,
-                request.getUsername(),
-                request.getFirstName(),
-                request.getLastName(),
-                request.getNickname(),
-                request.getBio(),
-                request.getPersonalPronouns(),
-                request.getEmail(),
-                EncryptionUtilities.encryptPassword(userSalt, request.getPassword()),
-                userSalt,
-                new ArrayList<>(Arrays.asList(Roles.STUDENT)))) {
+        boolean userCreated = false;
+        try {
+            userCreated = UserDAL.addUser(
+                    db,
+                    request.getUsername(),
+                    request.getFirstName(),
+                    request.getLastName(),
+                    request.getNickname(),
+                    request.getBio(),
+                    request.getPersonalPronouns(),
+                    request.getEmail(),
+                    EncryptionUtilities.encryptPassword(userSalt, request.getPassword()),
+                    userSalt,
+                    new ArrayList<>(Arrays.asList(Roles.STUDENT)));
+        } catch (SQLException e) {
+            reply.setIsSuccess(false);
+            reply.setMessage("Unable to create user");
+        }
+        if (userCreated) {
 
             User user = UserDAL.getUserByUsername(db, request.getUsername());
-            System.out.println(user.username);
             reply.setIsSuccess(true);
             reply.setNewUserId(user.userId);
             reply.setMessage(String.format(
@@ -48,7 +55,7 @@ public class RegisterServerService extends UserAccountServiceGrpc.UserAccountSer
             ));
         } else {
             reply.setIsSuccess(false);
-            reply.setMessage("Unable to create user");
+            reply.setMessage("User already exists");
         }
 
         responseObserver.onNext(reply.build());

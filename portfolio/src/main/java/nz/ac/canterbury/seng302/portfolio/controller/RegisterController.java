@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.portfolio.service.RegisterClientService;
 
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -50,8 +51,13 @@ public class RegisterController {
             @RequestParam String password,
             Model model
     ) {
-        registerClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
-        return "/login";
+        UserRegisterResponse idpResponse = registerClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
+        if (idpResponse.getIsSuccess()) {
+            return "redirect:/login";
+        } else {
+            model.addAttribute("error", idpResponse.getMessage());
+            return "/register";
+        }
     }
 
 }

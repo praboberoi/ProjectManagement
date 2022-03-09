@@ -38,9 +38,9 @@ header {
 
 }
 
-.login_square {
+.login_square, .registration_square {
     width: 50%;
-    height: 693px;
+    height: auto;
     background-color: white;
     margin: 10px auto;
     border-radius: 40px;
@@ -65,12 +65,11 @@ header {
     font-size: 24px;
     margin: 20px auto;
     align-items: center;
-    display: flex;
     justify-content: center;
 
 }
 
-.login-container {
+.login-container, .registration_container {
     align-items: center;
     margin: 40px auto;
     text-align: left;
@@ -83,7 +82,7 @@ header {
     font-size: 18px;
 }
 
-#login-form {
+#login-form, #registration_form {
     margin: 0 auto;
     color: #2b4a5c;
     display: inline-block;
@@ -95,7 +94,7 @@ label {
     text-align: left;
 }
 
-#username-field, #password-field{
+.form-control{
     border-radius: 64px;
     color: #2b4a5c;
     width:100%;
@@ -105,7 +104,7 @@ label {
     border-style: solid;
 }
 
-#login-form-submit{
+.form_submit{
     width: 100%;
     height: 28px;
     background: #2b4a5c;
@@ -114,9 +113,10 @@ label {
     color: white;
     border-color: #2b4a5c;
     border-style: solid;
+    cursor: pointer;
 }
 
-#login-error-msg-holder {
+.error-msg-holder {
     width: 100%;
     height: 100%;
     display: grid;
@@ -124,7 +124,7 @@ label {
     align-items: center;
 }
 
-#login-error-msg {
+.error-msg {
     width: 80%;
     text-align: justify;
     margin: 0;

@@ -1,25 +1,38 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org">
     <head>
-        <title>Sign-up</title>
+        <title>LENSfolio - Register</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="/css/style.css" />
     </head>
     <body>
-        <main>
-            <nav id="sidebar" class="sidebar"></nav>
-            <div id="content">
-                <form action="/register" method="post">
+        <header>
+            <div id="brand">
+                <h1>LENSfolio</h1>
+            </div>
+        </header>
+        <main class="registration_square">
+            <div class="box1">
+                <div class="page-title">
+                    <h2>Welcome to LENSfolio</h2>
+                    <p>Enter your information to create an account</p>
+                </div>
+            </div>
+            <div class="registration_container">
+                <form id="registration_form" action="/register" method="post">
                     <div class="mb-3">
                         <label for="username">Username:</label>
                         <input type="text" class="form-control" id="username" name="username">
                     </div>
+
                     <div class="mb-3">
                         <label for="firstName">First name:</label>
-                        <input type="text" class="form-control" id="firstName" name="firstName">
+                        <input type="text" class="form-control" id="firstName" name="firstName" required>
                     </div>
                     <div class="mb-3">
                         <label for="lastName">Last name:</label>
-                        <input type="text" class="form-control" id="lastName" name="lastName">
+                        <input type="text" class="form-control" id="lastName" name="lastName" required>
                     </div>
                     <div class="mb-3">
                         <label for="nickname">Nickname:</label>
@@ -27,7 +40,7 @@
                     </div>
                     <div class="mb-3">
                         <label for="email">Email:</label>
-                        <input type="email" class="form-control" id="email" name="email">
+                        <input type="email" class="form-control" id="email" name="email" required>
                     </div>
                     <div class="mb-3">
                         <label for="bio">Bio:</label>
@@ -39,14 +52,17 @@
                     </div>
                     <div class="mb-3">
                         <label for="password">Password:</label>
-                        <input type="password" class="form-control" id="password" name="password">
+                        <input type="password" class="form-control" id="password" name="password" required>
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword">Confirm Password:</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword">
-                    </div>
-                    <button type="submit" class="btn btn-primary">Submit</button>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
+                    </div><br>
+                    <button class="form_submit" type="submit">Submit</button>
                 </form>
+                <div class="error-msg-holder">
+                    <p th:text="${error}" class="error-msg"></p>
+                </div>
             </div>
         </main>
     </body>

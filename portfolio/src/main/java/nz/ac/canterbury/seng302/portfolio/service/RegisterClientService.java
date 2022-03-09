@@ -12,7 +12,7 @@ public class RegisterClientService {
     @GrpcClient("identity-provider-grpc-server")
     private UserAccountServiceGrpc.UserAccountServiceBlockingStub userAccountStub;
 
-    public String register(final String username,
+    public UserRegisterResponse register(final String username,
                            final String firstName,
                            final String lastName,
                            final String nickname,
@@ -30,6 +30,6 @@ public class RegisterClientService {
                 .setEmail(email)
                 .setPassword(password)
                 .build());
-        return response.getMessage();
+        return response;
     }
 }
