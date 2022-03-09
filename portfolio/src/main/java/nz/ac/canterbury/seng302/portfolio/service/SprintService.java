@@ -58,7 +58,7 @@ public class SprintService {
 
     // new function to get list by project id
 
-    public Integer countByProjectId(Long projectId) {
+    public int countByProjectId(Long projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         return sprintRepo.countByProject(current.get());
     }
