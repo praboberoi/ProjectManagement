@@ -38,7 +38,103 @@ header {
 
 }
 
-.login_square, .registration_square {
+ul {
+    list-style: none;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+ul a {
+    color: white;
+}
+
+ul li {
+    padding: 5px;
+    margin-left: 10px;
+}
+
+ul li:hover {
+    transform: scale(1.1);
+    transition: 0.3s;
+}
+
+.username{
+    display: inline-block;
+    position: relative;
+    vertical-align: middle;
+    float: left;
+    padding-right: 10px;
+    padding-top: 5px;
+}
+
+.icon{
+
+    display: inline-block;
+
+}
+
+#hamburger-icon {
+    margin: auto 0;
+    display: none;
+    cursor: pointer;
+}
+
+#hamburger-icon div {
+    width: 35px;
+    height: 3px;
+    background-color: white;
+    margin: 6px 0;
+    transition: 0.4s;
+}
+
+.open .bar1 {
+    -webkit-transform: rotate(-45deg) translate(-6px, 6px);
+    transform: rotate(-45deg) translate(-6px, 6px);
+}
+
+.open .bar2 {
+    opacity: 0;
+}
+
+.open .bar3 {
+    -webkit-transform: rotate(45deg) translate(-6px, -8px);
+    transform: rotate(45deg) translate(-6px, -8px);
+}
+
+.open .mobile-menu {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.mobile-menu {
+    display: none;
+    position: absolute;
+    top: 64px;
+    left: 0;
+    height: calc(100vh - 50px);
+    width: 100%;
+    color: black;
+}
+
+.mobile-menu li {
+    margin-bottom: 10px;
+}
+
+@media only screen and (max-width: 600px) {
+    header nav {
+        display: none;
+    }
+
+    #hamburger-icon {
+        display: block;
+    }
+}
+
+.content_square {
     width: 50%;
     height: auto;
     background-color: white;
@@ -69,7 +165,7 @@ header {
 
 }
 
-.login-container, .registration_container {
+.login-container, .content_container {
     align-items: center;
     margin: 40px auto;
     text-align: left;
@@ -82,7 +178,7 @@ header {
     font-size: 18px;
 }
 
-#login-form, #registration_form {
+#login-form, #registration_form, #content {
     margin: 0 auto;
     color: #2b4a5c;
     display: inline-block;
