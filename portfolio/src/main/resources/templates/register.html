@@ -29,7 +29,7 @@
                 <form id="registration_form" action="/register" method="post">
                     <div class="mb-3">
                         <label for="username">Username:</label>
-                        <input type="text" th:value="${username}" class="form-control" id="username" name="username">
+                        <input type="text" th:value="${username}" class="form-control" id="username" name="username" onkeyup="check_username();">
                     </div>
                     <div class="mb-3">
                         <label for="firstName">First name:</label>
@@ -57,11 +57,11 @@
                     </div>
                     <div class="mb-3">
                         <label for="password">Password:</label>
-                        <input type="password" class="form-control" id="password" name="password"  onkeyup="check_pass();" required>
+                        <input type="password" class="form-control" id="password" name="password"  onkeyup="check_pass(); match_pass();" required>
                     </div>
                     <div class="mb-3">
                         <label for="confirmPassword">Confirm Password:</label>
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"  onkeyup="check_pass();" required>
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"  onkeyup="match_pass();" required>
                     </div><br>
                     <button class="form_submit" type="submit">Submit</button>
                 </form>

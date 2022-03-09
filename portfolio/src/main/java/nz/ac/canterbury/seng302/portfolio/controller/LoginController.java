@@ -64,15 +64,15 @@ public class LoginController {
             model.addAttribute("error", "Error connecting to Server");
             return "login";
         }
-            if (loginReply.getSuccess()) {
+        if (loginReply.getSuccess()) {
             var domain = request.getHeader("host");
             CookieUtil.create(
-                    response,
-                    "lens-session-token",
+                response,
+                "lens-session-token",
                     loginReply.getToken(),
-                    true,
-                    5 * 60 * 60, // Expires in 5 hours
-                    domain.startsWith("localhost") ? null : domain
+                true,
+                5 * 60 * 60, // Expires in 5 hours
+                domain.startsWith("localhost") ? null : domain
             );
             return "redirect:/account";
         }
