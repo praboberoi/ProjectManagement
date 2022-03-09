@@ -4,7 +4,7 @@
         <title>LENSfolio - Login</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-        <link rel="stylesheet" href="/css/loginStyle.css" />
+        <link rel="stylesheet" href="/css/style.css" />
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
     </head>
     <body>
@@ -15,31 +15,29 @@
         </header>
         <div class="login_square">
 
-                    <div class="box1">
-                        <div class="page-title">
-                            <h2>Welcome back to LENSfolio</h2>
-                        </div>
-                    </div>
+            <div class="box1">
+                <div class="page-title">
+                    <h2>Welcome back to LENSfolio</h2>
+                </div>
+            </div>
 
-                    <div class="login-container">
-                        <div class="page-instruction">
-                            <h2>Log in</h2>
-                        </div>
-                        <form id="login-form" method="post">
-                            <label for="username-field">Username:</label><br>
-                            <input type="text" id="username-field" name="username" required><br><br>
-                            <label for="password-field">Password:</label><br>
-                            <input type="password" id="password-field" name="password" required><br><br>
-                            <input type="submit" value="Log In" id="login-form-submit">
-                        </form>
-                        <div class="no-account-warning">
-                            <h3 class="no-account-question">Don't have an account yet?</h3>
-                            <a class="signup-button" href="/signup">Sign Up</a>
-                        </div>
-                        <div id="login-error-msg-holder">
-                            <p th:text="${error}" id="login-error-msg">Invalid username and/or password</p>
-                        </div>
-                    </div>
+            <div class="login-container">
+                <div class="page-instruction">
+                    <h2>Log in</h2>
+                </div>
+                <form id="login-form" method="post">
+                    <label for="username-field">Username:</label><br>
+                    <input class="form-control" type="text" id="username-field" name="username" required><br><br>
+                    <label for="password-field">Password:</label><br>
+                    <input class="form-control" type="password" id="password-field" name="password" required><br><br>
+                    <input class="form_submit" type="submit" value="Log In" id="login-form-submit">
+                </form>
+                <div class="no-account-warning">
+                    <h3 class="no-account-question">Don't have an account yet?</h3>
+                    <a class="signup-button" href="/register">Sign Up</a>
+                </div>
+                <div class="error-msg-holder">
+                    <p th:text="${error}" class="error-msg"></p>
                 </div>
             </div>
         </div>

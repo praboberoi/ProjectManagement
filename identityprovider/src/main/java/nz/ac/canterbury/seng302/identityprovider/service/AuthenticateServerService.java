@@ -13,6 +13,7 @@ import net.devh.boot.grpc.server.service.GrpcService;
 
 import nz.ac.canterbury.seng302.identityprovider.authentication.AuthenticationServerInterceptor;
 import nz.ac.canterbury.seng302.identityprovider.authentication.JwtTokenUtil;
+import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 import nz.ac.canterbury.seng302.shared.enums.Roles;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateRequest;
@@ -26,7 +27,6 @@ import nz.ac.canterbury.seng302.shared.projectDAL.readWrite.UserDAL;
 @GrpcService
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
 
-    User user = new User(1, "abc123", "Valid", "User", null, null, null, null, "A9r8gjI/EB/S1PIcR03nU/6VhKQnP/LFyWjOlQ6oOJ8=", "FEDFST", new ArrayList<>(Arrays.asList(Roles.STUDENT)));
     private JwtTokenUtil jwtTokenService = JwtTokenUtil.getInstance();
 
     /**
@@ -35,11 +35,12 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
     @Override
     public void authenticate(AuthenticateRequest request, StreamObserver<AuthenticateResponse> responseObserver) {
         AuthenticateResponse.Builder reply = AuthenticateResponse.newBuilder();
-
+        Datastore db = new Datastore();
         String username = request.getUsername();
         String password = request.getPassword();
+        User user = UserDAL.getUserByUsername(db, username);
 
-        if (!username.equals("") && username.equals(user.username) && encryptPassword(user.salt, password).equals(user.password)) {
+        if (!username.equals("") && username.equals(user.username) && EncryptionUtilities.encryptPassword(user.salt, password).equals(user.password)) {
             String token = jwtTokenService.generateTokenForUser(user.username, user.userId, user.firstName + user.lastName, user.roles);
             reply
                 .setEmail("validuser@email.com")
@@ -50,8 +51,6 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
                 .setToken(token)
                 .setUserId(1)
                 .setUsername(user.username);
-            Datastore db = new Datastore();
-            UserDAL.addUser(db, user.username, user.firstName, user.lastName, user.nickname, user.bio, user.pronouns, user.email, user.password, user.salt, user.roles);
         } else {
             reply
             .setMessage("Log in attempt failed: username or password incorrect")
@@ -62,28 +61,6 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
-
-    /**
-     * Encrypts the given password using the salt and an SHA-256 hash
-     * @param salt a random string that is appended to the password before hashing
-     * @param password teh password to be encrypted
-     * @return The encrypted password
-     */
-    private String encryptPassword(String salt, String password) {
-        MessageDigest digest;
-        byte[] hashedPassword = null;
-
-		try {
-			digest = MessageDigest.getInstance("SHA-256");
-            hashedPassword = digest.digest((password + salt).getBytes(StandardCharsets.UTF_8));
-		} catch (NoSuchAlgorithmException e) {
-            System.out.println("Unable to find SHA-256 algorithm");
-		}
-        
-        return Base64.getEncoder().encodeToString(hashedPassword);
-	}
-
-
 
 	/**
      * The AuthenticationInterceptor already handles validating the authState for us, so here we just need to

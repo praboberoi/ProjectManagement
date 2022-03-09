@@ -41,7 +41,7 @@ public class UserDAL {
         User user = null;
         try (Connection conn = db.getNewConnection();
              Statement stmt = conn.createStatement()) {
-            var reader = stmt.executeQuery("SELECT UserId, Username, FirstName, LastName, Nickname, Bio, Pronouns, Email, Password, Salt FROM USERS WHERE Username = '" + username +"'");
+            var reader = stmt.executeQuery("SELECT UserId, Username, FirstName, LastName, Nickname, Bio, Pronouns, Email, Password, Salt FROM USERS WHERE Username = '" + username + "'");
             while (reader.next()) {
                 user = new User(
                         reader.getInt("UserId"),
@@ -54,7 +54,7 @@ public class UserDAL {
                         reader.getString("email"),
                         reader.getString("password"),
                         reader.getString("salt"),
-                        null
+                        new ArrayList<Roles>()
                 );
             }
         } catch (SQLException e) {
@@ -63,7 +63,7 @@ public class UserDAL {
         return user;
     }
 
-    public static boolean addUser(Datastore db, String username, String firstName, String lastName, String nickname, String bio, String pronouns, String email, String password, String salt, ArrayList<Roles> roles) {
+    public static boolean addUser(Datastore db, String username, String firstName, String lastName, String nickname, String bio, String pronouns, String email, String password, String salt, ArrayList<Roles> roles) throws SQLException {
         try (Connection conn = db.getNewConnection();
                 Statement stmt = conn.createStatement()
                 ) {
@@ -71,10 +71,8 @@ public class UserDAL {
                     " VALUES ('" + username + "', '" + firstName + "', '" + lastName + "', '" + nickname + "', '" + bio + "', '" + pronouns + "', '" + email + "', '" + password + "', '" + salt + "')");
             return true;
         } catch (SQLException e) {
-            if (e.getMessage().contains("Unique index or primary key violation")) {
-                System.out.println(LocalDateTime.now() + "User already exists");
-            } else {
-                e.printStackTrace();
+            if (!e.getMessage().contains("Unique index or primary key violation")) {
+                throw e;
             }
         }
         return false;
