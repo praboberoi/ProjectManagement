@@ -13,7 +13,7 @@ public class Sprint implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false, updatable = false)
-    private long sprintId;
+    private int sprintId;
 
     /**
      * Project ID that sprint is contained in
@@ -60,7 +60,7 @@ public class Sprint implements Serializable {
         this.endDate = endDate;
     }
 
-    public long getSprintId() {
+    public int getSprintId() {
         return sprintId;
     }
 

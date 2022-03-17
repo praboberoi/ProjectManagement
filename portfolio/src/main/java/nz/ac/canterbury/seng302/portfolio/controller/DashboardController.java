@@ -55,7 +55,7 @@ public class DashboardController {
     }
 
     /**
-     * Opens project_form.html and populates it with a new Project object
+     * Opens project.html and populates it with a new Project object
      * @param model
      * @return
      */
@@ -63,7 +63,7 @@ public class DashboardController {
     public String showNewForm(Model model) {
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
-        return "project_form";
+        return "project";
     }
 
     /**
@@ -78,17 +78,17 @@ public class DashboardController {
     }
 
     /**
-     * Opens edit page (project_form.html) and populates with given project
+     * Opens edit page (project.html) and populates with given project
      * @param projectId ID of project selected
      * @param model
      * @return
      */
     @GetMapping("/dashboard/editProject/{projectId}")
-    public String showEditForm(@PathVariable(value = "projectId") Long projectId, Model model) {
+    public String showEditForm(@PathVariable(value = "projectId") int projectId, Model model) {
         Project project  = dashboardService.getProject(projectId);
         model.addAttribute("project", project);
         model.addAttribute("pageTitle", "Edit Project (Name: " + projectId + ")");
-        return "project_form";
+        return "project";
     }
 
     /**
@@ -98,12 +98,13 @@ public class DashboardController {
      * @throws Exception If project is not found in the database
      */
     @GetMapping("/dashboard/deleteProject/{projectId}")
-    public String showEditForm(@PathVariable("projectId") Long projectId) throws Exception {
+    public String showEditForm(@PathVariable("projectId") int projectId) throws Exception {
+        SprintService sprintService = new SprintService();
         try {
-            List<Sprint> sprintList = SprintService.listAll();
+            List<Sprint> sprintList = sprintService.getAllSprints();
             for (Sprint i: sprintList) {
                 if (i.getProject().getProjectId() == projectId) {
-                    SprintService.deleteSprint(i.getSprintId());
+                    sprintService.deleteSprint(i.getSprintId());
                 }
             }
         } catch (Exception e) {
@@ -118,7 +119,7 @@ public class DashboardController {
     public String showSprintList(@PathVariable("projectId") Long projectId, Model model) {
         List<Sprint> listSprints;
         try{
-            listSprints = sprintService.listAll();
+            listSprints = sprintService.getAllSprints();
         } catch (NullPointerException e) {
             listSprints = new ArrayList<>();
         }

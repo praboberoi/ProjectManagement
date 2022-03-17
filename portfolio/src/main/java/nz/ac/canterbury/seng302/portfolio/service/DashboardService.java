@@ -44,7 +44,7 @@ public class DashboardService {
      * @param id
      * @return
      */
-    public Project getProject(Long id) {
+    public Project getProject(int id) {
         Optional<Project> result = projectRepo.findById(id);
         currentProject = result.get();
         return currentProject;
@@ -55,7 +55,7 @@ public class DashboardService {
      * @param projectId
      * @throws Exception
      */
-    public void deleteProject(Long projectId) throws Exception {
+    public void deleteProject(int projectId) throws Exception {
 /*
         Long count = projectRepo.countByProjectName(projectId);
         if (count == null || count == 0) {

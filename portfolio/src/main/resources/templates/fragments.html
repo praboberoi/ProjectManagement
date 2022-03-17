@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:fragment = "header">
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- Custom css -->
+  <link rel="stylesheet" type="text/css" th:href="@{/header.css}" href="/css/header.css"/>
+
+  <meta charset="UTF-8">
+  <title>Title</title>
+</head>
+
+<body>
+<!--fragment for header using bootstrap-->
+<header>
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" href="./dashboard">LENSfolio</a>
+      <a class="navbar-brand" href="#">Username</a>
+
+      <!-- button toggle for mobile
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
+          <span class="navbar-toggler-icon"></span>
+      </button>
+      -->
+
+
+    </div>
+  </nav>
+</header>
+
+<!--fragment for sidebar-->
+<nav th:fragment = "menu">
+  <div class = "container-fluid">
+    <div class="row">
+      <div class="sidebar">
+        <!--<div class="collapse navbar-collapse" id="collapsibleNavbar">-->
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Search</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="./project">Course</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/}">Skills</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link disabled" th:href="@{/}">Awards</a>
+          </li>
+        </ul>
+
+
+      </div>
+      <!-- not needed yet
+      <div class="main">
+      <div class="col-sm-12 main">
+          <h1 class="page-header">Dashboard</h1>
+      </div>
+      </div>
+      -->
+    </div>
+  </div>
+
+
+</nav>
+
+
+</body>
+</html>

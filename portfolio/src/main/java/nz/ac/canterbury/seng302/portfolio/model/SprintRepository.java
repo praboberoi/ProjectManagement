@@ -4,9 +4,9 @@ import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
-public interface SprintRepository extends CrudRepository<Sprint, Long> {
+public interface SprintRepository extends CrudRepository<Sprint, Integer> {
 
-    public List<Sprint> findBySprintId(String sprintId);
+    public List<Sprint> findBySprintId(int sprintId);
 
     public List<String> findBySprintName(String sprintName);
 
@@ -22,7 +22,7 @@ public interface SprintRepository extends CrudRepository<Sprint, Long> {
 
     public List<Sprint> findByProject(Project project);
 
-    public int countBySprintName(Long sprintId);
+    public int countBySprintName(int sprintId);
 
     public int countByProject(Project project);
 

@@ -1,0 +1,46 @@
+/*
+css for the fixed elements on each page
+header, sidebar
+ */
+
+.sidebar {
+    position: fixed;
+    top: 51px;
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 20px;
+    overflow-x: hidden;
+    overflow-y: auto; /* Scrollable contents if viewport is shorter than content. */
+    background-color: #f5f5f5;
+    border-right: 1px solid #eee;
+
+    width:250px;
+
+}
+
+/*
+continue implementing for mobile size screens
+& hamburger menus
+
+@media screen and (max-width: 600px){
+    .sidebar{
+        display: none;
+    }
+    .main{
+        margin-left: -250px;
+    }
+}
+*/
+
+/* not needed yet , resizing options
+@media (min-width: 768px) {
+    .main {
+        padding-right: 40px;
+        padding-left: 150px; /* 180 + 40 *
+        padding-top: 40px;
+    }
+}
+*/
+
