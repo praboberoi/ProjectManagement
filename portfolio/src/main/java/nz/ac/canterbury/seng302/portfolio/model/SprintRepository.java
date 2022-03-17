@@ -1,13 +1,31 @@
-package nz.ac.canterbury.seng302.portfolio.model;
+package nz.ac.canterbury.seng302.portfolio.repository;
 
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import org.springframework.data.repository.CrudRepository;
-import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-@Repository
-public interface SprintRepository extends CrudRepository<Sprint, Integer> {
-    List<Sprint> findBySprintName(String sprintName);
-    Sprint findById(int id);
-    List<Sprint> findByParentProjectId(int parentProjectId);
+public interface SprintRepository extends CrudRepository<Sprint, Long> {
+
+    public List<Sprint> findBySprintId(String sprintId);
+
+    public List<String> findBySprintName(String sprintName);
+
+    public List<String> findBySprintNameContaining(String name);
+
+    public List<Sprint> findByDescription(String description);
+
+    public List<Sprint> findByDescriptionContaining(String description);
+
+    public List<Sprint> findByStartDate(String startDate);
+
+    public List<Sprint> findByEndDate(String endDate);
+
+    public List<Sprint> findByProject(Project project);
+
+    public int countBySprintName(Long sprintId);
+
+    public int countByProject(Project project);
+
 }

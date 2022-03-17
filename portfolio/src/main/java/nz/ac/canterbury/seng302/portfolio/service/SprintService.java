@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
+import nz.ac.canterbury.seng302.portfolio.repository.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 @Service
 public class SprintService {
     @Autowired
-    private SprintRepository repository;
+    private nz.ac.canterbury.seng302.portfolio.repository.SprintRepository repository;
 
     /**
      * Get list of all sprints
@@ -27,7 +27,7 @@ public class SprintService {
     /**
      * Get sprint by id
      */
-    public Sprint getSprintById(Integer id) throws Exception {
+    public Sprint getSprintById(Long id) throws Exception {
 
         Optional<Sprint> sprint = repository.findById(id);
         if(sprint!=null) {

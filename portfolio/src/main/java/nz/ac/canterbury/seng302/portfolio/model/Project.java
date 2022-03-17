@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 public class Project {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
+    private Long id;
     private String projectName;
     private String projectDescription;
     private Date projectStartDate;
