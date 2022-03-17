@@ -13,7 +13,7 @@ public class Project implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false, updatable = false)
-    private Long projectId;
+    private int projectId;
 
     /**
      * Name of the project
@@ -58,7 +58,7 @@ public class Project implements Serializable {
         this.endDate = endDate;
     }
 
-    public Long getProjectId() {
+    public int getProjectId() {
         return projectId;
     }
     /**
