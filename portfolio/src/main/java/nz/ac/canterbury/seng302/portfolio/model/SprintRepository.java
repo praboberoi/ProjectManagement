@@ -1,7 +1,5 @@
-package nz.ac.canterbury.seng302.portfolio.repository;
+package nz.ac.canterbury.seng302.portfolio.model;
 
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;

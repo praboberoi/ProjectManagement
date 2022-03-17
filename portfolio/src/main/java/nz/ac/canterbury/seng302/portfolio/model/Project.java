@@ -1,124 +1,199 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import java.util.Date;
-import java.text.SimpleDateFormat;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Objects;
 
-@Entity // this is an entity, assumed to be in a table called Project
-public class Project {
+/**
+ * Creates a Project class required that maps to a table in the database
+ */
+@Entity
+public class Project implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    @Column(nullable = false, updatable = false)
+    private Long projectId;
+
+    /**
+     * Name of the project
+     */
+
+    @Column(nullable = false)
     private String projectName;
-    private String projectDescription;
-    private Date projectStartDate;
-    private Date projectEndDate;
-
-    protected Project() {}
-
-    public Project(String projectName, String projectDescription, Date projectStartDate, Date projectEndDate) {
-        this.projectName = projectName;
-        this.projectDescription = projectDescription;
-        this.projectStartDate = projectStartDate;
-        this.projectEndDate = projectEndDate;
-    }
-
-    public Project(String projectName, String projectDescription, String projectStartDate, String projectEndDate) {
-        this.projectName = projectName;
-        this.projectDescription = projectDescription;
-        this.projectStartDate = Project.stringToDate(projectStartDate);
-        this.projectEndDate = Project.stringToDate(projectEndDate);
-    }
-
-    @Override
-    public String toString() {
-        return String.format(
-                "Project[id=%d, projectName='%s', projectStartDate='%s', projectEndDate='%s', projectDescription='%s']",
-                id, projectName, projectStartDate, projectEndDate, projectDescription);
-    }
 
     /**
-     * Gets the date form of the given date string
-     *
-     * @param dateString the string to read as a date in format 01/Jan/2000
-     * @return the given date, as a date object
+     * Description of the project.
      */
-    static Date stringToDate(String dateString) {
-        Date date = null;
-        try {
-            date = new SimpleDateFormat("dd/MMM/yyyy").parse(dateString);
-        } catch (Exception e) {
-            System.err.println("Error parsing date: " + e.getMessage());
-        }
-        return date;
-    }
+    @Column
+    private String description;
 
     /**
-     * Gets the string form of the given date in
-     *
-     * @param date the date to convert
-     * @return the given date, as a string in format 01/Jan/2000
+     * Start Date of the project.
      */
-    static String dateToString(Date date) {
-        return new SimpleDateFormat("dd/MMM/yyyy").format(date);
+    @Column(nullable = false)
+    private String startDate;
+    /**
+     * End Date of the project.
+     */
+    @Column(nullable = false)
+    private String endDate;
+
+    /**
+     * No args Constructor of the Project.
+     */
+    public Project() {}
+
+    /**
+     * Constructor of the object
+     * @param projectName name of the project.
+     * @param description information related to the project.
+     * @param startDate start date of the project.
+     * @param endDate end date of the project.
+     */
+    public Project(String projectName, String description, String startDate, String endDate) {
+        this.projectName = projectName;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
-    /* Getters/Setters */
-
-    public int getId(){
-        return  id;
+    public Long getProjectId() {
+        return projectId;
     }
-
-    public String getName() {
+    /**
+     * Obtains the name of the project
+     * @return projectName
+     */
+    public String getProjectName() {
         return projectName;
     }
 
-    public void setName(String newName) {
-        this.projectName = newName;
+    /**
+     * Obtains the description of the project
+     * @return description of type String
+     */
+    public String getDescription() {
+        return description;
     }
 
-    public String getDescription(){
-        return projectDescription;
+    /**
+     * Obtains the start date of the project
+     * @return startDate of type String
+     */
+    public String getStartDate() {
+        return startDate;
     }
 
-    public void setDescription(String newDescription) {
-        this.projectDescription = newDescription;
+    /**
+     * Obtains the end date of the project
+     * @return endDate of type string
+     */
+    public String getEndDate() {
+        return endDate;
     }
 
-    /* Dates have string get/set methods to interact with view */
-
-    public Date getStartDate() {
-        return projectStartDate;
+    /**
+     * Sets the name of the Project
+     * @param projectName of type String
+     */
+    public void setProjectName(String projectName) {
+        this.projectName = projectName;
     }
 
-    public String getStartDateString() {
-        return Project.dateToString(this.projectStartDate);
+    /**
+     * Sets the description of the Project
+     * @param description of type String
+     */
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setStartDate(Date newStartDate) {
-        this.projectStartDate = newStartDate;
+    /**
+     * Sets the start date of the project
+     * @param startDate of type String
+     */
+    public void setStartDate(String startDate) {
+        this.startDate = startDate;
     }
 
-    public void setStartDateString(String date) {
-        this.projectStartDate = Project.stringToDate(date);
+    /**
+     * Sets the end date of the project
+     * @param endDate of type String
+     */
+    public void setEndDate(String endDate) {
+        this.endDate = endDate;
     }
 
-    public Date getEndDate() {
-        return projectEndDate;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Project)) return false;
+        Project project = (Project) o;
+        return projectName.equals(project.projectName) && Objects.equals(description, project.description) && startDate.equals(project.startDate) && endDate.equals(project.endDate);
     }
 
-    public String getEndDateString() {
-        return Project.dateToString(this.projectEndDate);
+    @Override
+    public int hashCode() {
+        return Objects.hash(projectName, description, startDate, endDate);
     }
 
-    public void setEndDate(Date newEndDate) {
-        this.projectEndDate = newEndDate;
-    }
+    /**
+     * Builder Class to build the Project
+     */
+    public static class Builder{
+        private String projectName;
+        private String description = "";
+        private String startDate;
+        private String endDate;
 
-    public void setEndDateString(String date) {
-        this.projectStartDate = Project.stringToDate(date);
+        /**
+         * Updates the project with the given project name
+         * @param projectName name of the project of type String
+         * @return
+         */
+        public Builder projectName(String projectName) {
+            this.projectName = projectName;
+            return this;
+        }
+
+        /**
+         * Updates the description with the given project description
+         * @param description
+         * @ Builder object
+         */
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        /**
+         * Update the start date with the given start date
+         * @param startDate of type
+         * @return Builder object
+         */
+        public Builder startDate(String startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        /**
+         * Update the end date with the given end date
+         * @param endDate of type Sting
+         * @return Builder object
+         */
+        public Builder endDate(String endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+
+        /**
+         * builds the new Project.
+         * @return an object of type Project
+         */
+        public Project build() {
+            return new Project(projectName, description, startDate, endDate);
+        }
+
     }
 }

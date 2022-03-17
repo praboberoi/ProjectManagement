@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.repository.SprintRepository;
+import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,8 +13,7 @@ import java.util.Optional;
 
 @Service
 public class SprintService {
-    @Autowired
-    private nz.ac.canterbury.seng302.portfolio.repository.SprintRepository repository;
+    @Autowired private SprintRepository repository;
 
     /**
      * Get list of all sprints

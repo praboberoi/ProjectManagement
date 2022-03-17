@@ -29,7 +29,7 @@ public class DashboardService {
         if (currentProject == null) {
             projectRepo.save(project);
         } else {
-            currentProject.setName(project.getName());
+            currentProject.setProjectName(project.getProjectName());
             currentProject.setDescription(project.getDescription());
             currentProject.setStartDate(project.getStartDate());
             currentProject.setEndDate(project.getEndDate());
@@ -45,7 +45,7 @@ public class DashboardService {
      * @return
      */
     public Project getProject(Long id) {
-        Optional<Project> result = Optional.ofNullable(projectRepo.findById(id));
+        Optional<Project> result = projectRepo.findById(id);
         currentProject = result.get();
         return currentProject;
     }
