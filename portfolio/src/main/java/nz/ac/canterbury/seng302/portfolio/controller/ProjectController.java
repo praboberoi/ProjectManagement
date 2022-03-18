@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,9 +16,9 @@ import java.util.List;
 public class ProjectController {
     @Autowired private SprintService sprintService;
 
-//    @GetMapping("/project/{projectId}")
-//    public String showSprintList(@PathVariable("projectId") Long projectId, Model model) {
-//         List<Sprint> listSprints = sprintService.getAllSprints(); //update list to only show list for project
+//    @GetMapping("/project/${projectId}")
+//    public String showSprintList(@PathVariable("projectId") int projectId, Model model) {
+//        List<Sprint> listSprints = sprintService.getAllSprints(); //update list to only show list for project
 //        //List<Sprint> listSprints = sprintService.listByProjectId(projectId);
 //        model.addAttribute("listSprints", listSprints);
 //        return "project";
@@ -46,7 +46,7 @@ public class ProjectController {
      * @return
      */
     @PostMapping("/project/{projectId}/saveSprint")
-    public String saveSprint(@PathVariable Long projectId, Sprint sprint) {
+    public String saveSprint(@PathVariable int projectId, Sprint sprint) {
         sprintService.saveSprint(sprint);
         /*model.addAttribute("sprint", sprint);*/
         return "redirect:/project/{projectId}";
@@ -86,13 +86,13 @@ public class ProjectController {
 
 
 
-    /*
-    @GetMapping
-    String getProject(Model model){
-        model.addAttribute("newproject", "this is a new project");
-            return "project";
 
-    }
-    */
+//    @GetMapping
+//    String getProject(Model model){
+//        model.addAttribute("project", model);
+//            return "project";
+//
+//    }
+
 
 }

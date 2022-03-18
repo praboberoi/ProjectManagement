@@ -48,7 +48,7 @@
                                         <div class="col-md-8">
                                             <!-- make a link to go to project detail page -->
                                             <!--<h2 th:text="'Name:  '  + ${project.projectName}"/>-->
-                                            <h2><a th:href="@{'/project/'+ ${project.projectId}}" th:text="'Name:  '  + ${project.projectName}"></a></h2>
+                                            <h2><a th:href="@{'/project/'+ ${project.projectId}}" th:text="'Name:  '  + ${project.projectName}" >Project Details</a></h2>
                                         </div>
                                         <div class="col-md-4">
                                             <p th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
@@ -72,17 +72,17 @@
 
         </table>
 
-        <!--            <div class="project_card">-->
-        <!--                <h5 class="card-header">Default Project</h5>-->
-        <!--                <div class="card-body">-->
-        <!--                    &lt;!&ndash;<h5 class="card-title">Special title treatment</h5>&ndash;&gt;-->
-        <!--                    &lt;!&ndash;<p class="card-text">With supporting text below a.</p>&ndash;&gt;-->
+<!--                    <div class="project_card">-->
+<!--                        <h5 class="card-header">Default Project</h5>-->
+<!--                        <div class="card-body">-->
+<!--                            &lt;!&ndash;<h5 class="card-title">Special title treatment</h5>&ndash;&gt;-->
+<!--                            &lt;!&ndash;<p class="card-text">With supporting text below a.</p>&ndash;&gt;-->
 
-        <!--                    <a href="./project" class="btn btn-primary">Go to details</a>-->
-        <!--                </div>-->
-        <!--            </div>-->
+<!--                            <a href="./project" class="btn btn-primary">Go to details</a>-->
+<!--                        </div>-->
+<!--                    </div>-->
 
-        <!--<p><a href="./project">Default Project</a></p>-->
+<!--        <p><a href="./project">Default Project</a></p>-->
     </div>
 </div>
 

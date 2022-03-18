@@ -46,9 +46,6 @@ public class DashboardService {
      */
     public Project getProject(int id) {
         Optional<Project> result = projectRepo.findById(id);
-        if(result == false) {
-            return null
-        }
         currentProject = result.get();
         return currentProject;
     }

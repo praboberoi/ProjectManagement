@@ -63,7 +63,7 @@ public class DashboardController {
     public String showNewForm(Model model) {
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
-        return "project";
+        return "project_form";
     }
 
     /**
@@ -88,7 +88,7 @@ public class DashboardController {
         Project project  = dashboardService.getProject(projectId);
         model.addAttribute("project", project);
         model.addAttribute("pageTitle", "Edit Project (Name: " + projectId + ")");
-        return "project";
+        return "project_form";
     }
 
     /**
@@ -116,15 +116,17 @@ public class DashboardController {
     }
 
     @GetMapping("/project/{projectId}")
-    public String showSprintList(@PathVariable("projectId") Long projectId, Model model) {
+    public String showSprintList(@PathVariable("projectId") int projectId, Model model) {
         List<Sprint> listSprints;
         try{
             listSprints = sprintService.getAllSprints();
         } catch (NullPointerException e) {
             listSprints = new ArrayList<>();
         }
+        Project project = dashboardService.getProject(projectId);
 
-        model.addAttribute("listSprints", listSprints);
+        model.addAttribute("project", project);
+//        model.addAttribute("listSprints", listSprints);
         return "project";
     }
 }
