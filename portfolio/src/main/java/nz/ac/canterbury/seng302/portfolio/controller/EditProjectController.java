@@ -22,9 +22,9 @@ public class EditProjectController {
     @GetMapping("/edit-project")
     public String projectForm(Model model) {
         /* Add project details to the model */
-        model.addAttribute("projectName", project.getName());
-        model.addAttribute("projectStartDate", project.getStartDateString());
-        model.addAttribute("projectEndDate", project.getEndDateString());
+        model.addAttribute("projectName", project.getProjectName());
+        model.addAttribute("projectStartDate", project.getStartDate());
+        model.addAttribute("projectEndDate", project.getEndDate());
         model.addAttribute("projectDescription", project.getDescription());
 
 
@@ -41,9 +41,9 @@ public class EditProjectController {
             @RequestParam(value="projectDescription") String projectDescription,
             Model model
     ) {
-        project.setName(projectName);
-        project.setStartDateString(projectStartDate);
-        project.setEndDateString(projectEndDate);
+        project.setProjectName(projectName);
+        project.setStartDate(projectStartDate);
+        project.setEndDate(projectEndDate);
         project.setDescription(projectDescription);
         return "redirect:/edit-project";
     }
