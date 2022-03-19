@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.sql.Date;
 import java.time.LocalDate;
 
 import java.util.List;
@@ -32,21 +33,12 @@ public class DashboardController {
         // Sets a default project if there are no projects
         if (listProjects.isEmpty()) {
 
-            int year = LocalDate.now().getYear();
-            int month = LocalDate.now().getMonthValue();
-            int day = LocalDate.now().getDayOfMonth();
+            LocalDate now = LocalDate.now();
             Project defaultProject = new Project();
-            defaultProject.setProjectName("Project " + year); // Project {year}
-            String currentDate =  (year + "-" + month + "-" + day);
-            defaultProject.setStartDate(currentDate); // Current date
+            defaultProject.setProjectName("Project " + now.getYear()); // Project {year}
+            defaultProject.setStartDate(Date.valueOf(now)); // Current date
 
-            month += 8;
-            if (month > 12) { // Changes year if month goes over 12
-                month -= 12;
-                year += 1;
-            }
-
-            defaultProject.setEndDate(year + "-" + month + "-" + day); // 8 months from start date
+            defaultProject.setEndDate(Date.valueOf(now.plusMonths(8))); // 8 months from start date
             dashboardService.saveProject(defaultProject);
             listProjects.add(defaultProject);
         }
