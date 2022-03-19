@@ -62,21 +62,20 @@ public class SprintService {
      * @param sprintId Key used to find the sprint object
      */
     public void deleteSprint(int sprintId){
-        //Long count = sprintRepo.countBySprintName(sprintId); //change
-        /*if (count != null || count == 0){
-            throw new Exception("error" + id);
-        }
-         */
+
         sprintRepository.deleteById(sprintId);
     }
-
-    // new function to get list by project id
 
     public int countByProjectId(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         return sprintRepository.countByProject(current.get());
     }
 
+    public List<Sprint> getSprintByProject(int projectId) {
+        Optional<Project> current = projectRepo.findById(projectId);
+        List<Sprint> sprints = sprintRepository.findByProject(current.get());
+        return sprints;
+    }
 
 }
 

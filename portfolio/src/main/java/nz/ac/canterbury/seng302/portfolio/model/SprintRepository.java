@@ -1,9 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+@Repository
 public interface SprintRepository extends CrudRepository<Sprint, Integer> {
 
     public List<Sprint> findBySprintId(int sprintId);

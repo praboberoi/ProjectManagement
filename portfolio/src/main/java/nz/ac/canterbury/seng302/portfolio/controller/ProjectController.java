@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,15 +16,14 @@ import java.util.List;
 @Controller
 public class ProjectController {
     @Autowired private SprintService sprintService;
+    @Autowired private ProjectService projectService;
 
-//    @GetMapping("/project/${projectId}")
-//    public String showSprintList(@PathVariable("projectId") int projectId, Model model) {
-//        List<Sprint> listSprints = sprintService.getAllSprints(); //update list to only show list for project
-//        //List<Sprint> listSprints = sprintService.listByProjectId(projectId);
-//        model.addAttribute("listSprints", listSprints);
-//        return "project";
-//    }
-
+    @GetMapping("/project/{projectId}")
+    public String showSprintList(@PathVariable("projectId") int projectId, Model model) {
+        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+        model.addAttribute("listSprints", listSprints);
+        return "project";
+    }
 
     /**
      * Displays page for adding a new sprint
@@ -31,12 +31,11 @@ public class ProjectController {
      * @return
      */
     @GetMapping("/project/{projectId}/newSprint")
-    public String newSprint(Model model, @PathVariable int projectId) {
+    public String newSprint(Model model, @PathVariable ("projectId") int projectId) {
         int sprintNo = sprintService.countByProjectId(projectId) + 1;
         Sprint newSprint = new Sprint();
         newSprint.setSprintName("Sprint " + sprintNo);
         model.addAttribute("sprint", newSprint);
-        model.addAttribute("pageTitle","Add new sprint");
         return "sprint_form";
     }
 
@@ -46,9 +45,10 @@ public class ProjectController {
      * @return
      */
     @PostMapping("/project/{projectId}/saveSprint")
-    public String saveSprint(@PathVariable int projectId, Sprint sprint) {
+    public String saveSprint(@PathVariable int projectId, Sprint sprint, Model model) throws Exception {
+        sprint.setProject(projectService.getProjectById(projectId));
         sprintService.saveSprint(sprint);
-        /*model.addAttribute("sprint", sprint);*/
+        model.addAttribute("sprint", sprint);
         return "redirect:/project/{projectId}";
     }
 

@@ -12,14 +12,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
+
 import java.util.List;
 
 
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
-    @Autowired private SprintService sprintService;
+
 
     /**
      * Adds project list to model and opens dashboard.html
@@ -115,18 +115,4 @@ public class DashboardController {
         return "redirect:/dashboard";
     }
 
-    @GetMapping("/project/{projectId}")
-    public String showSprintList(@PathVariable("projectId") int projectId, Model model) {
-        List<Sprint> listSprints;
-        try{
-            listSprints = sprintService.getAllSprints();
-        } catch (NullPointerException e) {
-            listSprints = new ArrayList<>();
-        }
-        Project project = dashboardService.getProject(projectId);
-
-        model.addAttribute("project", project);
-//        model.addAttribute("listSprints", listSprints);
-        return "project";
-    }
 }

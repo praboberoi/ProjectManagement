@@ -8,11 +8,11 @@ import java.util.Objects;
  * Creates a Project class required that maps to a table in the database
  */
 @Entity
-public class Project implements Serializable {
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private int projectId;
 
     /**
