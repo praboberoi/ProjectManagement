@@ -50,7 +50,7 @@
             <textarea class="form-control" id="message-text" th:field="*{description}"></textarea>
         </div>
         <div class="footer">
-            <a class="btn btn-primary" href="../">Close</a>
+            <a class="btn btn-primary" th:href="@{ '/project/' + ${projectId}}">Close</a>
             <button type="submit" value="Submit" class="btn btn-primary">Add sprint</button>
 
         </div>
