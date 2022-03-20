@@ -62,10 +62,11 @@ public class ProjectController {
      * @return
      */
     @PostMapping("/project/{projectId}/saveSprint")
-    public String saveSprint(@PathVariable int projectId, Sprint sprint, Model model) throws Exception {
+    public String saveSprint(@PathVariable int projectId, Sprint sprint) throws Exception {
         sprint.setProject(projectService.getProjectById(projectId));
         sprintService.saveSprint(sprint);
-        model.addAttribute("sprint", sprint);
+//        model.addAttribute("sprint", sprint);
+//        System.out.println(sprint);
         return "redirect:/project/{projectId}";
     }
 
@@ -78,10 +79,13 @@ public class ProjectController {
      */
     /*make sure to update project.html for path*/
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
-    public String sprintEditForm(@PathVariable("sprintId") int sprintId, Model model) throws Exception {
-        Sprint sprint = sprintService.getSprintById(sprintId);
+    public String sprintEditForm(@PathVariable("sprintId") int sprintId, @PathVariable("projectId") int projectId, Model model) throws Exception {
+        Sprint sprint = sprintService.getSprint(sprintId);
         model.addAttribute("sprint", sprint);
         model.addAttribute("pageTitle", "Edit Sprint (Name: " + sprintId + ")");
+
+        System.out.println("form");
+        System.out.println(sprintId);
         return "sprint_form";
 
 

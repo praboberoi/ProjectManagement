@@ -16,6 +16,7 @@ import java.util.Optional;
 public class SprintService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintRepository sprintRepository;
+    private Sprint currentSprint = null;
 
     /**
      * Get list of all sprints
@@ -43,9 +44,31 @@ public class SprintService {
      * Saves a sprint object to the database
      * @param sprint
      */
+    /*
     public void saveSprint(Sprint sprint) {
         sprintRepository.save(sprint);
     }
+
+     */
+    public void saveSprint(Sprint sprint) {
+        if (currentSprint == null) {
+            sprintRepository.save(sprint);
+
+            System.out.println("new");
+            System.out.println(sprint.getSprintId());
+        } else {
+            currentSprint.setSprintName(sprint.getSprintName());
+            currentSprint.setDescription(sprint.getDescription());
+            currentSprint.setStartDate(sprint.getStartDate());
+            currentSprint.setEndDate(sprint.getEndDate());
+            sprintRepository.save(currentSprint);
+
+            System.out.println("edit");
+            System.out.println(sprint.getSprintId());
+            currentSprint = null;
+        }
+    }
+
 
     /**
      * Returns a sprint object from the database
@@ -54,7 +77,11 @@ public class SprintService {
      */
     public Sprint getSprint(int sprintId){
         Optional<Sprint> result = sprintRepository.findById(sprintId);
-        return result.get();
+        currentSprint = result.get();
+
+        System.out.println("found same");
+        System.out.println(sprintId);
+        return currentSprint;
     }
 
     /**

@@ -18,9 +18,10 @@
 <body>
 <div>
     <form id="createSprintForm" action="#" th:action="@{'/project/' + ${projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
+        <input type="hidden" th:field="*{project.projectId}">
         <div class="mb-3">
             <label for="recipient-name" class="col-form-label">Sprint Label</label>
-            <input type="text" class="form-control" id="recipient-name" th:field=*{sprintName} readonly>
+            <input type="text" class="form-control" id="recipient-name" th:field="*{sprintName}" readonly>
         </div>
 
         <div style="height:30px;" class="row">
