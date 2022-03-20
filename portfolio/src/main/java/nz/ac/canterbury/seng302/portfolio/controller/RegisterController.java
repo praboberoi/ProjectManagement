@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
-import nz.ac.canterbury.seng302.portfolio.service.RegisterClientService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +17,7 @@ import javax.servlet.http.HttpServletResponse;
 public class RegisterController {
 
     @Autowired
-    private AuthenticateClientService authenticateClientService;
-
-    @Autowired
-    private RegisterClientService registerClientService;
+    private UserAccountClientService userAccountClientService;
 
     /**
      * @param request HTTP request sent to this endpoint
@@ -51,7 +47,7 @@ public class RegisterController {
             @RequestParam String password,
             Model model
     ) {
-        UserRegisterResponse idpResponse = registerClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
+        UserRegisterResponse idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
         if (idpResponse.getIsSuccess()) {
             return "redirect:/login";
         } else {
