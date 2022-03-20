@@ -8,11 +8,15 @@ import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
-    @Autowired private UserRepository userRepository;
+
+    private final UserRepository userRepository;
+
+    public UserAccountServerService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     private static final Logger logger = LoggerFactory.getLogger(UserAccountServerService.class);
 

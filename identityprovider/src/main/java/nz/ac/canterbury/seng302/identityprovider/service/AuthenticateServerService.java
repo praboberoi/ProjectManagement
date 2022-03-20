@@ -13,17 +13,20 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticationServiceGrpc.AuthenticationServiceImplBase;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Grpc service used to authenticate the user.
  */
 @GrpcService
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
-    @Autowired
-    private UserRepository userRepository;
 
-    private JwtTokenUtil jwtTokenService = JwtTokenUtil.getInstance();
+    private final UserRepository userRepository;
+
+    public AuthenticateServerService(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    private final JwtTokenUtil jwtTokenService = JwtTokenUtil.getInstance();
 
     /**
      * Attempts to authenticate a user with a given username and password. 

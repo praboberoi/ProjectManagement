@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,8 +18,11 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class RegisterController {
 
-    @Autowired
-    private UserAccountClientService userAccountClientService;
+    private final UserAccountClientService userAccountClientService;
+
+    public RegisterController(UserAccountClientService userAccountClientService) {
+        this.userAccountClientService = userAccountClientService;
+    }
 
     /**
      * Get message for empty registration page
@@ -67,7 +69,7 @@ public class RegisterController {
     ) {
         UserRegisterResponse idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
         if (idpResponse.getIsSuccess()) {
-            return "login";
+            return "redirect:login";
         } else {
             model.addAttribute("error", idpResponse.getMessage());
             model.addAttribute("username", username);

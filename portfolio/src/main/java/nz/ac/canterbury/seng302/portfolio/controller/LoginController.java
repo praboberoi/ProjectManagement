@@ -4,7 +4,6 @@ import io.grpc.StatusRuntimeException;
 import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class LoginController {
 
-    @Autowired
-    private AuthenticateClientService authenticateClientService;
+    private final AuthenticateClientService authenticateClientService;
+
+    public LoginController (AuthenticateClientService authenticateClientService) {
+        this.authenticateClientService = authenticateClientService;
+    }
 
     /**
      * Attempts to authenticate with the Identity Provider via gRPC.

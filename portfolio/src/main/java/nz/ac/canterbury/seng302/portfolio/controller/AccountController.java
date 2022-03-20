@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,8 +17,11 @@ import java.util.stream.Collectors;
 @Controller
 public class AccountController {
 
-    @Autowired
-    private UserAccountClientService userAccountClientService;
+    private final UserAccountClientService userAccountClientService;
+
+    public AccountController (UserAccountClientService userAccountClientService) {
+        this.userAccountClientService = userAccountClientService;
+    }
 
     /**
      * Get method for users personal page
