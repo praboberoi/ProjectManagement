@@ -12,12 +12,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 
 @Controller
-public class ProjectController {
+public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
 
