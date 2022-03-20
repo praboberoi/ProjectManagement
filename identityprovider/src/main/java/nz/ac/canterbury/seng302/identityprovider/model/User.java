@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * The user entity used to access the database in the identity provider application
+ */
 @Entity
 public class User implements Serializable {
     @Id
@@ -128,22 +131,23 @@ public class User implements Serializable {
         this.salt = salt;
     }
 
+    public void setRoles(List<UserRole> roles) {
+        this.roles = roles;
+    }
+
+    /**
+     * Blank constructor required by JPA
+     */
     public User() {
 
     }
 
-    public User(String username, String firstName, String lastName, String nickname, String bio, String pronouns, String email, String password, String salt, List<UserRole> roles) {
-        this.username = username;
-        this.firstName = firstName;
-        this.lastName = lastName;
-        this.nickname = nickname;
-        this.bio = bio;
-        this.pronouns = pronouns;
-        this.password = password;
-        this.salt = salt;
-        this.roles = roles;
-    }
-
+    /**
+     * Creates a new user from a registration request
+     * @param request Proto class which contains required idp user info
+     * @param password The new users encrypted passord
+     * @param salt The salt used during the encryption of the password
+     */
     public User(UserRegisterRequest request, String password, String salt) {
         this.username = request.getUsername();
         this.firstName = request.getFirstName();

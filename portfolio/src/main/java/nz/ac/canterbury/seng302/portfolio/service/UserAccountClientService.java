@@ -5,12 +5,28 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.stereotype.Service;
 
+/**
+ * Client service used to communicate to the IDP application relating to user account features
+ */
 @Service
 public class UserAccountClientService {
 
     @GrpcClient("identity-provider-grpc-server")
     private UserAccountServiceGrpc.UserAccountServiceBlockingStub userAccountStub;
 
+    /**
+     * Sends a register request to the server
+     * @param username New user's username (required)
+     * @param firstName New user's first name (required)
+     * @param lastName New user's last name (required)
+     * @param nickname New user's nickname
+     * @param bio New user's bio
+     * @param pronouns New user's pronouns
+     * @param email New user's email (required)
+     * @param password New user's password (required)
+     * @return Response from the server
+     * @throws StatusRuntimeException Failure status of the server call
+     */
     public UserRegisterResponse register(final String username,
                            final String firstName,
                            final String lastName,

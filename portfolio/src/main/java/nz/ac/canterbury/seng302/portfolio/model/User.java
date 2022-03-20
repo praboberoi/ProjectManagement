@@ -9,28 +9,27 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * User class with required information for use in the portfolio application
+ */
 public class User implements Serializable {
-    public int userId;
+    private int userId;
 
-    public String username;
+    private String username;
 
-    public String firstName;
+    private String firstName;
 
-    public String lastName;
+    private String lastName;
 
-    public String nickname;
+    private String nickname;
 
-    public String bio;
+    private String bio;
 
-    public String pronouns;
+    private String pronouns;
 
-    public String email;
+    private String email;
 
-    public String password;
-
-    public String salt;
-
-    public List<UserRole> roles = new ArrayList<>();
+    private List<UserRole> roles = new ArrayList<>();
 
     public int getUserId() {
         return userId;
@@ -64,12 +63,8 @@ public class User implements Serializable {
         return email;
     }
 
-    public String getPassword() {
-        return password;
-    }
-
-    public String getSalt() {
-        return salt;
+    public List<UserRole> getRoles() {
+        return roles;
     }
 
     public void setUserId(int userId) {
@@ -102,14 +97,6 @@ public class User implements Serializable {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setSalt(String salt) {
-        this.salt = salt;
     }
 
     public User() {

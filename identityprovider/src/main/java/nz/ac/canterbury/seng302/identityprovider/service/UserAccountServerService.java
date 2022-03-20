@@ -48,6 +48,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         reply.setUsername(user.getUsername());
         reply.setFirstName(user.getFirstName());
         reply.setLastName(user.getLastName());
+        reply.setNickname(user.getNickname());
+        reply.setPersonalPronouns(user.getPersonalPronouns());
         reply.setBio(user.getBio());
         reply.setEmail(user.getEmail());
         reply.addAllRoles(user.getRoles());

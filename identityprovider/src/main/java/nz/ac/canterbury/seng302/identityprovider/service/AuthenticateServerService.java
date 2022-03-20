@@ -15,7 +15,9 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticationServiceGrpc.AuthenticationServiceImplBase;
 import org.springframework.beans.factory.annotation.Autowired;
 
-
+/**
+ * Grpc service used to authenticate the user.
+ */
 @GrpcService
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
     @Autowired

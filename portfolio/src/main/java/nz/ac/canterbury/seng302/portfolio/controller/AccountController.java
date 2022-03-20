@@ -10,17 +10,23 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
-import java.util.List;
 import java.util.stream.Collectors;
 
-import static java.util.stream.Collectors.toList;
-
+/**
+ * Controller for the account page
+ */
 @Controller
 public class AccountController {
 
     @Autowired
     private UserAccountClientService userAccountClientService;
 
+    /**
+     * Get method for users personal page
+     * @param principal Authentication information containing user info
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Account html page
+     */
     @GetMapping("/account")
     public String account(
             @AuthenticationPrincipal AuthState principal,
@@ -34,14 +40,14 @@ public class AccountController {
         UserResponse idpResponse = userAccountClientService.getUser(id);
 
         User user = new User(idpResponse);
-        model.addAttribute("username", user.username);
-        model.addAttribute("firstName", user.firstName);
-        model.addAttribute("lastName", user.lastName);
-        model.addAttribute("nickname", user.nickname);
-        model.addAttribute("pronouns", user.pronouns);
-        model.addAttribute("email", user.email);
-        model.addAttribute("bio", user.bio);
-        model.addAttribute("roles", user.roles.stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+        model.addAttribute("username", user.getUsername());
+        model.addAttribute("firstName", user.getFirstName());
+        model.addAttribute("lastName", user.getLastName());
+        model.addAttribute("nickname", user.getNickname());
+        model.addAttribute("pronouns", user.getPersonalPronouns());
+        model.addAttribute("email", user.getEmail());
+        model.addAttribute("bio", user.getBio());
+        model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
         return "account";
     }
 
