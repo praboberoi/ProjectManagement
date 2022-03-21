@@ -43,3 +43,9 @@ css for the body of each page
     padding-bottom: 0px;
     margin-bottom: 0px;
 }
+
+.page-title {
+    text-align: center;
+    background-color: #F0B92A;
+    border-radius: 20px;
+}

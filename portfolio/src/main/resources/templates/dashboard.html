@@ -28,11 +28,15 @@
     <!--<p>Here are your current projects</p>-->
     <br>
     <div class="current_projects">
-        <table class="table">
+        <table class="table table-borderless">
             <thead>
-            <tr>
+            <tr class="page-title">
                 <th>
                     <h2>Current Projects</h2>
+                </th>
+            </tr>
+            <tr>
+                <th>
                     <a class="btn btn-primary" th:href="@{/dashboard/newProject}">Create Project</a>
                 </th>
             </tr>
@@ -42,27 +46,25 @@
                 <tr>
                     <td>
                         <div class="card">
-                            <div class="card-header">
-                                <div class="container-fluid">
-                                    <div class="row">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="card-body">
                                         <div class="col-md-8">
                                             <!-- make a link to go to project detail page -->
                                             <!--<h2 th:text="'Name:  '  + ${project.projectName}"/>-->
-                                            <h2><a th:href="@{'/project/'+ ${project.projectId}}" th:text="'Name:  '  + ${project.projectName}" >Project Details</a></h2>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
+                                            <h5 class="card-title">
+                                                <a th:href="@{'/project/'+ ${project.projectId}}" th:text="${project.projectName}">Project Details</a>
+                                            </h5>
+                                            <h6 class="card-subtitle mb-2 text-muted">
+                                                <p th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
+                                            </h6>
+                                            <p class="card-text" th:text="${project.description}"/>
+                                            <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                            <button type="button" class="btn btn-outline-primary"><a th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a></button>
+                                            <!--                                    <a href="./project" class="btn btn-primary">Go to details</a>-->
                                         </div>
                                     </div>
-
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                <h4>Description</h4>
-                                <p th:text="${project.description}"/>
-                                <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
-                                <a class="btn btn-primary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
-                                <!--                                    <a href="./project" class="btn btn-primary">Go to details</a>-->
                             </div>
                         </div>
                     </td>
@@ -71,18 +73,6 @@
             </tbody>
 
         </table>
-
-<!--                    <div class="project_card">-->
-<!--                        <h5 class="card-header">Default Project</h5>-->
-<!--                        <div class="card-body">-->
-<!--                            &lt;!&ndash;<h5 class="card-title">Special title treatment</h5>&ndash;&gt;-->
-<!--                            &lt;!&ndash;<p class="card-text">With supporting text below a.</p>&ndash;&gt;-->
-
-<!--                            <a href="./project" class="btn btn-primary">Go to details</a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--        <p><a href="./project">Default Project</a></p>-->
     </div>
 </div>
 
