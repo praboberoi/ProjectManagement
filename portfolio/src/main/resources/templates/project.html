@@ -18,7 +18,7 @@
 
 <body>
 <div class="main">
-  <h2 id="name">Project Name</h2>
+  <h2 id="name">[[${project.projectName}]]</h2>
   <!--<p>Project Description</p>-->
   <!--<h1 th:text="${newproject}"/>-->
   <div class="btn-group" role="group" aria-label="Basic example">
@@ -30,15 +30,11 @@
 
   <div class="card">
     <div class="card-header">
-      Project Description   01/02/2022 - 03/02/2022
+      Duration: [[${project.startDate}]] to [[${project.endDate}]]
     </div>
     <div class="card-body">
-      <h5 class="card-title">Group project for 2022</h5>
-      <p class="card-text">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, velit et vehicula gravida,
-        dolor lorem semper velit, id posuere sapien nibh a dui. Suspendisse sapien diam, sollicitudin ac placerat vel,
-        rutrum at arcu. Maecenas finibus blandit erat tincidunt venenatis. Curabitur cursus sed neque molestie ornare.
-        Interdum et malesuada fames ac ante ipsum primis in faucibus. Vivamus quis lacus libero. Nullam mattis tempor dui,
-        semper fringilla felis ullamcorper ut. Mauris laoreet laoreet lacus a volutpat.  </p>
+      <h5 class="card-title">Project Description:</h5>
+      <p class="card-text">[[${project.Description}]]</p>
       <!--<a href="./calender" class="btn btn-primary">Edit details</a>-->
     </div>
   </div>
