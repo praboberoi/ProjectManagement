@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,8 +8,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-
-import java.util.List;
 
 @Controller
 public class ProjectController {
@@ -37,7 +34,7 @@ public class ProjectController {
         newSprint.setSprintName("Sprint " + sprintNo);
         model.addAttribute("sprint", newSprint);
         model.addAttribute("pageTitle","Add new sprint");
-        return "sprint_form";
+        return "sprintForm";
     }
 
     /**
@@ -65,7 +62,7 @@ public class ProjectController {
         Sprint sprint = sprintService.getSprintById(sprintId);
         model.addAttribute("sprint", sprint);
         model.addAttribute("pageTitle", "Edit Sprint (Name: " + sprintId + ")");
-        return "sprint_form";
+        return "sprintForm";
 
 
     }
