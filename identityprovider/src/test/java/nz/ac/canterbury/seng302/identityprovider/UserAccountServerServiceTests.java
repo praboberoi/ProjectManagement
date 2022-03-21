@@ -20,6 +20,9 @@ import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+/**
+ * Unit tests for methods in the UserAccountServerService class
+ */
 @SpringBootTest
 class UserAccountServerServiceTests {
 
@@ -32,6 +35,10 @@ class UserAccountServerServiceTests {
         userAccountServerService = new UserAccountServerService(userRepository);
     }
 
+    /**
+     * Tests blue sky data for registering a user
+     * @throws Exception thrown during awaitCompletion method
+     */
     @Test
     void testUserCreation() throws Exception {
         UserRegisterRequest request = UserRegisterRequest.newBuilder()
