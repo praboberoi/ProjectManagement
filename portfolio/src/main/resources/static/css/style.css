@@ -145,26 +145,35 @@ body {
 }
 
 .box1 {
-    width:100%;
+    width:80%;
+    /*align-items: center;*/
+    /*padding to centre text*/
+    /*padding-left: 150px;*/
+    /*padding-top: 25px;*/
+    margin: 40px auto;
     height:130px;
     background:#efb83c;
     border-radius: 30px 30px 30px 30px;
-    padding: 40px 10px;
-
-
+    /*padding: 40px 10px;*/
 }
-
 
 .page-title, .page-instruction {
     font-family: 'Poppins', sans-serif;
     color: #07173b;
 }
 
+
 .page-title {
-    font-size: 24px;
+    font-size: 10px;
     margin: 20px auto;
-    align-items: center;
-    justify-content: center;
+
+    /* below does not seem to be working*/
+    /*align-items: center;*/
+    /*display: flex;*/
+    /*justify-content: center;*/
+
+    text-align: center;
+    padding-top: 40px;
 
 }
 
@@ -173,7 +182,7 @@ body {
     margin: 40px auto;
     text-align: left;
     padding-left: 60px;
-    width:100%;
+    width:80%;
 
     border-radius: 30px;
     border-color: #07173B;
