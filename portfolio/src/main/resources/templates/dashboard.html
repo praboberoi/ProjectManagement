@@ -53,15 +53,18 @@
                                             <!-- make a link to go to project detail page -->
                                             <!--<h2 th:text="'Name:  '  + ${project.projectName}"/>-->
                                             <h5 class="card-title">
-                                                <a th:href="@{'/project/'+ ${project.projectId}}" th:text="${project.projectName}">Project Details</a>
+                                                <a class=project-name th:href="@{'/project/'+ ${project.projectId}}" th:text="${project.projectName}">Project Details</a>
                                             </h5>
                                             <h6 class="card-subtitle mb-2 text-muted">
                                                 <p th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
                                             </h6>
                                             <p class="card-text" th:text="${project.description}"/>
-                                            <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
-                                            <button type="button" class="btn btn-outline-primary"><a th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a></button>
-                                            <!--                                    <a href="./project" class="btn btn-primary">Go to details</a>-->
+
+                                            <div class="btn-group">
+                                                    <a class="btn btn-primary text-center" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                                    <a class="btn btn-secondary text-center" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
+                                                <!---                                  <a href="./project" class="btn btn-primary">Go to details</a>-->
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
