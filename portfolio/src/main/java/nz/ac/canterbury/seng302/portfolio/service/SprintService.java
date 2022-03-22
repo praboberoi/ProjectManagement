@@ -53,9 +53,6 @@ public class SprintService {
     public void saveSprint(Sprint sprint) {
         if (currentSprint == null) {
             sprintRepository.save(sprint);
-
-            System.out.println("new");
-            System.out.println(sprint.getSprintId());
         } else {
             currentSprint.setSprintName(sprint.getSprintName());
             currentSprint.setDescription(sprint.getDescription());
