@@ -70,14 +70,15 @@
                 <br>
                 <h4>Great to see you <span th:text="${firstName} + '!'"> </span></h4>
                 <br>
-
+                <!-- card: to create a box outline to contain form-->
                 <div class="card">
                     <div class="container-fluid">
                         <div class="card-body">
-
+                            <!-- badges -->
                             <h6><span class="badge bg-success" th:text="${roles}"></span> member</h6>
                             <h6><span class="badge bg-secondary"> Add date joined</span></h6>
                             <br>
+                            <form>
                             <table class="table table-borderless">
                                 <tbody>
                                     <tr class ="d-flex">
@@ -114,6 +115,7 @@
                                     </tr>
                                 </tbody>
                             </table>
+                            </form>
 
 
 <!--                                <h6>First Name: <span th:text="${firstName}"></span></h6>-->
