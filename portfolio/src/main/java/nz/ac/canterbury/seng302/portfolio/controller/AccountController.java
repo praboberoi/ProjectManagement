@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.GreeterClientService;
 import nz.ac.canterbury.seng302.shared.enums.Roles;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -39,5 +40,25 @@ public class AccountController {
         model.addAttribute("roles", String.join(",", user.roles.stream().map(Roles::getRole).collect(toList())));
         return "account";
     }
+
+    @GetMapping("/editAccount")
+    public String showNewForm(
+            @AuthenticationPrincipal AuthState principal,
+            @RequestParam(name="userId", required=false) String favouriteColour,
+            Model model
+    ) {
+        Datastore db = new Datastore();
+        User user = UserDAL.getUserByUsername(db, principal.getClaims(1).getValue());
+        model.addAttribute("username", user.username);
+        model.addAttribute("firstName", user.firstName);
+        model.addAttribute("lastName", user.lastName);
+        model.addAttribute("nickname", user.nickname);
+        model.addAttribute("pronouns", user.pronouns);
+        model.addAttribute("email", user.email);
+        model.addAttribute("bio", user.bio);
+        model.addAttribute("roles", String.join(",", user.roles.stream().map(Roles::getRole).collect(toList())));
+        return "editAccount";
+    }
+
 
 }
