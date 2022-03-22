@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
@@ -9,6 +10,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.time.LocalDate;
+import java.time.Period;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
+import java.util.Date;
 import java.util.stream.Collectors;
 
 /**
@@ -50,7 +57,50 @@ public class AccountController {
         model.addAttribute("email", user.getEmail());
         model.addAttribute("bio", user.getBio());
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+
+        // Convert Date into LocalDate
+        LocalDate creationDate = user.getDateCreated()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        model.addAttribute("creationDate",
+                creationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+        model.addAttribute("timePassed", getTimePassed(creationDate));
+
         return "account";
+    }
+
+    private String getTimePassed(LocalDate creationDate) {
+        String timePassed = "(";
+        LocalDate currentDate = new Date()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+        Period period = Period.between(currentDate, creationDate);
+        if (period.getYears() != 0) {
+            if (period.getYears() == 1) {
+                timePassed += period.getYears() + " Year, ";
+            } else {
+                timePassed += period.getYears() + " Years, ";
+            }
+        }
+
+        if (period.getMonths() != 0 || period.getYears() != 0) {
+            if (period.getMonths() == 1) {
+                timePassed += period.getMonths() + " Month";
+            } else {
+                timePassed += period.getMonths() + " Months";
+            }
+        } else {
+            if (period.getDays() == 1) {
+                timePassed += period.getDays() + " Day";
+            } else {
+                timePassed += period.getDays() + " Days";
+            }
+        }
+
+        return timePassed + ")";
     }
 
 }

@@ -1,12 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 
-import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -30,6 +29,8 @@ public class User implements Serializable {
     private String email;
 
     private List<UserRole> roles = new ArrayList<>();
+
+    private Date dateCreated;
 
     public int getUserId() {
         return userId;
@@ -67,6 +68,10 @@ public class User implements Serializable {
         return roles;
     }
 
+    public Date getDateCreated() {
+        return dateCreated;
+    }
+
     public void setUserId(int userId) {
         this.userId = userId;
     }
@@ -99,6 +104,10 @@ public class User implements Serializable {
         this.email = email;
     }
 
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
     public User() {
 
     }
@@ -112,5 +121,6 @@ public class User implements Serializable {
         this.bio = response.getBio();
         this.pronouns = response.getPersonalPronouns();
         this.roles = response.getRolesList();
+        this.dateCreated = new Date(response.getCreated().getSeconds());
     }
 }

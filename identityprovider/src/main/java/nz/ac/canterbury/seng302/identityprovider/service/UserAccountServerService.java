@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
@@ -8,6 +9,8 @@ import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.NoSuchElementException;
 
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
@@ -45,10 +48,18 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onCompleted();
     }
 
+    /**
+     * Gets a user object from the db and sets the template elements with the user's details
+     * @param request Request containing the users id
+     * @param responseObserver Returns to previous method with data
+     */
     @Override
-    public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) {
+    public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) throws NoSuchElementException {
         UserResponse.Builder reply = UserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getId());
+        if (user == null) {
+            throw new NoSuchElementException("User doesn't exist");
+        }
         reply.setUsername(user.getUsername());
         reply.setFirstName(user.getFirstName());
         reply.setLastName(user.getLastName());
@@ -57,6 +68,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         reply.setBio(user.getBio());
         reply.setEmail(user.getEmail());
         reply.addAllRoles(user.getRoles());
+        reply.setCreated(Timestamp.newBuilder()
+                .setSeconds(user.getDateCreated().getTime())
+                .build());
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }

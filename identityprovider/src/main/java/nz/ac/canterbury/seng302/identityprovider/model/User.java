@@ -5,6 +5,8 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
+import java.util.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -46,6 +48,9 @@ public class User implements Serializable {
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<UserRole> roles = new ArrayList<>();
+
+    @Temporal(TemporalType.TIMESTAMP)
+    public Date dateCreated;
 
     public int getUserId() {
         return userId;
@@ -89,6 +94,10 @@ public class User implements Serializable {
 
     public List<UserRole> getRoles() {
         return roles;
+    }
+
+    public Date getDateCreated() {
+        return dateCreated;
     }
 
     public void setUserId(int userId) {
@@ -135,6 +144,10 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
+    public void setDateCreated(Date dateCreated) {
+        this.dateCreated = dateCreated;
+    }
+
     /**
      * Blank constructor required by JPA
      */
@@ -159,5 +172,7 @@ public class User implements Serializable {
         this.password = password;
         this.salt = salt;
         this.roles.add(UserRole.STUDENT);
+        this.dateCreated = new Timestamp(new Date().getTime());
+        // this.dateCreated = Timestamp.newBuilder().setSeconds(time.getEpochSecond()).build();
     }
 }
