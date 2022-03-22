@@ -45,7 +45,7 @@
             <th:block th:each="project : ${listProjects}">
                 <tr>
                     <td>
-                        <div class="card">
+                        <div class="card project-card">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="card-body">
@@ -55,16 +55,12 @@
                                             <h5 class="card-title">
                                                 <a class=project-name th:href="@{'/project/'+ ${project.projectId}}" th:text="${project.projectName}">Project Details</a>
                                             </h5>
-                                            <h6 class="card-subtitle mb-2 text-muted">
-                                                <p th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
+                                            <h6 class="card-subtitle mb-2 text-muted"> <!-- displays the date start - finish -->
+                                                <p style="color: #07173B" th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
                                             </h6>
                                             <p class="card-text" th:text="${project.description}"/>
-
-                                            <div class="btn-group">
-                                                    <a class="btn btn-primary text-center" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
-                                                    <a class="btn btn-secondary text-center" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
-                                                <!---                                  <a href="./project" class="btn btn-primary">Go to details</a>-->
-                                            </div>
+                                                <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                                <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
                                         </div>
                                     </div>
                                 </div>
