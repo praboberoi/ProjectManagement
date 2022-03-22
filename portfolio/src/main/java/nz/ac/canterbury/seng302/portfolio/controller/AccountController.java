@@ -41,12 +41,8 @@ public class AccountController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
-        int id = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("-100"));
-        UserResponse idpResponse = userAccountClientService.getUser(id);
+
+        UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
         model.addAttribute("username", user.getUsername());
@@ -77,7 +73,7 @@ public class AccountController {
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
                 .toLocalDate();
-        Period period = Period.between(currentDate, creationDate);
+        Period period = Period.between(creationDate, currentDate);
         if (period.getYears() != 0) {
             if (period.getYears() == 1) {
                 timePassed += period.getYears() + " Year, ";

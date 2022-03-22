@@ -48,7 +48,28 @@ public class UserAccountClientService {
         return response;
     }
 
+    /**
+     * Get user account with id
+     * @param id The id of the account to get
+     * @return Response containing user info
+     * @throws StatusRuntimeException
+     */
     public UserResponse getUser(int id) throws StatusRuntimeException {
+        UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
+        return response;
+    }
+
+    /**
+     * Gets currently logged-in user's account
+     * @param principal The security principal of the currently logged-in user
+     * @return Response containing user info
+     */
+    public UserResponse getUser(AuthState principal) {
+        int id = Integer.parseInt(principal.getClaimsList().stream()
+                .filter(claim -> claim.getType().equals("nameid"))
+                .findFirst()
+                .map(ClaimDTO::getValue)
+                .orElse("-100"));
         UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
         return response;
     }
