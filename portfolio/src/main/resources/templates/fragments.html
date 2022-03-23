@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:fragment = "header">
   <!-- Bootstrap -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
@@ -16,29 +16,38 @@
 <body>
 <!--fragment for header using bootstrap-->
 <header>
-  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top" style="background-color: #07173B !important;">
     <div class="container-fluid">
       <a class="navbar-brand" href="../dashboard">LENSfolio</a>
-      <div class="nav-item dropdown">
-        <a class="navbar-brand nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          Username
+      <ul class="nav navbar-nav navbar-right">
+        <li><a class="navbar-brand" href="../dashboard">
+          <img src="/icons/home-icon.svg" alt="Home" height=28 width=28 class="d-inline-block align-text-top">
         </a>
-        <div class="bg-dark navbar-dark dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
-          <a class="navbar-brand dropdown-item" href="../account">Account</a>
-          <a class="navbar-brand dropdown-item" href="/logout">Logout</a>
+        </li>
+        <div class="nav-item dropdown">
+
+          <a class="navbar-brand nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+            Username
+            <img src="/icons/user-icon.svg" alt="Account" height="28 width=28" class="d-inline-block align-text-top">
+          </a>
+          <div class="bg-dark navbar-dark dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
+            <a class="navbar-brand dropdown-item" href="../account">Account</a>
+            <a class="navbar-brand dropdown-item" href="/logout">Logout</a>
+          </div>
         </div>
-      </div>
-
-      <!-- button toggle for mobile
-      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-          <span class="navbar-toggler-icon"></span>
-      </button>
-      -->
-
-
+      </ul>
     </div>
   </nav>
 </header>
+<div th:fragment="login-header">
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+    <div class="container-fluid">
+      <a class="navbar-brand" >LENSfolio</a>
+      <!--      <a class="navbar-brand" href="../account">Username</a>-->
+      <!--      <img src="/icons/user-icon.svg" alt="Account" height="28 width=28"-->
+    </div>
+  </nav>
+</div>
 
 <!--fragment for sidebar-->
 <nav th:fragment = "menu">
