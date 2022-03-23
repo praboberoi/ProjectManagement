@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 @Controller
-public class ProjectController {
+public class SprintController {
     @Autowired private SprintService sprintService;
 
 //    @GetMapping("/project/${projectId}")
