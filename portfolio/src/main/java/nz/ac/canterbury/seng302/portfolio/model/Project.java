@@ -1,18 +1,18 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.sql.Date;
 import java.util.Objects;
 
 /**
  * Creates a Project class required that maps to a table in the database
  */
 @Entity
-public class Project implements Serializable {
+public class Project {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private int projectId;
 
     /**
@@ -31,12 +31,12 @@ public class Project implements Serializable {
      * Start Date of the project.
      */
     @Column(nullable = false)
-    private String startDate;
+    private Date startDate;
     /**
      * End Date of the project.
      */
     @Column(nullable = false)
-    private String endDate;
+    private Date endDate;
 
     /**
      * No args Constructor of the Project.
@@ -50,7 +50,7 @@ public class Project implements Serializable {
      * @param startDate start date of the project.
      * @param endDate end date of the project.
      */
-    public Project(String projectName, String description, String startDate, String endDate) {
+    public Project(String projectName, String description, Date startDate, Date endDate) {
         this.projectName = projectName;
         this.description = description;
         this.startDate = startDate;
@@ -80,7 +80,7 @@ public class Project implements Serializable {
      * Obtains the start date of the project
      * @return startDate of type String
      */
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
@@ -88,7 +88,7 @@ public class Project implements Serializable {
      * Obtains the end date of the project
      * @return endDate of type string
      */
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
@@ -112,7 +112,7 @@ public class Project implements Serializable {
      * Sets the start date of the project
      * @param startDate of type String
      */
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
@@ -120,7 +120,7 @@ public class Project implements Serializable {
      * Sets the end date of the project
      * @param endDate of type String
      */
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
 
@@ -143,8 +143,8 @@ public class Project implements Serializable {
     public static class Builder{
         private String projectName;
         private String description = "";
-        private String startDate;
-        private String endDate;
+        private Date startDate;
+        private Date endDate;
 
         /**
          * Updates the project with the given project name
@@ -171,7 +171,7 @@ public class Project implements Serializable {
          * @param startDate of type
          * @return Builder object
          */
-        public Builder startDate(String startDate) {
+        public Builder startDate(Date startDate) {
             this.startDate = startDate;
             return this;
         }
@@ -181,7 +181,7 @@ public class Project implements Serializable {
          * @param endDate of type Sting
          * @return Builder object
          */
-        public Builder endDate(String endDate) {
+        public Builder endDate(Date endDate) {
             this.endDate = endDate;
             return this;
         }

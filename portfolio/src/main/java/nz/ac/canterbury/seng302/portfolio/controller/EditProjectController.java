@@ -9,6 +9,8 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.Date;
+
 
 /**
  * Controller for the edit project details page
@@ -16,8 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class EditProjectController {
     /* Create default project. TODO: use database to check for this*/
-    Project project = new Project("Project 2022", "", "04/Mar/2022",
-                                  "04/Nov/2022");
+    Project project = new Project();
 
     @GetMapping("/edit-project")
     public String projectForm(Model model) {
@@ -36,8 +37,8 @@ public class EditProjectController {
     public String projectSave(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam(value="projectName") String projectName,
-            @RequestParam(value="projectStartDate") String projectStartDate,
-            @RequestParam(value="projectEndDate") String projectEndDate,
+            @RequestParam(value="projectStartDate") Date projectStartDate,
+            @RequestParam(value="projectEndDate") Date projectEndDate,
             @RequestParam(value="projectDescription") String projectDescription,
             Model model
     ) {

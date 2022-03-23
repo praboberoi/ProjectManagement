@@ -1,29 +1,27 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
-import java.io.Serializable;
+import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 @Entity
-public class Sprint implements Serializable {
+public class Sprint {
 
     /**
      * ID for the sprint
      */
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(nullable = false, updatable = false)
+    @Column(nullable = false)
     private int sprintId;
 
     /**
      * Project ID that sprint is contained in
      * Foreign key
      */
-    @ManyToOne
-    @JoinColumn(
-            name = "projectId",
-            referencedColumnName = "projectId"
-    )
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "projectId", nullable = false)
     private Project project;
 
     /**
@@ -42,17 +40,17 @@ public class Sprint implements Serializable {
      * Start date of sprint
      */
     @Column(nullable = false)
-    private String startDate;
+    private Date startDate;
     /**
      * End date of sprint
      */
     @Column(nullable = false)
-    private String endDate;
+    private Date endDate;
 
     public Sprint() {
     }
 
-    public Sprint(Project project, String sprintName, String description, String startDate, String endDate) {
+    public Sprint(Project project, String sprintName, String description, Date startDate, Date endDate) {
         this.project = project;
         this.sprintName = sprintName;
         this.description = description;
@@ -88,20 +86,28 @@ public class Sprint implements Serializable {
         this.description = description;
     }
 
-    public String getStartDate() {
+    public Date getStartDate() {
         return startDate;
     }
 
-    public void setStartDate(String startDate) {
+    public void setStartDate(Date startDate) {
         this.startDate = startDate;
     }
 
-    public String getEndDate() {
+    public Date getEndDate() {
         return endDate;
     }
 
-    public void setEndDate(String endDate) {
+    public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public String getStartDateString() {
+        return new SimpleDateFormat("dd/MMMM/yyyy").format(startDate);
+    }
+
+    public String getEndDateString() {
+        return new SimpleDateFormat("dd/MMMM/yyyy").format(endDate);
     }
 
     @Override
@@ -123,8 +129,8 @@ public class Sprint implements Serializable {
     public static class Builder {
         private String sprintName;
         private String description = "";
-        private String startDate;
-        private String endDate;
+        private Date startDate;
+        private Date endDate;
         private Project project;
 
 
@@ -138,12 +144,12 @@ public class Sprint implements Serializable {
             return this;
         }
 
-        public Builder startDate(String startDate) {
+        public Builder startDate(Date startDate) {
             this.startDate = startDate;
             return this;
         }
 
-        public Builder endDate(String endDate) {
+        public Builder endDate(Date endDate) {
             this.endDate = endDate;
             return this;
         }

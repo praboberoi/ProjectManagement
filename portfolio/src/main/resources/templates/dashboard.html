@@ -14,6 +14,12 @@
     <!-- do not include fragments that are not in use PARSING ERROR -->
     <!--<head th:replace="fragments :: content"></head>-->
     <title>Dashboard</title>
+    <style>
+        .required:after {
+            content:"*";
+            color: red;
+        }
+    </style>
 </head>
 
 <!--fragments-->

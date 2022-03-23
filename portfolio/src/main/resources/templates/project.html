@@ -57,7 +57,7 @@
     <table class="table table-bordered table-hover">
       <thead class = "table-light">
       <tr>
-        <th scope="col">Sprint Number</th>
+        <th scope="col">Sprint Name</th>
         <th scope="col">Description</th>
         <th scope="col">Start Date</th>
         <th scope="col">End Date</th>
@@ -68,7 +68,7 @@
       
       <th:block th:each="sprint : ${listSprints}">
         <tr>
-          <td>[[${sprint.sprintId}]]</td>
+          <td>[[${sprint.sprintName}]]</td>
           <td>[[${sprint.description}]]</td>
           <td>[[${sprint.startDate}]]</td>
           <td>[[${sprint.endDate}]]</td>
