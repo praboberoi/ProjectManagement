@@ -63,7 +63,7 @@ public class DashboardController {
     public String showNewForm(Model model) {
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
-        return "project_form";
+        return "projectForm";
     }
 
     /**
@@ -88,7 +88,7 @@ public class DashboardController {
         Project project  = dashboardService.getProject(projectId);
         model.addAttribute("project", project);
         model.addAttribute("pageTitle", "Edit Project (Name: " + projectId + ")");
-        return "project_form";
+        return "projectForm";
     }
 
     /**

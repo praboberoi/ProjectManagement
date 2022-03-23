@@ -22,17 +22,21 @@
 
 <body>
 <div class="main">
-    <div>
-        <!-- Button trigger modal - Create Project -->
-    </div>
+
     <!--<p>Here are your current projects</p>-->
     <br>
+    <div class="page-title">
+        <h2>Current Projects</h2>
+    </div>
     <div class="current_projects">
-        <table class="table">
+        <table class="table table-borderless">
             <thead>
             <tr>
                 <th>
-                    <h2>Current Projects</h2>
+                </th>
+            </tr>
+            <tr>
+                <th>
                     <a class="btn btn-primary" th:href="@{/dashboard/newProject}">Create Project</a>
                 </th>
             </tr>
@@ -41,28 +45,25 @@
             <th:block th:each="project : ${listProjects}">
                 <tr>
                     <td>
-                        <div class="card">
-                            <div class="card-header">
-                                <div class="container-fluid">
-                                    <div class="row">
+                        <div class="card project-card">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="card-body">
                                         <div class="col-md-8">
                                             <!-- make a link to go to project detail page -->
                                             <!--<h2 th:text="'Name:  '  + ${project.projectName}"/>-->
-                                            <h2><a th:href="@{'/project/'+ ${project.projectId}}" th:text="'Name:  '  + ${project.projectName}" >Project Details</a></h2>
-                                        </div>
-                                        <div class="col-md-4">
-                                            <p th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
+                                            <h5 class="card-title">
+                                                <a class=project-name th:href="@{'/project/'+ ${project.projectId}}" th:text="${project.projectName}">Project Details</a>
+                                            </h5>
+                                            <h6 class="card-subtitle mb-2 text-muted"> <!-- displays the date start - finish -->
+                                                <p style="color: #07173B" th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
+                                            </h6>
+                                            <p class="card-text" th:text="${project.description}"/>
+                                                <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                                <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
                                         </div>
                                     </div>
-
                                 </div>
-                            </div>
-                            <div class="card-body">
-                                <h4>Description</h4>
-                                <p th:text="${project.description}"/>
-                                <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
-                                <a class="btn btn-primary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
-                                <!--                                    <a href="./project" class="btn btn-primary">Go to details</a>-->
                             </div>
                         </div>
                     </td>
@@ -71,18 +72,6 @@
             </tbody>
 
         </table>
-
-<!--                    <div class="project_card">-->
-<!--                        <h5 class="card-header">Default Project</h5>-->
-<!--                        <div class="card-body">-->
-<!--                            &lt;!&ndash;<h5 class="card-title">Special title treatment</h5>&ndash;&gt;-->
-<!--                            &lt;!&ndash;<p class="card-text">With supporting text below a.</p>&ndash;&gt;-->
-
-<!--                            <a href="./project" class="btn btn-primary">Go to details</a>-->
-<!--                        </div>-->
-<!--                    </div>-->
-
-<!--        <p><a href="./project">Default Project</a></p>-->
     </div>
 </div>
 
