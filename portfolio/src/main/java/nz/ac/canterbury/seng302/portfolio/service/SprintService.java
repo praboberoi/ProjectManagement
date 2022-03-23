@@ -59,9 +59,6 @@ public class SprintService {
             currentSprint.setStartDate(sprint.getStartDate());
             currentSprint.setEndDate(sprint.getEndDate());
             sprintRepository.save(currentSprint);
-
-            System.out.println("edit");
-            System.out.println(sprint.getSprintId());
             currentSprint = null;
         }
     }
@@ -75,9 +72,6 @@ public class SprintService {
     public Sprint getSprint(int sprintId){
         Optional<Sprint> result = sprintRepository.findById(sprintId);
         currentSprint = result.get();
-
-        System.out.println("found same");
-        System.out.println(sprintId);
         return currentSprint;
     }
 

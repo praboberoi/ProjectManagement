@@ -64,8 +64,6 @@ public class SprintController {
     public String saveSprint(@PathVariable int projectId, Sprint sprint) throws Exception {
         sprint.setProject(projectService.getProjectById(projectId));
         sprintService.saveSprint(sprint);
-//        model.addAttribute("sprint", sprint);
-//        System.out.println(sprint);
         return "redirect:/project/{projectId}";
     }
 
@@ -82,9 +80,6 @@ public class SprintController {
         Sprint sprint = sprintService.getSprint(sprintId);
         model.addAttribute("sprint", sprint);
         model.addAttribute("pageTitle", "Edit Sprint (Name: " + sprintId + ")");
-
-        System.out.println("form");
-        System.out.println(sprintId);
         return "sprint_form";
 
 

@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
-import java.io.Serializable;
 import java.sql.Date;
 import java.util.Objects;
 
