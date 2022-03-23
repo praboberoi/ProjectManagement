@@ -6,3 +6,6 @@
 */src/generated/
 */bin/
 .vs/
+
+*/src/main/resources/database/
+src/main/resources/database/projectDB.mv.db

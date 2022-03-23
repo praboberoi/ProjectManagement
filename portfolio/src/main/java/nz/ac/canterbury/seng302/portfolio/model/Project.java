@@ -18,7 +18,6 @@ public class Project implements Serializable {
     /**
      * Name of the project
      */
-
     @Column(nullable = false)
     private String projectName;
 

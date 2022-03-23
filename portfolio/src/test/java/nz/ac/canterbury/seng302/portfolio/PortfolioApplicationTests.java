@@ -14,15 +14,15 @@ class PortfolioApplicationTests {
     void contextLoads() {
     }
 
-    @Test
-    void testDeleteProject() throws Exception {
-        Project testProject = new Project("testProject", "project to test the delete method",
-                "12-12-2019", "08-08-2020");
-        int projId = testProject.getProjectId();
-        DashboardService dashboardService = new DashboardService();
-        dashboardService.deleteProject(projId);
-        assertEquals(null, dashboardService.getProject(projId), "Project should not be found");
-
-    }
+//    @Test
+//    void testDeleteProject() throws Exception {
+//        Project testProject = new Project("testProject", "project to test the delete method",
+//                "12-12-2019", "08-08-2020");
+//        int projId = testProject.getProjectId();
+//        DashboardService dashboardService = new DashboardService();
+//        dashboardService.deleteProject(projId);
+//        assertEquals(null, dashboardService.getProject(projId), "Project should not be found");
+//
+//    }
 
 }
