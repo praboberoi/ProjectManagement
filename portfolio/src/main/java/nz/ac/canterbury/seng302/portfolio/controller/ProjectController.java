@@ -80,16 +80,4 @@ public class ProjectController {
         return "redirect:/project/{projectId}";
     }
 
-
-
-
-
-//    @GetMapping
-//    String getProject(Model model){
-//        model.addAttribute("project", model);
-//            return "project";
-//
-//    }
-
-
 }
