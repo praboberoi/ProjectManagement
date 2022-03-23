@@ -1,88 +1,165 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.sql.Date;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Objects;
 
-@Entity // this is an entity, assumed to be in a table called Sprint
+@Entity
 public class Sprint {
+
+    /**
+     * ID for the sprint
+     */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private int id;
-    private int parentProjectId;
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(nullable = false)
+    private int sprintId;
+
+    /**
+     * Project ID that sprint is contained in
+     * Foreign key
+     */
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "projectId", nullable = false)
+    private Project project;
+
+    /**
+     * Name of Sprint
+     */
+    @Column(nullable = false)
     private String sprintName;
-    private String sprintLabel;
-    private String sprintDescription;
-    private Date sprintStartDate;
-    private Date sprintEndDate;
 
-    protected Sprint() {}
+    /**
+     * Description of sprint
+     */
+    @Column
+    private String description;
 
-    public Sprint(int parentProjectId, String sprintName, String sprintLabel, String sprintDescription, Date sprintStartDate, Date sprintEndDate) {
-        this.parentProjectId = parentProjectId;
+    /**
+     * Start date of sprint
+     */
+    @Column(nullable = false)
+    private Date startDate;
+    /**
+     * End date of sprint
+     */
+    @Column(nullable = false)
+    private Date endDate;
+
+    public Sprint() {
+    }
+
+    public Sprint(Project project, String sprintName, String description, Date startDate, Date endDate) {
+        this.project = project;
         this.sprintName = sprintName;
-        this.sprintLabel = sprintLabel;
-        this.sprintDescription = sprintDescription;
-        this.sprintStartDate = sprintStartDate;
-        this.sprintEndDate = sprintEndDate;
+        this.description = description;
+        this.startDate = startDate;
+        this.endDate = endDate;
     }
 
-    @Override
-    public String toString() {
-        return String.format(
-                "Sprint[id=%d, parentProjectId='%d', sprintName='%s', sprintLabel='%s', sprintStartDate='%s', sprintEndDate='%s', sprintDescription='%s']",
-                id, parentProjectId, sprintName, sprintLabel, sprintStartDate, sprintEndDate, sprintDescription);
+    public int getSprintId() {
+        return sprintId;
     }
 
+    public Project getProject() {
+        return project;
+    }
 
-    public int getId(){
-        return  id;
+    public void setProject(Project project) {
+        this.project = project;
     }
-    public int getParentProjectId() {
-        return parentProjectId;
-    }
-    public String getName() {
+
+    public String getSprintName() {
         return sprintName;
     }
-    public String getLabel() {
-        return sprintLabel;
+
+    public void setSprintName(String sprintName) {
+        this.sprintName = sprintName;
     }
-    public String getDescription(){
-        return sprintDescription;
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getStartDate() {
-        return sprintStartDate;
+        return startDate;
     }
 
-    public String getStartDateString() {
-        return Project.dateToString(this.sprintStartDate);
-    }
-
-    public void setStartDate(Date newStartDate) {
-        this.sprintStartDate = newStartDate;
-    }
-
-    public void setStartDateString(String date) {
-        this.sprintStartDate = Project.stringToDate(date);
+    public void setStartDate(Date startDate) {
+        this.startDate = startDate;
     }
 
     public Date getEndDate() {
-        return sprintEndDate;
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
+    }
+
+    public String getStartDateString() {
+        return new SimpleDateFormat("dd/MMMM/yyyy").format(startDate);
     }
 
     public String getEndDateString() {
-        return Project.dateToString(this.sprintEndDate);
+        return new SimpleDateFormat("dd/MMMM/yyyy").format(endDate);
     }
 
-    public void setEndDate(Date newEndDate) {
-        this.sprintEndDate = newEndDate;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Sprint)) return false;
+        Sprint sprint = (Sprint) o;
+        return sprintId == sprint.sprintId && Objects.equals(project, sprint.project) && Objects.equals(sprintName, sprint.sprintName) && description.equals(sprint.description) && Objects.equals(startDate, sprint.startDate) && Objects.equals(endDate, sprint.endDate);
     }
 
-    public void setEndDateString(String date) {
-        this.sprintStartDate = Project.stringToDate(date);
+    @Override
+    public int hashCode() {
+        return Objects.hash(sprintId, project, sprintName, description, startDate, endDate);
+    }
+
+    /**
+     * Builder class to build the sprint
+     */
+    public static class Builder {
+        private String sprintName;
+        private String description = "";
+        private Date startDate;
+        private Date endDate;
+        private Project project;
+
+
+        public Builder sprintName(String sprintName) {
+            this.sprintName = sprintName;
+            return this;
+        }
+
+        public Builder description(String description) {
+            this.description = description;
+            return this;
+        }
+
+        public Builder startDate(Date startDate) {
+            this.startDate = startDate;
+            return this;
+        }
+
+        public Builder endDate(Date endDate) {
+            this.endDate = endDate;
+            return this;
+        }
+
+        public Builder project(Project project) {
+            this.project = project;
+            return this;
+        }
+        public Sprint build() {
+            return new Sprint(project, sprintName, description, startDate, endDate);
+        }
     }
 }

@@ -1,0 +1,45 @@
+/*
+css for the body of each page
+ */
+
+.main{
+    padding-right: 40px;
+    padding-left: 300px;
+    padding-top: 80px;
+}
+
+/*
+.current_projects{
+    display: inline-block;
+    width: 100px;
+    border: #dedede;
+    border-radius: 8px;
+    border: 1px solid;
+
+    text-align: center;
+}
+
+ */
+
+.project_card{
+    max-width: 18rem;
+    border: #dedede;
+    border-radius: 8px;
+    border: 1px solid;
+    border-color: #dedede;
+}
+
+.bdr {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+#name {
+    display:inline-block;
+}
+
+.btn-group {
+    padding-left: 50px;
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+}

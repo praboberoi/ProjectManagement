@@ -9,6 +9,8 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.sql.Date;
+
 
 /**
  * Controller for the edit project details page
@@ -16,15 +18,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 @Controller
 public class EditProjectController {
     /* Create default project. TODO: use database to check for this*/
-    Project project = new Project("Project 2022", "", "04/Mar/2022",
-                                  "04/Nov/2022");
+    Project project = new Project();
 
     @GetMapping("/edit-project")
     public String projectForm(Model model) {
         /* Add project details to the model */
-        model.addAttribute("projectName", project.getName());
-        model.addAttribute("projectStartDate", project.getStartDateString());
-        model.addAttribute("projectEndDate", project.getEndDateString());
+        model.addAttribute("projectName", project.getProjectName());
+        model.addAttribute("projectStartDate", project.getStartDate());
+        model.addAttribute("projectEndDate", project.getEndDate());
         model.addAttribute("projectDescription", project.getDescription());
 
 
@@ -36,14 +37,14 @@ public class EditProjectController {
     public String projectSave(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam(value="projectName") String projectName,
-            @RequestParam(value="projectStartDate") String projectStartDate,
-            @RequestParam(value="projectEndDate") String projectEndDate,
+            @RequestParam(value="projectStartDate") Date projectStartDate,
+            @RequestParam(value="projectEndDate") Date projectEndDate,
             @RequestParam(value="projectDescription") String projectDescription,
             Model model
     ) {
-        project.setName(projectName);
-        project.setStartDateString(projectStartDate);
-        project.setEndDateString(projectEndDate);
+        project.setProjectName(projectName);
+        project.setStartDate(projectStartDate);
+        project.setEndDate(projectEndDate);
         project.setDescription(projectDescription);
         return "redirect:/edit-project";
     }
