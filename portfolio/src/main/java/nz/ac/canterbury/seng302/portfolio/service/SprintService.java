@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 // more info here https://codebun.com/spring-boot-crud-application-using-thymeleaf-and-spring-data-jpa/
 
@@ -82,6 +83,15 @@ public class SprintService {
     public void deleteSprint(int sprintId){
 
         sprintRepository.deleteById(sprintId);
+
+    }
+    public void updateSprintNames(List<Sprint> sprintList) {
+        AtomicInteger count = new AtomicInteger(1);
+        sprintList.stream().forEach(sprint -> {
+            sprint.setSprintName("Sprint " + count.getAndIncrement());
+            sprintRepository.save(sprint);
+        });
+
     }
 
     public int countByProjectId(int projectId) {
