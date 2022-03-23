@@ -19,15 +19,10 @@
 <body>
 <!--<header></header>-->
 <div class="main">
-
-  <h2 id="name">[[${project.projectName}]]</h2>
-
-  <!--<p>Project Description</p>-->
-  <!--<h1 th:text="${newproject}"/>-->
-<!--  <div class="btn-group" role="group" aria-label="Basic example">-->
-<!--    <button type="button" class="btn btn-secondary">Details</button>-->
-<!--    <button type="button" class="btn btn-secondary">Calender</button>-->
-<!--  </div>-->
+  <br>
+  <div class="page-title">
+    <h2 id="name">[[${project.projectName}]]</h2>
+  </div>
   <h2></h2>
   <br>
 
@@ -70,20 +65,7 @@
       </tr>
       </thead>
       <tbody>
-      <!-- placeholders
-      <tr>
-          <th scope="row">Sprint 1</th>
-          <td>focus on gui</td>
-          <td>02/02/2022</td>
-          <td>03/02/2022</td>
-      </tr>
-      <tr>
-          <th scope="row">Sprint 2</th>
-          <td>combine with database</td>
-          <td>05/02/2022</td>
-          <td>06/02/2022</td>
-      </tr>
-      -->
+      
       <th:block th:each="sprint : ${listSprints}">
         <tr>
           <td>[[${sprint.sprintId}]]</td>
@@ -98,13 +80,6 @@
         </tr>
 
       </th:block>
-      <!--
-      <th scope="row">Sprint 3</th>
-      <td th:text="${newSprint.description}"></td>
-      <td th:text="${newSprint.startDate}"></td>
-      <td th:text="${newSprint.endDate}"></td>
-      -->
-
       </tbody>
     </table>
   </div>
