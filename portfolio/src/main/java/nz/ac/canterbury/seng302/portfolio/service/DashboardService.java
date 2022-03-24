@@ -55,14 +55,7 @@ public class DashboardService {
      * @param projectId
      * @throws Exception
      */
-    public void deleteProject(int projectId) throws Exception {
-/*
-        Long count = projectRepo.countByProjectName(projectId);
-        if (count == null || count == 0) {
-            throw new Exception("Could not find any projects with project Id" + projectId);
-//          throw new ProjectNotFoundException("Could not find any projects with projectName" + projectName);
-        }
-*/
+    public void deleteProject(int projectId) {
         projectRepo.deleteById(projectId);
     }
 }

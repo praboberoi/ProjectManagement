@@ -69,8 +69,9 @@ public class RegisterController {
     ) {
         UserRegisterResponse idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
         if (idpResponse.getIsSuccess()) {
-            return "redirect:login";
+            return "redirect:/login";
         } else {
+            System.out.println("HELP");
             model.addAttribute("error", idpResponse.getMessage());
             model.addAttribute("username", username);
             model.addAttribute("firstName", firstName);

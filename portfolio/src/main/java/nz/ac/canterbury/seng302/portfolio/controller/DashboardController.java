@@ -3,7 +3,9 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
+import nz.ac.canterbury.seng302.portfolio.service.RoleClientService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -20,6 +22,8 @@ import java.util.List;
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
+    private RoleClientService roleClientService;
+
 
 
     /**
@@ -43,6 +47,9 @@ public class DashboardController {
             listProjects.add(defaultProject);
         }
         model.addAttribute("listProjects", listProjects);
+        if (roleClientService.getUserRole().contains(UserRole.STUDENT)) {
+            return "account";
+        }
         return "dashboard";
     }
 
