@@ -7,11 +7,11 @@ import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
-
-// more info here https://codebun.com/spring-boot-crud-application-using-thymeleaf-and-spring-data-jpa/
 
 @Service
 public class SprintService {
@@ -19,37 +19,34 @@ public class SprintService {
     @Autowired private SprintRepository sprintRepository;
     private Sprint currentSprint = null;
 
-    /**
-     * Get list of all sprints
-     */
-    public List<Sprint> getAllSprints() {
-        List<Sprint> list = (List<Sprint>) sprintRepository.findAll();
-        return list;
-    }
+    public Sprint getNewSprint(Project project){
+        int sprintNo = countByProjectId(project.getProjectId()) + 1;
 
-    /**
-     * Get sprint by id
-     */
-    public Sprint getSprintById(int id) throws Exception {
-        Optional<Sprint> sprint = sprintRepository.findById(id);
-        if(sprint!=null) {
-            return sprint.get();
+        Sprint newSprint = new Sprint();
+        newSprint.setSprintName("Sprint " + sprintNo);
+        List<Sprint> listSprints = getSprintByProject(project.getProjectId());
+        if(listSprints.size() == 0) {
+
+            LocalDate startDate = project.getStartDate().toLocalDate();
+            newSprint.setStartDate(Date.valueOf(startDate));
+            newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
+        } else {
+            Sprint last_sprint = listSprints.get(listSprints.size() - 1);
+            LocalDate startDate = last_sprint.getEndDate().toLocalDate();
+            newSprint.setStartDate(Date.valueOf(startDate));
+            newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
         }
-        else
-        {
-            throw new Exception("Project not found");
-        }
+        return newSprint;
+    }
+    //  TODO: Write Exceptions
+    public void deleteAllSprints(int projectId) {
+        List<Sprint> sprintList = getSprintByProject(projectId);
+        sprintList.stream().forEach(sprint -> deleteSprint(sprint.getSprintId()) );
     }
 
     /**
      * Saves a sprint object to the database
      * @param sprint
-     */
-    /*
-    public void saveSprint(Sprint sprint) {
-        sprintRepository.save(sprint);
-    }
-
      */
     public void saveSprint(Sprint sprint) {
         if (currentSprint == null) {
@@ -63,7 +60,6 @@ public class SprintService {
             currentSprint = null;
         }
     }
-
 
     /**
      * Returns a sprint object from the database
