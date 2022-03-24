@@ -103,10 +103,11 @@ public class RegistrationController {
         if (personalPronouns.length() > 32) {
             errorBuilder.setFieldName("personalPronouns");
             errorBuilder.setErrorText("Personal pronouns cannot be more than 32 characters.");
+            result.add(errorBuilder.build());
         }
 
         //Password validation
-        if (password.isBlank() || password.length() < 8 || !ValidationUtilities.hasUpper(password) || !ValidationUtilities.hasDigit(password)) {
+        if (password.isBlank() || password.length() < 8 || password.length() > 16 || !ValidationUtilities.hasUpper(password) || !ValidationUtilities.hasDigit(password)) {
             errorBuilder.setFieldName("password");
             errorBuilder.setErrorText("Password must be between 8 and 16 characters and contain a digit and uppercase character.");
             result.add(errorBuilder.build());

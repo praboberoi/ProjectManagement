@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.identityprovider;
 
-
 import nz.ac.canterbury.seng302.identityprovider.controller.RegistrationController;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Unit tests for methods in the UserAccountServerService class
@@ -57,7 +55,8 @@ class RegistrationControllerTests {
         requestBuilder.setUsername("sm");
         List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
 
-        assertEquals(1, result.size(), "Small username not invalid");
+        assertEquals(1, result.size(), "Small username not invalid\n"
+                + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
     }
 
     /**
@@ -67,7 +66,8 @@ class RegistrationControllerTests {
     void givenNoValues_whenUserValidation_thenNoValidationErrors(){
         List<ValidationError> result = controller.validateUserDetails(UserRegisterRequest.newBuilder().build());
 
-        assertEquals(5, result.size(), "Incorrect number of validation errors");
+        assertEquals(5, result.size(), "Incorrect number of validation errors\n"
+                + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
     }
 
     /**
@@ -75,9 +75,35 @@ class RegistrationControllerTests {
      */
     @Test
     void givenInvalidRequest_whenUserValidation_thenNoValidationErrors(){
-        requestBuilder.setUsername("sm").setFirstName("123").setEmail("Not#Valid");
+        requestBuilder
+                .setUsername("sm")
+                .setFirstName("123")
+                .setEmail("Not#Valid")
+                .setPassword("notvalid");
         List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
 
-        assertEquals(3, result.size(), "Incorrect number of validation errors");
+        assertEquals(4, result.size(), "Incorrect number of validation errors\n"
+                + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
+    }
+
+    /**
+     * Tests user validation with a multiple long entries
+     */
+    @Test
+    void givenLongValues_whenUserValidation_thenMultipleValidationErrors(){
+        String longVar = "This string should be too long for the attributes to store";
+        requestBuilder
+                .setUsername(longVar)
+                .setFirstName(longVar)
+                .setLastName(longVar)
+                .setNickname(longVar)
+                .setEmail(longVar)
+                .setBio(longVar)
+                .setPersonalPronouns(longVar)
+                .setPassword("Th1s Password should be too long");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+
+        assertEquals(7, result.size(), "Incorrect number of validation errors\n"
+                + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
     }
 }
