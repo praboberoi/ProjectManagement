@@ -45,7 +45,8 @@
                         <div class="card-body">
                             <!-- badges -->
                             <h6><span class="badge bg-success" th:text="${roles}"></span> member</h6>
-                            <h6><span class="badge bg-secondary"> Add date joined</span></h6>
+                            <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
+                                <span th:text="${timePassed}"></span>> Member</span></h6>
                             <br>
                             <!-- start of form -->
                             <!-- edit with @postmapping to update details in database AND screen-->
@@ -59,13 +60,13 @@
                                 <div class="row mb-3">
                                     <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="firstName" readonly class="form-control-plaintext" th:placeholder="${username}">
+                                        <input type="text" id="firstName" readonly class="form-control-plaintext" th:placeholder="${firstName}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="lastName" readonly class="form-control-plaintext" th:placeholder="${username}">
+                                        <input type="text" id="lastName" readonly class="form-control-plaintext" th:placeholder="${lastName}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
@@ -108,7 +109,7 @@
                     </div>
                 </div>
             </div>
-            <a href="/logout">Logout</a>
+
         </div>
         </div>
     </div>

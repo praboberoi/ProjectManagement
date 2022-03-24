@@ -34,8 +34,8 @@ dependencies {
     implementation 'nz.ac.canterbury.seng302:shared:1.0' // Local package containing .proto files
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
-
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.grpc:grpc-testing:1.45.0'
 }
 
 tasks.named('test') {

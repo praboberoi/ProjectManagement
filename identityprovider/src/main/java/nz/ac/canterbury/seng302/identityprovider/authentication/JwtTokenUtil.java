@@ -6,13 +6,14 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import nz.ac.canterbury.seng302.shared.enums.Roles;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+
 import javax.crypto.SecretKey;
 
 import static java.util.stream.Collectors.toList;
@@ -126,7 +127,7 @@ public class JwtTokenUtil implements Serializable {
 	 * @param rolesOfUser The user's roles, e.g student, teacher, or course administrator
 	 * @return String encoded JWT token
 	 */
-	public String generateTokenForUser(String username, int userId, String nameOfUser, ArrayList<Roles> rolesOfUser) {
+	public String generateTokenForUser(String username, int userId, String nameOfUser, List<UserRole> rolesOfUser) {
 		Map<String, Object> claims = new HashMap<>();
 
         claims.put("unique_name", username);
@@ -135,7 +136,7 @@ public class JwtTokenUtil implements Serializable {
 
 		// When assigning multiple roles to a user, encode them as a comma separated list
 		// E.g "student,teacher" or "teacher,courseadministrator,student" (Order doesn't matter)
-		claims.put(ROLE_CLAIM_TYPE, String.join(",", rolesOfUser.stream().map(Roles::getRole).collect(toList())));
+		claims.put(ROLE_CLAIM_TYPE, rolesOfUser.stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
 
 		return Jwts.builder()
                 .setClaims(claims)
