@@ -1,11 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import org.aspectj.lang.annotation.Before;
+
 import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.security.core.parameters.P;
+
 
 import java.sql.Date;
 import java.util.ArrayList;
