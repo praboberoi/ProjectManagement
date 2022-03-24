@@ -43,7 +43,7 @@
     <!-- use span to make header and button on same line-->
     <h3>Sprints <span class="pull-right">
             <!-- Button trigger modal for new sprints-->
-            <a class="btn btn-primary" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
+            <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
 
             </span></h3>
   </div>
@@ -57,11 +57,11 @@
     <table class="table table-bordered table-hover">
       <thead class = "table-light">
       <tr>
-        <th scope="col">Sprint Name</th>
-        <th scope="col">Description</th>
-        <th scope="col">Start Date</th>
-        <th scope="col">End Date</th>
-        <th></th>
+        <th scope="col" style="width:15%">Sprint Name</th>
+        <th scope="col" style="width:45%">Description</th>
+        <th scope="col" style="width:10%">Start Date</th>
+        <th scope="col" style="width:10%">End Date</th>
+        <th style="width:20%"></th>
       </tr>
       </thead>
       <tbody>
@@ -73,8 +73,8 @@
           <td>[[${sprint.startDate}]]</td>
           <td>[[${sprint.endDate}]]</td>
           <td>
-            <a class="btn btn-primary" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
-            <a class="btn btn-primary" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
+            <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
+            <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
           </td>
 
         </tr>

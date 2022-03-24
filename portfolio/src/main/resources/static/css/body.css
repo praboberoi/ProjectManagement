@@ -70,12 +70,17 @@ a.project-name {
     border: 2px solid #07173B !important;
     font-size: 20px !important;
     margin-left: 10px;
+
+    text-align: center !important;;
+    line-height: 17px !important;;
+
 }
 
 /* Style for primary buttons which guide the user through common tasks*/
 .btn-primary {
     background-color: #07173B !important;
     vertical-align: middle !important;
+
 }
 
 /* Secondary button, used for less frequent actions, i.e. deleting a project.*/
@@ -83,4 +88,22 @@ a.project-name {
     color: #07173B !important;
     background-color: transparent !important;
 
+}
+
+#sprint-btn {
+    width: 40px;
+    height: 32px;
+}
+
+#sprint-edit-btn {
+    width: 100px;
+    height: 32px;
+}
+#sprint-del-btn {
+    width: 100px;
+    height: 32px;
+}
+
+#create-btn {
+    margin-left: 45px;
 }
