@@ -40,7 +40,7 @@ class UserAccountServerServiceTests {
      * @throws Exception thrown during awaitCompletion method
      */
     @Test
-    void testUserCreation() throws Exception {
+    void givenValidUserRequest_whenUserCreation_thenResponseSuccessTrue() throws Exception {
         UserRegisterRequest request = UserRegisterRequest.newBuilder()
                 .setUsername("tu123")
                 .setFirstName("Test")
@@ -56,9 +56,7 @@ class UserAccountServerServiceTests {
             fail("The call did not terminate in time");
         }
 
-        assertNull(responseObserver.getError());
         List<UserRegisterResponse> results = responseObserver.getValues();
-        assertEquals(1, results.size());
         UserRegisterResponse response = results.get(0);
         assertTrue(response.getIsSuccess());
     }
