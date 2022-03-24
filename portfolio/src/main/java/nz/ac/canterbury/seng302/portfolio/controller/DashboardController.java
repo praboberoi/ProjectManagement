@@ -22,7 +22,7 @@ import java.util.List;
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
-    private RoleClientService roleClientService;
+    @Autowired private RoleClientService roleClientService;
 
 
 
@@ -47,9 +47,9 @@ public class DashboardController {
             listProjects.add(defaultProject);
         }
         model.addAttribute("listProjects", listProjects);
-        if (roleClientService.getUserRole().contains(UserRole.STUDENT)) {
-            return "account";
-        }
+//        if (roleClientService.getUserRole().contains(UserRole.STUDENT)) {
+//            return "account";
+//        }
         return "dashboard";
     }
 
