@@ -1,8 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.service.GreeterClientService;
-import nz.ac.canterbury.seng302.shared.enums.Roles;
+
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
@@ -15,8 +13,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -128,6 +128,41 @@ public class AccountController {
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
         return "editAccount";
     }
+
+    @PostMapping("/editAccount")
+    public String editUser(
+            @AuthenticationPrincipal AuthState principal,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String nickname,
+            @RequestParam String bio,
+            @RequestParam String pronouns,
+            @RequestParam String email,
+            Model model
+    ) {
+        Integer userId = Integer.parseInt(principal.getClaimsList().stream()
+                .filter(claim -> claim.getType().equals("nameid"))
+                .findFirst().map(ClaimDTO::getValue).orElse("-1"));
+        EditUserResponse idpResponse = userAccountClientService.edit(userId, firstName, lastName, nickname,
+                bio,
+                pronouns,
+                email);
+        if (idpResponse.getIsSuccess()) {
+            return "redirect:account";
+        } else {
+            model.addAttribute("error", idpResponse.getMessage());
+            model.addAttribute("firstName", firstName);
+            model.addAttribute("lastName", lastName);
+            model.addAttribute("nickname", nickname);
+            model.addAttribute("bio", bio);
+            model.addAttribute("pronouns", pronouns);
+            model.addAttribute("email", email);
+            return "editAccount";
+        }
+    };
+
+
+
 
 
 }

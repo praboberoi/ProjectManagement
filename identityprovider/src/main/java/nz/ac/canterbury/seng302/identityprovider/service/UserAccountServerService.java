@@ -48,6 +48,30 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onCompleted();
     }
 
+    @Override
+    public void editUser(EditUserRequest request, StreamObserver<EditUserResponse> responseObserver) {
+        EditUserResponse.Builder reply = EditUserResponse.newBuilder();
+        User user = userRepository.getUserByUserId(request.getUserId());
+        if (user == null) {
+            reply.setIsSuccess(false);
+            reply.setMessage("User cannot be found in database");
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setNickname(request.getNickname());
+        user.setBio(request.getBio());
+        user.setPersonalPronouns(request.getPersonalPronouns());
+        user.setEmail(request.getEmail());
+        userRepository.save(user);
+        reply.setIsSuccess(true);
+        reply.setMessage(String.format("User with id %s has been edited successfully", user.getUserId()));
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+
     /**
      * Gets a user object from the db and sets the template elements with the user's details
      * @param request Request containing the users id
