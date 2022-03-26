@@ -1,6 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider;
 
-import nz.ac.canterbury.seng302.identityprovider.controller.RegistrationController;
+import nz.ac.canterbury.seng302.identityprovider.service.RegistrationService;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
@@ -18,11 +18,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit tests for methods in the UserAccountServerService class
  */
 @SpringBootTest
-class RegistrationControllerTests {
+class RegistrationServiceTests {
 
     private UserRegisterRequest.Builder requestBuilder;
     private static final UserRepository userRepository = Mockito.mock(UserRepository.class);
-    private static final RegistrationController controller = new RegistrationController(userRepository);
+    private static final RegistrationService controller = new RegistrationService(userRepository);
 
     @BeforeEach
     public void init() {

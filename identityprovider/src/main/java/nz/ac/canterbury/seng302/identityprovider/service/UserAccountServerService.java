@@ -3,10 +3,8 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import nz.ac.canterbury.seng302.identityprovider.controller.RegistrationController;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
-import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,10 +24,10 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     @Override
     public void register(UserRegisterRequest request, StreamObserver<UserRegisterResponse> responseObserver) {
-        RegistrationController controller = new RegistrationController(userRepository);
+        RegistrationService controller = new RegistrationService(userRepository);
         UserRegisterResponse.Builder reply = UserRegisterResponse.newBuilder();
         reply.addAllValidationErrors(controller.validateUserDetails(request));
-        if (reply.getValidationErrorsCount() > 1) {
+        if (reply.getValidationErrorsCount() != 0) {
             reply.setIsSuccess(false);
             reply.setMessage("Registration validation failed");
             responseObserver.onNext(reply.build());
@@ -55,6 +53,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             ));
             responseObserver.onNext(reply.build());
             responseObserver.onCompleted();
+            return;
         }
 
         reply.setIsSuccess(false);
