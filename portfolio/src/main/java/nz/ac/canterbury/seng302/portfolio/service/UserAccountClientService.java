@@ -49,6 +49,39 @@ public class UserAccountClientService {
     }
 
     /**
+     * Sends an edit user request to the server
+     *
+     * @param firstName First Name of User (edited or not)
+     * @param lastName Last Name of User (edited or not)
+     * @param nickname Nickname of User (edited or not)
+     * @param bio Bio of User (edited or not)
+     * @param pronouns Pronouns of User (edited or not)
+     * @param email Email of User (edited or not)
+     * @return Response from server
+     * @throws StatusRuntimeException Failure status of the server call
+     */
+    public EditUserResponse edit(
+            final int userId,
+            final String firstName,
+            final String lastName,
+            final String nickname,
+            final String bio,
+            final String pronouns,
+            final String email
+    ) throws StatusRuntimeException {
+        EditUserResponse response = userAccountStub.editUser(EditUserRequest.newBuilder()
+                .setUserId(userId)
+                .setFirstName(firstName)
+                .setLastName(lastName)
+                .setNickname(nickname)
+                .setBio(bio)
+                .setPersonalPronouns(pronouns)
+                .setEmail(email)
+                .build());
+        return response;
+    }
+
+    /**
      * Get user account with id
      * @param id The id of the account to get
      * @return Response containing user info

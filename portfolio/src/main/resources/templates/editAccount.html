@@ -50,7 +50,7 @@
                             <br>
                             <!-- start of form -->
                             <!-- edit with @postmapping to update details in database AND screen-->
-                            <form>
+                            <form action="/editAccount" method="post">
                                 <div class="row mb-3">
                                     <label for="username" class = "col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-3">
@@ -60,38 +60,38 @@
                                 <div class="row mb-3">
                                     <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="firstName" class="form-control text-end" th:placeholder="${username}" pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="firstName" name="firstName" class="form-control text-end" th:value="${username}" pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="lastName" class="form-control text-end" th:placeholder="${username}"  pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="lastName" name="lastName" class="form-control text-end" th:value="${username}"  pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="pronouns" class = "col-sm-2 col-form-label"><h6>Pronouns: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="pronouns" class="form-control text-end" th:placeholder="${pronouns}" pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="pronouns" name="pronouns" class="form-control text-end" th:value="${pronouns}" pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="nickname" class = "col-sm-2 col-form-label"><h6>Nicknames: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="nickname" class="form-control text-end" th:placeholder="${nickname}" pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="nickname" id="nickname" class="form-control text-end" th:value="${nickname}" pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class = "col-sm-2 col-form-label"><h6>Email: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="email" id="email" class="form-control text-end" th:placeholder="${email}" >
+                                        <input type="email" id="email" name="email" class="form-control text-end" th:value="${email}" >
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="bio" class = "col-sm-2 col-form-label"><h6>Bio: </h6></label>
                                     <div class = "col-sm-3">
                                         <!--                                        <input type="text" id="bio" class="form-control text-end" th:placeholder="${bio}">-->
-                                        <textarea class="form-control mt-50" id="bio" rows="3" th:placeholder="${bio}"></textarea>
+                                        <textarea class="form-control mt-50" id="bio" name="bio" rows="3" th:value="${bio}"></textarea>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary" href="/account">Save</button>
