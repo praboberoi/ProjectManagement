@@ -25,6 +25,7 @@
 <div>
     <form id="createSprintForm" action="#" th:action="@{'/project/' + ${projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
         <input type="hidden" th:field="*{project.projectId}">
+        <input type="hidden" id = "project" th:field="*{project}">
         <div class="mb-3">
             <label for="recipient-name" class="col-form-label required">Sprint Name</label>
             <input type="text" class="form-control" id="recipient-name" th:field="*{sprintName}" readonly>
@@ -66,11 +67,15 @@
         const startDate = document.getElementById('startDate').value;
         const endDate = document.getElementById('endDate').value;
 
+        const currentProject = document.getElementById('project').value;
+
         const startDateInput = document.querySelector('#startDate')
         const endDateInput = document.querySelector('#endDate')
 
+        startDateInput.setAttribute('min', startDate);
         startDateInput.setAttribute('max', endDate);
         endDateInput.setAttribute('min', startDate);
+        endDateInput.setAttribute('max', currentProject.getEndDate());
     }
     const startDateElement = document.querySelector('#startDate');
 
