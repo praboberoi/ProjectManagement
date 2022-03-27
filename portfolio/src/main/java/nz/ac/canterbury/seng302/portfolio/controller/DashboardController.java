@@ -35,26 +35,8 @@ public class DashboardController {
      * @return name of the dashboard html file.
      */
     @GetMapping("/dashboard")
-    public String showProjectList(
-            @AuthenticationPrincipal AuthState principal,
-            Model model) {
-
-        List<Project> listProjects = dashboardService.listAll();
-        // Sets a default project if there are no projects
-        if (listProjects.isEmpty()) {
-            LocalDate now = LocalDate.now();
-            Project defaultProject = new Project();
-            defaultProject.setProjectName("Project " + now.getYear()); // Project {year}
-            defaultProject.setStartDate(Date.valueOf(now)); // Current date
-            defaultProject.setEndDate(Date.valueOf(now.plusMonths(8))); // 8 months from start date
-            dashboardService.saveProject(defaultProject);
-            listProjects.add(defaultProject);
-        }
-        model.addAttribute("listProjects", listProjects);
-        // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
-        model.addAttribute("roles", userAccountClientService.getUserRole(principal));
-        return "dashboard";
-    public String showProjectList(Model model) {
+    public String showProjectList( @AuthenticationPrincipal AuthState principal,
+                                   Model model) {
         List<Project> listProjects = null;
         try {
             listProjects = dashboardService.getAllProjects();
