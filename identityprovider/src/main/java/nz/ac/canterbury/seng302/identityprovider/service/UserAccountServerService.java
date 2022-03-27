@@ -48,6 +48,14 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onCompleted();
     }
 
+    /**
+     * This method builds a user based off an EditUserRequest, first it checks that the user exists in the database,
+     * if the user from the edit request exists, it saves the new details to the user from the request and saves the
+     * user back into the repository.
+     * @param request A proto containing all the details of the user to be edited, such as the userId, first name etc
+     * @param responseObserver The streamObserver contains the edit user response which will be passed back down the
+     *                         line with details of the operation
+     */
     @Override
     public void editUser(EditUserRequest request, StreamObserver<EditUserResponse> responseObserver) {
         EditUserResponse.Builder reply = EditUserResponse.newBuilder();

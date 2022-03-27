@@ -74,6 +74,11 @@ public class AccountController {
         return "account";
     }
 
+    /**
+     * A function that returns the time passed since the creation date (usually of a user)
+     * @param creationDate the date at which some entity was created
+     * @return A string containing the time passed since the creation date
+     */
     private String getTimePassed(LocalDate creationDate) {
         String timePassed = "(";
         LocalDate currentDate = new Date()
@@ -106,9 +111,13 @@ public class AccountController {
         return timePassed + ")";
     }
 
-
-
-
+    /**
+     * A mapping to a get request to edit the user, which returns the current details of the user to be edited
+     * @param principal Authentication information containing user info
+     * @param favouriteColour The favourite colour of the user to be edited
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Html account editing page
+     */
     @GetMapping("/editAccount")
     public String showNewForm(
             @AuthenticationPrincipal AuthState principal,
@@ -129,6 +138,18 @@ public class AccountController {
         return "editAccount";
     }
 
+    /**
+     * The mapping for a Post request relating to editing a user
+     * @param principal  Authentication information containing user info
+     * @param firstName The first name of the user
+     * @param lastName The last name of the user
+     * @param nickname The nickname of the user
+     * @param bio The bio of the user
+     * @param pronouns The pronouns of the user
+     * @param email The email of the user
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Html account editing page
+     */
     @PostMapping("/editAccount")
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
