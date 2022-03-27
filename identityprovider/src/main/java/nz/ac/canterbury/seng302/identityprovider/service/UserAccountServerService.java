@@ -23,6 +23,12 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     private static final Logger logger = LoggerFactory.getLogger(UserAccountServerService.class);
 
+    /**
+     * This method registers a user in the database based off a UserRegisterRequest, and uses the StreamObserver to
+     * contain it's UserRegisterResponse as the result of the operation
+     * @param request The request containing details of the user to be registered
+     * @param responseObserver The response observer records the result of the operation
+     */
     @Override
     public void register(UserRegisterRequest request, StreamObserver<UserRegisterResponse> responseObserver) {
         UserRegisterResponse.Builder reply = UserRegisterResponse.newBuilder();
@@ -53,8 +59,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * if the user from the edit request exists, it saves the new details to the user from the request and saves the
      * user back into the repository.
      * @param request A proto containing all the details of the user to be edited, such as the userId, first name etc
-     * @param responseObserver The streamObserver contains the edit user response which will be passed back down the
-     *                         line with details of the operation
+     * @param responseObserver The streamObserver contains the edit user response which will be passed back down the line with details of the operation
      */
     @Override
     public void editUser(EditUserRequest request, StreamObserver<EditUserResponse> responseObserver) {
