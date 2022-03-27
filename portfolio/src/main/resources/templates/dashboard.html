@@ -62,7 +62,7 @@
                                                 <a class=project-name th:href="@{'/project/'+ ${project.projectId}}" th:text="${project.projectName}">Project Name</a>
                                             </h5>
                                             <h6 class="card-subtitle mb-2 text-muted"> <!-- displays the date start - finish -->
-                                                <p style="color: #07173B" th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
+                                                <p style="color: #07173B"  th:text="${#dates.format(project.startDate, 'dd-MM-yyyy')} + ' to ' + ${#dates.format(project.endDate, 'dd-MM-yyyy')}"></p>
                                             </h6>
                                             <p class="card-text" th:text="${project.description}"/>
                                                 <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>

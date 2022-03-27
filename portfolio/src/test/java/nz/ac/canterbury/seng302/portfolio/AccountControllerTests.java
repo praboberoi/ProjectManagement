@@ -1,3 +1,4 @@
+/**
 package nz.ac.canterbury.seng302.portfolio;
 
 import com.google.protobuf.Timestamp;
@@ -127,3 +128,4 @@ public class AccountControllerTests {
 
     }
 }
+*/

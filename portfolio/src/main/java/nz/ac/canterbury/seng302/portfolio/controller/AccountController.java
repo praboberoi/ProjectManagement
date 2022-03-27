@@ -1,3 +1,4 @@
+/*
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
@@ -25,9 +26,11 @@ import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+*/
 /**
  * Controller for the account page
- */
+ *//*
+
 @Controller
 public class AccountController {
 
@@ -37,12 +40,14 @@ public class AccountController {
         this.userAccountClientService = userAccountClientService;
     }
 
-    /**
+    */
+/**
      * Get method for users personal page
      * @param principal Authentication information containing user info
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Account html page
-     */
+     *//*
+
     @GetMapping("/account")
     public String account(
             @AuthenticationPrincipal AuthState principal,
@@ -131,3 +136,4 @@ public class AccountController {
 
 
 }
+*/
