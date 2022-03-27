@@ -36,6 +36,7 @@ public class SprintController {
     public String newSprint(Model model, @PathVariable ("projectId") int projectId) throws Exception {
         Project currentProject = projectService.getProjectById(projectId);
         Sprint newSprint = sprintService.getNewSprint(currentProject);
+        model.addAttribute("pageTitle", "Add New Sprint");
         model.addAttribute("sprint", newSprint);
         model.addAttribute("project", currentProject);
         return "sprintForm";
