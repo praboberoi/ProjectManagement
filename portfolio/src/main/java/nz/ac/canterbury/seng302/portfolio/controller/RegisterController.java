@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
+import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Controller for the registration page
@@ -65,22 +68,44 @@ public class RegisterController {
             @RequestParam String pronouns,
             @RequestParam String email,
             @RequestParam String password,
+            @RequestParam String confirmPassword,
             Model model
     ) {
-        UserRegisterResponse idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
-        if (idpResponse.getIsSuccess()) {
-            return "redirect:login";
+        UserRegisterResponse idpResponse = null;
+        List<ValidationError> validationErrors = new ArrayList<>();
+        if (password.equals(confirmPassword)) {
+            idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
+            if (idpResponse.getIsSuccess()) {
+                return "redirect:login";
+            } else {
+                validationErrors = idpResponse.getValidationErrorsList();
+            }
+
         } else {
-            model.addAttribute("error", idpResponse.getMessage());
-            model.addAttribute("username", username);
-            model.addAttribute("firstName", firstName);
-            model.addAttribute("lastName", lastName);
-            model.addAttribute("nickname", nickname);
-            model.addAttribute("bio", bio);
-            model.addAttribute("pronouns", pronouns);
-            model.addAttribute("email", email);
-            return "register";
+            validationErrors.add(ValidationError.newBuilder()
+                    .setFieldName("confirmPasswordError")
+                    .setErrorText("Passwords don't match")
+                    .build());
         }
+
+        validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
+
+
+        model.addAttribute("username", username);
+
+        model.addAttribute("firstName", firstName);
+
+        model.addAttribute("lastName", lastName);
+
+        model.addAttribute("nickname", nickname);
+
+        model.addAttribute("bio", bio);
+
+        model.addAttribute("personalPronouns", pronouns);
+ 
+        model.addAttribute("email", email);
+
+        return "register";
     }
 
 }
