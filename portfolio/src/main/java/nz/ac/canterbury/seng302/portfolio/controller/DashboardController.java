@@ -44,7 +44,6 @@ public class DashboardController {
             Project defaultProject = new Project();
             defaultProject.setProjectName("Project " + now.getYear()); // Project {year}
             defaultProject.setStartDate(Date.valueOf(now)); // Current date
-
             defaultProject.setEndDate(Date.valueOf(now.plusMonths(8))); // 8 months from start date
             dashboardService.saveProject(defaultProject);
             listProjects.add(defaultProject);

@@ -24,6 +24,15 @@ public class SprintController {
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
 
+    /**
+     * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
+     * to the individual project pages.
+     * @param projectId - ID of the project selected to view.
+     * @param principal - Current User.
+     * @param model
+     * @return - name of the html page to display
+     * @throws Exception
+     */
     @GetMapping("/project/{projectId}")
     public String showSprintList(
             @PathVariable("projectId") int projectId,
@@ -102,7 +111,6 @@ public class SprintController {
      * @param model
      * @return
      */
-    /* Deleting sprints */
     @GetMapping("/project/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(@PathVariable("sprintId") int sprintId, Model model, @PathVariable int projectId){
         sprintService.deleteSprint(sprintId);
