@@ -45,11 +45,13 @@
       <div th:each="role: ${roles}">
           <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
             <div th:switch="${role}">
-                <div th:case="${role.STUDENT}"></div>
-                <div th:case="*">
-                  <!-- Button trigger modal for new sprints-->
+                <div th:case="${role.TEACHER}">
                   <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
                 </div>
+                <div th:case="${role.COURSE_ADMINISTRATOR}">
+                    <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
+                </div>
+                <div th:case="*"></div>
           </div>
        </div>
       </span></h3>
@@ -83,11 +85,15 @@
             <div th:each="role: ${roles}">
 <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
               <div th:switch="${role}">
-                <div th:case="${role.STUDENT}"></div>
-                <div th:case="*">
+                <div th:case="${role.TEACHER}">
                   <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
                   <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
                 </div>
+                <div th:case="${role.COURSE_ADMINISTRATOR}">
+                  <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
+                  <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
+                </div>
+                <div th:case="*"></div>
               </div>
             </div>
           </td>

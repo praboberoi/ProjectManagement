@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -44,14 +45,19 @@
             <tr>
                 <th>
                     <!-- Iterate through the roles of the current user !-->
+                    <div sec:authorize="hasRole('TEACHER')">
                     <div th:each="role: ${roles}">
                         <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
                         <div th:switch="${role}">
-                            <div th:case="${role.STUDENT}"></div>
-                            <div th:case="*">
+                            <div th:case="${role.TEACHER}">
                                 <a class="btn btn-primary" id = "create-btn" th:href="@{/dashboard/newProject}">Create Project</a>
                             </div>
+                            <div th:case="${role.COURSE_ADMINISTRATOR}">
+                                <a class="btn btn-primary" id = "create-btn" th:href="@{/dashboard/newProject}">Create Project</a>
+                            </div>
+                            <div th:case="*"></div>
                         </div>
+                    </div>
                     </div>
                 </th>
             </tr>
@@ -84,11 +90,15 @@
                                             <p class="card-text" th:text="${project.description}"/>
                                             <div th:each="role: ${roles}">
                                                 <div th:switch="${role}">
-                                                    <div th:case="${role.STUDENT}"></div>
-                                                    <div th:case="*">
+                                                    <div th:case="${role.TEACHER}">
                                                         <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
                                                         <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
                                                     </div>
+                                                    <div th:case="${role.COURSE_ADMINISTRATOR}">
+                                                        <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                                        <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
+                                                    </div>
+                                                    <div th:case="*"></div>
                                                 </div>
                                              </div>
                                         </div>
