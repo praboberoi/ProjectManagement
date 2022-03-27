@@ -107,3 +107,8 @@ a.project-name {
 #create-btn {
     margin-left: 45px;
 }
+
+/* for invalid inputs in form*/
+input:invalid{
+    box-shadow: 0 0 5px 1px red;
+}

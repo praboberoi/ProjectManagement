@@ -1,3 +1,4 @@
+/*
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
@@ -14,9 +15,11 @@ import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
 import java.util.List;
 
+*/
 /**
  * Controller for the display project details page
- */
+ *//*
+
 @Controller
 public class DetailsController {
 
@@ -27,7 +30,9 @@ public class DetailsController {
 
     @GetMapping("/details")
     public String details(@AuthenticationPrincipal AuthState principal, Model model) throws Exception {
-        /* Add project details to the model */
+        */
+/* Add project details to the model *//*
+
         // Gets the project with id 0 to plonk on the page
         Project project = projectService.getProjectById(0);
         model.addAttribute("project", project);
@@ -43,7 +48,9 @@ public class DetailsController {
                 .map(ClaimDTO::getValue)
                 .orElse("NOT FOUND");
 
-        /* Return the name of the Thymeleaf template */
+        */
+/* Return the name of the Thymeleaf template *//*
+
         // detects the role of the current user and returns appropriate page
         if (role.equals("teacher")) {
             return "teacherProjectDetails";
@@ -53,3 +60,4 @@ public class DetailsController {
     }
 
 }
+*/
