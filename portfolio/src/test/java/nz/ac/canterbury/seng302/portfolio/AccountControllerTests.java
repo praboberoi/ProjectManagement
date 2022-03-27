@@ -4,18 +4,24 @@ import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.controller.AccountController;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.ui.Model;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -124,6 +130,38 @@ public class AccountControllerTests {
                 .perform(get("/account"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("timePassed", "(2 Years, 3 Months)"));
+
+    }
+
+    @Test
+    public void GivenNonExistentUser_WhenEditRequestMade_ThenEditAccountReturned()
+    {
+        UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
+        EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(false).build();
+        when(mockUserAccountClientService.edit(-1, "", "", "", "", "",
+                "")).thenReturn(editUserResponse);
+        AccountController accountController = new AccountController(mockUserAccountClientService);
+        AuthState principal = AuthState.newBuilder().build();
+        String testString = "";
+        Model mockModel = Mockito.mock(Model.class);
+        assertEquals( "editAccount", accountController.editUser(principal, testString,
+                testString, testString, testString, testString, testString, mockModel));
+
+    }
+
+    @Test
+    public void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned()
+    {
+        UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
+        EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
+        when(mockUserAccountClientService.edit(-1, "", "", "", "", "",
+                "")).thenReturn(editUserResponse);
+        AccountController accountController = new AccountController(mockUserAccountClientService);
+        AuthState principal = AuthState.newBuilder().build();
+        String testString = "";
+        Model mockModel = Mockito.mock(Model.class);
+        assertEquals( "redirect:account", accountController.editUser(principal, testString,
+                testString, testString, testString, testString, testString, mockModel));
 
     }
 }
