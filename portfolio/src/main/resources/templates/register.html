@@ -26,17 +26,17 @@
 
                 <form id="registration_form" action="/register" method="post">
                     <div class="mb-3">
-                        <label for="username">Username:</label>
+                        <label for="username" class="required">Username:</label>
                         <input type="text" th:value="${username}" class="form-control" id="username" name="username" onkeyup="check_username();">
                         <p id="usernameError" th:text="${usernameError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="firstName">First name:</label>
+                        <label for="firstName" class="required">First name:</label>
                         <input type="text" th:value="${firstName}" class="form-control" id="firstName" name="firstName" onkeyup="check_firstName();" required>
                         <p id="firstNameError" th:text="${firstNameError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="lastName">Last name:</label>
+                        <label for="lastName" class="required">Last name:</label>
                         <input type="text" th:value="${lastName}" class="form-control" id="lastName" name="lastName" onkeyup="check_lastName();" required>
                         <p id="lastNameError" th:text="${lastNameError}" class="error-msg"></p>
                     </div>
@@ -46,7 +46,7 @@
                         <p id="nicknameError" th:text="${nicknameError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="email">Email:</label>
+                        <label for="email" class="required">Email:</label>
                         <input type="email" th:value="${email}" class="form-control" id="email" name="email" onkeyup="check_email();" required>
                         <p id="emailError" th:text="${emailError}" class="error-msg"></p>
                     </div>
@@ -61,12 +61,12 @@
                         <p id="personalPronounsError" th:text="${personalPronounsError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="password">Password:</label>
+                        <label for="password" class="required">Password:</label>
                         <input type="password" class="form-control" id="password" name="password"  onkeyup="check_pass(); match_pass();" required>
                         <p id="passwordError" th:text="${passwordError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="confirmPassword">Confirm Password:</label>
+                        <label for="confirmPassword" class="required">Confirm Password:</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"  onkeyup="match_pass();" required>
                         <p id="confirmPasswordError" th:text="${confirmPasswordError}" class="error-msg"></p>
                     </div><br>
