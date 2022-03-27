@@ -36,7 +36,11 @@ public class AccountControllerTests {
     @MockBean
     private UserAccountClientService userAccountClientService;
 
-
+    /**
+     * Test's the getTimePassed function of Account Controller, in this we are testing the blue sky that everything
+     * works after 20 days pass
+     * @throws Exception Expection thrown during checking time
+     */
     @Test
     public void getTimePassed_20Days() throws Exception{
         Calendar cal = new GregorianCalendar();
@@ -68,6 +72,10 @@ public class AccountControllerTests {
                 .andExpect(model().attribute("timePassed", "(7 Days)"));
     }
 
+    /**
+     * Test of getTimPassed method as if one month had passed
+     * @throws Exception That may occur during checking of time
+     */
     @Test
     public void getTimePassed_1Month() throws Exception{
         Calendar cal = new GregorianCalendar();
@@ -100,6 +108,10 @@ public class AccountControllerTests {
 
     }
 
+    /**
+     * Testing the getTimePassedSince method of account controller, after 2 years 3 months have passed
+     * @throws Exception An exception can occur during the parsing and checking of time
+     */
     @Test
     public void getTimePassed_2Year3Month() throws Exception{
         Calendar cal = new GregorianCalendar();
@@ -133,6 +145,10 @@ public class AccountControllerTests {
 
     }
 
+    /**
+     * Testing that when the account controller is asked to make an edit request for a non-existent user, and it
+     * receives the correct response that it redirects the Html to the right page
+     */
     @Test
     public void GivenNonExistentUser_WhenEditRequestMade_ThenEditAccountReturned()
     {
@@ -149,6 +165,10 @@ public class AccountControllerTests {
 
     }
 
+    /**
+     * Testing that when the account controller is asked to edit an existing user and the operation is a success it
+     * redirects back to the account page.
+     */
     @Test
     public void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned()
     {
