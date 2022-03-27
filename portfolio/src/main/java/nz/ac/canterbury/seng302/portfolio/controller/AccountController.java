@@ -105,12 +105,15 @@ public class AccountController {
     }
 
 
-
-
+    /**
+     *
+     * @param principal - current user session.
+     * @param model
+     * @return - html page title for the editAccount window.
+     */
     @GetMapping("/editAccount")
     public String showNewForm(
             @AuthenticationPrincipal AuthState principal,
-            @RequestParam(name="userId", required=false) String favouriteColour,
             Model model
     ) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
@@ -126,6 +129,5 @@ public class AccountController {
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
         return "editAccount";
     }
-
 
 }

@@ -12,7 +12,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
 import java.util.List;
 
@@ -20,7 +19,7 @@ import java.util.List;
  * Controller for the display project details page
  */
 @Controller
-public class DetailsController {
+public class ProjectController {
 
     @Autowired
     private ProjectService projectService;
@@ -42,7 +41,7 @@ public class DetailsController {
         List<UserRole> roles = userAccountClientService.getUserRole(principal);
         model.addAttribute("roles", roles);
 
-        return "teacherProjectDetails";
+        return "project";
         }
 }
 

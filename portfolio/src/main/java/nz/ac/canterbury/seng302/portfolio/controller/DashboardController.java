@@ -6,12 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.expression.SecurityExpressionOperations;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,9 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 
 import java.sql.Date;
 import java.time.LocalDate;
-
 import java.util.List;
-import java.util.Set;
 
 
 @Controller
@@ -32,9 +25,12 @@ public class DashboardController {
     @Autowired private UserAccountClientService userAccountClientService;
 
     /**
-     * Adds project list and list of curent user roles to model and opens dashboard.html
+     * Adds the project list to the Dashboard.
+     * Gets the list of the current user's roles
+     * Opens dashboard.html
      * @param model
-     * @return
+     * @param principal - current user.
+     * @return name of the dashboard html file.
      */
     @GetMapping("/dashboard")
     public String showProjectList(
@@ -54,7 +50,7 @@ public class DashboardController {
             listProjects.add(defaultProject);
         }
         model.addAttribute("listProjects", listProjects);
-        // List of the current users roles.
+        // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
         model.addAttribute("roles", userAccountClientService.getUserRole(principal));
         return "dashboard";
     }
@@ -112,8 +108,6 @@ public class DashboardController {
                     sprintService.deleteSprint(i.getSprintId());
                 }
             }
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -11,8 +11,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
-// more info here https://codebun.com/spring-boot-crud-application-using-thymeleaf-and-spring-data-jpa/
-
 @Service
 public class SprintService {
     @Autowired private ProjectRepository projectRepo;
@@ -45,12 +43,6 @@ public class SprintService {
      * Saves a sprint object to the database
      * @param sprint
      */
-    /*
-    public void saveSprint(Sprint sprint) {
-        sprintRepository.save(sprint);
-    }
-
-     */
     public void saveSprint(Sprint sprint) {
         if (currentSprint == null) {
             sprintRepository.save(sprint);
@@ -63,7 +55,6 @@ public class SprintService {
             currentSprint = null;
         }
     }
-
 
     /**
      * Returns a sprint object from the database
@@ -85,6 +76,11 @@ public class SprintService {
         sprintRepository.deleteById(sprintId);
 
     }
+
+    /**
+     * If the project sprint list is edited in some way, change the names of sprints accordingly.
+     * @param sprintList
+     */
     public void updateSprintNames(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.stream().forEach(sprint -> {
@@ -94,11 +90,20 @@ public class SprintService {
 
     }
 
+    /**
+     * Return the number of sprints created under a project.
+     * @param projectId
+     * @return total number of sprints in a project.
+     */
     public int countByProjectId(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         return sprintRepository.countByProject(current.get());
     }
 
+    /**
+     * @param projectId
+     * @return a list of sprints from a project specified by its Id.
+     */
     public List<Sprint> getSprintByProject(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         List<Sprint> sprints = sprintRepository.findByProject(current.get());
