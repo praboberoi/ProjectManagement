@@ -21,7 +21,7 @@
 
 <!--    add/fragments -->
 <div th:replace="fragments :: header"></div>
-<div th:replace="fragments :: menu"></div>
+<!--<div th:replace="fragments :: menu"></div>-->
 
 <body>
 <header>
@@ -60,31 +60,31 @@
                                 <div class="row mb-3">
                                     <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="firstName" class="form-control text-end" th:placeholder="${username}">
+                                        <input type="text" id="firstName" class="form-control text-end" th:placeholder="${username}" pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="lastName" class="form-control text-end" th:placeholder="${username}">
+                                        <input type="text" id="lastName" class="form-control text-end" th:placeholder="${username}"  pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="pronouns" class = "col-sm-2 col-form-label"><h6>Pronouns: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="pronouns" class="form-control text-end" th:placeholder="${pronouns}">
+                                        <input type="text" id="pronouns" class="form-control text-end" th:placeholder="${pronouns}" pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="nickname" class = "col-sm-2 col-form-label"><h6>Nicknames: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="nickname" class="form-control text-end" th:placeholder="${nickname}">
+                                        <input type="text" id="nickname" class="form-control text-end" th:placeholder="${nickname}" pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class = "col-sm-2 col-form-label"><h6>Email: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="email" class="form-control text-end" th:placeholder="${email}">
+                                        <input type="email" id="email" class="form-control text-end" th:placeholder="${email}" >
                                     </div>
                                 </div>
                                 <div class="row mb-3">
