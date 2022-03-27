@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
 
@@ -53,8 +54,10 @@ public class DashboardController {
      */
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model) {
+        dashboardService.setPreviousFeature("Create");
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
+        model.addAttribute("submissionName", "Create");
         return "projectForm";
     }
 
@@ -64,9 +67,15 @@ public class DashboardController {
      * @return
      */
     @PostMapping("/dashboard/saveProject")
-    public String saveProject(Project project, Model model) {
+    public String saveProject(Project project, Model model, RedirectAttributes ra) {
         try {
+            String msgString;
             dashboardService.saveProject(project);
+            msgString = dashboardService.createSuccessMessage(project);
+            if (msgString == null) {
+                throw new Exception("Error generating success message");
+            }
+            ra.addFlashAttribute("messageSuccess", msgString);
             return "redirect:/dashboard";
         } catch (Exception e) {
             model.addAttribute("exception", e);
@@ -87,11 +96,18 @@ public class DashboardController {
      * @return
      */
     @GetMapping("/dashboard/editProject/{projectId}")
-    public String showEditForm(@PathVariable(value = "projectId") int projectId, Model model) {
-        Project project  = dashboardService.getProject(projectId);
-        model.addAttribute("project", project);
-        model.addAttribute("pageTitle", "Edit Project (Name: " + projectId + ")");
-        return "projectForm";
+    public String showEditForm(@PathVariable(value = "projectId") int projectId, Model model, RedirectAttributes ra) {
+        try {
+            dashboardService.setPreviousFeature("Edit");
+            Project project  = dashboardService.getProject(projectId);
+            model.addAttribute("project", project);
+            model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
+            model.addAttribute("submissionName", "Save");
+            return "projectForm";
+        } catch (NullPointerException e) {
+            ra.addFlashAttribute("messageDanger", "No Project Found");
+            return "redirect:/dashboard";
+        }
     }
 
     /**

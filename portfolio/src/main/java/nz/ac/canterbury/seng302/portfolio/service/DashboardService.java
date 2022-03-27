@@ -15,6 +15,12 @@ public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
     private Project currentProject = null;
 
+    /**
+     * Used to identify which project crud feature (Mainly create or edit)
+     * was used to changed success message when project created or saved.
+     */
+    private String previousFeature;
+
     private boolean verifyProject(Project project) {
         if (project.getProjectName().isEmpty() || project.getStartDate() == null || project.getEndDate() == null)
             return false;
@@ -88,6 +94,20 @@ public class DashboardService {
         }
 */
         projectRepo.deleteById(projectId);
+    }
+
+    public void setPreviousFeature(String previousFeature) {
+        this.previousFeature = previousFeature;
+    }
+
+    public String createSuccessMessage(Project project) throws Exception{
+        String returnMessage = null;
+        if (previousFeature == "Create") {
+            returnMessage = "Successfully Created Project: " + project.getProjectName();
+        } else if (previousFeature == "Edit") {
+            returnMessage = "Successfully Saved Project: " + project.getProjectName();
+        }
+        return returnMessage;
     }
 }
 
