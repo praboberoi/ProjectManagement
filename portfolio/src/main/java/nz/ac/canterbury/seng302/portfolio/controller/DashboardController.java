@@ -54,8 +54,10 @@ public class DashboardController {
      */
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model) {
+        dashboardService.setPreviousFeature("Create");
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
+        model.addAttribute("submissionName", "Create");
         return "projectForm";
     }
 
@@ -69,7 +71,10 @@ public class DashboardController {
         try {
             String msgString;
             dashboardService.saveProject(project);
-            msgString = String.format("Successfully Saved Project %s", project.getProjectName());
+            msgString = dashboardService.createSuccessMessage(project);
+            if (msgString == null) {
+                throw new Exception("Error generating success message");
+            }
             ra.addFlashAttribute("messageSuccess", msgString);
             return "redirect:/dashboard";
         } catch (Exception e) {
@@ -93,9 +98,11 @@ public class DashboardController {
     @GetMapping("/dashboard/editProject/{projectId}")
     public String showEditForm(@PathVariable(value = "projectId") int projectId, Model model, RedirectAttributes ra) {
         try {
+            dashboardService.setPreviousFeature("Edit");
             Project project  = dashboardService.getProject(projectId);
             model.addAttribute("project", project);
-            model.addAttribute("pageTitle", "Edit Project (Name: " + project.getProjectName() + ")");
+            model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
+            model.addAttribute("submissionName", "Save");
             return "projectForm";
         } catch (NullPointerException e) {
             ra.addFlashAttribute("messageDanger", "No Project Found");
