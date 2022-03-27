@@ -95,8 +95,8 @@ public class DashboardController {
         try {
             Project project  = dashboardService.getProject(projectId);
             model.addAttribute("project", project);
-            model.addAttribute("pageTitle", "Edit Project (Name: " + projectId + ")");
-            return "project_form";
+            model.addAttribute("pageTitle", "Edit Project (Name: " + project.getProjectName() + ")");
+            return "projectForm";
         } catch (NullPointerException e) {
             ra.addFlashAttribute("messageDanger", "No Project Found");
             return "redirect:/dashboard";
