@@ -181,7 +181,7 @@ public class AccountController {
             model.addAttribute("bio", bio);
             model.addAttribute("pronouns", pronouns);
             model.addAttribute("email", email);
-            return "editAccount";
+            return "redirect:account";
         }
     };
 

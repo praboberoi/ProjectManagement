@@ -25,6 +25,7 @@ editBtn.addEventListener('click', function(e) {
         }
     }
 });
+
 function check_firstName() {
     let firstNameElement = document.getElementById("firstName");
     let firstNameErrorElement = document.getElementById("firstNameError");
