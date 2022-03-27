@@ -80,7 +80,7 @@ label {
 }
 
 .form_error {
-    border-color: #ff0010;
+    border-color: #ff0010 !important;
 }
 
 .form_submit{
