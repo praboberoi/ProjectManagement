@@ -5,6 +5,8 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 /**
  * Client service used to communicate to the IDP application relating to user account features
  */
@@ -73,4 +75,13 @@ public class UserAccountClientService {
         UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
         return response;
     }
-}
+
+    /**
+     * Get the current user (principal) roles and returns them as a list.
+     * @param principal - current user detail.
+     * @return List of current user roles.
+     */
+    public List<UserRole> getUserRole(AuthState principal) {
+        UserResponse user = getUser(principal);
+        return user.getRolesList();
+    }}

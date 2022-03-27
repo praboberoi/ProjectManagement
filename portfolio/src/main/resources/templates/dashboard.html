@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="https://www.thymeleaf.org/thymeleaf-extras-springsecurity5" lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -65,8 +65,14 @@
                                                 <p style="color: #07173B" th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
                                             </h6>
                                             <p class="card-text" th:text="${project.description}"/>
-                                                <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
-                                                <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
+                                            <div th:each="role: ${roles}">
+                                                <div th:switch="${role}">
+                                                    <div th:case="${role.STUDENT}"></div>
+                                                    <div th:case="*">
+                                                        <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                                        <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a></div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

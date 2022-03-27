@@ -47,7 +47,6 @@ public class AccountController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
-
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);

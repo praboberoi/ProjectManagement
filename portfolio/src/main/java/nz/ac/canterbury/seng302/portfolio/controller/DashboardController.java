@@ -3,10 +3,16 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
-import nz.ac.canterbury.seng302.portfolio.service.RoleClientService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.expression.SecurityExpressionOperations;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,26 +23,27 @@ import java.sql.Date;
 import java.time.LocalDate;
 
 import java.util.List;
+import java.util.Set;
 
 
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
-    @Autowired private RoleClientService roleClientService;
-
-
+    @Autowired private UserAccountClientService userAccountClientService;
 
     /**
-     * Adds project list to model and opens dashboard.html
+     * Adds project list and list of curent user roles to model and opens dashboard.html
      * @param model
      * @return
      */
     @GetMapping("/dashboard")
-    public String showProjectList(Model model) {
+    public String showProjectList(
+            @AuthenticationPrincipal AuthState principal,
+            Model model) {
+
         List<Project> listProjects = dashboardService.listAll();
         // Sets a default project if there are no projects
         if (listProjects.isEmpty()) {
-
             LocalDate now = LocalDate.now();
             Project defaultProject = new Project();
             defaultProject.setProjectName("Project " + now.getYear()); // Project {year}
@@ -47,9 +54,8 @@ public class DashboardController {
             listProjects.add(defaultProject);
         }
         model.addAttribute("listProjects", listProjects);
-//        if (roleClientService.getUserRole().contains(UserRole.STUDENT)) {
-//            return "account";
-//        }
+        // List of the current users roles.
+        model.addAttribute("roles", userAccountClientService.getUserRole(principal));
         return "dashboard";
     }
 
@@ -106,12 +112,12 @@ public class DashboardController {
                     sprintService.deleteSprint(i.getSprintId());
                 }
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         dashboardService.deleteProject(projectId);
         return "redirect:/dashboard";
     }
-
 }
