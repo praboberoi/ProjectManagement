@@ -5,7 +5,6 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
-import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +24,17 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     @Override
     public void register(UserRegisterRequest request, StreamObserver<UserRegisterResponse> responseObserver) {
+        RegistrationService controller = new RegistrationService(userRepository);
         UserRegisterResponse.Builder reply = UserRegisterResponse.newBuilder();
+        reply.addAllValidationErrors(controller.validateUserDetails(request));
+        if (reply.getValidationErrorsCount() != 0) {
+            reply.setIsSuccess(false);
+            reply.setMessage("Registration validation failed");
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
         if (userRepository.getUserByUsername(request.getUsername()) != null) {
             reply.setIsSuccess(false);
             reply.setMessage("User already exists");
@@ -34,16 +43,21 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             return;
         }
 
-        String userSalt = EncryptionUtilities.createSalt();
-        String userPassword = EncryptionUtilities.encryptPassword(userSalt, request.getPassword());
-        User user = userRepository.save(new User(request, userPassword, userSalt));
-        reply.setIsSuccess(true);
-        reply.setNewUserId(user.getUserId());
-        reply.setMessage(String.format(
-                "User %s has been created successfully",
-                user.getUsername()
-        ));
+        User user = controller.createUser(request);
+        if (user != null) {
+            reply.setIsSuccess(true);
+            reply.setNewUserId(user.getUserId());
+            reply.setMessage(String.format(
+                    "User %s has been created successfully",
+                    user.getUsername()
+            ));
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
 
+        reply.setIsSuccess(false);
+        reply.setMessage("User failed to create");
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
