@@ -42,10 +42,17 @@
   <div class = "sprint_header">
     <!-- use span to make header and button on same line-->
     <h3>Sprints <span class="pull-right">
-            <!-- Button trigger modal for new sprints-->
-            <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
-
-            </span></h3>
+       <div th:each="role: ${roles}">
+            <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+          <div th:switch="${role}">
+            <div th:case="${role.STUDENT}"></div>
+            <div th:case="*">
+              <!-- Button trigger modal for new sprints-->
+              <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
+            </div>
+          </div>
+       </div>
+      </span></h3>
   </div>
 
 
@@ -72,11 +79,18 @@
           <td>[[${sprint.description}]]</td>
           <td>[[${sprint.startDate}]]</td>
           <td>[[${sprint.endDate}]]</td>
-          <td>
-            <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
-            <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
-          </td>
-
+          <div th:each="role: ${roles}">
+            <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+          <div th:switch="${role}">
+            <div th:case="${role.STUDENT}"></div>
+            <div th:case="*">
+              <td>
+                <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
+                <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
+              </td>
+            </div>
+          </div>
+          </div>
         </tr>
 
       </th:block>

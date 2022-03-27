@@ -43,7 +43,16 @@
             </tr>
             <tr>
                 <th>
-                    <a class="btn btn-primary" id = "create-btn" th:href="@{/dashboard/newProject}">Create Project</a>
+                    <!-- Iterate through the roles of the current user !-->
+                    <div th:each="role: ${roles}">
+                        <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+                        <div th:switch="${role}">
+                            <div th:case="${role.STUDENT}"></div>
+                            <div th:case="*">
+                                <a class="btn btn-primary" id = "create-btn" th:href="@{/dashboard/newProject}">Create Project</a>
+                            </div>
+                        </div>
+                    </div>
                 </th>
             </tr>
             </thead>

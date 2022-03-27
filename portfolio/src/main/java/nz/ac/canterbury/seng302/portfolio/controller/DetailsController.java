@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +27,8 @@ public class DetailsController {
     @Autowired
     private SprintService sprintService;
 
+    @Autowired private UserAccountClientService userAccountClientService;
+
     @GetMapping("/details")
     public String details(@AuthenticationPrincipal AuthState principal, Model model) throws Exception {
         /* Add project details to the model */
@@ -35,21 +39,10 @@ public class DetailsController {
         List<Sprint> sprintList = sprintService.getAllSprints();
         model.addAttribute("sprints", sprintList);
 
+        List<UserRole> roles = userAccountClientService.getUserRole(principal);
+        model.addAttribute("roles", roles);
 
-        // Below code is just begging to be added as a method somewhere...
-        String role = principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("role"))
-                .findFirst()
-                .map(ClaimDTO::getValue)
-                .orElse("NOT FOUND");
-
-        /* Return the name of the Thymeleaf template */
-        // detects the role of the current user and returns appropriate page
-        if (role.equals("teacher")) {
-            return "teacherProjectDetails";
-        } else {
-            return "userProjectDetails";
+        return "teacherProjectDetails";
         }
-    }
-
 }
+
