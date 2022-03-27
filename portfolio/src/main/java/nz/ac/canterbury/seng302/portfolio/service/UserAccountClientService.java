@@ -5,6 +5,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -84,4 +85,5 @@ public class UserAccountClientService {
     public List<UserRole> getUserRole(AuthState principal) {
         UserResponse user = getUser(principal);
         return user.getRolesList();
-    }}
+    }
+}

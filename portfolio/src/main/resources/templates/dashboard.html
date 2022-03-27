@@ -79,9 +79,10 @@
                                                     <div th:case="${role.STUDENT}"></div>
                                                     <div th:case="*">
                                                         <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
-                                                        <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a></div>
+                                                        <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
+                                                    </div>
                                                 </div>
-                                            </div>
+                                             </div>
                                         </div>
                                     </div>
                                 </div>
