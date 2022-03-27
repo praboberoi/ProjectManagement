@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
 import java.sql.Date;
-import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 /**

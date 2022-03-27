@@ -32,7 +32,7 @@ public class SprintService {
             newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
         } else {
             Sprint last_sprint = listSprints.get(listSprints.size() - 1);
-            LocalDate startDate = last_sprint.getEndDate().toLocalDate().plusDays(1);
+            LocalDate startDate = last_sprint.getEndDate().toLocalDate();
             newSprint.setStartDate(Date.valueOf(startDate));
             newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
         }
