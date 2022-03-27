@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.GreeterClientService;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
@@ -14,8 +15,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -72,6 +75,11 @@ public class AccountController {
         return "account";
     }
 
+    /**
+     * A function that returns the time passed since the creation date (usually of a user)
+     * @param creationDate the date at which some entity was created
+     * @return A string containing the time passed since the creation date
+     */
     private String getTimePassed(LocalDate creationDate) {
         String timePassed = "(";
         LocalDate currentDate = new Date()
@@ -104,16 +112,17 @@ public class AccountController {
         return timePassed + ")";
     }
 
-
     /**
-     *
-     * @param principal - current user session.
-     * @param model
-     * @return - html page title for the editAccount window.
+     * A mapping to a get request to edit the user, which returns the current details of the user to be edited
+     * @param principal Authentication information containing user info
+     * @param favouriteColour The favourite colour of the user to be edited
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Html account editing page
      */
     @GetMapping("/editAccount")
     public String showNewForm(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam(name="userId", required=false) String favouriteColour,
             Model model
     ) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
@@ -130,4 +139,47 @@ public class AccountController {
         return "editAccount";
     }
 
+    /**
+     * The mapping for a Post request relating to editing a user
+     * @param principal  Authentication information containing user info
+     * @param firstName The first name of the user
+     * @param lastName The last name of the user
+     * @param nickname The nickname of the user
+     * @param bio The bio of the user
+     * @param pronouns The pronouns of the user
+     * @param email The email of the user
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Html account editing page
+     */
+    @PostMapping("/editAccount")
+    public String editUser(
+            @AuthenticationPrincipal AuthState principal,
+            @RequestParam String firstName,
+            @RequestParam String lastName,
+            @RequestParam String nickname,
+            @RequestParam String bio,
+            @RequestParam String pronouns,
+            @RequestParam String email,
+            Model model
+    ) {
+        Integer userId = Integer.parseInt(principal.getClaimsList().stream()
+                .filter(claim -> claim.getType().equals("nameid"))
+                .findFirst().map(ClaimDTO::getValue).orElse("-1"));
+        EditUserResponse idpResponse = userAccountClientService.edit(userId, firstName, lastName, nickname,
+                bio,
+                pronouns,
+                email);
+        if (idpResponse.getIsSuccess()) {
+            return "redirect:account";
+        } else {
+            model.addAttribute("error", idpResponse.getMessage());
+            model.addAttribute("firstName", firstName);
+            model.addAttribute("lastName", lastName);
+            model.addAttribute("nickname", nickname);
+            model.addAttribute("bio", bio);
+            model.addAttribute("pronouns", pronouns);
+            model.addAttribute("email", email);
+            return "editAccount";
+        }
+    };
 }

@@ -13,16 +13,18 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
-
+// TODO:
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
+    @Autowired private SprintService sprintService;
+
 
     /**
      * Adds the project list to the Dashboard.
@@ -52,6 +54,24 @@ public class DashboardController {
         // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
         model.addAttribute("roles", userAccountClientService.getUserRole(principal));
         return "dashboard";
+    public String showProjectList(Model model) {
+        List<Project> listProjects = null;
+        try {
+            listProjects = dashboardService.getAllProjects();
+            model.addAttribute("listProjects", listProjects);
+            // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
+            model.addAttribute("roles", userAccountClientService.getUserRole(principal));
+            return "dashboard";
+        } catch (Exception e) {
+            model.addAttribute("exception", e);
+            model.addAttribute("message", e.getMessage());
+            model.addAttribute("timestamp", LocalDate.now());
+            model.addAttribute("error", "Invalid Information");
+            model.addAttribute("path", "./portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/controller/DashboardController.java");
+            model.addAttribute("trace", "portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/service/DashboardService.java");
+            model.addAttribute("status", "re-run Project");
+            return "error";
+        }
     }
 
     /**
@@ -61,8 +81,10 @@ public class DashboardController {
      */
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model) {
+        dashboardService.setPreviousFeature("Create");
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
+        model.addAttribute("submissionName", "Create");
         return "projectForm";
     }
 
@@ -72,9 +94,26 @@ public class DashboardController {
      * @return
      */
     @PostMapping("/dashboard/saveProject")
-    public String saveProject(Project project) {
-        dashboardService.saveProject(project);
-        return "redirect:/dashboard";
+    public String saveProject(Project project, Model model, RedirectAttributes ra) {
+        try {
+            String msgString;
+            dashboardService.saveProject(project);
+            msgString = dashboardService.createSuccessMessage(project);
+            if (msgString == null) {
+                throw new Exception("Error generating success message");
+            }
+            ra.addFlashAttribute("messageSuccess", msgString);
+            return "redirect:/dashboard";
+        } catch (Exception e) {
+            model.addAttribute("exception", e);
+            model.addAttribute("message", e.getMessage());
+            model.addAttribute("timestamp", LocalDate.now());
+            model.addAttribute("error", "Invalid Information");
+            model.addAttribute("path", "./portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/controller/DashboardController.java");
+            model.addAttribute("trace", "portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/service/DashboardService.java");
+            model.addAttribute("status", "re-run Project");
+            return "error";
+        }
     }
 
     /**
@@ -84,11 +123,18 @@ public class DashboardController {
      * @return
      */
     @GetMapping("/dashboard/editProject/{projectId}")
-    public String showEditForm(@PathVariable(value = "projectId") int projectId, Model model) {
-        Project project  = dashboardService.getProject(projectId);
-        model.addAttribute("project", project);
-        model.addAttribute("pageTitle", "Edit Project (Name: " + projectId + ")");
-        return "projectForm";
+    public String showEditForm(@PathVariable(value = "projectId") int projectId, Model model, RedirectAttributes ra) {
+        try {
+            dashboardService.setPreviousFeature("Edit");
+            Project project  = dashboardService.getProject(projectId);
+            model.addAttribute("project", project);
+            model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
+            model.addAttribute("submissionName", "Save");
+            return "projectForm";
+        } catch (NullPointerException e) {
+            ra.addFlashAttribute("messageDanger", "No Project Found");
+            return "redirect:/dashboard";
+        }
     }
 
     /**
@@ -98,19 +144,20 @@ public class DashboardController {
      * @throws Exception If project is not found in the database
      */
     @GetMapping("/dashboard/deleteProject/{projectId}")
-    public String showEditForm(@PathVariable("projectId") int projectId) throws Exception {
-        SprintService sprintService = new SprintService();
+    public String deleteProject(@PathVariable("projectId") int projectId, Model model) {
         try {
-            List<Sprint> sprintList = sprintService.getAllSprints();
-            for (Sprint i: sprintList) {
-                if (i.getProject().getProjectId() == projectId) {
-                    sprintService.deleteSprint(i.getSprintId());
-                }
-            }
+            sprintService.deleteAllSprints(projectId);
+            dashboardService.deleteProject(projectId);
+            return "redirect:/dashboard";
         } catch (Exception e) {
-            e.printStackTrace();
+            model.addAttribute("exception", e);
+            model.addAttribute("message", e.getMessage());
+            model.addAttribute("timestamp", LocalDate.now());
+            model.addAttribute("error", "Invalid Information");
+            model.addAttribute("path", "./portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/controller/DashboardController.java");
+            model.addAttribute("trace", "portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/service/DashboardService.java");
+            model.addAttribute("status", "re-run Project");
+            return "error";
         }
-        dashboardService.deleteProject(projectId);
-        return "redirect:/dashboard";
     }
 }

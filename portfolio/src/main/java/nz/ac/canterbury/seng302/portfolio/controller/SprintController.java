@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 @Controller
@@ -54,23 +52,8 @@ public class SprintController {
      */
     @GetMapping("/project/{projectId}/newSprint")
     public String newSprint(Model model, @PathVariable ("projectId") int projectId) throws Exception {
-        int sprintNo = sprintService.countByProjectId(projectId) + 1;
-        Sprint newSprint = new Sprint();
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
-        if(listSprints.size() == 0) {
-
-            Project currentProject = projectService.getProjectById(projectId);
-            LocalDate startDate = currentProject.getStartDate().toLocalDate();
-            newSprint.setStartDate(Date.valueOf(startDate));
-            newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
-
-        } else {
-            Sprint last_sprint = listSprints.get(listSprints.size() - 1);
-            LocalDate startDate = last_sprint.getEndDate().toLocalDate();
-            newSprint.setStartDate(Date.valueOf(startDate));
-            newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
-        }
-        newSprint.setSprintName("Sprint " + sprintNo);
+        Project currentProject = projectService.getProjectById(projectId);
+        Sprint newSprint = sprintService.getNewSprint(currentProject);
         model.addAttribute("sprint", newSprint);
         return "sprintForm";
     }
@@ -115,7 +98,6 @@ public class SprintController {
     public String deleteSprint(@PathVariable("sprintId") int sprintId, Model model, @PathVariable int projectId){
         sprintService.deleteSprint(sprintId);
         sprintService.updateSprintNames(sprintService.getSprintByProject(projectId));
-        sprintService.getSprintByProject(projectId);
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         model.addAttribute("listSprints", listSprints);
         return "redirect:/project/{projectId}";

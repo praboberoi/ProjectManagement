@@ -91,6 +91,13 @@ By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 ## Contributors
 
 - SENG302 teaching team
+- Saskia van der Peet
+- Jack McCorkindale
+- Prableen Oberoi
+- Sonia Ra
+- Yaoce Yang
+- James Claridge
+- Rory Holmes
 
 ## References
 

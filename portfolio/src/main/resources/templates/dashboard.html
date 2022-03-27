@@ -24,7 +24,7 @@
 
 <!--fragments-->
 <div th:replace="fragments :: header"></div>
-<div th:replace="fragments :: menu"></div>
+<!--<div th:replace="fragments :: menu"></div>-->
 
 <body>
 <div class="main">
@@ -55,6 +55,14 @@
                     </div>
                 </th>
             </tr>
+            <div>
+                <div th:if="${messageSuccess}" class="alert alert-success text-center">
+                    [[${messageSuccess}]]
+                </div>
+                <div th:if="${messageDanger}" class="alert alert-danger text-center">
+                    [[${messageDanger}]]
+                </div>
+            </div>
             </thead>
             <tbody>
             <th:block th:each="project : ${listProjects}">
