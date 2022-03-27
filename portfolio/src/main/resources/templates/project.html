@@ -28,7 +28,7 @@
 
   <div class="card">
     <div class="card-header">
-      Duration: [[${project.startDate}]] to [[${project.endDate}]]
+      Duration: [[${#dates.format(project.startDate,'dd-MM-yyyy')}]] to [[${#dates.format(project.endDate,'dd-MM-yyyy')}]]
     </div>
     <div class="card-body">
       <h5 class="card-title">Project Description:</h5>
@@ -70,8 +70,8 @@
         <tr>
           <td>[[${sprint.sprintName}]]</td>
           <td>[[${sprint.description}]]</td>
-          <td>[[${sprint.startDate}]]</td>
-          <td>[[${sprint.endDate}]]</td>
+          <td>[[${#dates.format(sprint.startDate, 'dd-MM-yyyy')}]]</td>
+          <td>[[${#dates.format(sprint.endDate, 'dd-MM-yyyy')}]]</td>
           <td>
             <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
             <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>

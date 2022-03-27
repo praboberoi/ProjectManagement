@@ -37,6 +37,7 @@ public class SprintController {
         Project currentProject = projectService.getProjectById(projectId);
         Sprint newSprint = sprintService.getNewSprint(currentProject);
         model.addAttribute("sprint", newSprint);
+        model.addAttribute("project", currentProject);
         return "sprintForm";
     }
 
