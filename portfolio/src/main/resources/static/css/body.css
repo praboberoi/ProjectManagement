@@ -107,6 +107,12 @@ a.project-name {
     height: 32px;
 }
 
+#back-btn{
+    margin-top: 8px;
+    margin-bottom: 18px;
+    margin-left: 45px;
+
+}
 #create-btn {
     margin-left: 45px;
 }
