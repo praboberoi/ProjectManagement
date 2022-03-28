@@ -95,23 +95,12 @@
                                 <div class="row mb-3">
                                     <label for="bio" class = "col-sm-2 col-form-label"><h6>Bio: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="bio" id="bio" name="bio" class="form-control text-end" th:value="${bio}"onkeyup="check_bio();" required>
+                                        <input type="bio" id="bio" name="bio" class="form-control text-end" th:value="${bio}"onkeyup="check_bio();">
                                         <p id="bioError" th:text="${bioError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <button type="submit" class="btn btn-primary" href="/account">Save</button>
-
-
                             </form>
-
-
-                            <!--                                <h6>First Name: <span th:text="${firstName}"></span></h6>-->
-                            <!--                                <h6>Last Name: <span th:text="${lastName}"></span></h6>-->
-                            <!--                                <h6>Role/s: <span th:text="${roles}"></span></h6>-->
-                            <!--                                <h6>Nickname/s: <span th:text="${nickname}"></span></h6>-->
-                            <!--                                <h6>Email Address: <span th:text="${email}"></span></h6>-->
-                            <!--                                <h6>Biography: <span th:text="${bio}"></span></h6>-->
-                            <!--                                <h6>Pronouns: <span th:text="${pronouns}"></span></h6>-->
                         </div>
                     </div>
                 </div>

@@ -79,7 +79,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void editUser(EditUserRequest request, StreamObserver<EditUserResponse> responseObserver) {
         EditUserResponse.Builder reply = EditUserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getUserId());
-        EditService controller = new EditService();
+        EditUserAccountService controller = new EditUserAccountService();
         reply.addAllValidationErrors(controller.validateUserDetails(request));
         if (reply.getValidationErrorsCount() != 0) {
             reply.setIsSuccess(false);

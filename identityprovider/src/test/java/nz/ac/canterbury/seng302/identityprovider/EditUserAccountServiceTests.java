@@ -1,10 +1,9 @@
 package nz.ac.canterbury.seng302.identityprovider;
 
-import nz.ac.canterbury.seng302.identityprovider.service.EditService;
+import nz.ac.canterbury.seng302.identityprovider.service.EditUserAccountService;
 
 
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserRequest;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,11 +14,11 @@ import java.util.stream.Collectors;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
- * Unit tests for methods in the EditService class
+ * Unit tests for methods in the EditUserAccountService class
  */
-public class EditServiceTests {
+public class EditUserAccountServiceTests {
     private EditUserRequest.Builder requestBuilder;
-    private static final EditService controller = new EditService();
+    private static final EditUserAccountService controller = new EditUserAccountService();
 
     @BeforeEach
     public void init() {

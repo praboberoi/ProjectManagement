@@ -7,7 +7,7 @@ import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditService {
+public class EditUserAccountService {
 
 
     /**
@@ -75,7 +75,7 @@ public class EditService {
         }
 
         //Bio validation
-        if (bio.length() > Integer.MAX_VALUE - 3) {
+        if (bio.length() > 250) {
             errorBuilder.setFieldName("bioError");
             errorBuilder.setErrorText("Your bio is too long");
             result.add(errorBuilder.build());

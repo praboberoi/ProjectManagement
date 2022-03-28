@@ -1,6 +1,6 @@
 var editBtn = document.getElementById('editBtn');
 var editables = document.querySelectorAll('#username, #firstname, #lastname');
-var special = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+var special = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
 
