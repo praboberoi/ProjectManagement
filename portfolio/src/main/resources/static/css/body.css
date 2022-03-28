@@ -81,6 +81,7 @@ a.project-name {
 
 /* Style for primary buttons which guide the user through common tasks*/
 .btn-primary {
+    colour: white !important;
     background-color: #07173B !important;
     vertical-align: middle !important;
 
@@ -88,8 +89,8 @@ a.project-name {
 
 /* Secondary button, used for less frequent actions, i.e. deleting a project.*/
 .btn-secondary {
-    color: white !important;
-    background-color: red !important;
+    color: #07173B !important;
+    background-color: white !important;
 
 }
 
