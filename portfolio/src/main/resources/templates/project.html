@@ -44,14 +44,8 @@
     <h3>Sprints <span class="pull-right">
       <div th:each="role: ${roles}">
           <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-            <div th:switch="${role}">
-                <div th:case="${role.TEACHER}">
-                  <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
-                </div>
-                <div th:case="${role.COURSE_ADMINISTRATOR}">
-                    <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
-                </div>
-                <div th:case="*"></div>
+          <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+            <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
           </div>
        </div>
       </span></h3>
@@ -84,16 +78,9 @@
           <td>
             <div th:each="role: ${roles}">
 <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-              <div th:switch="${role}">
-                <div th:case="${role.TEACHER}">
+              <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
                   <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
                   <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
-                </div>
-                <div th:case="${role.COURSE_ADMINISTRATOR}">
-                  <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
-                  <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
-                </div>
-                <div th:case="*"></div>
               </div>
             </div>
           </td>
