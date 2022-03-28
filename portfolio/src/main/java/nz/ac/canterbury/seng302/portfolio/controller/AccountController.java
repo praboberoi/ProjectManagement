@@ -136,6 +136,17 @@ public class AccountController {
         model.addAttribute("email", user.getEmail());
         model.addAttribute("bio", user.getBio());
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+
+        // Convert Date into LocalDate
+        LocalDate creationDate = user.getDateCreated()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        model.addAttribute("creationDate",
+                creationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+        model.addAttribute("timePassed", getTimePassed(creationDate));
+
         return "editAccount";
     }
 
@@ -169,17 +180,17 @@ public class AccountController {
                 bio,
                 pronouns,
                 email);
+        model.addAttribute("error", idpResponse.getMessage());
+        model.addAttribute("firstName", firstName);
+        model.addAttribute("lastName", lastName);
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("bio", bio);
+        model.addAttribute("pronouns", pronouns);
+        model.addAttribute("email", email);
         if (idpResponse.getIsSuccess()) {
             return "redirect:account";
-        } else {
-            model.addAttribute("error", idpResponse.getMessage());
-            model.addAttribute("firstName", firstName);
-            model.addAttribute("lastName", lastName);
-            model.addAttribute("nickname", nickname);
-            model.addAttribute("bio", bio);
-            model.addAttribute("pronouns", pronouns);
-            model.addAttribute("email", email);
-            return "editAccount";
         }
+        return "editAccount";
+
     };
 }

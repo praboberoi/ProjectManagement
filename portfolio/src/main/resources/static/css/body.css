@@ -115,3 +115,7 @@ a.project-name {
 input:invalid{
     box-shadow: 0 0 5px 1px red;
 }
+
+.asterisk {
+    color: red;
+}
