@@ -48,16 +48,24 @@ public class SprintService {
      * Saves a sprint object to the database
      * @param sprint
      */
-    public void saveSprint(Sprint sprint) {
+    public String saveSprint(Sprint sprint) {
+        String message;
         if (currentSprint == null) {
-            sprintRepository.save(sprint);
+            currentSprint = sprint;
+            message = "Sprint created successfully";
         } else {
             currentSprint.setSprintName(sprint.getSprintName());
             currentSprint.setDescription(sprint.getDescription());
             currentSprint.setStartDate(sprint.getStartDate());
             currentSprint.setEndDate(sprint.getEndDate());
+            message = "Sprint updated successfully";
+        }
+        try {
             sprintRepository.save(currentSprint);
             currentSprint = null;
+            return message;
+        } catch (Exception e){
+            return "Sprint Creation Unsuccessful";
         }
     }
 

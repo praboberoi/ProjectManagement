@@ -10,6 +10,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -48,9 +49,13 @@ public class SprintController {
      * @return
      */
     @PostMapping("/project/{projectId}/saveSprint")
-    public String saveSprint(@PathVariable int projectId, Sprint sprint) throws Exception {
+    public String saveSprint(@PathVariable int projectId, Sprint sprint, RedirectAttributes ra) throws Exception {
         sprint.setProject(projectService.getProjectById(projectId));
-        sprintService.saveSprint(sprint);
+        String message = sprintService.saveSprint(sprint);
+        if (message == "Sprint Creation Unsuccessful")
+            ra.addFlashAttribute("messageDanger", message);
+        else
+            ra.addFlashAttribute("messageSuccess", message);
         return "redirect:/project/{projectId}";
     }
 
@@ -66,7 +71,7 @@ public class SprintController {
     public String sprintEditForm(@PathVariable("sprintId") int sprintId, @PathVariable("projectId") int projectId, Model model) throws Exception {
         Sprint sprint = sprintService.getSprint(sprintId);
         model.addAttribute("sprint", sprint);
-        model.addAttribute("pageTitle", "Edit Sprint (Name: " + sprintId + ")");
+        model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
         return "sprintForm";
 
 
