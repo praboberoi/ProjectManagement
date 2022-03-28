@@ -24,6 +24,7 @@
 
                 <form id="registration_form" action="/register" method="post">
                     <div class="mb-3">
+                        <br>
                         <label for="username" class="required">Username:</label>
                         <input type="text" th:value="${username}" class="form-control" id="username" name="username" onkeyup="check_username();">
                         <p id="usernameError" th:text="${usernameError}" class="error-msg"></p>
