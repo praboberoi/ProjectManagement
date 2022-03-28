@@ -127,7 +127,7 @@ label {
 
 .signup-button{
     text-decoration: none;
-    border-color: #2b4a5c;
+    border-color: #07173B;
     border-style: solid;
     border-radius: 40px;
     border-width: 1px;
@@ -137,8 +137,21 @@ label {
     display: inline-block;
     text-align: center;
     margin-left: 5%;
-    color: #2b4a5c;
+    color: #07173B;
 
+}
+
+#register-btn{
+    background-color: #07173B;
+    border-color: #07173B;
+}
+/*#signup-btn{*/
+/*    background-color: #07173B;*/
+/*    border-color: #07173B;*/
+/*}*/
+#login-form-submit{
+    background-color: #07173B;
+    border-color: #07173B;
 }
 
 .required:after {
