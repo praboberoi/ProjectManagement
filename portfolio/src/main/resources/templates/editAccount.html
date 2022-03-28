@@ -11,8 +11,6 @@
     Custom css for body
     <link rel="stylesheet" type="text/css" th:href="@{/css/body.css}" href="/css/body.css"/>
 
-    <!--        <link rel="stylesheet" href="/css/style.css" />-->
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!--        <script src="/javascript/header.js"></script>-->
 
@@ -59,13 +57,13 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: </h6></label>
+                                    <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="firstName" name="firstName" class="form-control text-end" th:value="${firstName}" pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="firstName" name="firstName" class="form-control text-end" th:value="${firstName}" pattern = "[a-zA-Z]+" title = "Alphabet only" required>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: </h6></label>
+                                    <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-3">
                                         <input type="text" id="lastName" name="lastName" class="form-control text-end" th:value="${lastName}"  pattern = "[a-zA-Z]+" title = "Alphabet only">
                                     </div>
@@ -83,7 +81,7 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="email" class = "col-sm-2 col-form-label"><h6>Email: </h6></label>
+                                    <label for="email" class = "col-sm-2 col-form-label"><h6>Email: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-3">
                                         <input type="email" id="email" name="email" class="form-control text-end" th:value="${email}" >
                                     </div>
