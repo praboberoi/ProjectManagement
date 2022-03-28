@@ -138,6 +138,17 @@ public class AccountController {
         model.addAttribute("email", user.getEmail());
         model.addAttribute("bio", user.getBio());
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+
+        // Convert Date into LocalDate
+        LocalDate creationDate = user.getDateCreated()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        model.addAttribute("creationDate",
+                creationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+        model.addAttribute("timePassed", getTimePassed(creationDate));
+
         return "editAccount";
     }
 
