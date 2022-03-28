@@ -15,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -160,8 +161,9 @@ public class AccountControllerTests {
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
         Model mockModel = Mockito.mock(Model.class);
+        RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
         assertEquals( "editAccount", accountController.editUser(principal, testString,
-                testString, testString, testString, testString, testString, mockModel));
+                testString, testString, testString, testString, testString, mockModel, ra));
 
     }
 
@@ -180,8 +182,9 @@ public class AccountControllerTests {
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
         Model mockModel = Mockito.mock(Model.class);
+        RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
         assertEquals( "redirect:account", accountController.editUser(principal, testString,
-                testString, testString, testString, testString, testString, mockModel));
+                testString, testString, testString, testString, testString, mockModel, ra ));
 
     }
 }

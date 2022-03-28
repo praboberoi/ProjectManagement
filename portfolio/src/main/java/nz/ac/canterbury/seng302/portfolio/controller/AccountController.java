@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
@@ -171,7 +173,8 @@ public class AccountController {
             @RequestParam String bio,
             @RequestParam String pronouns,
             @RequestParam String email,
-            Model model
+            Model model,
+            RedirectAttributes ra
     ) {
         Integer userId = Integer.parseInt(principal.getClaimsList().stream()
                 .filter(claim -> claim.getType().equals("nameid"))
@@ -188,6 +191,12 @@ public class AccountController {
         model.addAttribute("pronouns", pronouns);
         model.addAttribute("email", email);
         if (idpResponse.getIsSuccess()) {
+            // msg to show successfully saved details
+            String msgString;
+            msgString = String.format("Successfully updated details");
+            ra.addFlashAttribute("messageSuccess", msgString);
+            // ends here
+
             return "redirect:account";
         }
         return "editAccount";
