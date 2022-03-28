@@ -79,6 +79,15 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void editUser(EditUserRequest request, StreamObserver<EditUserResponse> responseObserver) {
         EditUserResponse.Builder reply = EditUserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getUserId());
+        EditUserAccountService controller = new EditUserAccountService();
+        reply.addAllValidationErrors(controller.validateUserDetails(request));
+        if (reply.getValidationErrorsCount() != 0) {
+            reply.setIsSuccess(false);
+            reply.setMessage("Edit validation failed");
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
         if (user == null) {
             reply.setIsSuccess(false);
             reply.setMessage("User cannot be found in database");
