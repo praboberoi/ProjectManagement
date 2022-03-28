@@ -171,18 +171,18 @@ public class AccountController {
                 bio,
                 pronouns,
                 email);
+        model.addAttribute("error", idpResponse.getMessage());
+        model.addAttribute("firstName", firstName);
+        model.addAttribute("lastName", lastName);
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("bio", bio);
+        model.addAttribute("pronouns", pronouns);
+        model.addAttribute("email", email);
         if (idpResponse.getIsSuccess()) {
             return "redirect:account";
-        } else {
-            model.addAttribute("error", idpResponse.getMessage());
-            model.addAttribute("firstName", firstName);
-            model.addAttribute("lastName", lastName);
-            model.addAttribute("nickname", nickname);
-            model.addAttribute("bio", bio);
-            model.addAttribute("pronouns", pronouns);
-            model.addAttribute("email", email);
-            return "editAccount";
         }
+        return "editAccount";
+
     };
 
 
