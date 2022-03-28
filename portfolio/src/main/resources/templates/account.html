@@ -13,8 +13,7 @@
 
     <!--        <link rel="stylesheet" href="/css/style.css" />-->
 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--        <script src="/javascript/header.js"></script>-->
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="/javascript/editAccount.js"></script>
 </head>
@@ -23,14 +22,23 @@
 <div th:replace="fragments :: header"></div>
 <!--    <div th:replace="fragments :: menu"></div>-->
 
-<body>
-<header>
-</header>
-<div class = "main">
-    <div class="content_account">
-        <div class="box1">
-            <div class="page-title">
-                <h2>Your LENSfolio Account</h2>
+    <body>
+    <header>
+    </header>
+    <div class = "main">
+        <div class="content_account">
+            <div class="box1">
+                <div class="page-title">
+                    <h2>Your LENSfolio Account</h2>
+                </div>
+
+<!--                msg to show updated details have been successfully saved-->
+                <div th:if="${messageSuccess}" class="alert alert-success text-center">
+                    [[${messageSuccess}]]
+                </div>
+<!--                msg end-->
+
+
             </div>
         </div>
 
@@ -95,6 +103,7 @@
                                     </div>
                                 </div>
                                 <a class="btn btn-primary" href="/editAccount">Edit</a>
+                                <a class="btn btn-secondary" href="/dashboard">Return Home</a>
                             </form>
 
 

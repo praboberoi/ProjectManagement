@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-  <title>Getting Started: Serving Web Content</title>
+  <title>Project</title>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
@@ -10,6 +10,7 @@
 
   <!-- do not include fragments that are not in use PARSING ERROR -->
   <!--<head th:replace="fragments :: content"></head>-->
+
 </head>
 
 <!--fragments-->
@@ -24,8 +25,8 @@
     <h2 id="name">[[${project.projectName}]] </h2>
   </div>
   <h2></h2>
-  <br>
-
+<!--  <br>-->
+    <a class="btn btn-primary" id = "back-btn" href="/dashboard"> back </a>
   <div class="card">
     <div class="card-header">
       Duration: [[${project.startDate}]] to [[${project.endDate}]]
@@ -33,7 +34,6 @@
     <div class="card-body">
       <h5 class="card-title">Project Description:</h5>
       <p class="card-text">[[${project.Description}]]</p>
-      <!--<a href="./calender" class="btn btn-primary">Edit details</a>-->
     </div>
   </div>
 
@@ -42,10 +42,14 @@
   <div class = "sprint_header">
     <!-- use span to make header and button on same line-->
     <h3>Sprints <span class="pull-right">
-            <!-- Button trigger modal for new sprints-->
+      <div th:each="role: ${roles}">
+          <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+          <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
             <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
+          </div>
+       </div>
 
-            </span></h3>
+      </span></h3>
   </div>
 
 
@@ -73,12 +77,15 @@
           <td>[[${sprint.startDate}]]</td>
           <td>[[${sprint.endDate}]]</td>
           <td>
-            <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
-            <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
+            <div th:each="role: ${roles}">
+<!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+              <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+                  <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
+                  <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
+              </div>
+            </div>
           </td>
-
         </tr>
-
       </th:block>
       </tbody>
     </table>

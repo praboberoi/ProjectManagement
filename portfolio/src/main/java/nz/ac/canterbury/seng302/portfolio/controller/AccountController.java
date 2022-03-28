@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.GreeterClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
@@ -18,6 +17,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 
 import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
@@ -51,7 +52,6 @@ public class AccountController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
-
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
@@ -138,6 +138,17 @@ public class AccountController {
         model.addAttribute("email", user.getEmail());
         model.addAttribute("bio", user.getBio());
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+
+        // Convert Date into LocalDate
+        LocalDate creationDate = user.getDateCreated()
+                .toInstant()
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+
+        model.addAttribute("creationDate",
+                creationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
+        model.addAttribute("timePassed", getTimePassed(creationDate));
+
         return "editAccount";
     }
 
@@ -162,7 +173,8 @@ public class AccountController {
             @RequestParam String bio,
             @RequestParam String pronouns,
             @RequestParam String email,
-            Model model
+            Model model,
+            RedirectAttributes ra
     ) {
         Integer userId = Integer.parseInt(principal.getClaimsList().stream()
                 .filter(claim -> claim.getType().equals("nameid"))
@@ -171,22 +183,23 @@ public class AccountController {
                 bio,
                 pronouns,
                 email);
+        model.addAttribute("error", idpResponse.getMessage());
+        model.addAttribute("firstName", firstName);
+        model.addAttribute("lastName", lastName);
+        model.addAttribute("nickname", nickname);
+        model.addAttribute("bio", bio);
+        model.addAttribute("pronouns", pronouns);
+        model.addAttribute("email", email);
         if (idpResponse.getIsSuccess()) {
-            return "redirect:account";
-        } else {
-            model.addAttribute("error", idpResponse.getMessage());
-            model.addAttribute("firstName", firstName);
-            model.addAttribute("lastName", lastName);
-            model.addAttribute("nickname", nickname);
-            model.addAttribute("bio", bio);
-            model.addAttribute("pronouns", pronouns);
-            model.addAttribute("email", email);
+            // msg to show successfully saved details
+            String msgString;
+            msgString = String.format("Successfully updated details");
+            ra.addFlashAttribute("messageSuccess", msgString);
+            // ends here
+
             return "redirect:account";
         }
+        return "editAccount";
+
     };
-
-
-
-
-
 }

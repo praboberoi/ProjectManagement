@@ -102,7 +102,7 @@ public class RegisterController {
         model.addAttribute("bio", bio);
 
         model.addAttribute("personalPronouns", pronouns);
- 
+
         model.addAttribute("email", email);
 
         return "register";
