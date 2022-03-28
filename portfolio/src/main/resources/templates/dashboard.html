@@ -74,6 +74,8 @@
                                             </h6>
                                             <p class="card-text" th:text="${project.description}"/>
                                                 <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                                &nbsp;
+                                                &nbsp;
                                                 <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
                                         </div>
                                     </div>

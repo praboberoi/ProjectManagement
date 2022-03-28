@@ -81,7 +81,7 @@
           <td>[[${#dates.format(sprint.endDate, 'dd-MM-yyyy')}]]</td>
           <td>
             <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
-            <a class="btn btn-primary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
+            <a class="btn btn-secondary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
           </td>
 
         </tr>

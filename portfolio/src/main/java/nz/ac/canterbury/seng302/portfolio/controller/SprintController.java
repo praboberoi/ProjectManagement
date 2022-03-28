@@ -20,12 +20,17 @@ public class SprintController {
     @Autowired private ProjectService projectService;
 
     @GetMapping("/project/{projectId}")
-    public String showSprintList(@PathVariable("projectId") int projectId, Model model) throws Exception {
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
-        Project project = projectService.getProjectById(projectId);
-        model.addAttribute("listSprints", listSprints);
-        model.addAttribute("project", project);
-        return "project";
+    public String showSprintList(@PathVariable("projectId") int projectId, Model model, RedirectAttributes ra) {
+        try {
+            List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            Project project = projectService.getProjectById(projectId);
+            model.addAttribute("listSprints", listSprints);
+            model.addAttribute("project", project);
+            return "project";
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/dashboard";
+        }
     }
 
     /**
@@ -34,13 +39,19 @@ public class SprintController {
      * @return
      */
     @GetMapping("/project/{projectId}/newSprint")
-    public String newSprint(Model model, @PathVariable ("projectId") int projectId) throws Exception {
-        Project currentProject = projectService.getProjectById(projectId);
-        Sprint newSprint = sprintService.getNewSprint(currentProject);
-        model.addAttribute("pageTitle", "Add New Sprint");
-        model.addAttribute("sprint", newSprint);
-        model.addAttribute("project", currentProject);
-        return "sprintForm";
+    public String newSprint(Model model, @PathVariable ("projectId") int projectId, RedirectAttributes ra) {
+        try {
+            Project currentProject = projectService.getProjectById(projectId);
+            Sprint newSprint = sprintService.getNewSprint(currentProject);
+            model.addAttribute("pageTitle", "Add New Sprint");
+            model.addAttribute("sprint", newSprint);
+            model.addAttribute("project", currentProject);
+            return "sprintForm";
+
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
+        }
     }
 
     /**
@@ -49,13 +60,15 @@ public class SprintController {
      * @return
      */
     @PostMapping("/project/{projectId}/saveSprint")
-    public String saveSprint(@PathVariable int projectId, Sprint sprint, RedirectAttributes ra) throws Exception {
-        sprint.setProject(projectService.getProjectById(projectId));
-        String message = sprintService.saveSprint(sprint);
-        if (message == "Sprint Creation Unsuccessful")
-            ra.addFlashAttribute("messageDanger", message);
-        else
+    public String saveSprint(@PathVariable int projectId, Sprint sprint, RedirectAttributes ra) {
+        try {
+            sprint.setProject(projectService.getProjectById(projectId));
+            String message = sprintService.saveSprint(sprint);
             ra.addFlashAttribute("messageSuccess", message);
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+        }
+
         return "redirect:/project/{projectId}";
     }
 
@@ -68,13 +81,18 @@ public class SprintController {
      */
     /*make sure to update project.html for path*/
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
-    public String sprintEditForm(@PathVariable("sprintId") int sprintId, @PathVariable("projectId") int projectId, Model model) throws Exception {
-        Sprint sprint = sprintService.getSprint(sprintId);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
-        return "sprintForm";
-
-
+    public String sprintEditForm(@PathVariable("sprintId") int sprintId, @PathVariable("projectId") int projectId, Model model, RedirectAttributes ra) {
+        try {
+            Project currentProject = projectService.getProjectById(projectId);
+            Sprint sprint = sprintService.getSprint(sprintId);
+            model.addAttribute("sprint", sprint);
+            model.addAttribute("project", currentProject);
+            model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
+            return "sprintForm";
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
+        }
     }
 
     /**
@@ -85,8 +103,13 @@ public class SprintController {
      */
     /* Deleting sprints */
     @GetMapping("/project/{projectId}/deleteSprint/{sprintId}")
-    public String deleteSprint(@PathVariable("sprintId") int sprintId, Model model, @PathVariable int projectId){
-        sprintService.deleteSprint(sprintId);
+    public String deleteSprint(@PathVariable("sprintId") int sprintId, Model model, @PathVariable int projectId, RedirectAttributes ra){
+        try {
+            String message = sprintService.deleteSprint(sprintId);
+            ra.addFlashAttribute("messageSuccess", message);
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+        }
         sprintService.updateSprintNames(sprintService.getSprintByProject(projectId));
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         model.addAttribute("listSprints", listSprints);
