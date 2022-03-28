@@ -81,6 +81,11 @@ public class SprintService {
         sprintRepository.deleteById(sprintId);
 
     }
+
+    /**
+     * If the project sprint list is edited in some way, change the names of sprints accordingly.
+     * @param sprintList
+     */
     public void updateSprintNames(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.stream().forEach(sprint -> {
@@ -90,11 +95,20 @@ public class SprintService {
 
     }
 
+    /**
+     * Return the number of sprints created under a project.
+     * @param projectId
+     * @return total number of sprints in a project.
+     */
     public int countByProjectId(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         return sprintRepository.countByProject(current.get());
     }
 
+    /**
+     * @param projectId
+     * @return a list of sprints from a project specified by its Id.
+     */
     public List<Sprint> getSprintByProject(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         List<Sprint> sprints = sprintRepository.findByProject(current.get());

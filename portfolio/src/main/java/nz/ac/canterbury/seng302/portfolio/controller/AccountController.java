@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.GreeterClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
@@ -51,7 +50,6 @@ public class AccountController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
-
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
@@ -195,9 +193,4 @@ public class AccountController {
         return "editAccount";
 
     };
-
-
-
-
-
 }
