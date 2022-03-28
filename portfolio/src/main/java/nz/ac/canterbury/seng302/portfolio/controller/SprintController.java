@@ -6,6 +6,9 @@ import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -14,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Controller
@@ -51,7 +55,14 @@ public class SprintController {
      * @return
      */
     @GetMapping("/project/{projectId}/newSprint")
-    public String newSprint(Model model, @PathVariable ("projectId") int projectId) throws Exception {
+    public String newSprint(
+        Model model, 
+        @PathVariable ("projectId") int projectId, 
+        @AuthenticationPrincipal AuthState principal) throws Exception {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return "redirect:/dashboard";
+        }
         Project currentProject = projectService.getProjectById(projectId);
         Sprint newSprint = sprintService.getNewSprint(currentProject);
         model.addAttribute("sprint", newSprint);
@@ -64,7 +75,14 @@ public class SprintController {
      * @return
      */
     @PostMapping("/project/{projectId}/saveSprint")
-    public String saveSprint(@PathVariable int projectId, Sprint sprint) throws Exception {
+    public String saveSprint(
+        @PathVariable int projectId, 
+        Sprint sprint,
+        @AuthenticationPrincipal AuthState principal) throws Exception {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return "redirect:/dashboard";
+        }
         sprint.setProject(projectService.getProjectById(projectId));
         sprintService.saveSprint(sprint);
         return "redirect:/project/{projectId}";
@@ -79,7 +97,15 @@ public class SprintController {
      */
     /*make sure to update project.html for path*/
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
-    public String sprintEditForm(@PathVariable("sprintId") int sprintId, @PathVariable("projectId") int projectId, Model model) throws Exception {
+    public String sprintEditForm(
+        @PathVariable("sprintId") int sprintId, 
+        @PathVariable("projectId") int projectId, 
+        Model model,
+        @AuthenticationPrincipal AuthState principal) throws Exception {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return "redirect:/dashboard";
+        }
         Sprint sprint = sprintService.getSprint(sprintId);
         model.addAttribute("sprint", sprint);
         model.addAttribute("pageTitle", "Edit Sprint (Name: " + sprintId + ")");
@@ -95,7 +121,15 @@ public class SprintController {
      * @return
      */
     @GetMapping("/project/{projectId}/deleteSprint/{sprintId}")
-    public String deleteSprint(@PathVariable("sprintId") int sprintId, Model model, @PathVariable int projectId){
+    public String deleteSprint(
+        @PathVariable("sprintId") int sprintId, 
+        Model model, 
+        @PathVariable int projectId,
+        @AuthenticationPrincipal AuthState principal){
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return "redirect:/dashboard";
+        }
         sprintService.deleteSprint(sprintId);
         sprintService.updateSprintNames(sprintService.getSprintByProject(projectId));
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);

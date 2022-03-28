@@ -5,7 +5,7 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -115,8 +115,9 @@ public class UserAccountClientService {
      * @param principal - current user detail.
      * @return List of current user roles.
      */
-    public List<UserRole> getUserRole(AuthState principal) {
-        UserResponse user = getUser(principal);
-        return user.getRolesList();
+    public List<String> getUserRole(AuthState principal) {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream()
+        .filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        return userRoles;
     }
 }

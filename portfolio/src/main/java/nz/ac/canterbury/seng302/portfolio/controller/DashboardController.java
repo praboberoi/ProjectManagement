@@ -1,11 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,9 +18,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
-// TODO:
+
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
@@ -62,7 +65,11 @@ public class DashboardController {
      * @return
      */
     @GetMapping("/dashboard/newProject")
-    public String showNewForm(Model model) {
+    public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return "redirect:/dashboard";
+        }
         dashboardService.setPreviousFeature("Create");
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
@@ -76,7 +83,11 @@ public class DashboardController {
      * @return
      */
     @PostMapping("/dashboard/saveProject")
-    public String saveProject(Project project, Model model, RedirectAttributes ra) {
+    public String saveProject(Project project, Model model, RedirectAttributes ra, @AuthenticationPrincipal AuthState principal) {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return "redirect:/dashboard";
+        }
         try {
             String msgString;
             dashboardService.saveProject(project);
@@ -105,7 +116,14 @@ public class DashboardController {
      * @return
      */
     @GetMapping("/dashboard/editProject/{projectId}")
-    public String showEditForm(@PathVariable(value = "projectId") int projectId, Model model, RedirectAttributes ra) {
+    public String showEditForm(
+        @PathVariable(value = "projectId") int projectId, 
+        Model model, RedirectAttributes ra,
+        @AuthenticationPrincipal AuthState principal) {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return "redirect:/dashboard";
+        }
         try {
             dashboardService.setPreviousFeature("Edit");
             Project project  = dashboardService.getProject(projectId);
@@ -126,7 +144,14 @@ public class DashboardController {
      * @throws Exception If project is not found in the database
      */
     @GetMapping("/dashboard/deleteProject/{projectId}")
-    public String deleteProject(@PathVariable("projectId") int projectId, Model model) {
+    public String deleteProject(
+        @PathVariable("projectId") int projectId,
+        Model model,
+        @AuthenticationPrincipal AuthState principal) {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return "redirect:/dashboard";
+        }
         try {
             sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
