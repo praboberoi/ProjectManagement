@@ -69,7 +69,8 @@
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"  onkeyup="match_pass();" required>
                         <p id="confirmPasswordError" th:text="${confirmPasswordError}" class="error-msg"></p>
                     </div><br>
-                    <button class="form_submit" id="register-btn" type="submit">Submit</button>
+                        <button class="signup-button" type="submit">Submit</button>
+                        <a href="/login"><button type="button" class="close-signup">Close</button></a>
                 </form>
             </div>
         </main>
