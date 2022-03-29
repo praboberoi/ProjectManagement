@@ -90,7 +90,6 @@ public class RegisterController {
 
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
 
-
         model.addAttribute("username", username);
 
         model.addAttribute("firstName", firstName);

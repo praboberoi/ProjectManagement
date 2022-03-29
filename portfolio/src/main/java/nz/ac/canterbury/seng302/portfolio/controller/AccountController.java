@@ -191,12 +191,9 @@ public class AccountController {
         model.addAttribute("pronouns", pronouns);
         model.addAttribute("email", email);
         if (idpResponse.getIsSuccess()) {
-            // msg to show successfully saved details
             String msgString;
             msgString = String.format("Successfully updated details");
             ra.addFlashAttribute("messageSuccess", msgString);
-            // ends here
-
             return "redirect:account";
         }
         return "editAccount";
