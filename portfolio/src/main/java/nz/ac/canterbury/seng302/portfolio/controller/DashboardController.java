@@ -60,7 +60,7 @@ public class DashboardController {
      */
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
-        if (retrieveUserRoles(principal)) return "redirect:/dashboard";
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
