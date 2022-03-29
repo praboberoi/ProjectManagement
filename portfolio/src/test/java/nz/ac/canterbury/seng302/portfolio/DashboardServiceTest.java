@@ -8,12 +8,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -30,6 +32,7 @@ public class DashboardServiceTest {
 
     @BeforeEach
     void setup() {
+        MockitoAnnotations.openMocks(this);
         project1 = new Project.Builder()
                 .projectName("Test Project 1")
                 .description("Test project description")
@@ -52,7 +55,8 @@ public class DashboardServiceTest {
         projectList.add(project1);
         projectList.add(project2);
         when(projectRepository.findAll()).thenReturn(projectList);
-
+        List<Project> returnList = dashboardService.listAll();
+        assertEquals(returnList, projectList);
 
     }
 }
