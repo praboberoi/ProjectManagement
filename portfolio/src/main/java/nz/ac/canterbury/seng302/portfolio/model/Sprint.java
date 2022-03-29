@@ -164,7 +164,7 @@ public class Sprint {
     /**
      * To check the given sprint is equal to the current sprint.
      * @param o Of type object
-     * @return
+     * @return A boolean
      */
     @Override
     public boolean equals(Object o) {

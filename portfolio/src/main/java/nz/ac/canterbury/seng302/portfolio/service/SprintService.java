@@ -15,10 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class SprintService {
-    @Autowired
-    private ProjectRepository projectRepo;
-    @Autowired
-    private SprintRepository sprintRepository;
+    @Autowired private ProjectRepository projectRepo;
+    @Autowired private SprintRepository sprintRepository;
     private Sprint currentSprint = null;
 
     public Sprint getNewSprint(Project project) {
@@ -99,8 +97,6 @@ public class SprintService {
             throw new Exception("Failure Deleting Sprint");
         }
     }
-
-
 
     /**
      * If the project sprint list is edited in some way, change the names of sprints accordingly.

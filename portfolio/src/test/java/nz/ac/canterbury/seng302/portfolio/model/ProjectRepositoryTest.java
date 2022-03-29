@@ -28,20 +28,18 @@ class ProjectRepositoryTest {
                 .build();
 
         Project project2 = new Project.Builder()
-                .projectName("Project 2021")
+                .projectName("Project 2020")
                 .description("Second Attempt")
                 .startDate(new Date(2021, 1, 9))
                 .endDate(new Date(2021, 11, 20))
                 .build();
 
-
+        List<Project> projList = Arrays.asList(project1, project2);
         projectRepo.save(project1);
         projectRepo.save(project2);
-        assertEquals(project1, projectRepo.findByProjectName("Project 2020"));
-        assertNotEquals(project2, projectRepo.findByProjectName("Project 2020"));
+        assertArrayEquals(projList.toArray(), projectRepo.findByProjectName("Project 2020").toArray());
         projectRepo.delete(project1);
         projectRepo.delete(project2);
-
     }
 
     @Test
@@ -82,16 +80,15 @@ class ProjectRepositoryTest {
 
         Project project2 = new Project.Builder()
                 .projectName("Project 2021")
-                .description("Second Attempt")
+                .description("First Attempt")
                 .startDate(new Date(2021, 1, 9))
                 .endDate(new Date(2021, 11, 20))
                 .build();
 
         projectRepo.save(project1);
-
-        assertEquals(project1, projectRepo.findByDescription("First Attempt"));
-        assertNotEquals(project2, projectRepo.findByDescription("Second Attempt"));
-
+        projectRepo.save(project2);
+        List<Project> projList= Arrays.asList(project1, project2);
+        assertArrayEquals(projList.toArray(), projectRepo.findByDescription("First Attempt").toArray());
         projectRepo.delete(project1);
     }
 
