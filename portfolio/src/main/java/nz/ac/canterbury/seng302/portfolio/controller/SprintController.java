@@ -67,10 +67,7 @@ public class SprintController {
             @PathVariable ("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
-        }
+        if (DashboardController.retrieveUserRoles(principal)) return "redirect:/dashboard";
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
@@ -96,10 +93,7 @@ public class SprintController {
         Sprint sprint,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
-            }
+        if (DashboardController.retrieveUserRoles(principal)) return "redirect:/dashboard";
         try {
                 sprint.setProject(projectService.getProjectById(projectId));
                 String message = sprintService.saveSprint(sprint);
@@ -126,11 +120,8 @@ public class SprintController {
             Model model,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-            List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-            if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-                return "redirect:/dashboard";
-            }
-            try {
+        if (DashboardController.retrieveUserRoles(principal)) return "redirect:/dashboard";
+        try {
                 Project currentProject = projectService.getProjectById(projectId);
                 Sprint sprint = sprintService.getSprint(sprintId);
                 model.addAttribute("sprint", sprint);
@@ -157,10 +148,7 @@ public class SprintController {
         @PathVariable int projectId,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra){
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
-        }
+        if (DashboardController.retrieveUserRoles(principal)) return "redirect:/dashboard";
         try {
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);

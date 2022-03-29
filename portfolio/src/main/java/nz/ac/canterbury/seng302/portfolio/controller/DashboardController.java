@@ -66,10 +66,7 @@ public class DashboardController {
      */
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
-        }
+        if (retrieveUserRoles(principal)) return "redirect:/dashboard";
         dashboardService.setPreviousFeature("Create");
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
@@ -83,11 +80,12 @@ public class DashboardController {
      * @return
      */
     @PostMapping("/dashboard/saveProject")
-    public String saveProject(Project project, Model model, RedirectAttributes ra, @AuthenticationPrincipal AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
-        }
+    public String saveProject(
+            Project project,
+            Model model,
+            RedirectAttributes ra,
+            @AuthenticationPrincipal AuthState principal) {
+        if (retrieveUserRoles(principal)) return "redirect:/dashboard";
         try {
             String msgString;
             dashboardService.saveProject(project);
@@ -110,13 +108,12 @@ public class DashboardController {
      */
     @GetMapping("/dashboard/editProject/{projectId}")
     public String showEditForm(
-        @PathVariable(value = "projectId") int projectId,
-        Model model, RedirectAttributes ra,
+        @PathVariable(
+        value = "projectId") int projectId,
+        Model model,
+        RedirectAttributes ra,
         @AuthenticationPrincipal AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
-        }
+        if (retrieveUserRoles(principal)) return "redirect:/dashboard";
         try {
             dashboardService.setPreviousFeature("Edit");
             Project project  = dashboardService.getProject(projectId);
@@ -141,10 +138,7 @@ public class DashboardController {
         @PathVariable("projectId") int projectId,
         Model model,
         @AuthenticationPrincipal AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
-        }
+        if (retrieveUserRoles(principal)) return "redirect:/dashboard";
         try {
             sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
@@ -159,5 +153,13 @@ public class DashboardController {
             model.addAttribute("status", "re-run Project");
             return "error";
         }
+    }
+
+    static boolean retrieveUserRoles(@AuthenticationPrincipal AuthState principal) {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return true;
+        }
+        return false;
     }
 }
