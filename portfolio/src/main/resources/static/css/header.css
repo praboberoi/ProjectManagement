@@ -19,27 +19,3 @@ header, sidebar
 
 }
 
-/*
-continue implementing for mobile size screens
-& hamburger menus
-
-@media screen and (max-width: 600px){
-    .sidebar{
-        display: none;
-    }
-    .main{
-        margin-left: -250px;
-    }
-}
-*/
-
-/* not needed yet , resizing options
-@media (min-width: 768px) {
-    .main {
-        padding-right: 40px;
-        padding-left: 150px; /* 180 + 40 *
-        padding-top: 40px;
-    }
-}
-*/
-
