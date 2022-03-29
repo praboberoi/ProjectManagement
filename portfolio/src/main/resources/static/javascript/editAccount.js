@@ -1,6 +1,7 @@
 var editBtn = document.getElementById('editBtn');
 var editables = document.querySelectorAll('#username, #firstname, #lastname');
 var special = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
 
@@ -31,7 +32,7 @@ function check_firstName() {
     let firstNameErrorElement = document.getElementById("firstNameError");
     if (firstNameElement.value.length < 3
         || firstNameElement.value.length > 32
-        || special.test(firstNameElement.value)
+        || names.test(firstNameElement.value)
         || digit.test(firstNameElement.value))
     {
         firstNameElement.classList.add("form_error")
@@ -47,7 +48,7 @@ function check_lastName() {
     let lastNameErrorElement = document.getElementById("lastNameError");
     if (lastNameElement.value.length < 3
         || lastNameElement.value.length > 32
-        || special.test(lastNameElement.value)
+        || names.test(lastNameElement.value)
         || digit.test(lastNameElement.value))
     {
         lastNameElement.classList.add("form_error")

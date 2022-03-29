@@ -22,6 +22,16 @@ public class ValidationUtilitiesTests {
     }
 
     @Test
+    public void givenNumbers_hasSpecialCharacterHyphenReturnsTrue() {
+        Assertions.assertFalse(ValidationUtilities.hasNameSpecial("test-name"));
+    }
+
+    @Test
+    public void givenNumbers_hasSpecialCharacterSpaceReturnsTrue() {
+        Assertions.assertFalse(ValidationUtilities.hasNameSpecial("test name"));
+    }
+
+    @Test
     public void givenSpecialCharacters_hasDigitsReturnsFalse() {
         Assertions.assertFalse(ValidationUtilities.hasDigit("Test!"));
     }
