@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.sql.Date;
@@ -32,6 +33,7 @@ public class ProjectServiceTest {
 
     @BeforeEach
     void setup() {
+        MockitoAnnotations.openMocks(this);
         project1 = new Project.Builder()
                 .projectName("Test Project 1")
                 .description("Test project description")
