@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
-import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -16,16 +15,16 @@ import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class ProjectServiceTest {
+public class DashboardServiceTest {
     @Mock
     ProjectRepository projectRepository;
 
     @InjectMocks
-    ProjectService projectService;
+    DashboardService dashboardService;
 
     private Project project1;
     private Project project2;
@@ -50,10 +49,14 @@ public class ProjectServiceTest {
     }
 
     @Test
-    public void getProjectByIdTestNull() throws Exception {
-        assertThrows(Exception.class, () -> {
-            when(projectRepository.findById(1)).thenReturn(null);
-            Project project = projectService.getProjectById(1);
-        });
+    public void givenProjectDatabaseWithProjects_whenGetAllProjects_thenReturnListProject() throws Exception {
+        List<Project> projectList;
+        projectList = new ArrayList<Project>();
+        projectList.add(project1);
+        projectList.add(project2);
+        when(projectRepository.findAll()).thenReturn(projectList);
+        List<Project> returnList = dashboardService.getAllProjects();
+        assertEquals(returnList, projectList);
+
     }
 }

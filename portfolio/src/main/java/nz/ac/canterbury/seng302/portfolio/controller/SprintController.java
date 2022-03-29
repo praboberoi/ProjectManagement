@@ -49,6 +49,7 @@ public class SprintController {
             model.addAttribute("project", project);
             model.addAttribute("roles",
                     userAccountClientService.getUserRole(principal));
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "project";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -74,6 +75,7 @@ public class SprintController {
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "sprintForm";
 
         } catch (Exception e) {
@@ -127,6 +129,7 @@ public class SprintController {
                 model.addAttribute("sprint", sprint);
                 model.addAttribute("project", currentProject);
                 model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
+            model.addAttribute("user", userAccountClientService.getUser(principal));
                 return "sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());
