@@ -5,11 +5,11 @@ import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Bean;
 
 import java.sql.Date;
@@ -30,10 +30,9 @@ class SprintServiceTest {
         return new SprintService();
     }
     /**
-     * Creates a Mock for the SprintRepository, which can be used to bypass the call
-     * to actual SprintRepository
+     * Use Autowire to place instance of bean
      */
-    @MockBean
+    @Autowired
     private SprintRepository sprintRepository;
     @Autowired
     private SprintService sprintService;
@@ -43,7 +42,6 @@ class SprintServiceTest {
     private Sprint sprint2;
     private Sprint sprint3;
     private Project project;
-
 
 
     @BeforeEach
@@ -74,7 +72,7 @@ class SprintServiceTest {
         sprint3 = new Sprint.Builder()
                 .sprintName("Sprint 3")
                 .description("Attempt 3")
-                .project(project)
+//                .project(project)
                 .startDate(new Date(2021, 3, 1))
                 .endDate(new Date(2021, 6, 1))
                 .build();
@@ -84,15 +82,23 @@ class SprintServiceTest {
         sprintRepository.save(sprint2);
     }
 
+    @AfterEach
+    public void tearDown() {
+        sprintRepository.delete(sprint1);
+        sprintRepository.delete(sprint2);
+        projectRepository.delete(project);
+    }
+
     /**
      * Tests that all sprints in a project get deleted
      * @throws Exception
      */
     @Test
     public void givenSprintExists_DeleteAllSprints() throws Exception {
+        List<Sprint> sprintList = Arrays.asList();
         sprintService.deleteAllSprints(project.getProjectId());
         sprintService.getSprintByProject(project.getProjectId());
-        assertEquals(null,sprintService.getSprintByProject(project.getProjectId()));
+        assertEquals(sprintList,sprintService.getSprintByProject(project.getProjectId()));
     }
 
     /**
@@ -109,8 +115,10 @@ class SprintServiceTest {
      */
     @Test
     public void givenNewSprint_AddNewSprint() {
-        assertEquals(sprint3, sprintService.getNewSprint(project));
-        assertNotEquals(sprint1, sprintService.getNewSprint(project));
+//        sprintService.getNewSprint(project).getSprintName();
+        Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
+        assertEquals(sprint3.getSprintName(), sprintService.getNewSprint(project1).getSprintName());
+//        assertNotEquals(sprint1, sprintService.getNewSprint(project));
 
     }
 
@@ -130,7 +138,8 @@ class SprintServiceTest {
      */
     @Test
     public void givenSprintExists_CountByProject() {
-        assertEquals(2, sprintService.countByProjectId(project.getProjectId()));
+        Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
+        assertEquals(2, sprintService.countByProjectId(project1.getProjectId()));
         assertNotEquals(1, sprintService.countByProjectId(project.getProjectId()));
     }
 
@@ -139,7 +148,8 @@ class SprintServiceTest {
      */
     @Test
     public void givenProjectId_GetListOfSprints() {
+        Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
         List<Sprint> sprintList = Arrays.asList(sprint1,sprint2);
-        assertArrayEquals(sprintList.toArray(), sprintService.getSprintByProject(project.getProjectId()).toArray());
+        assertArrayEquals(sprintList.toArray(), sprintService.getSprintByProject(project1.getProjectId()).toArray());
     }
 }
