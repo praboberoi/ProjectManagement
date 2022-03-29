@@ -45,7 +45,7 @@
         <div class="content_container">
             <div id="content">
                 <br>
-                <h4>Great to see you <span th:text="${firstName} + '!'"> </span></h4>
+                <h4>Great to see you <span th:text="${user.firstName} + '!'"> </span></h4>
                 <br>
                 <!-- card: to create a box outline to contain form-->
                 <div class="card">
@@ -62,58 +62,49 @@
                                 <div class="row mb-3">
                                     <label for="username" class = "col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" readonly class="form-control-plaintext" id="username" th:placeholder="${username}">
+                                        <input type="text" readonly class="form-control-plaintext" id="username" th:placeholder="${user.username}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="firstName" readonly class="form-control-plaintext" th:placeholder="${firstName}">
+                                        <input type="text" id="firstName" readonly class="form-control-plaintext" th:placeholder="${user.firstName}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="lastName" readonly class="form-control-plaintext" th:placeholder="${lastName}">
+                                        <input type="text" id="lastName" readonly class="form-control-plaintext" th:placeholder="${user.lastName}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="pronouns" class = "col-sm-2 col-form-label"><h6>Pronouns: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="pronouns" readonly class="form-control-plaintext" th:placeholder="${pronouns}">
+                                        <input type="text" id="pronouns" readonly class="form-control-plaintext" th:placeholder="${user.pronouns}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="nickname" class = "col-sm-2 col-form-label"><h6>Nicknames: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="nickname" readonly class="form-control-plaintext" th:placeholder="${nickname}">
+                                        <input type="text" id="nickname" readonly class="form-control-plaintext" th:placeholder="${user.nickname}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class = "col-sm-2 col-form-label"><h6>Email: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="email" readonly class="form-control-plaintext" th:placeholder="${email}">
+                                        <input type="text" id="email" readonly class="form-control-plaintext" th:placeholder="${user.email}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="bio" class = "col-sm-2 col-form-label"><h6>Bio: </h6></label>
                                     <div class = "col-sm-3">
                                         <!--                                        <input type="text" id="bio" class="form-control text-end" th:placeholder="${bio}">-->
-                                        <textarea readonly class="form-control-plaintext" id="bio" rows="3" th:placeholder="${bio}"></textarea>
+                                        <textarea readonly class="form-control-plaintext" id="bio" rows="3" th:placeholder="${user.bio}"></textarea>
                                     </div>
                                 </div>
                                 <a class="btn btn-primary" href="/editAccount">Edit</a>
-                                <a class="btn btn-secondary" href="/dashboard">Return Home</a>
+                                <a class="btn btn-secondary" href="/dashboard">Close</a>
                             </form>
-
-
-                            <!--                                <h6>First Name: <span th:text="${firstName}"></span></h6>-->
-                            <!--                                <h6>Last Name: <span th:text="${lastName}"></span></h6>-->
-                            <!--                                <h6>Role/s: <span th:text="${roles}"></span></h6>-->
-                            <!--                                <h6>Nickname/s: <span th:text="${nickname}"></span></h6>-->
-                            <!--                                <h6>Email Address: <span th:text="${email}"></span></h6>-->
-                            <!--                                <h6>Biography: <span th:text="${bio}"></span></h6>-->
-                            <!--                                <h6>Pronouns: <span th:text="${pronouns}"></span></h6>-->
                         </div>
                     </div>
                 </div>

@@ -69,7 +69,7 @@ public class User implements Serializable {
         return bio;
     }
 
-    public String getPersonalPronouns() {
+    public String getPronouns() {
         return pronouns;
     }
 
