@@ -16,7 +16,6 @@ import java.time.LocalDate;
 
 import java.util.List;
 
-// TODO:
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
@@ -78,13 +77,6 @@ public class DashboardController {
             ra.addFlashAttribute("messageSuccess", msgString);
             return "redirect:/dashboard";
         } catch (Exception e) {
-            model.addAttribute("exception", e);
-            model.addAttribute("message", e.getMessage());
-            model.addAttribute("timestamp", LocalDate.now());
-            model.addAttribute("error", "Invalid Information");
-            model.addAttribute("path", "./portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/controller/DashboardController.java");
-            model.addAttribute("trace", "portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/service/DashboardService.java");
-            model.addAttribute("status", "re-run Project");
             return "error";
         }
     }

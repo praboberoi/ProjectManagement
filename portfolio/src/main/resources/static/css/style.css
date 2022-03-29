@@ -146,6 +146,14 @@ label {
     color: red;
 }
 
+.date-color {
+    color: #07173B !important;
+}
+
+.date-font {
+    font-size:15px !important;
+}
+
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
 @media screen and (max-width: 950px) {
     .login_square, .login-container{

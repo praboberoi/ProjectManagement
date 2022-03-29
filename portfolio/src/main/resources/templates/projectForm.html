@@ -17,12 +17,6 @@
     <!-- do not include fragments that are not in use PARSING ERROR -->
     <!--<head th:replace="fragments :: content"></head>-->
     <title>[[${pageTitle}]]</title>
-    <style>
-        .required:after {
-            content:"*";
-            color: red;
-        }
-    </style>
 </head>
 
 <!--fragments-->
@@ -47,18 +41,18 @@
             <div style="height:30px;" class="row">
 
                 <div class="col-md-6 ms-auto">
-                    <label style="font-size:15px;" for="startDate" class="form-label required">Start Date</label>
+                    <label  for="startDate" class="form-label date-font required">Start Date</label>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <label style="font-size:15px;" for="endDate" class="form-label required">End Date</label>
+                    <label for="endDate" class="form-label required">End Date</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 ms-auto">
-                    <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" required>
+                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" required>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" required>
+                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" required>
                 </div>
             </div>
 
