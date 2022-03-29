@@ -16,8 +16,7 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class SprintServiceTest {
@@ -42,6 +41,7 @@ class SprintServiceTest {
     private ProjectRepository projectRepository;
     private Sprint sprint1;
     private Sprint sprint2;
+    private Sprint sprint3;
     private Project project;
 
 
@@ -70,24 +70,74 @@ class SprintServiceTest {
                 .startDate(new Date(2021, 3, 1))
                 .endDate(new Date(2021, 6, 1))
                 .build();
+
+        sprint3 = new Sprint.Builder()
+                .sprintName("Sprint 3")
+                .description("Attempt 3")
+                .project(project)
+                .startDate(new Date(2021, 3, 1))
+                .endDate(new Date(2021, 6, 1))
+                .build();
+
         projectRepository.save(project);
         sprintRepository.save(sprint1);
         sprintRepository.save(sprint2);
     }
 
     /**
-     * Tests that a sprint get deleted
+     * Tests that all sprints in a project get deleted
      * @throws Exception
      */
     @Test
     public void givenSprintExists_DeleteAllSprints() throws Exception {
-        sprintService.deleteSprint(sprint1.getSprintId());
-        assertEquals(null,sprint1);
+        assertEquals(null,sprintService.deleteSprint(project.getProjectId()));
     }
 
+    /**
+     * Tests a sprint has been successfully deleted from database
+     * @throws Exception
+     */
     @Test
-    public void givenSprintExists_FindBySprintNameContaining() {
-        List<Sprint> sprintList = Arrays.asList(sprint1, sprint2);
-        assertArrayEquals(sprintList.toArray(), sprintRepository.findBySprintNameContaining("Sprint").toArray());
+    public void givenSprintId_DeleteFromDatabase() throws Exception {
+        assertEquals("Sprint Deleted Successfully", sprintService.deleteSprint(sprint1.getSprintId()));
+    }
+
+    /**
+     * Tests that a new sprint got added to project
+     */
+    @Test
+    public void givenNewSprint_AddNewSprint() {
+        assertEquals(sprint3, sprintService.getNewSprint(project));
+        assertNotEquals(sprint1, sprintService.getNewSprint(project));
+
+    }
+
+    /**
+     * Tests the correct sprint object is returned
+     * when give the sprintId
+     */
+    @Test
+    public void givenSprintId_GetCurrentSprint(){
+        assertEquals(sprint1,sprintService.getSprint(sprint1.getSprintId()));
+        assertNotEquals(sprint2,sprintService.getSprint(sprint1.getSprintId()));
+    }
+
+    /**
+     * Tests the correct number of sprint has been returned
+     * given a projectId
+     */
+    @Test
+    public void givenSprintExists_CountByProject() {
+        assertEquals(2, sprintService.countByProjectId(project.getProjectId()));
+        assertNotEquals(1, sprintService.countByProjectId(project.getProjectId()));
+    }
+
+    /**
+     * Tests the list of sprints returned is correct
+     */
+    @Test
+    public void givenProjectId_GetListOfSprints() {
+        List<Sprint> sprintList = Arrays.asList(sprint1,sprint2);
+        assertArrayEquals(sprintList.toArray(), sprintService.getSprintByProject(project.getProjectId()).toArray());
     }
 }
