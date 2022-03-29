@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -120,4 +121,19 @@ public class UserAccountClientService {
         .filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
         return userRoles;
     }
+
+    /**
+     * Checks whether the current user has a teacher or course administrator role.
+     * @param principal - current user
+     * @return true if has role teacher or course administrator
+     */
+    public boolean checkUserIsTeacherOrAdmin(@AuthenticationPrincipal AuthState principal) {
+        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
+        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+            return true;
+        }
+        return false;
+    }
+
+
 }

@@ -98,8 +98,6 @@ public class SprintService {
         }
     }
 
-
-
     /**
      * If the project sprint list is edited in some way, change the names of sprints accordingly.
      * @param sprintList

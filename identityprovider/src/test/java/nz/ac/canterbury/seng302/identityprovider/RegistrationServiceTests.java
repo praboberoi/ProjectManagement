@@ -106,4 +106,32 @@ class RegistrationServiceTests {
         assertEquals(7, result.size(), "Incorrect number of validation errors\n"
                 + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
     }
+
+    /**
+     * Tests blue sky data for registering a user
+     */
+    @Test
+    void givenValidUserRequestWithSpaceInNames_whenUserValidation_thenNoValidationErrors() {
+        requestBuilder.setFirstName("test first name");
+        requestBuilder.setLastName("test last name");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+
+        assertEquals(0, result.size(), "Valid user's "
+                + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
+                + " are invalid");
+    }
+
+    /**
+     * Tests blue sky data for registering a user
+     */
+    @Test
+    void givenValidUserRequestWithHyphensInNames_whenUserValidation_thenNoValidationErrors() {
+        requestBuilder.setFirstName("test-first-name");
+        requestBuilder.setLastName("test-last-name");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+
+        assertEquals(0, result.size(), "Valid user's "
+                + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
+                + " are invalid");
+    }
 }

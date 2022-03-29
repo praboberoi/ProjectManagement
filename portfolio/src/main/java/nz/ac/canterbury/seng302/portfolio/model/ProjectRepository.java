@@ -9,16 +9,46 @@ import java.util.List;
 @Repository
 public interface ProjectRepository extends CrudRepository<Project, Integer> {
 
+    /**
+     * Obtains a list of projects with the given name.
+     * @param projectName of type String.
+     * @return a list of type Project.
+     */
     public List<Project> findByProjectName(String projectName);
 
+    /**
+     * Obtains a list of projects with the name containing the given string
+     * @param name of type String
+     * @return a list of type Project
+     */
     public List<Project> findByProjectNameContaining(String name);
 
+    /**
+     * Obtains a list of projects with the given description.
+     * @param description of type String.
+     * @return a list of type Sprint.
+     */
     public List<Project> findByDescription(String description);
 
+    /**
+     * Obtains a list of projects with description containing the give string
+     * @param description of type String
+     * @return a list of type Project.
+     */
     public List<Project> findByDescriptionContaining(String description);
 
-    public List<Project> findByStartDate(Date startDate);
+    /**
+     * Obtains a list of projects that start on the given date.
+     * @param startDate of type Date.
+     * @return a list of type Sprint.
+     */
+    public Project findByStartDate(Date startDate);
 
-    public List<Project> findByEndDate(Date endDate);
+    /**
+     * Obtains a list of projects that end on the given date.
+     * @param endDate of type Date.
+     * @return a list of type Project.
+     */
+    public Project findByEndDate(Date endDate);
 
 }
