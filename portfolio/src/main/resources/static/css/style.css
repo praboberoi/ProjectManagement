@@ -2,6 +2,7 @@
     padding: 0;
     margin: 0;
     box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
 }
 
 .content_square {
@@ -59,7 +60,7 @@
 
 #login-form, #registration_form, #content {
     margin: 0 auto;
-    color: #2b4a5c;
+    color: #07173B;
     display: inline-block;
     padding-bottom: 30px;
     width:80%;
@@ -71,11 +72,12 @@ label {
 
 .form-control{
     border-radius: 64px;
-    color: #2b4a5c;
+    color: #07173B;
     width:100%;
     height: 24px;
-    border-color: #2b4a5c;
+    border-color: #07173B;
     padding-left: 8px;
+    border-width: 2px;
     border-style: solid;
 }
 
@@ -86,11 +88,11 @@ label {
 .form_submit{
     width: 100%;
     height: 28px;
-    background: #2b4a5c;
+    background: #07173B;
     border-radius: 40px;
     font-size: 18px;
     color: white;
-    border-color: #2b4a5c;
+    border-color: #07173B;
     border-style: solid;
     cursor: pointer;
 }
@@ -113,34 +115,39 @@ label {
 }
 
 .no-account-warning{
-
-    color: #2b4a5c;
+    color: #07173B;
     width:100%;
 }
 
 .no-account-question {
     float: left;
-    font-weight: 200;
+    font-weight: 400;
     font-size: 18px;
     display: inline-block;
+    color: #07173B;
+
 }
 
-.signup-button, .close-signup{
+.signup-button, .close-signup {
     text-decoration: none;
     border-color: #07173B;
     border-style: solid;
     border-radius: 40px;
-    border-width: 1px;
+    border-width: 2px;
     width: 120px;
     height: 28px;
     font-size: 14px;
     display: inline-block;
     text-align: center;
     margin-left: 5%;
-    color: #07173B;
-.signup-button {
     background-color: #07173B;
     color: white;
+}
+
+#login-btn {
+    background-color: white;
+    color: #07173B;
+
 }
 
 #register-btn{
@@ -184,5 +191,3 @@ label {
         padding: 10px 10px;
     }
 }
-
-

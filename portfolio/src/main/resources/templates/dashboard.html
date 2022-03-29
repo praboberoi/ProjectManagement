@@ -17,10 +17,13 @@
 </head>
 
 <!--fragments-->
-<div th:replace="fragments :: header"></div>
-<div th:replace="fragments :: dashboard"></div>
+
 
 <body>
+<header>
+    <div th:replace="fragments :: header"></div>
+</header>
+<div th:replace="fragments :: dashboard"></div>
 <div class="main">
 
     <!--<p>Here are your current projects</p>-->

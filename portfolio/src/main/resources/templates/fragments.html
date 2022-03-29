@@ -15,7 +15,7 @@
 
 <body>
 <!--fragment for header using bootstrap-->
-<header>
+<div th:fragment="header">
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top" style="background-color: #07173B !important;">
     <div class="container-fluid">
       <a class="navbar-brand" href="/dashboard">LENSfolio</a>
@@ -36,7 +36,7 @@
       </ul>
     </div>
   </nav>
-</header>
+</div>
 
 <div th:fragment="login-header">
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top" style="background-color: #07173B !important;">
