@@ -125,9 +125,9 @@ label {
     display: inline-block;
 }
 
-.signup-button{
+.signup-button, .close-signup{
     text-decoration: none;
-    border-color: #2b4a5c;
+    border-color: #07173B;
     border-style: solid;
     border-radius: 40px;
     border-width: 1px;
@@ -137,9 +137,28 @@ label {
     display: inline-block;
     text-align: center;
     margin-left: 5%;
-    color: #2b4a5c;
-
+    color: #07173B;
+.signup-button {
+    background-color: #07173B;
+    color: white;
 }
+
+#register-btn{
+    background-color: #07173B;
+    border-color: #07173B;
+}
+
+#login-form-submit{
+    background-color: #07173B;
+    border-color: #07173B;
+}
+
+.close-signup {
+    background-color: white;
+    color: #07173B;
+}
+
+
 
 .required:after {
     content:"*";

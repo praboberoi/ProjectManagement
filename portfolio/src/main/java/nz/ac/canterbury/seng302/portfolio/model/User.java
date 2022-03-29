@@ -77,9 +77,7 @@ public class User implements Serializable {
         return email;
     }
 
-    public List<UserRole> getRoles() {
-        return roles;
-    }
+    public List<UserRole> getRoles() {return roles;}
 
     public Date getDateCreated() {
         return dateCreated;

@@ -37,7 +37,13 @@
             </tr>
             <tr>
                 <th>
-                    <a class="btn btn-primary" id = "create-btn" th:href="@{/dashboard/newProject}">Create Project</a>
+                    <!-- Iterate through the roles of the current user !-->
+                    <div th:each="role: ${roles}">
+                        <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+                        <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+                            <a class="btn btn-primary" id = "create-btn" th:href="@{/dashboard/newProject}">Create Project</a>
+                        </div>
+                    </div>
                 </th>
             </tr>
             <div>
@@ -67,10 +73,14 @@
                                                 <p class="date-color"  th:text="${#dates.format(project.startDate, 'dd-MM-yyyy')} + ' to ' + ${#dates.format(project.endDate, 'dd-MM-yyyy')}"></p>
                                             </h6>
                                             <p class="date-color" th:text="${project.description}"/>
-                                                <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
-                                                &nbsp;
-                                                &nbsp;
-                                                <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
+                                            <div th:each="role: ${roles}">
+                                                <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+                                                    <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                                    &nbsp;
+                                                    &nbsp;
+                                                    <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
+                                                </div>
+                                             </div>
                                         </div>
                                     </div>
                                 </div>

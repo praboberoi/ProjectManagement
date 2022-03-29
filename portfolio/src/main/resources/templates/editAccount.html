@@ -1,7 +1,7 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Account page</title>
+    <title>Edit Account page</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
 
@@ -11,12 +11,9 @@
     Custom css for body
     <link rel="stylesheet" type="text/css" th:href="@{/css/body.css}" href="/css/body.css"/>
 
-    <!--        <link rel="stylesheet" href="/css/style.css" />-->
-
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <!--        <script src="/javascript/header.js"></script>-->
 
-    <script src="/javascript/editAccount.js"></script>
+<!--    <script src="/javascript/editAccount.js"></script>-->
 </head>
 
 <!--    add/fragments -->
@@ -46,67 +43,66 @@
                         <div class="card-body">
                             <!-- badges -->
                             <h6><span class="badge bg-success" th:text="${roles}"></span> member</h6>
-                            <h6><span class="badge bg-secondary"> Add date joined</span></h6>
+                            <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
+                                <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
                             <!-- start of form -->
                             <!-- edit with @postmapping to update details in database AND screen-->
                             <form action="/editAccount" method="post">
                                 <div class="row mb-3">
-                                    <label for="username" class = "col-sm-2 col-form-label"><h6>Username: </h6></label>
+                                    <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-3">
                                         <input type="text" id="username" class="form-control text-end" th:placeholder="${username}"  aria-label="Disabled input example" disabled>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: </h6></label>
+                                    <label for="firstName" class = "required col-sm-2 col-form-label"><h6>First Name: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="firstName" name="firstName" class="form-control text-end" th:value="${username}" pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="firstName" name="firstName" class="form-control text-end" th:value="${firstName}" onkeyup="check_firstName();" required>
+                                        <p id="firstNameError" th:text="${firstNameError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: </h6></label>
+                                    <label for="lastName" class = "required col-sm-2 col-form-label"><h6>Last Name: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="lastName" name="lastName" class="form-control text-end" th:value="${username}"  pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="lastName" name="lastName" class="form-control text-end" th:value="${lastName}"  onkeyup="check_lastName();" required>
+                                        <p id="lastNameError" th:text="${lastNameError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="pronouns" class = "col-sm-2 col-form-label"><h6>Pronouns: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="pronouns" name="pronouns" class="form-control text-end" th:value="${pronouns}" pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="pronouns" name="pronouns" class="form-control text-end" th:value="${pronouns}" onkeyup="check_pronouns();">
+                                        <p id="personalPronounsError" th:text="${personalPronounsError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="nickname" class = "col-sm-2 col-form-label"><h6>Nicknames: </h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="text" id="nickname" class="form-control text-end" th:value="${nickname}" pattern = "[a-zA-Z]+" title = "Alphabet only">
+                                        <input type="text" id="nickname" name="nickname" class="form-control text-end" th:value="${nickname}" onkeyup="check_nickname();">
+                                        <p id="nicknameError" th:text="${nicknameError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="email" class = "col-sm-2 col-form-label"><h6>Email: </h6></label>
+                                    <label for="email" class = "required col-sm-2 col-form-label"><h6>Email: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-3">
-                                        <input type="email" id="email" name="email" class="form-control text-end" th:value="${email}" >
+                                        <input type="email" id="email" name="email" class="form-control text-end" th:value="${email}"onkeyup="check_email();" required>
+                                        <p id="emailError" th:text="${emailError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="bio" class = "col-sm-2 col-form-label"><h6>Bio: </h6></label>
                                     <div class = "col-sm-3">
-                                        <!--                                        <input type="text" id="bio" class="form-control text-end" th:placeholder="${bio}">-->
-                                        <textarea class="form-control mt-50" id="bio" name="bio" rows="3" th:value="${bio}"></textarea>
+                                        <input type="bio" id="bio" name="bio" class="form-control text-end" th:value="${bio}"onkeyup="check_bio();">
+                                        <p id="bioError" th:text="${bioError}" class="error-msg"></p>
                                     </div>
                                 </div>
+                                <br>
                                 <button type="submit" class="btn btn-primary" href="/account">Save</button>
+                                <a class="btn btn-secondary" href="/account">Cancel</a>
 
 
                             </form>
-
-
-                            <!--                                <h6>First Name: <span th:text="${firstName}"></span></h6>-->
-                            <!--                                <h6>Last Name: <span th:text="${lastName}"></span></h6>-->
-                            <!--                                <h6>Role/s: <span th:text="${roles}"></span></h6>-->
-                            <!--                                <h6>Nickname/s: <span th:text="${nickname}"></span></h6>-->
-                            <!--                                <h6>Email Address: <span th:text="${email}"></span></h6>-->
-                            <!--                                <h6>Biography: <span th:text="${bio}"></span></h6>-->
-                            <!--                                <h6>Pronouns: <span th:text="${pronouns}"></span></h6>-->
                         </div>
                     </div>
                 </div>

@@ -108,11 +108,23 @@ a.project-name {
     height: 32px;
 }
 
+#back-btn{
+    margin-top: 8px;
+    margin-bottom: 18px;
+    margin-left: 45px;
+
+}
 #create-btn {
     margin-left: 45px;
 }
 
+
+
 /* for invalid inputs in form*/
 input:invalid{
     box-shadow: 0 0 5px 1px red;
+}
+
+.asterisk {
+    color: red;
 }

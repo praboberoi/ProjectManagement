@@ -49,7 +49,7 @@ class UserAccountServerServiceTests {
                 .setFirstName("Test")
                 .setLastName("User")
                 .setEmail("TestUser@canterbury.ac.nz")
-                .setPassword("password123")
+                .setPassword("Paassword123")
                 .build();
         StreamRecorder<UserRegisterResponse> responseObserver = StreamRecorder.create();
         when(userRepository.save(any(User.class))).then(returnsFirstArg());

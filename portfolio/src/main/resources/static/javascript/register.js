@@ -113,3 +113,16 @@ function match_pass() {
         confirmPasswordErrorElement.innerText = "Passwords do not match."
     }
 }
+
+function check_bio() {
+    let bioElement = document.getElementById("bio");
+    let bioErrorElement = document.getElementById("bioError");
+    if (bioElement.value.length > 250)
+    {
+        bioErrorElement.classList.add("form_error");
+        bioErrorElement.innerText = "Bio must be less than 250 characters."
+    } else {
+        bioErrorElement.classList.remove("form_error");
+        bioErrorElement.innerText = null;
+    }
+};

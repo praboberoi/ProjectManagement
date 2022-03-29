@@ -40,8 +40,6 @@ public class SprintService {
         }
         return newSprint;
     }
-
-    //  TODO: Write Exceptions
     public void deleteAllSprints(int projectId) {
         List<Sprint> sprintList = getSprintByProject(projectId);
         sprintList.stream().forEach(sprint -> {
@@ -55,7 +53,6 @@ public class SprintService {
 
     /**
      * Saves a sprint object to the database
-     *
      * @param sprint
      */
     public String saveSprint(Sprint sprint) throws Exception {
@@ -81,7 +78,6 @@ public class SprintService {
 
     /**
      * Returns a sprint object from the database
-     *
      * @param sprintId Key used to find the sprint object
      * @return Sprint object
      */
@@ -93,7 +89,6 @@ public class SprintService {
 
     /**
      * Deletes a sprint from the database
-     *
      * @param sprintId Key used to find the sprint object
      */
     public String deleteSprint(int sprintId) throws Exception {
@@ -105,6 +100,12 @@ public class SprintService {
         }
     }
 
+
+
+    /**
+     * If the project sprint list is edited in some way, change the names of sprints accordingly.
+     * @param sprintList
+     */
     public void updateSprintNames(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.stream().forEach(sprint -> {
@@ -114,11 +115,20 @@ public class SprintService {
 
     }
 
+    /**
+     * Return the number of sprints created under a project.
+     * @param projectId
+     * @return total number of sprints in a project.
+     */
     public int countByProjectId(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         return sprintRepository.countByProject(current.get());
     }
 
+    /**
+     * @param projectId
+     * @return a list of sprints from a project specified by its Id.
+     */
     public List<Sprint> getSprintByProject(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         List<Sprint> sprints = sprintRepository.findByProject(current.get());

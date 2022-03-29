@@ -1,5 +1,8 @@
 var editBtn = document.getElementById('editBtn');
-var editables = document.querySelectorAll('#username, #firstname, #lastname')
+var editables = document.querySelectorAll('#username, #firstname, #lastname');
+var special = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+var digit = /[0-9]/;
+var upper = /[A-Z]/;
 
 editBtn.addEventListener('click', function(e) {
     if (!editables[0].isContentEditable) {
@@ -22,3 +25,81 @@ editBtn.addEventListener('click', function(e) {
         }
     }
 });
+
+function check_firstName() {
+    let firstNameElement = document.getElementById("firstName");
+    let firstNameErrorElement = document.getElementById("firstNameError");
+    if (firstNameElement.value.length < 3
+        || firstNameElement.value.length > 32
+        || special.test(firstNameElement.value)
+        || digit.test(firstNameElement.value))
+    {
+        firstNameElement.classList.add("form_error")
+        firstNameErrorElement.innerText = "First name must be between 3 and 32 characters with no special characters or digits."
+    } else {
+        firstNameElement.classList.remove("form_error");
+        firstNameErrorElement.innerText = null;
+    }
+};
+
+function check_lastName() {
+    let lastNameElement = document.getElementById("lastName");
+    let lastNameErrorElement = document.getElementById("lastNameError");
+    if (lastNameElement.value.length < 3
+        || lastNameElement.value.length > 32
+        || special.test(lastNameElement.value)
+        || digit.test(lastNameElement.value))
+    {
+        lastNameElement.classList.add("form_error")
+        lastNameErrorElement.innerText = "Last name must be between 3 and 32 characters with no special characters or digits."
+    } else {
+        lastNameElement.classList.remove("form_error");
+        lastNameErrorElement.innerText = null;
+    }
+};
+
+function check_nickname() {
+    let nicknameElement = document.getElementById("nickname");
+    let nicknameErrorElement = document.getElementById("nicknameError");
+    if (nicknameElement.value.length > 32)
+    {
+        nicknameElement.classList.add("form_error")
+        nicknameErrorElement.innerText = "Nickname must be less than 32 characters."
+    } else {
+        nicknameElement.classList.remove("form_error");
+        nicknameErrorElement.innerText = null;
+    }
+};
+
+function check_email() {
+    let nicknameElement = document.getElementById("nickname");
+    let nicknameErrorElement = document.getElementById("nicknameError");
+    nicknameElement.classList.remove("form_error");
+    nicknameErrorElement.innerText = null;
+};
+
+function check_pronouns() {
+    let pronounsElement = document.getElementById("pronouns");
+    let pronounsErrorElement = document.getElementById("personalPronounsError");
+    if (pronounsElement.value.length > 32)
+    {
+        pronounsElement.classList.add("form_error")
+        pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
+    } else {
+        pronounsElement.classList.remove("form_error");
+        pronounsErrorElement.innerText = null;
+    }
+};
+
+function check_bio() {
+    let bioElement = document.getElementById("bio");
+    let bioErrorElement = document.getElementById("bioError");
+    if (bioElement.value.length > 250)
+    {
+        bioErrorElement.classList.add("form_error");
+        bioErrorElement.innerText = "Bio must be less than 250 characters."
+    } else {
+        bioErrorElement.classList.remove("form_error");
+        bioErrorElement.innerText = null;
+    }
+};
