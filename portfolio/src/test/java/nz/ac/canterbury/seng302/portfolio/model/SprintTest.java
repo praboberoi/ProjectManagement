@@ -50,8 +50,15 @@ class SprintTest {
 
     @Test
     public void givenSprintExists_GetProject() {
+        Project project2 = new Project.Builder()
+                .projectName("Project 2021")
+                .description("Second Attempt")
+                .startDate(new Date(2021, 1, 9))
+                .endDate(new Date(2021, 11, 20))
+                .build();
+
         assertEquals(project, sprint1.getProject());
-        assertNotEquals(new Project(), sprint1.getProject());
+        assertNotEquals(project2, sprint1.getProject());
     }
 
     @Test
