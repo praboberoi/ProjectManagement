@@ -72,10 +72,10 @@ function check_nickname() {
 };
 
 function check_email() {
-    let nicknameElement = document.getElementById("nickname");
-    let nicknameErrorElement = document.getElementById("nicknameError");
-    nicknameElement.classList.remove("form_error");
-    nicknameErrorElement.innerText = null;
+    let emailElement = document.getElementById("email");
+    let emailErrorElement = document.getElementById("emailError");
+    emailElement.classList.remove("form_error");
+    emailErrorElement.innerText = null;
 };
 
 function check_pronouns() {
