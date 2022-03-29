@@ -6,23 +6,12 @@ css for the body of each page
     padding-right: 40px;
     padding-left: 300px;
     padding-top: 60px;
+
+    /*NOTE: remove when sidebar can be used for future stories*/
+    padding-right: 300px;
 }
-
-/*
-.current_projects{
-    display: inline-block;
-    width: 100px;
-    border: #dedede;
-    border-radius: 8px;
-    border: 1px solid;
-
-    text-align: center;
-}
-
- */
 
 .project-card{
-    /*!*max-width: 18rem;*! not sure so i just took it out, */
     border: #07173B !important;
     border-radius: 20px !important;
     border: 2px solid !important;
@@ -49,7 +38,7 @@ css for the body of each page
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #F0B92A;
+    background-color: #efb83c;
     border-radius: 15px;
     color: #07173B;
 
@@ -70,17 +59,56 @@ a.project-name {
     border: 2px solid #07173B !important;
     font-size: 20px !important;
     margin-left: 10px;
+
+    text-align: center !important;;
+    line-height: 17px !important;;
+
 }
 
 /* Style for primary buttons which guide the user through common tasks*/
 .btn-primary {
+    colour: white !important;
     background-color: #07173B !important;
     vertical-align: middle !important;
+
 }
 
 /* Secondary button, used for less frequent actions, i.e. deleting a project.*/
 .btn-secondary {
     color: #07173B !important;
-    background-color: transparent !important;
+    background-color: white !important;
 
+}
+
+#sprint-btn {
+    width: 40px;
+    height: 32px;
+}
+
+#sprint-edit-btn {
+    width: 100px;
+    height: 32px;
+}
+#sprint-del-btn {
+    width: 100px;
+    height: 32px;
+}
+
+#back-btn{
+    margin-top: 8px;
+    margin-bottom: 18px;
+    margin-left: 45px;
+
+}
+#create-btn {
+    margin-left: 45px;
+}
+
+/* for invalid inputs in form*/
+input:invalid{
+    box-shadow: 0 0 5px 1px red;
+}
+
+.asterisk {
+    color: red;
 }
