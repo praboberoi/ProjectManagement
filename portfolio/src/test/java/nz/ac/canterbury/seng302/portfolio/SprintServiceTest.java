@@ -90,7 +90,9 @@ class SprintServiceTest {
      */
     @Test
     public void givenSprintExists_DeleteAllSprints() throws Exception {
-        assertEquals(null,sprintService.deleteSprint(project.getProjectId()));
+        sprintService.deleteAllSprints(project.getProjectId());
+        sprintService.getSprintByProject(project.getProjectId());
+        assertEquals(null,sprintService.getSprintByProject(project.getProjectId()));
     }
 
     /**
