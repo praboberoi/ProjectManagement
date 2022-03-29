@@ -1,6 +1,7 @@
 var editBtn = document.getElementById('editBtn');
 var editables = document.querySelectorAll('#username, #firstname, #lastname');
 var special = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
 
@@ -74,8 +75,14 @@ function check_nickname() {
 function check_email() {
     let emailElement = document.getElementById("email");
     let emailErrorElement = document.getElementById("emailError");
-    emailElement.classList.remove("form_error");
-    emailErrorElement.innerText = null;
+    if (!email.test(emailElement.value))
+    {
+        emailElement.classList.add("form_error")
+        emailErrorElement.innerText = "Email must be in the form username@domainName.domain."
+    } else {
+        emailElement.classList.remove("form_error");
+        emailErrorElement.innerText = null;
+    }
 };
 
 function check_pronouns() {
