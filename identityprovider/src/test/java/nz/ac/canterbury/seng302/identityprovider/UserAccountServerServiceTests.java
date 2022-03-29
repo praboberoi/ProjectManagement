@@ -90,7 +90,7 @@ class UserAccountServerServiceTests {
     void givenValidUserRequest_WhenEditUserCalled_ThenResponseRecordedAsSuccess()
     {
       EditUserRequest request =
-              EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
+              EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
         User user = new User();
         user.setFirstName("Replace");
@@ -98,7 +98,7 @@ class UserAccountServerServiceTests {
         user.setNickname("Replace");
         user.setBio("Replace");
         user.setPersonalPronouns("Replace");
-        user.setEmail("Replace");
+        user.setEmail("test@gmail.com");
         when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
@@ -111,7 +111,7 @@ class UserAccountServerServiceTests {
     @Test
     void givenValidEditUserRequest_WhenEditUserCalled_ThenUserIsEdited() {
         EditUserRequest request =
-                EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
+                EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
         User user = new User();
         user.setFirstName("Replace");
@@ -119,7 +119,7 @@ class UserAccountServerServiceTests {
         user.setNickname("Replace");
         user.setBio("Replace");
         user.setPersonalPronouns("Replace");
-        user.setEmail("Replace");
+        user.setEmail("Replace@gmail.com");
         when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
         userAccountServerService.editUser(request, responseObserver);
         assertEquals("Test", user.getFirstName());
@@ -127,6 +127,6 @@ class UserAccountServerServiceTests {
         assertEquals("Test", user.getNickname());
         assertEquals("Test", user.getBio());
         assertEquals("Test", user.getPersonalPronouns());
-        assertEquals("Test", user.getEmail());
+        assertEquals("Test@gmail.com", user.getEmail());
     }
 }
