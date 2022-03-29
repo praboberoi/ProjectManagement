@@ -21,9 +21,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 class SprintServiceTest {
     /**
-     * Use mocking support provided by Spring Boot Test
-     * to test Service layer code
-     * @return
+     * Use bean provided by Spring Boot Test to test Service layer code
+     * creates an instance of SprintService
      */
     @Bean
     public SprintService sprintService(){
@@ -31,6 +30,7 @@ class SprintServiceTest {
     }
     /**
      * Use Autowire to place instance of bean
+     * returns an instance of class created with @Bean annotation
      */
     @Autowired
     private SprintRepository sprintRepository;
@@ -43,7 +43,9 @@ class SprintServiceTest {
     private Sprint sprint3;
     private Project project;
 
-
+    /**
+     * setup data before each test
+     */
     @BeforeEach
     public void setUp() {
         project = new Project.Builder()
@@ -82,6 +84,9 @@ class SprintServiceTest {
         sprintRepository.save(sprint2);
     }
 
+    /**
+     * clear after each test has been completed
+     */
     @AfterEach
     public void tearDown() {
         sprintRepository.delete(sprint1);
@@ -96,9 +101,10 @@ class SprintServiceTest {
     @Test
     public void givenSprintExists_DeleteAllSprints() throws Exception {
         List<Sprint> sprintList = Arrays.asList();
-        sprintService.deleteAllSprints(project.getProjectId());
-        sprintService.getSprintByProject(project.getProjectId());
-        assertEquals(sprintList,sprintService.getSprintByProject(project.getProjectId()));
+        Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
+        sprintService.deleteAllSprints(project1.getProjectId());
+        sprintService.getSprintByProject(project1.getProjectId());
+        assertEquals(sprintList,sprintService.getSprintByProject(project1.getProjectId()));
     }
 
     /**
@@ -115,11 +121,8 @@ class SprintServiceTest {
      */
     @Test
     public void givenNewSprint_AddNewSprint() {
-//        sprintService.getNewSprint(project).getSprintName();
         Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
         assertEquals(sprint3.getSprintName(), sprintService.getNewSprint(project1).getSprintName());
-//        assertNotEquals(sprint1, sprintService.getNewSprint(project));
-
     }
 
     /**
