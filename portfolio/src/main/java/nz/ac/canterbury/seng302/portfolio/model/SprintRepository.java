@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
+
+import java.sql.Date;
 import java.util.List;
 
 /**
@@ -10,26 +12,21 @@ import java.util.List;
 @Repository
 public interface SprintRepository extends CrudRepository<Sprint, Integer> {
 
-    /**
-     * Obtains sprint with the given sprint id.
-     * @param sprintId of type int
-     * @return a list of type Sprint.
-     */
-    public List<Sprint> findBySprintId(int sprintId);
+
 
     /**
      * Obtains a list of sprints with the given sprint name.
      * @param sprintName of type String.
      * @return a list of type Sprint.
      */
-    public List<String> findBySprintName(String sprintName);
+    public List<Sprint> findBySprintName(String sprintName);
 
     /**
      * Obtains a list of sprints with the name containing the given string
      * @param name of type String
      * @return a list of type Sprint
      */
-    public List<String> findBySprintNameContaining(String name);
+    public List<Sprint> findBySprintNameContaining(String name);
 
     /**
      * Obtains a list of sprints with the given description.
@@ -50,14 +47,14 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      * @param startDate of type Date.
      * @return a list of type Sprint.
      */
-    public List<Sprint> findByStartDate(String startDate);
+    public List<Sprint> findByStartDate(Date startDate);
 
     /**
      * Obtains a list of sprints that end on the given date.
      * @param endDate of type Date.
      * @return a list of type Sprint.
      */
-    public List<Sprint> findByEndDate(String endDate);
+    public List<Sprint> findByEndDate(Date endDate);
 
     /**
      * Obtains a list of sprints containing the given project.
