@@ -90,6 +90,8 @@ class ProjectRepositoryTest {
         List<Project> projList= Arrays.asList(project1, project2);
         assertArrayEquals(projList.toArray(), projectRepo.findByDescription("First Attempt").toArray());
         projectRepo.delete(project1);
+        projectRepo.delete(project2);
+
     }
 
     @Test
