@@ -79,7 +79,7 @@ public class DashboardController {
             Model model,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal) {
-        if (retrieveUserRoles(principal)) return "redirect:/dashboard";
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             String msgString;
             String message =  dashboardService.saveProject(project);
@@ -104,7 +104,7 @@ public class DashboardController {
         Model model,
         RedirectAttributes ra,
         @AuthenticationPrincipal AuthState principal) {
-        if (retrieveUserRoles(principal)) return "redirect:/dashboard";
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project project  = dashboardService.getProject(projectId);
             model.addAttribute("project", project);
@@ -129,7 +129,7 @@ public class DashboardController {
         @PathVariable("projectId") int projectId,
         Model model,
         @AuthenticationPrincipal AuthState principal) {
-        if (retrieveUserRoles(principal)) return "redirect:/dashboard";
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
@@ -139,11 +139,4 @@ public class DashboardController {
         }
     }
 
-    static boolean retrieveUserRoles(@AuthenticationPrincipal AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return true;
-        }
-        return false;
-    }
 }

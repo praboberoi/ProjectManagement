@@ -14,8 +14,7 @@ import java.util.Optional;
 
 @Service
 public class ProjectService {
-    @Autowired
-    private ProjectRepository repository;
+    @Autowired private ProjectRepository repository;
 
     /**
      * Get list of all projects

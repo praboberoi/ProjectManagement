@@ -22,6 +22,21 @@ public class ValidationUtilitiesTests {
     }
 
     @Test
+    public void givenNames_hasSpecialCharacterHyphenReturnsFalse() {
+        Assertions.assertFalse(ValidationUtilities.hasNameSpecial("test-name"));
+    }
+
+    @Test
+    public void givenNames_hasSpecialCharacterSpaceReturnsFalse() {
+        Assertions.assertFalse(ValidationUtilities.hasNameSpecial("test name"));
+    }
+
+    @Test
+    public void givenNames_hasSpecialCharacterApostropheReturnsFalse() {
+        Assertions.assertFalse(ValidationUtilities.hasNameSpecial("test'name"));
+    }
+
+    @Test
     public void givenSpecialCharacters_hasDigitsReturnsFalse() {
         Assertions.assertFalse(ValidationUtilities.hasDigit("Test!"));
     }
