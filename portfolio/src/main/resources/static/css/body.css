@@ -12,7 +12,6 @@ css for the body of each page
 }
 
 .project-card{
-    /*!*max-width: 18rem;*! not sure so i just took it out, */
     border: #07173B !important;
     border-radius: 20px !important;
     border: 2px solid !important;
@@ -39,7 +38,7 @@ css for the body of each page
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #F0B92A;
+    background-color: #efb83c;
     border-radius: 15px;
     color: #07173B;
 

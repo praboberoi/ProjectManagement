@@ -1,3 +1,11 @@
+/**
+ * Script for setting the minimum and maximum values for start and end dates of the selected project.
+ */
+
+
+/**
+ * Function that initialises the minimum and maximum date values when the project form is first opened.
+ */
 function initialDateSetup() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
@@ -28,6 +36,11 @@ function initialDateSetup() {
 }
 const startDateElement = document.querySelector('#startDate');
 
+/**
+ * Function for date formatting to obtain a double character string if the given number is less than 10
+ * @param date number value
+ * @returns {string} a double-digit value
+ */
 function formatDate(date) {
     let newDate = (date);
     if (newDate<10){
@@ -36,6 +49,10 @@ function formatDate(date) {
 
     return newDate;
 }
+
+/**
+ * An Event listener for triggering the required change for setting minimum and maximum values of dates.
+ */
 startDateElement.addEventListener('change', (event) => {
     const startDate = document.getElementById("startDate").value
     const endDate = document.querySelector('#endDate');

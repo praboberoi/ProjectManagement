@@ -49,13 +49,6 @@ public class DashboardController {
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "dashboard";
         } catch (Exception e) {
-            model.addAttribute("exception", e);
-            model.addAttribute("message", e.getMessage());
-            model.addAttribute("timestamp", LocalDate.now());
-            model.addAttribute("error", "Invalid Information");
-            model.addAttribute("path", "./portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/controller/DashboardController.java");
-            model.addAttribute("trace", "portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/service/DashboardService.java");
-            model.addAttribute("status", "re-run Project");
             return "error";
         }
     }
@@ -147,13 +140,6 @@ public class DashboardController {
             dashboardService.deleteProject(projectId);
             return "redirect:/dashboard";
         } catch (Exception e) {
-            model.addAttribute("exception", e);
-            model.addAttribute("message", e.getMessage());
-            model.addAttribute("timestamp", LocalDate.now());
-            model.addAttribute("error", "Invalid Information");
-            model.addAttribute("path", "./portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/controller/DashboardController.java");
-            model.addAttribute("trace", "portfolio/src/main/java/nz/ac/canterbury/seng302/portfolio/service/DashboardService.java");
-            model.addAttribute("status", "re-run Project");
             return "error";
         }
     }

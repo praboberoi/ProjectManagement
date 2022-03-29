@@ -22,7 +22,7 @@
     /*margin-top:100px;*/
 }
 
-.box1 {
+.page-title-container {
     width:80%;
     margin: 40px auto;
     height:130px;
@@ -125,7 +125,7 @@ label {
     display: inline-block;
 }
 
-.signup-button, .close-signup {
+.signup-button, .close-signup{
     text-decoration: none;
     border-color: #07173B;
     border-style: solid;
@@ -138,8 +138,6 @@ label {
     text-align: center;
     margin-left: 5%;
     color: #07173B;
-}
-
 .signup-button {
     background-color: #07173B;
     color: white;

@@ -1,3 +1,11 @@
+/**
+ * Script for setting the minimum and maximum values for start and end dates of the selected sprint.
+ */
+
+
+/**
+ * Function that initialises the minimum and maximum date values when the sprint form is first opened.
+ */
 function initialDateSetup() {
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
@@ -22,6 +30,10 @@ startDateElement.addEventListener('change', (event) => {
 
 const endDateElement = document.querySelector('#endDate');
 
+
+/**
+ * An Event listener for triggering the required change for setting minimum and maximum values of dates.
+ */
 endDateElement.addEventListener('change',(event) => {
     const endDate = document.getElementById("endDate").value
     const startDate = document.querySelector('#startDate')

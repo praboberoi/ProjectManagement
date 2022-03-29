@@ -15,10 +15,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 @Service
 public class SprintService {
-    @Autowired
-    private ProjectRepository projectRepo;
-    @Autowired
-    private SprintRepository sprintRepository;
+    @Autowired private ProjectRepository projectRepo;
+    @Autowired private SprintRepository sprintRepository;
     private Sprint currentSprint = null;
 
     public Sprint getNewSprint(Project project) {
