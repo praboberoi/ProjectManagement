@@ -158,7 +158,7 @@ public class Project {
         private Date endDate;
 
         /**
-         * Updatrs the project Id with the given project id
+         * Updaters the project Id with the given project id
          * @param projectId Id of the project of type int
          * @return Builder
          */

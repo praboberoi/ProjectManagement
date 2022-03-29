@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.sql.Date;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -37,7 +38,12 @@ class ProjectRepositoryTest {
         List<Project> projList = Arrays.asList(project1, project2);
         projectRepo.save(project1);
         projectRepo.save(project2);
+
         assertArrayEquals(projList.toArray(), projectRepo.findByProjectName("Project 2020").toArray());
+
+        List<Project> emptyList = Collections.<Project>emptyList();
+        assertArrayEquals(emptyList.toArray(), projectRepo.findByProjectName("No").toArray());
+
         projectRepo.delete(project1);
         projectRepo.delete(project2);
     }
@@ -61,9 +67,12 @@ class ProjectRepositoryTest {
 
         projectRepo.save(project1);
         projectRepo.save(project2);
-        List<Project> projList= Arrays.asList(project1, project2);
 
+        List<Project> projList= Arrays.asList(project1, project2);
         assertArrayEquals(projList.toArray(), projectRepo.findByProjectNameContaining("Project").toArray());
+
+        List<Project> emptyList = Collections.<Project>emptyList();
+        assertArrayEquals(emptyList.toArray(), projectRepo.findByProjectNameContaining("No").toArray());
 
         projectRepo.delete(project1);
         projectRepo.delete(project2);
@@ -87,8 +96,13 @@ class ProjectRepositoryTest {
 
         projectRepo.save(project1);
         projectRepo.save(project2);
+
         List<Project> projList= Arrays.asList(project1, project2);
         assertArrayEquals(projList.toArray(), projectRepo.findByDescription("First Attempt").toArray());
+
+        List<Project> emptyList = Collections.<Project>emptyList();
+        assertArrayEquals(emptyList.toArray(), projectRepo.findByDescription("No").toArray());
+
         projectRepo.delete(project1);
         projectRepo.delete(project2);
 
@@ -115,8 +129,10 @@ class ProjectRepositoryTest {
         projectRepo.save(project2);
 
         List<Project> projList= Arrays.asList(project1, project2);
-
         assertArrayEquals(projList.toArray(), projectRepo.findByDescriptionContaining("Attempt").toArray());
+
+        List<Project> emptyList = Collections.<Project>emptyList();
+        assertArrayEquals(emptyList.toArray(), projectRepo.findByDescriptionContaining("No").toArray());
 
         projectRepo.delete(project1);
         projectRepo.delete(project2);

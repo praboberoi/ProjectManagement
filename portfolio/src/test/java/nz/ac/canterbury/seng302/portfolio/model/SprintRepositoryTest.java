@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.sql.Date;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -61,24 +62,37 @@ class SprintRepositoryTest {
     public void givenSprintExists_FindBySprintName() {
         List<Sprint> sprintList = Arrays.asList(sprint1);
         assertArrayEquals(sprintList.toArray(), sprintRepository.findBySprintName("Sprint 1").toArray());
+
+        List<Sprint> emptyList = Collections.<Sprint>emptyList();
+        assertArrayEquals(emptyList.toArray(), sprintRepository.findBySprintName("No").toArray());
+
     }
 
     @Test
     public void givenSprintExists_FindBySprintNameContaining() {
         List<Sprint> sprintList = Arrays.asList(sprint1, sprint2);
         assertArrayEquals(sprintList.toArray(),sprintRepository.findBySprintNameContaining("Sprint").toArray());
+
+        List<Sprint> emptyList = Collections.<Sprint>emptyList();
+        assertArrayEquals(emptyList.toArray(), sprintRepository.findBySprintNameContaining("No").toArray());
     }
 
     @Test
     public void givenSprintExists_FindByDescription() {
         List<Sprint> sprintList = Arrays.asList(sprint1);
         assertArrayEquals(sprintList.toArray(), sprintRepository.findByDescription("Attempt 1").toArray());
+
+        List<Sprint> emptyList = Collections.<Sprint>emptyList();
+        assertArrayEquals(emptyList.toArray(), sprintRepository.findByDescription("No").toArray());
     }
 
     @Test
     public void givenSprintExists_FindByDescriptionContaining() {
         List<Sprint> sprintList = Arrays.asList(sprint1, sprint2);
         assertArrayEquals(sprintList.toArray(), sprintRepository.findByDescriptionContaining("Attempt").toArray());
+
+        List<Sprint> emptyList = Collections.<Sprint>emptyList();
+        assertArrayEquals(emptyList.toArray(), sprintRepository.findByDescriptionContaining("No").toArray());
     }
 
     @Test
@@ -91,16 +105,44 @@ class SprintRepositoryTest {
     public void givenSprintExists_FindByEndDate() {
         List<Sprint> sprintList = Arrays.asList(sprint1);
         assertArrayEquals(sprintList.toArray(), sprintRepository.findByEndDate(new Date(2021, 3, 1)).toArray());
+
+        List<Sprint> emptyList = Collections.<Sprint>emptyList();
+        assertArrayEquals(emptyList.toArray(), sprintRepository.findByEndDate(new Date(2025, 3,1)).toArray());
     }
 
     @Test
     public void givenSprintExists_FindByProject() {
         List<Sprint> sprintList = Arrays.asList(sprint1, sprint2);
         assertArrayEquals(sprintList.toArray(), sprintRepository.findByProject(project).toArray());
+
+        Project project2 = new Project.Builder()
+                .projectName("Project 2021")
+                .description("Second Attempt")
+                .startDate(new Date(2021, 1, 9))
+                .endDate(new Date(2021, 11, 20))
+                .build();
+        projectRepository.save(project2);
+
+        List<Sprint> emptyList = Collections.<Sprint>emptyList();
+        assertArrayEquals(emptyList.toArray(), sprintRepository.findByProject(project2).toArray());
+
+        projectRepository.delete(project2);
     }
 
     @Test
     public void givenSprintExists_CountByProject() {
+        Project project2 = new Project.Builder()
+                .projectName("Project 2021")
+                .description("Second Attempt")
+                .startDate(new Date(2021, 1, 9))
+                .endDate(new Date(2021, 11, 20))
+                .build();
+        projectRepository.save(project2);
+
         assertEquals(2, sprintRepository.countByProject(project));
+
+        assertNotEquals(2, sprintRepository.countByProject(project2));
+
+        projectRepository.delete(project2);
     }
 }
