@@ -49,13 +49,13 @@ public class DashboardServiceTest {
     }
 
     @Test
-    public void givenProjectDatabase_whenListAll_thenReturnListProject() {
+    public void givenProjectDatabaseWithProjects_whenGetAllProjects_thenReturnListProject() throws Exception {
         List<Project> projectList;
         projectList = new ArrayList<Project>();
         projectList.add(project1);
         projectList.add(project2);
         when(projectRepository.findAll()).thenReturn(projectList);
-        List<Project> returnList = dashboardService.listAll();
+        List<Project> returnList = dashboardService.getAllProjects();
         assertEquals(returnList, projectList);
 
     }
