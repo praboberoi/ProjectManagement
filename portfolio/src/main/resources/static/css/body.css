@@ -11,19 +11,6 @@ css for the body of each page
     padding-right: 300px;
 }
 
-/*
-.current_projects{
-    display: inline-block;
-    width: 100px;
-    border: #dedede;
-    border-radius: 8px;
-    border: 1px solid;
-
-    text-align: center;
-}
-
- */
-
 .project-card{
     /*!*max-width: 18rem;*! not sure so i just took it out, */
     border: #07173B !important;
@@ -117,8 +104,6 @@ a.project-name {
 #create-btn {
     margin-left: 45px;
 }
-
-
 
 /* for invalid inputs in form*/
 input:invalid{
