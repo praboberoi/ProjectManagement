@@ -5,67 +5,72 @@
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
         <link rel="stylesheet" href="/css/style.css" />
-        <script src="/javascript/registrationScript.js"></script>
+        <script src="/javascript/register.js"></script>
     </head>
         <div th:replace="fragments :: header"></div>
     <body>
         <header>
             <div th:replace="fragments :: login-header"></div>
-            <div id="brand">
-                <h1>LENSfolio</h1>
-            </div>
+
         </header>
         <main class="content_square">
             <div class="box1">
                 <div class="page-title">
-                    <h2>Welcome to LENSfolio</h2>
+                    <h2>Welcome to LENSfolio<br></h2>
                     <p>Enter your information to create an account</p>
                 </div>
             </div>
             <div class="content_container">
 
-                <div class="error-msg-holder">
-                    <p th:text="${error}" class="error-msg"></p>
-                </div>
-
                 <form id="registration_form" action="/register" method="post">
                     <div class="mb-3">
-                        <label for="username">Username:</label>
+                        <br>
+                        <label for="username" class="required">Username:</label>
                         <input type="text" th:value="${username}" class="form-control" id="username" name="username" onkeyup="check_username();">
+                        <p id="usernameError" th:text="${usernameError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="firstName">First name:</label>
-                        <input type="text" th:value="${firstName}" class="form-control" id="firstName" name="firstName" required>
+                        <label for="firstName" class="required">First name:</label>
+                        <input type="text" th:value="${firstName}" class="form-control" id="firstName" name="firstName" onkeyup="check_firstName();" required>
+                        <p id="firstNameError" th:text="${firstNameError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="lastName">Last name:</label>
-                        <input type="text" th:value="${lastName}" class="form-control" id="lastName" name="lastName" required>
+                        <label for="lastName" class="required">Last name:</label>
+                        <input type="text" th:value="${lastName}" class="form-control" id="lastName" name="lastName" onkeyup="check_lastName();" required>
+                        <p id="lastNameError" th:text="${lastNameError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
                         <label for="nickname">Nickname:</label>
-                        <input type="text" th:value="${nickname}" class="form-control" id="nickname" name="nickname">
+                        <input type="text" th:value="${nickname}" class="form-control" id="nickname" name="nickname" onkeyup="check_nickname();">
+                        <p id="nicknameError" th:text="${nicknameError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="email">Email:</label>
-                        <input type="email" th:value="${email}" class="form-control" id="email" name="email" required>
+                        <label for="email" class="required">Email:</label>
+                        <input type="email" th:value="${email}" class="form-control" id="email" name="email" onkeyup="check_email();" required>
+                        <p id="emailError" th:text="${emailError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
                         <label for="bio">Bio:</label>
-                        <input type="text" th:value="${bio}" class="form-control" id="bio" name="bio">
+                        <input type="text" th:value="${bio}" class="form-control" id="bio" name="bio" onkeyup="check_bio();">
+                        <p id="bioError" th:text="${bioError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
                         <label for="pronouns">Pronouns:</label>
-                        <input type="text" th:value="${pronouns}" class="form-control" id="pronouns" name="pronouns">
+                        <input type="text" th:value="${personalPronouns}" class="form-control" id="pronouns" name="pronouns" onkeyup="check_pronouns();">
+                        <p id="personalPronounsError" th:text="${personalPronounsError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="password">Password:</label>
+                        <label for="password" class="required">Password:</label>
                         <input type="password" class="form-control" id="password" name="password"  onkeyup="check_pass(); match_pass();" required>
+                        <p id="passwordError" th:text="${passwordError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="confirmPassword">Confirm Password:</label>
+                        <label for="confirmPassword" class="required">Confirm Password:</label>
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"  onkeyup="match_pass();" required>
+                        <p id="confirmPasswordError" th:text="${confirmPasswordError}" class="error-msg"></p>
                     </div><br>
-                    <button class="form_submit" type="submit">Submit</button>
+                        <button class="signup-button" type="submit">Submit</button>
+                        <a href="/login"><button type="button" class="close-signup">Close</button></a>
                 </form>
             </div>
         </main>

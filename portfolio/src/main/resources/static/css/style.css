@@ -28,6 +28,9 @@
     height:130px;
     background:#efb83c;
     border-radius: 30px 30px 30px 30px;
+
+    text-align: center !important;;
+    padding-top: 45px !important;;
 }
 
 .page-title, .page-instruction {
@@ -77,7 +80,7 @@ label {
 }
 
 .form_error {
-    border-color: #ff0010;
+    border-color: #ff0010 !important;
 }
 
 .form_submit{
@@ -122,9 +125,9 @@ label {
     display: inline-block;
 }
 
-.signup-button{
+.signup-button, .close-signup{
     text-decoration: none;
-    border-color: #2b4a5c;
+    border-color: #07173B;
     border-style: solid;
     border-radius: 40px;
     border-width: 1px;
@@ -134,8 +137,40 @@ label {
     display: inline-block;
     text-align: center;
     margin-left: 5%;
-    color: #2b4a5c;
+    color: #07173B;
+.signup-button {
+    background-color: #07173B;
+    color: white;
+}
 
+#register-btn{
+    background-color: #07173B;
+    border-color: #07173B;
+}
+
+#login-form-submit{
+    background-color: #07173B;
+    border-color: #07173B;
+}
+
+.close-signup {
+    background-color: white;
+    color: #07173B;
+}
+
+
+
+.required:after {
+    content:"*";
+    color: red;
+}
+
+.date-color {
+    color: #07173B !important;
+}
+
+.date-font {
+    font-size:15px !important;
 }
 
 /* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */

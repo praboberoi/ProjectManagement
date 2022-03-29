@@ -18,17 +18,17 @@
 <header>
   <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top" style="background-color: #07173B !important;">
     <div class="container-fluid">
-      <a class="navbar-brand" href="../dashboard">LENSfolio</a>
+      <a class="navbar-brand" href="/dashboard">LENSfolio</a>
       <ul class="nav navbar-nav navbar-right">
-        <li><a class="navbar-brand" href="../dashboard">
+        <li><a class="navbar-brand" href="/dashboard">
           <img src="/icons/home-icon.svg" alt="Home" height=28 width=28 class="d-inline-block align-text-top">
         </a>
         </li>
-        <div class="nav-item dropdown">
-          <a class="navbar-brand nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">            Username
+        <div class="nav-item dropdown" >
+          <a class="navbar-brand nav-link dropdown-toggle"  href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">            Username
             <img src="/icons/user-icon.svg" alt="Account" height="28 width=28" class="d-inline-block align-text-top">
           </a>
-          <div class="bg-dark navbar-dark dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown">
+          <div class="bg-dark navbar-dark dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown" style="background-color: #07173B !important;">
             <a class="navbar-brand dropdown-item" href="../account">Account</a>
             <a class="navbar-brand dropdown-item" href="/logout">Logout</a>
           </div>
@@ -37,51 +37,48 @@
     </div>
   </nav>
 </header>
+
 <div th:fragment="login-header">
-  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top">
+  <nav class="navbar navbar-expand-sm bg-dark navbar-dark fixed-top" style="background-color: #07173B !important;">
     <div class="container-fluid">
-      <a class="navbar-brand" >LENSfolio</a>
+      <a class="navbar-brand" style="color: #ffffff !important;">LENSfolio</a>
       <!--      <a class="navbar-brand" href="../account">Username</a>-->
       <!--      <img src="/icons/user-icon.svg" alt="Account" height="28 width=28"-->
     </div>
   </nav>
 </div>
 
-<!--fragment for sidebar-->
-<nav th:fragment = "menu">
+<nav th:fragment = "dashboard">
+  <div class = "container-fluid">
+    <div class="row">
+      <div class="sidebar">
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/account}">Account Page</a>
+          </li>
+        </ul>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<nav th:fragment = "project-and-sprint">
   <div class = "container-fluid">
     <div class="row">
       <div class="sidebar">
         <!--<div class="collapse navbar-collapse" id="collapsibleNavbar">-->
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link" href="#">Search</a>
+            <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" href="./project">Course</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{/}">Skills</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" th:href="@{/}">Awards</a>
+            <a class="nav-link" th:href="@{/account}">Account Page</a>
           </li>
         </ul>
-
-
       </div>
-      <!-- not needed yet
-      <div class="main">
-      <div class="col-sm-12 main">
-          <h1 class="page-header">Dashboard</h1>
-      </div>
-      </div>
-      -->
     </div>
   </div>
-
-
 </nav>
-
 </body>
 </html>

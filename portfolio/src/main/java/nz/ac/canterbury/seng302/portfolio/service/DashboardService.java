@@ -5,8 +5,11 @@ import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+
 
 @Service
 public class DashboardService {
@@ -14,29 +17,57 @@ public class DashboardService {
     private Project currentProject = null;
 
     /**
+     * Used to identify which project crud feature (Mainly create or edit)
+     * was used to changed success message when project created or saved.
+     */
+    private String previousFeature;
+
+    private boolean verifyProject(Project project) {
+        if (project.getProjectName().isEmpty() || project.getStartDate() == null || project.getEndDate() == null)
+            return false;
+        else
+            return true;
+    }
+    /**
      * Returns list of all Project objecs in the database
      * @return list of project objects
      */
-    public List<Project> listAll() {
-        return (List<Project>) projectRepo.findAll();
+    public List<Project> getAllProjects() throws Exception {
+        List<Project> listProjects = (List<Project>) projectRepo.findAll();
+        if (listProjects.isEmpty()) {
+
+            LocalDate now = LocalDate.now();
+            Project defaultProject = new Project();
+            defaultProject.setProjectName("Project " + now.getYear()); // Project {year}
+            defaultProject.setStartDate(Date.valueOf(now)); // Current date
+
+            defaultProject.setEndDate(Date.valueOf(now.plusMonths(8))); // 8 months from start date
+            saveProject(defaultProject);
+            listProjects.add(defaultProject);
+        }
+
+        return listProjects;
     }
 
     /**
      * Saves a project object to the database
      * @param project
      */
-    public void saveProject(Project project) {
-        if (currentProject == null) {
-            projectRepo.save(project);
-        } else {
-            currentProject.setProjectName(project.getProjectName());
-            currentProject.setDescription(project.getDescription());
-            currentProject.setStartDate(project.getStartDate());
-            currentProject.setEndDate(project.getEndDate());
-            projectRepo.save(currentProject);
-            currentProject = null;
+    public void saveProject(Project project) throws Exception {
+        if (!verifyProject(project))
+            throw new Exception("Project Details Incomplete");
+        else {
+            if (currentProject == null) {
+                projectRepo.save(project);
+            } else {
+                currentProject.setProjectName(project.getProjectName());
+                currentProject.setDescription(project.getDescription());
+                currentProject.setStartDate(project.getStartDate());
+                currentProject.setEndDate(project.getEndDate());
+                projectRepo.save(currentProject);
+                currentProject = null;
+            }
         }
-
     }
 
     /**
@@ -55,15 +86,22 @@ public class DashboardService {
      * @param projectId
      * @throws Exception
      */
-    public void deleteProject(int projectId) throws Exception {
-/*
-        Long count = projectRepo.countByProjectName(projectId);
-        if (count == null || count == 0) {
-            throw new Exception("Could not find any projects with project Id" + projectId);
-//          throw new ProjectNotFoundException("Could not find any projects with projectName" + projectName);
-        }
-*/
+    public void deleteProject(int projectId) {
         projectRepo.deleteById(projectId);
+    }
+
+    public void setPreviousFeature(String previousFeature) {
+        this.previousFeature = previousFeature;
+    }
+
+    public String createSuccessMessage(Project project) throws Exception{
+        String returnMessage = null;
+        if (previousFeature == "Create") {
+            returnMessage = "Successfully Created Project: " + project.getProjectName();
+        } else if (previousFeature == "Edit") {
+            returnMessage = "Successfully Saved Project: " + project.getProjectName();
+        }
+        return returnMessage;
     }
 }
 

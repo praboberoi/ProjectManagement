@@ -55,8 +55,8 @@ public class LoginController {
     public String submitLogin (
             HttpServletRequest request,
             HttpServletResponse response,
-            @RequestParam(name="username", required=false) String username,
-            @RequestParam(name="password", required=false) String password,
+            @RequestParam(name="username") String username,
+            @RequestParam(name="password") String password,
             Model model)
         {
         AuthenticateResponse loginReply;
