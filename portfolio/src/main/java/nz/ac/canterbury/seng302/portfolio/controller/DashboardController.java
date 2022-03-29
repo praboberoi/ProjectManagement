@@ -61,7 +61,6 @@ public class DashboardController {
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (retrieveUserRoles(principal)) return "redirect:/dashboard";
-        dashboardService.setPreviousFeature("Create");
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
@@ -83,15 +82,12 @@ public class DashboardController {
         if (retrieveUserRoles(principal)) return "redirect:/dashboard";
         try {
             String msgString;
-            dashboardService.saveProject(project);
-            msgString = dashboardService.createSuccessMessage(project);
-            if (msgString == null) {
-                throw new Exception("Error generating success message");
-            }
-            ra.addFlashAttribute("messageSuccess", msgString);
+            String message =  dashboardService.saveProject(project);
+            ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
         } catch (Exception e) {
-            return "error";
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/dashboard";
         }
     }
 
@@ -110,7 +106,6 @@ public class DashboardController {
         @AuthenticationPrincipal AuthState principal) {
         if (retrieveUserRoles(principal)) return "redirect:/dashboard";
         try {
-            dashboardService.setPreviousFeature("Edit");
             Project project  = dashboardService.getProject(projectId);
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());

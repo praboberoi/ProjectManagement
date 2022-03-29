@@ -17,18 +17,6 @@ public class DashboardService {
     private Project currentProject = null;
 
     /**
-     * Used to identify which project crud feature (Mainly create or edit)
-     * was used to changed success message when project created or saved.
-     */
-    private String previousFeature;
-
-    private boolean verifyProject(Project project) {
-        if (project.getProjectName().isEmpty() || project.getStartDate() == null || project.getEndDate() == null)
-            return false;
-        else
-            return true;
-    }
-    /**
      * Returns list of all Project objecs in the database
      * @return list of project objects
      */
@@ -53,21 +41,27 @@ public class DashboardService {
      * Saves a project object to the database
      * @param project
      */
-    public void saveProject(Project project) throws Exception {
-        if (!verifyProject(project))
-            throw new Exception("Project Details Incomplete");
-        else {
+    public String saveProject(Project project) throws Exception {
+            String message;
             if (currentProject == null) {
-                projectRepo.save(project);
+                currentProject = project;
+                message = "Successfully Created Project: " + project.getProjectName();
+
             } else {
                 currentProject.setProjectName(project.getProjectName());
                 currentProject.setDescription(project.getDescription());
                 currentProject.setStartDate(project.getStartDate());
                 currentProject.setEndDate(project.getEndDate());
+                message = "Successfully Saved Project: " + project.getProjectName();
+
+            }
+            try {
                 projectRepo.save(currentProject);
                 currentProject = null;
+                return message;
+            } catch (Exception e) {
+                throw new Exception("Failure Saving Project");
             }
-        }
     }
 
     /**
@@ -88,20 +82,6 @@ public class DashboardService {
      */
     public void deleteProject(int projectId) {
         projectRepo.deleteById(projectId);
-    }
-
-    public void setPreviousFeature(String previousFeature) {
-        this.previousFeature = previousFeature;
-    }
-
-    public String createSuccessMessage(Project project) throws Exception{
-        String returnMessage = null;
-        if (previousFeature == "Create") {
-            returnMessage = "Successfully Created Project: " + project.getProjectName();
-        } else if (previousFeature == "Edit") {
-            returnMessage = "Successfully Saved Project: " + project.getProjectName();
-        }
-        return returnMessage;
     }
 }
 
