@@ -96,7 +96,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    public void findByDescriptionContaining() {
+    public void givenDescriptionExists_findByDescriptionContaining() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
@@ -125,7 +125,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    public void findByStartDate() {
+    public void givenDateExists_FindByStartDate() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
@@ -142,7 +142,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
-    public void findByEndDate() {
+    public void givenEndDateExists_FindByEndDate() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
