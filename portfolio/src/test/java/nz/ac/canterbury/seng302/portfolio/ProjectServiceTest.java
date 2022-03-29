@@ -29,7 +29,6 @@ public class ProjectServiceTest {
 
     private Project project1;
     private Project project2;
-//    private ArrayList<Project> projectList;
 
     @BeforeEach
     void setup() {
