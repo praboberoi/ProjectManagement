@@ -14,17 +14,11 @@
     <!-- do not include fragments that are not in use PARSING ERROR -->
     <!--<head th:replace="fragments :: content"></head>-->
     <title>Dashboard</title>
-    <style>
-        .required:after {
-            content:"*";
-            color: red;
-        }
-    </style>
 </head>
 
 <!--fragments-->
 <div th:replace="fragments :: header"></div>
-<div th:replace="fragments :: menu"></div>
+<div th:replace="fragments :: dashboard"></div>
 
 <body>
 <div class="main">
@@ -76,12 +70,14 @@
                                                 <a class=project-name th:href="@{'/project/'+ ${project.projectId}}" th:text="${project.projectName}">Project Name</a>
                                             </h5>
                                             <h6 class="card-subtitle mb-2 text-muted"> <!-- displays the date start - finish -->
-                                                <p style="color: #07173B" th:text="${project.startDate} + ' to ' + ${project.endDate}"/>
+                                                <p class="date-color"  th:text="${#dates.format(project.startDate, 'dd-MM-yyyy')} + ' to ' + ${#dates.format(project.endDate, 'dd-MM-yyyy')}"></p>
                                             </h6>
-                                            <p class="card-text" th:text="${project.description}"/>
+                                            <p class="date-color" th:text="${project.description}"/>
                                             <div th:each="role: ${roles}">
                                                 <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
                                                     <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
+                                                    &nbsp;
+                                                    &nbsp;
                                                     <a class="btn btn-secondary" th:href="@{'/dashboard/deleteProject/' + ${project.projectId}}">Delete</a>
                                                 </div>
                                              </div>

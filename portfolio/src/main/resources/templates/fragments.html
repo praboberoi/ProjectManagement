@@ -48,30 +48,37 @@
   </nav>
 </div>
 
-<!--fragment for sidebar-->
-<nav th:fragment = "menu">
+<nav th:fragment = "dashboard">
   <div class = "container-fluid">
     <div class="row">
       <div class="sidebar">
-        <!--<div class="collapse navbar-collapse" id="collapsibleNavbar">-->
         <ul class="nav flex-column">
           <li class="nav-item">
-            <a class="nav-link" href="#">Search</a>
+            <a class="nav-link" th:href="@{/account}">Account Page</a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" href="./project">Course</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{/}">Skills</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link disabled" th:href="@{/}">Awards</a>
-          </li>
+        </ul>
         </ul>
       </div>
     </div>
   </div>
 </nav>
 
+<nav th:fragment = "project-and-sprint">
+  <div class = "container-fluid">
+    <div class="row">
+      <div class="sidebar">
+        <!--<div class="collapse navbar-collapse" id="collapsibleNavbar">-->
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/dashboard}">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{/account}">Account Page</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
 </body>
 </html>

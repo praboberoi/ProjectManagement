@@ -17,17 +17,11 @@
     <!-- do not include fragments that are not in use PARSING ERROR -->
     <!--<head th:replace="fragments :: content"></head>-->
     <title>[[${pageTitle}]]</title>
-    <style>
-        .required:after {
-            content:"*";
-            color: red;
-        }
-    </style>
 </head>
 
 <!--fragments-->
 <div th:replace="fragments :: header"></div>
-<div th:replace="fragments :: menu"></div>
+<div th:replace="fragments :: project-and-sprint"></div>
 
 <body>
 <div class="main">
@@ -41,24 +35,24 @@
 
             <div class="mb-3">
                 <label for="project-name" class="col-form-label required">Project Name</label>
-                <input style="font-size:20px;" type="text" class="form-control required" id="project-name" placeholder="Project" th:field="*{projectName}" pattern=".*\S.*" required oninvalid="this.setCustomValidity('Project Name must not be empty')" oninput="setCustomValidity('')"> <!---maxlength="30" minlength="1" add min and max input length?--->
+                <input style="font-size:20px;" type="text" class="form-control required" id="project-name" placeholder="Project {Year}" th:field="*{projectName}" required> <!---maxlength="30" minlength="1" add min and max input length?--->
             </div>
 
             <div style="height:30px;" class="row">
 
                 <div class="col-md-6 ms-auto">
-                    <label style="font-size:15px;" for="startDate" class="form-label required">Start Date</label>
+                    <label  for="startDate" class="form-label date-font required">Start Date</label>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <label style="font-size:15px;" for="endDate" class="form-label required">End Date</label>
+                    <label for="endDate" class="form-label required">End Date</label>
                 </div>
             </div>
             <div class="row">
                 <div class="col-md-6 ms-auto">
-                    <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" required oninvalid="this.setCustomValidity('Please enter a Start Date')" oninput="setCustomValidity('')">
+                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" required>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" required oninvalid="this.setCustomValidity('Please enter a End Date')" oninput="setCustomValidity('')">
+                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" required>
                 </div>
             </div>
 
@@ -86,38 +80,6 @@
     <div style="height:30px; colour:Grey">
     </div>
 </div>
-<script type="text/javascript">
-
-    function initialDateSetup() {
-        const startDate = document.getElementById('startDate').value;
-        const endDate = document.getElementById('endDate').value;
-
-        const startDateInput = document.querySelector('#startDate')
-        const endDateInput = document.querySelector('#endDate')
-
-        startDateInput.setAttribute('max', endDate);
-        endDateInput.setAttribute('min', startDate);
-    }
-    const startDateElement = document.querySelector('#startDate');
-
-    startDateElement.addEventListener('change', (event) => {
-        const startDate = document.getElementById("startDate").value
-        const endDate = document.querySelector('#endDate');
-        endDate.setAttribute("min", startDate);
-    });
-
-    const endDateElement = document.querySelector('#endDate');
-
-    endDateElement.addEventListener('change',(event) => {
-        const endDate = document.getElementById("endDate").value
-        const startDate = document.querySelector('#startDate')
-        startDate.setAttribute("max", endDate)
-    });
-    initialDateSetup();
-
-</script>
-
-<!--&lt;!&ndash;Bootstrap Bundle with Popper &ndash;&gt;-->
-<!--<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>-->
-
+<script src="/javascript/projectFormDateConstraints.js"></script>
 </body>
+</html>

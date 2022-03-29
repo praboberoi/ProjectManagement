@@ -7,8 +7,8 @@ import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 import java.util.List;
@@ -39,14 +40,20 @@ public class SprintController {
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
-            Model model) throws Exception {
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
-        Project project = projectService.getProjectById(projectId);
-        model.addAttribute("listSprints", listSprints);
-        model.addAttribute("project", project);
-        model.addAttribute("roles",
-                userAccountClientService.getUserRole(principal));
-        return "project";
+            Model model,
+            RedirectAttributes ra) {
+        try {
+            List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            Project project = projectService.getProjectById(projectId);
+            model.addAttribute("listSprints", listSprints);
+            model.addAttribute("project", project);
+            model.addAttribute("roles",
+                    userAccountClientService.getUserRole(principal));
+            return "project";
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/dashboard";
+        }
     }
 
     /**
@@ -56,17 +63,23 @@ public class SprintController {
      */
     @GetMapping("/project/{projectId}/newSprint")
     public String newSprint(
-        Model model, 
-        @PathVariable ("projectId") int projectId, 
-        @AuthenticationPrincipal AuthState principal) throws Exception {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
+            Model model,
+            @PathVariable ("projectId") int projectId,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra){
+        if (DashboardController.retrieveUserRoles(principal)) return "redirect:/dashboard";
+        try {
+            Project currentProject = projectService.getProjectById(projectId);
+            Sprint newSprint = sprintService.getNewSprint(currentProject);
+            model.addAttribute("pageTitle", "Add New Sprint");
+            model.addAttribute("sprint", newSprint);
+            model.addAttribute("project", currentProject);
+            return "sprintForm";
+
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
         }
-        Project currentProject = projectService.getProjectById(projectId);
-        Sprint newSprint = sprintService.getNewSprint(currentProject);
-        model.addAttribute("sprint", newSprint);
-        return "sprintForm";
     }
 
     /**
@@ -76,43 +89,51 @@ public class SprintController {
      */
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(
-        @PathVariable int projectId, 
+        @PathVariable int projectId,
         Sprint sprint,
-        @AuthenticationPrincipal AuthState principal) throws Exception {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
+        @AuthenticationPrincipal AuthState principal,
+        RedirectAttributes ra) {
+        if (DashboardController.retrieveUserRoles(principal)) return "redirect:/dashboard";
+        try {
+                sprint.setProject(projectService.getProjectById(projectId));
+                String message = sprintService.saveSprint(sprint);
+                ra.addFlashAttribute("messageSuccess", message);
+            } catch (Exception e) {
+                ra.addFlashAttribute("messageDanger", e.getMessage());
+            }
+            return "redirect:/project/{projectId}";
         }
-        sprint.setProject(projectService.getProjectById(projectId));
-        sprintService.saveSprint(sprint);
-        return "redirect:/project/{projectId}";
-    }
 
 
-    /**
-     * Directs to page for editing a sprint
-     * @param sprintId ID for sprint being edited
-     * @param model
-     * @return
-     */
+
+        /**
+         * Directs to page for editing a sprint
+         * @param sprintId ID for sprint being edited
+         * @param model
+         * @return
+         */
     /*make sure to update project.html for path*/
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
-        @PathVariable("sprintId") int sprintId, 
-        @PathVariable("projectId") int projectId, 
-        Model model,
-        @AuthenticationPrincipal AuthState principal) throws Exception {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
+            @PathVariable("sprintId") int sprintId,
+            @PathVariable("projectId") int projectId,
+            Model model,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra){
+        if (DashboardController.retrieveUserRoles(principal)) return "redirect:/dashboard";
+        try {
+                Project currentProject = projectService.getProjectById(projectId);
+                Sprint sprint = sprintService.getSprint(sprintId);
+                model.addAttribute("sprint", sprint);
+                model.addAttribute("project", currentProject);
+                model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
+                return "sprintForm";
+            } catch (Exception e) {
+                ra.addFlashAttribute("messageDanger", e.getMessage());
+                return "redirect:/project/{projectId}";
+            }
         }
-        Sprint sprint = sprintService.getSprint(sprintId);
-        model.addAttribute("sprint", sprint);
-        model.addAttribute("pageTitle", "Edit Sprint (Name: " + sprintId + ")");
-        return "sprintForm";
 
-
-    }
 
     /**
      * Deletes a sprint and redirects back to project page
@@ -122,15 +143,18 @@ public class SprintController {
      */
     @GetMapping("/project/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(
-        @PathVariable("sprintId") int sprintId, 
-        Model model, 
+        @PathVariable("sprintId") int sprintId,
+        Model model,
         @PathVariable int projectId,
-        @AuthenticationPrincipal AuthState principal){
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return "redirect:/dashboard";
+        @AuthenticationPrincipal AuthState principal,
+        RedirectAttributes ra){
+        if (DashboardController.retrieveUserRoles(principal)) return "redirect:/dashboard";
+        try {
+            String message = sprintService.deleteSprint(sprintId);
+            ra.addFlashAttribute("messageSuccess", message);
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        sprintService.deleteSprint(sprintId);
         sprintService.updateSprintNames(sprintService.getSprintByProject(projectId));
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         model.addAttribute("listSprints", listSprints);
