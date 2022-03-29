@@ -46,6 +46,7 @@ public class DashboardController {
             model.addAttribute("listProjects", listProjects);
             // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "dashboard";
         } catch (Exception e) {
             return "error";
@@ -64,6 +65,7 @@ public class DashboardController {
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
+        model.addAttribute("user", userAccountClientService.getUser(principal));
         return "projectForm";
     }
 
@@ -113,6 +115,7 @@ public class DashboardController {
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "projectForm";
         } catch (NullPointerException e) {
             ra.addFlashAttribute("messageDanger", "No Project Found");

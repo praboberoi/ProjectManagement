@@ -19,11 +19,10 @@
 </head>
 
 <!--    add/fragments -->
-<div th:replace="fragments :: header"></div>
-    <div th:replace="fragments :: dashboard"></div>
 
     <body>
     <header>
+        <div th:replace="fragments :: header"></div>
     </header>
     <div class = "main">
         <div class="content_account">
@@ -40,7 +39,7 @@
         <div class="content_container">
             <div id="content">
                 <br>
-                <h4>Great to see you <span th:text="${firstName} + '!'"> </span></h4>
+                <h4>Great to see you <span th:text="${user.firstName} + '!'"> </span></h4>
                 <br>
                 <!-- card: to create a box outline to contain form-->
                 <div class="card">
@@ -57,43 +56,43 @@
                                 <div class="row mb-3">
                                     <label for="username" class = "col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" readonly class="form-control" id="username" th:placeholder="${username}">
+                                        <input type="text" readonly class="form-control" id="username" th:placeholder="${user.username}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: </h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="firstName" readonly class="form-control" th:placeholder="${firstName}">
+                                        <input type="text" id="firstName" readonly class="form-control" th:placeholder="${user.firstName}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: </h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="lastName" readonly class="form-control" th:placeholder="${lastName}">
+                                        <input type="text" id="lastName" readonly class="form-control" th:placeholder="${user.lastName}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="pronouns" class = "col-sm-2 col-form-label"><h6>Pronouns: </h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="pronouns" readonly class="form-control" th:placeholder="${pronouns}">
+                                        <input type="text" id="pronouns" readonly class="form-control" th:placeholder="${user.pronouns}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="nickname" class = "col-sm-2 col-form-label"><h6>Nicknames: </h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="nickname" readonly class="form-control" th:placeholder="${nickname}">
+                                        <input type="text" id="nickname" readonly class="form-control" th:placeholder="${user.nickname}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class = "col-sm-2 col-form-label"><h6>Email: </h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="email" readonly class="form-control" th:placeholder="${email}">
+                                        <input type="text" id="email" readonly class="form-control" th:placeholder="${user.email}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="bio" class = "col-sm-2 col-form-label"><h6>Bio: </h6></label>
                                     <div class = "col-sm-6">
-                                        <textarea readonly class="form-control" id="bio" th:placeholder="${bio}"></textarea>
+                                        <textarea readonly class="form-control" id="bio" th:placeholder="${user.bio}"></textarea>
                                     </div>
                                 </div>
                                 <a class="btn btn-primary" href="/editAccount">Edit</a>
