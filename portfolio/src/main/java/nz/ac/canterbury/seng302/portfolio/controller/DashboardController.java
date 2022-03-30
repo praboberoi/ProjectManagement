@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -22,7 +23,6 @@ public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Autowired private SprintService sprintService;
-
 
     /**
      * Adds the project list to the Dashboard.
@@ -56,13 +56,13 @@ public class DashboardController {
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        dashboardService.setPreviousFeature("Create");
         model.addAttribute("project", new Project());
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
         model.addAttribute("user", userAccountClientService.getUser(principal));
         return "projectForm";
     }
+
 
     /**
      * Saves project object to the database and redirects to dashboard page
@@ -78,15 +78,12 @@ public class DashboardController {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             String msgString;
-            dashboardService.saveProject(project);
-            msgString = dashboardService.createSuccessMessage(project);
-            if (msgString == null) {
-                throw new Exception("Error generating success message");
-            }
-            ra.addFlashAttribute("messageSuccess", msgString);
+            String message =  dashboardService.saveProject(project);
+            ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
         } catch (Exception e) {
-            return "error";
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/dashboard";
         }
     }
 
@@ -105,7 +102,6 @@ public class DashboardController {
         @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            dashboardService.setPreviousFeature("Edit");
             Project project  = dashboardService.getProject(projectId);
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
@@ -127,12 +123,16 @@ public class DashboardController {
     @GetMapping("/dashboard/deleteProject/{projectId}")
     public String deleteProject(
         @PathVariable("projectId") int projectId,
+        RedirectAttributes ra,
         Model model,
         @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
+            Project project  = dashboardService.getProject(projectId);
+            String message = "Successfully Deleted " + project.getProjectName();
             sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
+            ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
         } catch (Exception e) {
             return "error";
