@@ -1,8 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.service.GreeterClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
@@ -20,13 +19,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
-import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
+import java.util.List;
 import java.util.stream.Collectors;
 
 /**
@@ -103,7 +102,6 @@ public class AccountController {
     @GetMapping("/editAccount")
     public String showNewForm(
             @AuthenticationPrincipal AuthState principal,
-            @RequestParam(name="userId", required=false) String favouriteColour,
             Model model
     ) {
         this.addAttributesToModel(principal, model);
@@ -143,19 +141,17 @@ public class AccountController {
                 bio,
                 pronouns,
                 email);
-        model.addAttribute("error", idpResponse.getMessage());
-        model.addAttribute("firstName", firstName);
-        model.addAttribute("lastName", lastName);
-        model.addAttribute("nickname", nickname);
-        model.addAttribute("bio", bio);
-        model.addAttribute("pronouns", pronouns);
-        model.addAttribute("email", email);
+
+        addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
             msgString = String.format("Successfully updated details");
             ra.addFlashAttribute("messageSuccess", msgString);
             return "redirect:account";
         }
+        List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
+        validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
+        
         return "editAccount";
     }
 

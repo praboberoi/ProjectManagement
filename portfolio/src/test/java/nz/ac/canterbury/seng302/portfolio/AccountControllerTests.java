@@ -7,6 +7,9 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+
+import org.aspectj.lang.annotation.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +21,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Calendar;
+import java.util.Date;
 import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -36,6 +40,32 @@ public class AccountControllerTests {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+
+    User user;
+
+    UserResponse.Builder reply;
+
+
+    @BeforeEach
+    public void init() {
+        user = new User.Builder()
+        .userId(0)
+        .username("TimeTester")
+        .firstName("Time")
+        .lastName("Tester")
+        .email("Test@tester.nz")
+        .creationDate(new Date())
+        .build();
+
+        reply = UserResponse.newBuilder();
+        reply.setUsername(user.getUsername());
+        reply.setFirstName(user.getFirstName());
+        reply.setLastName(user.getLastName());
+        reply.setEmail(user.getEmail());
+        reply.setCreated(Timestamp.newBuilder()
+                .setSeconds(user.getDateCreated().getTime())
+                .build());
+    }
 
     /**
      * Test's the getTimePassed function of Account Controller, in this we are testing the blue sky that everything
@@ -155,8 +185,9 @@ public class AccountControllerTests {
     {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(false).build();
-        when(mockUserAccountClientService.edit(-1, "", "", "", "", "",
-                "")).thenReturn(editUserResponse);
+        when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
+        when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
+
         AccountController accountController = new AccountController(mockUserAccountClientService);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
@@ -176,8 +207,8 @@ public class AccountControllerTests {
     {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
-        when(mockUserAccountClientService.edit(-1, "", "", "", "", "",
-                "")).thenReturn(editUserResponse);
+        when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
+        when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
         AccountController accountController = new AccountController(mockUserAccountClientService);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
