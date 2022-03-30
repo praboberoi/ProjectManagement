@@ -10,20 +10,15 @@
 
     Custom css for body
     <link rel="stylesheet" type="text/css" th:href="@{/css/body.css}" href="/css/body.css"/>
-
-    <!--        <link rel="stylesheet" href="/css/style.css" />-->
-
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="/javascript/editAccount.js"></script>
 </head>
-
-<!--    add/fragments -->
-
     <body>
     <header>
         <div th:replace="fragments :: header"></div>
     </header>
+    <div th:replace="fragments :: account"></div>
     <div class = "main">
         <div class="content_account">
             <div class="page-title-container">
@@ -35,7 +30,6 @@
                 </div>
             </div>
         </div>
-
         <div class="content_container">
             <div id="content">
                 <br>
