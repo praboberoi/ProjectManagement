@@ -57,13 +57,13 @@ public class SprintService {
         String message;
         if (currentSprint == null) {
             currentSprint = sprint;
-            message = "Sprint created successfully";
+            message = "Successfully Created Sprint " + sprint.getSprintName();
         } else {
             currentSprint.setSprintName(sprint.getSprintName());
             currentSprint.setDescription(sprint.getDescription());
             currentSprint.setStartDate(sprint.getStartDate());
             currentSprint.setEndDate(sprint.getEndDate());
-            message = "Sprint updated successfully";
+            message = "Successfully Updated Sprint " + sprint.getSprintName();
         }
         try {
             sprintRepository.save(currentSprint);

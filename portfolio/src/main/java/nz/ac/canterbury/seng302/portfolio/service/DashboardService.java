@@ -52,7 +52,7 @@ public class DashboardService {
                 currentProject.setDescription(project.getDescription());
                 currentProject.setStartDate(project.getStartDate());
                 currentProject.setEndDate(project.getEndDate());
-                message = "Successfully Saved Project: " + project.getProjectName();
+                message = "Successfully Saved Project " + project.getProjectName();
 
             }
             try {
