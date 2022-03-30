@@ -1,3 +1,6 @@
+// Bolt Development
+// SENG302 Team 300
+
 plugins {
     id "java-library"
     id "idea"
