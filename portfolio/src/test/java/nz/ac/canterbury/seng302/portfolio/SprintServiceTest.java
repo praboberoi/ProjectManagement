@@ -5,12 +5,11 @@ import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
-import org.junit.jupiter.api.AfterEach;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Bean;
 
 import java.sql.Date;
 import java.util.Arrays;
@@ -20,14 +19,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 class SprintServiceTest {
-    /**
-     * Use bean provided by Spring Boot Test to test Service layer code
-     * creates an instance of SprintService
-     */
-    @Bean
-    public SprintService sprintService(){
-        return new SprintService();
-    }
     /**
      * Use Autowire to place instance of bean
      * returns an instance of class created with @Bean annotation
@@ -41,6 +32,7 @@ class SprintServiceTest {
     private Sprint sprint1;
     private Sprint sprint2;
     private Sprint sprint3;
+    private Sprint sprint4;
     private Project project;
 
     /**
@@ -51,8 +43,8 @@ class SprintServiceTest {
         project = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
-                .startDate(new Date(2020, 3, 12))
-                .endDate(new Date(2021, 1, 10))
+                .startDate(new Date(2021, 1, 1))
+                .endDate(new Date(2021, 12, 10))
                 .build();
 
         sprint1 = new Sprint.Builder()
@@ -74,32 +66,46 @@ class SprintServiceTest {
         sprint3 = new Sprint.Builder()
                 .sprintName("Sprint 3")
                 .description("Attempt 3")
-//                .project(project)
-                .startDate(new Date(2021, 3, 1))
-                .endDate(new Date(2021, 6, 1))
+                .project(project)
+                .startDate(new Date(2021, 6, 1))
+                .endDate(new Date(2021, 9, 1))
                 .build();
 
+        sprint4 = new Sprint.Builder()
+                .sprintName("Sprint 4")
+                .description("Attempt 4")
+                .project(project)
+                .startDate(new Date(2021, 9, 1))
+                .endDate(new Date(2021, 12, 1))
+                .build();
+
+
         projectRepository.save(project);
-        sprintRepository.save(sprint1);
-        sprintRepository.save(sprint2);
+        try {
+            sprintService.saveSprint(sprint1);
+        } catch (Exception e) {
+            System.out.println(sprint1);
+        }
+        try {
+            sprintService.saveSprint(sprint2);
+        } catch (Exception e) {
+            System.out.println(sprint2);
+        }
+        try {
+            sprintService.saveSprint(sprint3);
+        } catch (Exception e) {
+            System.out.println(sprint3);
+        }
+
     }
 
-    /**
-     * clear after each test has been completed
-     */
-    @AfterEach
-    public void tearDown() {
-        sprintRepository.delete(sprint1);
-        sprintRepository.delete(sprint2);
-        projectRepository.delete(project);
-    }
 
     /**
      * Tests that all sprints in a project get deleted
      * @throws Exception
      */
     @Test
-    public void givenSprintExists_DeleteAllSprints() throws Exception {
+    public void givenSprintExists_DeleteAllSprints() {
         List<Sprint> sprintList = Arrays.asList();
         Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
         sprintService.deleteAllSprints(project1.getProjectId());
@@ -120,9 +126,9 @@ class SprintServiceTest {
      * Tests that a new sprint got added to project
      */
     @Test
-    public void givenNewSprint_AddNewSprint() {
-        Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
-        assertEquals(sprint3.getSprintName(), sprintService.getNewSprint(project1).getSprintName());
+    public void givenNewSprint_GetSprintObject() {
+        assertEquals(sprint4.getSprintName(), sprintService.getNewSprint(project).getSprintName());
+        sprintRepository.delete(sprint4);
     }
 
     /**
@@ -141,8 +147,7 @@ class SprintServiceTest {
      */
     @Test
     public void givenSprintExists_CountByProject() {
-        Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
-        assertEquals(2, sprintService.countByProjectId(project1.getProjectId()));
+        assertEquals(3, sprintService.countByProjectId(project.getProjectId()));
         assertNotEquals(1, sprintService.countByProjectId(project.getProjectId()));
     }
 
@@ -151,8 +156,23 @@ class SprintServiceTest {
      */
     @Test
     public void givenProjectId_GetListOfSprints() {
-        Project project1 = projectRepository.findByProjectName(project.getProjectName()).get(0);
-        List<Sprint> sprintList = Arrays.asList(sprint1,sprint2);
-        assertArrayEquals(sprintList.toArray(), sprintService.getSprintByProject(project1.getProjectId()).toArray());
+        List<Sprint> sprintList = Arrays.asList(sprint1,sprint2,sprint3);
+        assertArrayEquals(sprintList.toArray(), sprintService.getSprintByProject(project.getProjectId()).toArray());
+    }
+
+    /**
+     * Tests a sprint is saved to database
+     */
+    @Test
+    public void givenSprint_SaveToDatabase() throws Exception {
+        Sprint sprint5 = new Sprint.Builder()
+                .sprintName("Sprint 5")
+                .description("Attempt 5")
+                .project(project)
+                .startDate(new Date(2022, 9, 1))
+                .endDate(new Date(2022, 12, 1))
+                .build();
+        assertEquals("Sprint created successfully", sprintService.saveSprint(sprint5));
+        sprintRepository.delete(sprint5);
     }
 }
