@@ -6,6 +6,8 @@ import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import nz.ac.canterbury.seng302.shared.util.ValidationError;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +44,10 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         }
 
         if (userRepository.getUserByUsername(request.getUsername()) != null) {
+            ValidationError.Builder errorBuilder = ValidationError.newBuilder();
+            errorBuilder.setFieldName("usernameError");
+            errorBuilder.setErrorText("Username must unique.");
+            reply.addValidationErrors(errorBuilder);
             reply.setIsSuccess(false);
             reply.setMessage("User already exists");
             responseObserver.onNext(reply.build());
@@ -102,6 +108,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         user.setPersonalPronouns(request.getPersonalPronouns());
         user.setEmail(request.getEmail());
         userRepository.save(user);
+
         reply.setIsSuccess(true);
         reply.setMessage(String.format("User with id %s has been edited successfully", user.getUserId()));
         responseObserver.onNext(reply.build());
