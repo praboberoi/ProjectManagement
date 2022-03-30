@@ -84,17 +84,17 @@ class SprintServiceTest {
         try {
             sprintService.saveSprint(sprint1);
         } catch (Exception e) {
-            System.out.println(sprint1);
+            System.out.println(e.getMessage());
         }
         try {
             sprintService.saveSprint(sprint2);
         } catch (Exception e) {
-            System.out.println(sprint2);
+            System.out.println(e.getMessage());
         }
         try {
             sprintService.saveSprint(sprint3);
         } catch (Exception e) {
-            System.out.println(sprint3);
+            System.out.println(e.getMessage());
         }
 
     }
@@ -172,7 +172,7 @@ class SprintServiceTest {
                 .startDate(new Date(2022, 9, 1))
                 .endDate(new Date(2022, 12, 1))
                 .build();
-        assertEquals("Sprint created successfully", sprintService.saveSprint(sprint5));
+        assertEquals("Successfully Created Sprint Sprint 5", sprintService.saveSprint(sprint5));
         sprintRepository.delete(sprint5);
     }
 }
