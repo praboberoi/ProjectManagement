@@ -1,3 +1,24 @@
+# Team300 README
+Endpoints implemented <br />
+
+- "/login" GET - Sends the user to the login page. <br />
+- "/login" POST - Attemps to connect to server and then authenticate user's username and password. If successful the a token is created for the users's session. If unsuccessful the user is redirected to the login page. <br />
+- "/account" GET - Populates the user's page with thier details.
+- "/editAccount" GET - Populates the edit page with a user's details. 
+- "/editAccount" POST - Attempts to save the edited user's details into the database, if successful it redirects the user to thier account page, otherwise it leaves them on the edit page.
+- "/dashboard" GET - Populates the users dashboard with projects they have.
+- "/dashboard/newProject" GET - If the user has the correct role to create a project they are directed to the project form, if not they are redirected to the dashboard.
+- "dashboard/saveProject" POST - Checks that the user has the correct role to be saving a project, if not they are are redirected to dashboard. If they do, they project is saved then the user is redirected to the dashboard.<br />
+- "dashboard/editProject/{projectId}" GET - Opens the edit page and populates it with the given projects details.
+- "dashboard/deleteProject/{projectId}" GET - Deletes the project with the specified id from the database.
+- "/register" GET - The get message to return an empty registration page.
+- "/register" POST - Attemps to register the user with the given details provided in the form on the page, if successful the user is redirected to the login page. If not, then errors are displaye as to why it was unsuccessful. 
+- "/project/{projectId}" GET - This call adds project details, sprints and current user roles to the project page.
+- "/project/{projectId}/newSprint" GET - This calls displays a page for adding a new sprint.
+- "/project/{projectId}/saveSprint" POST - This calls saves a sprint and redirects the user to the project page.
+- "/project/{projectId}/editSprint/{sprintId}" GET - This call directs the user to a page specifically for editing a sprint.
+- "/project/{projectId}/deleteSprint/{sprintId}" GET - This call deletes a sprint and redirects back to the project page.
+
 # SENG302 Template Project Overview
 
 Welcome to the template project for SENG302-2022, in this README file we've included some useful information to help you get started. We advise you to take some time reading through this entire document, as doing so may save you many headaches down the line!
