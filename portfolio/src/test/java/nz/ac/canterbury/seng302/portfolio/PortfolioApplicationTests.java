@@ -1,11 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio;
 
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 
 @SpringBootTest
 class PortfolioApplicationTests {
