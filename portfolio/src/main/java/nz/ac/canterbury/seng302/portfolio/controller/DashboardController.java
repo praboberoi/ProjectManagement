@@ -77,7 +77,6 @@ public class DashboardController {
             @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            String msgString;
             String message =  dashboardService.saveProject(project);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";

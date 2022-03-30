@@ -8,9 +8,6 @@ import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.NoSuchElementException;
 
 @GrpcService
@@ -21,8 +18,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public UserAccountServerService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
-
-    private static final Logger logger = LoggerFactory.getLogger(UserAccountServerService.class);
 
     /**
      * This method registers a user in the database based off a UserRegisterRequest, and uses the StreamObserver to
