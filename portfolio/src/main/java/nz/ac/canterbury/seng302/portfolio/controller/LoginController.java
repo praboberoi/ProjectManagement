@@ -4,11 +4,11 @@ import io.grpc.StatusRuntimeException;
 import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PostMapping;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 @Controller
 public class LoginController {
 
-    @Autowired
-    private AuthenticateClientService authenticateClientService;
+    private final AuthenticateClientService authenticateClientService;
+
+    public LoginController (AuthenticateClientService authenticateClientService) {
+        this.authenticateClientService = authenticateClientService;
+    }
 
     /**
      * Attempts to authenticate with the Identity Provider via gRPC.
@@ -45,11 +48,22 @@ public class LoginController {
             @RequestParam(name="password", required=false, defaultValue="Password123!") String password,
             Model model
     ) {
+        return "login";
+    }
+
+    @PostMapping("/login")
+    public String submitLogin (
+            HttpServletRequest request,
+            HttpServletResponse response,
+            @RequestParam(name="username") String username,
+            @RequestParam(name="password") String password,
+            Model model)
+        {
         AuthenticateResponse loginReply;
         try {
             loginReply = authenticateClientService.authenticate(username, password);
         } catch (StatusRuntimeException e){
-            model.addAttribute("loginMessage", "Error connecting to Identity Provider...");
+            model.addAttribute("error", "Error connecting to Server");
             return "login";
         }
         if (loginReply.getSuccess()) {
@@ -62,9 +76,10 @@ public class LoginController {
                 5 * 60 * 60, // Expires in 5 hours
                 domain.startsWith("localhost") ? null : domain
             );
+            return "redirect:/dashboard";
         }
 
-        model.addAttribute("loginMessage", loginReply.getMessage());
+        model.addAttribute("error", loginReply.getMessage());
         return "login";
     }
 

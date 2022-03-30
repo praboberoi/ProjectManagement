@@ -1,0 +1,117 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
+<head>
+    <title>Edit Account page</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+    Custom css for body
+    <link rel="stylesheet" type="text/css" th:href="@{/css/body.css}" href="/css/body.css"/>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+   <script src="/javascript/editAccount.js"></script>
+</head>
+
+<!--    add/fragments -->
+
+<!--<div th:replace="fragments :: menu"></div>-->
+
+<body>
+<header>
+    <div th:replace="fragments :: header"></div>
+</header>
+<div th:replace="fragments :: account"></div>
+<div class = "main">
+    <div class="content_account">
+        <div class="box1">
+            <div class="page-title">
+                <h2>Your LENSfolio Account</h2>
+            </div>
+        </div>
+
+        <div class="content_container">
+            <!--                <nav id="sidebar" class="sidebar"></nav>-->
+            <div id="content">
+                <br>
+                <h4>Edit your account details </span></h4>
+                <br>
+                <!-- card: to create a box outline to contain form-->
+                <div class="card">
+                    <div class="container-fluid">
+                        <div class="card-body">
+                            <!-- badges -->
+                            <h6><span class="badge bg-success" th:text="${roles}"></span> member</h6>
+                            <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
+                                <span th:text="${timePassed}"></span> since joined</h6>
+                            <br>
+                            <!-- start of form -->
+                            <!-- edit with @postmapping to update details in database AND screen-->
+                            <form action="/editAccount" method="post">
+                                <div class="row mb-3">
+                                    <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>
+                                    <div class = "col-sm-6">
+                                        <input type="text" id="username" class="form-control" th:placeholder="${user.username}"  aria-label="Disabled input example" disabled>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="firstName" class = "required col-sm-2 col-form-label"><h6>First Name: <span class="asterisk">*</span></h6></label>
+                                    <div class = "col-sm-6">
+                                        <input type="text" id="firstName" name="firstName" class="form-control" th:value="${user.firstName}" onkeyup="check_firstName();" required>
+                                        <p id="firstNameError" th:text="${firstNameError}" class="error-msg"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="lastName" class = "required col-sm-2 col-form-label"><h6>Last Name: <span class="asterisk">*</span></h6></label>
+                                    <div class = "col-sm-6">
+                                        <input type="text" id="lastName" name="lastName" class="form-control " th:value="${user.lastName}"  onkeyup="check_lastName();" required>
+                                        <p id="lastNameError" th:text="${lastNameError}" class="error-msg"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="pronouns" class = "col-sm-2 col-form-label"><h6>Pronouns: </h6></label>
+                                    <div class = "col-sm-6">
+                                        <input type="text" id="pronouns" name="pronouns" class="form-control" th:value="${user.pronouns}" onkeyup="check_pronouns();">
+                                        <p id="personalPronounsError" th:text="${personalPronounsError}" class="error-msg"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="nickname" class = "col-sm-2 col-form-label"><h6>Nicknames: </h6></label>
+                                    <div class = "col-sm-6">
+                                        <input type="text" id="nickname" name="nickname" class="form-control" th:value="${user.nickname}" onkeyup="check_nickname();">
+                                        <p id="nicknameError" th:text="${nicknameError}" class="error-msg"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="email" class = "required col-sm-2 col-form-label"><h6>Email: <span class="asterisk">*</span></h6></label>
+                                    <div class = "col-sm-6">
+                                        <input type="email" id="email" name="email" class="form-control" th:value="${user.email}"onkeyup="check_email();" required>
+                                        <p id="emailError" th:text="${emailError}" class="error-msg"></p>
+                                    </div>
+                                </div>
+                                <div class="row mb-3">
+                                    <label for="bio" class = "col-sm-2 col-form-label"><h6>Bio: </h6></label>
+                                    <div class = "col-sm-6">
+                                            <textarea type="bio" id="bio" name="bio" class="form-control"onkeyup="check_bio();">[[${user.bio}]]</textarea>
+                                        <p id="bioError" th:text="${bioError}" class="error-msg"></p>
+                                    </div>
+                                </div>
+                                <br>
+                                <button type="submit" class="btn btn-primary" href="/account">Save</button>
+                                <a class="btn btn-secondary" href="/account">Cancel</a>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <br>
+                <br>
+            </div>
+        </div>
+
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,193 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+.content_square {
+    width: 50%;
+    height: auto;
+    background-color: white;
+    margin: 100px auto;
+    border-radius: 30px;
+    /*margin-top:100px;*/
+}
+
+.content_account {
+    /*width: 100%;*/
+    height: auto;
+    background-color: white;
+    margin: 100px auto;
+    border-radius: 30px;
+    /*margin-top:100px;*/
+}
+
+.page-title-container {
+    width:80%;
+    margin: 40px auto;
+    height:130px;
+    background:#efb83c;
+    border-radius: 30px 30px 30px 30px;
+
+    text-align: center !important;;
+    padding-top: 45px !important;;
+}
+
+.page-title, .page-instruction {
+    font-family: 'Poppins', sans-serif;
+    color: #07173b;
+}
+
+
+.login-container, .content_container {
+    align-items: center;
+    margin: 40px auto;
+    text-align: left;
+    padding-left: 120px;
+    width:80%;
+
+    border-radius: 30px;
+    border-color: #07173B;
+    border-style: solid;
+    border-width: 2px;
+}
+
+.page-instruction {
+    margin: 20px auto;
+    font-size: 18px;
+}
+
+#login-form, #registration_form, #content {
+    margin: 0 auto;
+    color: #07173B;
+    display: inline-block;
+    padding-bottom: 30px;
+    width:80%;
+}
+
+label {
+    text-align: left;
+}
+
+.form-control{
+    border-radius: 64px;
+    color: #07173B;
+    width:100%;
+    height: 24px;
+    border-color: #07173B;
+    padding-left: 8px;
+    border-width: 2px;
+    border-style: solid;
+}
+
+.form_error {
+    border-color: #ff0010 !important;
+}
+
+.form_submit{
+    width: 100%;
+    height: 28px;
+    background: #07173B;
+    border-radius: 40px;
+    font-size: 18px;
+    color: white;
+    border-color: #07173B;
+    border-style: solid;
+    cursor: pointer;
+}
+
+.error-msg-holder {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    justify-items: center;
+    align-items: center;
+}
+
+.error-msg {
+    width: 100%;
+    text-align: justify;
+    margin: 0;
+    padding: 5px;
+    font-size: 14px;
+    color: #8a0000;
+}
+
+.no-account-warning{
+    color: #07173B;
+    width:100%;
+}
+
+.no-account-question {
+    float: left;
+    font-weight: 400;
+    font-size: 18px;
+    display: inline-block;
+    color: #07173B;
+
+}
+
+.signup-button, .close-signup {
+    text-decoration: none;
+    border-color: #07173B;
+    border-style: solid;
+    border-radius: 40px;
+    border-width: 2px;
+    width: 120px;
+    height: 28px;
+    font-size: 14px;
+    display: inline-block;
+    text-align: center;
+    margin-left: 5%;
+    background-color: #07173B;
+    color: white;
+}
+
+#login-btn {
+    background-color: white;
+    color: #07173B;
+
+}
+
+#register-btn{
+    background-color: #07173B;
+    border-color: #07173B;
+}
+
+#login-form-submit{
+    background-color: #07173B;
+    border-color: #07173B;
+}
+
+.close-signup {
+    background-color: white;
+    color: #07173B;
+}
+
+
+
+.required:after {
+    content:"*";
+    color: red;
+}
+
+.date-color {
+    color: #07173B !important;
+}
+
+.date-font {
+    font-size:15px !important;
+}
+
+/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 950px) {
+    .login_square, .login-container{
+        width: 90%;
+    }
+    .login-container{ padding-left:10px;}
+
+    .box1 {
+        padding: 10px 10px;
+    }
+}
