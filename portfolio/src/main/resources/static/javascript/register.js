@@ -1,4 +1,4 @@
-var special = /[ `!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
 var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
@@ -22,7 +22,7 @@ function check_firstName() {
     let firstNameErrorElement = document.getElementById("firstNameError");
     if (firstNameElement.value.length < 3 
         || firstNameElement.value.length > 32 
-        || names.test(firstNameElement.value) 
+        || names.test(firstNameElement.value)
         || digit.test(firstNameElement.value))
         {
         firstNameElement.classList.add("form_error")
@@ -38,7 +38,7 @@ function check_lastName() {
     let lastNameErrorElement = document.getElementById("lastNameError");
     if (lastNameElement.value.length < 3 
         || lastNameElement.value.length > 32 
-        || names.test(lastNameElement.value) 
+        || names.test(lastNameElement.value)
         || digit.test(lastNameElement.value))
         {
         lastNameElement.classList.add("form_error")
@@ -63,10 +63,16 @@ function check_nickname() {
 }
 
 function check_email() {
-    let nicknameElement = document.getElementById("nickname");
-    let nicknameErrorElement = document.getElementById("nicknameError");
-    nicknameElement.classList.remove("form_error");
-    nicknameErrorElement.innerText = null;
+    let emailElement = document.getElementById("email");
+    let emailErrorElement = document.getElementById("emailError");
+    if (!email.test(emailElement.value))
+    {
+        emailElement.classList.add("form_error")
+        emailErrorElement.innerText = "Email must be in the form username@domainName.domain."
+    } else {
+        emailElement.classList.remove("form_error");
+        emailErrorElement.innerText = null;
+    }
 }
 
 function check_pronouns() {

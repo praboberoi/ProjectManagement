@@ -60,7 +60,7 @@ public class EditUserAccountServiceTests {
      * Tests user validation with no values in request
      */
     @Test
-    void givenNoValues_whenUserValidation_thenNoValidationErrors(){
+    void givenNoValues_whenUserValidation_then3ValidationErrors(){
         List<ValidationError> result = controller.validateUserDetails(EditUserRequest.newBuilder().build());
 
         assertEquals(3, result.size(), "Incorrect number of validation errors\n"
@@ -71,14 +71,13 @@ public class EditUserAccountServiceTests {
      * Tests user validation with a multiple invalid entries
      */
     @Test
-    void givenInvalidRequest_whenUserValidation_thenNoValidationErrors(){
+    void givenInvalidRequest_whenUserValidation_then2ValidationErrors(){
         requestBuilder
                 .setLastName("sm")
                 .setFirstName("123")
                 .setEmail("Not#Valid")
                 .setBio("notvalid");
         List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
-
         assertEquals(2, result.size(), "Incorrect number of validation errors\n"
                 + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
     }
