@@ -99,6 +99,9 @@ By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 - James Claridge
 - Rory Holmes
 
+## License
+Apache 2.0
+
 ## References
 
 - [Spring Boot Docs](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
