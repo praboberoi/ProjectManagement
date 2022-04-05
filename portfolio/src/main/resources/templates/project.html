@@ -37,7 +37,7 @@
   <br>
   <div class="card">
     <div class="card-header">
-      Duration: [[${#dates.format(project.startDate,'dd-MM-yyyy')}]] to [[${#dates.format(project.endDate,'dd-MM-yyyy')}]]
+      Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]
     </div>
     <div class="card-body">
       <h5 class="card-title">Project Description:</h5>
@@ -79,8 +79,8 @@
         <tr>
           <td>[[${sprint.sprintName}]]</td>
           <td>[[${sprint.description}]]</td>
-          <td>[[${#dates.format(sprint.startDate, 'dd-MM-yyyy')}]]</td>
-          <td>[[${#dates.format(sprint.endDate, 'dd-MM-yyyy')}]]</td>
+          <td>[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
+          <td>[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
           <td>
             <div th:each="role: ${roles}">
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
