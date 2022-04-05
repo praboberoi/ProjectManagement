@@ -42,8 +42,9 @@ public class DashboardController {
             // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "dashboard";
+            return "error";
         } catch (Exception e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }
@@ -134,6 +135,7 @@ public class DashboardController {
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
         } catch (Exception e) {
+            model.addAttribute("role", userAccountClientService.getUserRole(principal));
             return "error";
         }
     }
