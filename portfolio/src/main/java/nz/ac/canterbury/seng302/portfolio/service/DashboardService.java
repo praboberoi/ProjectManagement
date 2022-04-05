@@ -80,6 +80,11 @@ public class DashboardService {
         projectRepo.deleteById(projectId);
     }
 
+    /**
+     * Creates a new project with a name(i.e. Project {year}), start date as the current date and end date as the date
+     * eight months after the current date.
+     * @return of type Project
+     */
     public Project getNewProject() {
         LocalDate now = LocalDate.now();
         Project newProject = new Project();
