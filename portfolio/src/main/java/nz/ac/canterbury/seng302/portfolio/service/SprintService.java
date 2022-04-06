@@ -23,6 +23,7 @@ public class SprintService {
         int sprintNo = countByProjectId(project.getProjectId()) + 1;
 
         Sprint newSprint = new Sprint();
+        newSprint.setSprintLabel("Sprint " + sprintNo);
         newSprint.setSprintName("Sprint " + sprintNo);
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.size() == 0) {
@@ -57,8 +58,9 @@ public class SprintService {
         String message;
         if (currentSprint == null) {
             currentSprint = sprint;
-            message = "Successfully Created Sprint " + sprint.getSprintName();
+            message = "Successfully Created Sprint " + sprint.getSprintLabel();
         } else {
+            currentSprint.setSprintLabel(sprint.getSprintLabel());
             currentSprint.setSprintName(sprint.getSprintName());
             currentSprint.setDescription(sprint.getDescription());
             currentSprint.setStartDate(sprint.getStartDate());
@@ -99,13 +101,13 @@ public class SprintService {
     }
 
     /**
-     * If the project sprint list is edited in some way, change the names of sprints accordingly.
+     * If the project sprint list is edited in some way, change the labels of sprints accordingly.
      * @param sprintList
      */
     public void updateSprintNames(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.stream().forEach(sprint -> {
-            sprint.setSprintName("Sprint " + count.getAndIncrement());
+            sprint.setSprintLabel("Sprint " + count.getAndIncrement());
             sprintRepository.save(sprint);
         });
 

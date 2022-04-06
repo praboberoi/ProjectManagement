@@ -27,6 +27,13 @@ public class Sprint {
     private Project project;
 
     /**
+     * Label of Sprint
+     */
+    @Column(nullable = false)
+    private String sprintLabel;
+
+
+    /**
      * Name of Sprint
      */
     @Column(nullable = false)
@@ -59,14 +66,16 @@ public class Sprint {
      * Constructor for the sprint class with arguments
      * @param sprintId id of the sprint.
      * @param project Project associated with the sprint.
+     * @param sprintLabel Label of the sprint.
      * @param sprintName Name of the sprint.
      * @param description Description of the sprint.
      * @param startDate Start date of the sprint.
      * @param endDate End date of the sprint.
      */
-    public Sprint(int sprintId, Project project, String sprintName, String description, Date startDate, Date endDate) {
+    public Sprint(int sprintId, Project project, String sprintLabel, String sprintName, String description, Date startDate, Date endDate) {
         this.sprintId = sprintId;
         this.project = project;
+        this.sprintLabel= sprintLabel;
         this.sprintName = sprintName;
         this.description = description;
         this.startDate = startDate;
@@ -95,6 +104,22 @@ public class Sprint {
      */
     public void setProject(Project project) {
         this.project = project;
+    }
+
+    /**
+     * To obtain the label of the Sprint
+     * @return The name of the sprint.
+     */
+    public String getSprintLabel() {
+        return sprintLabel;
+    }
+
+    /**
+     * Sets the sprint label to the given label
+     * @param sprintLabel of type String
+     */
+    public void setSprintLabel(String sprintLabel) {
+        this.sprintLabel = sprintLabel;
     }
 
     /**
@@ -171,7 +196,7 @@ public class Sprint {
         if (this == o) return true;
         if (!(o instanceof Sprint)) return false;
         Sprint sprint = (Sprint) o;
-        return sprintId == sprint.sprintId && Objects.equals(project, sprint.project) && Objects.equals(sprintName, sprint.sprintName) && description.equals(sprint.description) && Objects.equals(startDate, sprint.startDate) && Objects.equals(endDate, sprint.endDate);
+        return sprintId == sprint.sprintId && Objects.equals(project, sprint.project) && Objects.equals(sprintLabel, sprint.sprintLabel) && Objects.equals(sprintName, sprint.sprintName) && description.equals(sprint.description) && Objects.equals(startDate, sprint.startDate) && Objects.equals(endDate, sprint.endDate);
     }
 
 
@@ -180,6 +205,7 @@ public class Sprint {
      */
     public static class Builder {
         private int sprintId;
+        private String sprintLabel;
         private String sprintName;
         private String description = "";
         private Date startDate;
@@ -193,6 +219,16 @@ public class Sprint {
          */
         public Builder sprintId(int sprintId) {
             this.sprintId = sprintId;
+            return this;
+        }
+
+        /**
+         * Builds the current Builder with the given sprint label.
+         * @param sprintLabel of type String
+         * @return the current Builder
+         */
+        public Builder sprintLabel(String sprintLabel) {
+            this.sprintLabel = sprintLabel;
             return this;
         }
 
@@ -251,7 +287,7 @@ public class Sprint {
          * @return of type Sprint
          */
         public Sprint build() {
-            return new Sprint(sprintId, project, sprintName, description, startDate, endDate);
+            return new Sprint(sprintId, project, sprintLabel, sprintName, description, startDate, endDate);
         }
     }
 }

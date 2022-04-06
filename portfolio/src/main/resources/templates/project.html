@@ -66,8 +66,9 @@
     <table class="table table-bordered table-hover">
       <thead class = "table-light">
       <tr>
-        <th scope="col" style="width:15%">Sprint Name</th>
-        <th scope="col" style="width:45%">Description</th>
+        <th scope="col" style="width:10%">Sprint Label</th>
+        <th scope="col" style="width:10%">Sprint Name</th>
+        <th scope="col" style="width:40%">Description</th>
         <th scope="col" style="width:10%">Start Date</th>
         <th scope="col" style="width:10%">End Date</th>
         <th style="width:20%"></th>
@@ -77,6 +78,7 @@
       
       <th:block th:each="sprint : ${listSprints}">
         <tr>
+          <td>[[${sprint.sprintLabel}]]</td>
           <td>[[${sprint.sprintName}]]</td>
           <td>[[${sprint.description}]]</td>
           <td>[[${#dates.format(sprint.startDate, 'dd-MM-yyyy')}]]</td>
