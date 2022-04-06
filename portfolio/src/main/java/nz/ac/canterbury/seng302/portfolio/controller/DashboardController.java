@@ -135,7 +135,7 @@ public class DashboardController {
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
         } catch (Exception e) {
-            model.addAttribute("role", userAccountClientService.getUserRole(principal));
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }
