@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -24,12 +25,7 @@ public class DashboardService {
         List<Project> listProjects = (List<Project>) projectRepo.findAll();
         if (listProjects.isEmpty()) {
 
-            LocalDate now = LocalDate.now();
-            Project defaultProject = new Project();
-            defaultProject.setProjectName("Project " + now.getYear()); // Project {year}
-            defaultProject.setStartDate(Date.valueOf(now)); // Current date
-
-            defaultProject.setEndDate(Date.valueOf(now.plusMonths(8))); // 8 months from start date
+            Project defaultProject = getNewProject();
             saveProject(defaultProject);
             listProjects.add(defaultProject);
         }
@@ -82,6 +78,20 @@ public class DashboardService {
      */
     public void deleteProject(int projectId) {
         projectRepo.deleteById(projectId);
+    }
+
+    /**
+     * Creates a new project with a name(i.e. Project {year}), start date as the current date and end date as the date
+     * eight months after the current date.
+     * @return of type Project
+     */
+    public Project getNewProject() {
+        LocalDate now = LocalDate.now();
+        Project newProject = new Project();
+        newProject.setProjectName("Project " + now.getYear());
+        newProject.setStartDate(Date.valueOf(now));
+        newProject.setEndDate(Date.valueOf(now.plusMonths(8)));
+        return newProject;
     }
 }
 

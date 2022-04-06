@@ -44,6 +44,7 @@ public class DashboardController {
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "dashboard";
         } catch (Exception e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }
@@ -56,7 +57,7 @@ public class DashboardController {
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        model.addAttribute("project", new Project());
+        model.addAttribute("project", dashboardService.getNewProject());
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
         model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -134,6 +135,7 @@ public class DashboardController {
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
         } catch (Exception e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }
