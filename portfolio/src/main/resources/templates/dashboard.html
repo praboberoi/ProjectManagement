@@ -71,7 +71,7 @@
                                             <div th:each="role: ${roles}">
                                                 <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
                                                     <a class="btn btn-primary" th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">Edit details</a>
-                                                    <a class="btn btn-secondary" data-toggle="modal"  data-target="#conformationModal" id="delProject" th:data-id = "${project.projectId}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'))">Delete</a>
+                                                    <a class="btn btn-secondary" data-toggle="modal"  data-target="#conformationModal" th:data-id = "${project.projectId}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'))">Delete</a>
                                                 </div>
                                              </div>
                                         </div>
@@ -100,7 +100,7 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <form action="" method="post" id="deleteConfirmed">
+                <form action="" method="post" id="deleteProject">
                     <button type= "submit" class="btn btn-primary">Delete</button>
                 </form>
             </div>
