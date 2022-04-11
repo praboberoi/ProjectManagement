@@ -7,8 +7,7 @@ css for the body of each page
     padding-left: 300px;
     padding-top: 60px;
 
-    /*NOTE: remove when sidebar can be used for future stories*/
-    padding-right: 300px;
+
 }
 
 .project-card{
@@ -16,6 +15,7 @@ css for the body of each page
     border-radius: 20px !important;
     border: 2px solid !important;
     border-color: #07173B;
+    width: 100%;
 }
 
 .bdr {

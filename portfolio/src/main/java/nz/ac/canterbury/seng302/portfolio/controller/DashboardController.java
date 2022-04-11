@@ -35,9 +35,8 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
-        List<Project> listProjects = null;
         try {
-            listProjects = dashboardService.getAllProjects();
+            List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
             // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
@@ -120,7 +119,7 @@ public class DashboardController {
      * @return
      * @throws Exception If project is not found in the database
      */
-    @GetMapping("/dashboard/deleteProject/{projectId}")
+    @PostMapping("/dashboard/deleteProject/{projectId}")
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,

@@ -24,12 +24,9 @@ public class DashboardService {
     public List<Project> getAllProjects() throws Exception {
         List<Project> listProjects = (List<Project>) projectRepo.findAll();
         if (listProjects.isEmpty()) {
-
-            Project defaultProject = getNewProject();
-            saveProject(defaultProject);
-            listProjects.add(defaultProject);
+            saveProject(getNewProject());
+            listProjects = (List<Project>) projectRepo.findAll();
         }
-
         return listProjects;
     }
 
