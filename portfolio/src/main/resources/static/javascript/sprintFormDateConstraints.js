@@ -2,6 +2,20 @@
  * Script for setting the minimum and maximum values for start and end dates of the selected sprint.
  */
 
+function check_sprintName() {
+    let projectName = document.getElementById('project-name');
+    let projectNameError = document.getElementById('projectNameError');
+    if (projectName.value.length < 1) {
+        projectName.classList.add("form_error");
+        projectNameError.innerText = "Project Name must not be empty";
+    } else if (! projectNameRegex.test(projectName.value)) {
+        projectName.classList.add("form_error");
+        projectNameError.innerText = "Project Name must not start or end with space characters";
+    } else {
+        projectName.classList.remove("form_error");
+        projectNameError.innerText = null;
+    }
+}
 
 /**
  * Function that initialises the minimum and maximum date values when the sprint form is first opened.
