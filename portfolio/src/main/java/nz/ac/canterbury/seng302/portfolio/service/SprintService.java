@@ -104,7 +104,7 @@ public class SprintService {
      * If the project sprint list is edited in some way, change the labels of sprints accordingly.
      * @param sprintList
      */
-    public void updateSprintNames(List<Sprint> sprintList) {
+    public void updateSprintLabels(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.stream().forEach(sprint -> {
             sprint.setSprintLabel("Sprint " + count.getAndIncrement());

@@ -7,8 +7,6 @@ css for the body of each page
     padding-left: 300px;
     padding-top: 60px;
 
-    /*NOTE: remove when sidebar can be used for future stories*/
-    padding-right: 300px;
 }
 
 .project-card{
