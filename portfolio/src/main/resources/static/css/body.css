@@ -53,25 +53,33 @@ a.project-name {
 }
 /*Style consistent across all buttons.*/
 .btn {
-    width: 240px;
-    height: 32px;
+    width: auto;
+    height: auto;
     border-radius: 40px !important;
-    border: 2px solid #07173B !important;
     font-size: 20px !important;
-    margin-left: 10px;
+}
 
-    text-align: center !important;;
-    line-height: 17px !important;;
+.icon{
+    vertical-align: -.1em; !important;
 
 }
+.icon:hover{
+    text-decoration: none; !important;
+}
+.icon:active{
+    text-decoration: none; !important;
+}
+
 
 /* Style for primary buttons which guide the user through common tasks*/
 .btn-primary {
-    colour: white !important;
+    color: white !important;
     background-color: #07173B !important;
     vertical-align: middle !important;
 
 }
+
+
 
 /* Secondary button, used for less frequent actions, i.e. deleting a project.*/
 .btn-secondary {
