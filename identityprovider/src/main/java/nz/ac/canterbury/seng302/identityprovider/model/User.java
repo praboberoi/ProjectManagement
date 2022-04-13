@@ -46,6 +46,9 @@ public class User implements Serializable {
     @Column(nullable = false)
     private String salt;
 
+    @Column
+    private String image;
+
     @ElementCollection(fetch = FetchType.EAGER)
     private List<UserRole> roles = new ArrayList<>();
 
@@ -91,6 +94,8 @@ public class User implements Serializable {
     public String getSalt() {
         return salt;
     }
+
+    public String getImage() { return image; }
 
     public List<UserRole> getRoles() {
         return roles;
@@ -139,6 +144,8 @@ public class User implements Serializable {
     public void setSalt(String salt) {
         this.salt = salt;
     }
+
+    public void setImage(String image) { this.image = image; }
 
     public void setRoles(List<UserRole> roles) {
         this.roles = roles;
