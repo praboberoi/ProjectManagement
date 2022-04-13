@@ -15,7 +15,7 @@ class SprintTest {
     @BeforeEach
     public void setup() {
          project = new Project.Builder()
-                 .prijectId(1)
+                 .projectId(1)
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new Date(2020, 3, 12))
