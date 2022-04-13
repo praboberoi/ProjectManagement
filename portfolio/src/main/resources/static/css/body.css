@@ -59,7 +59,6 @@ a.project-name {
     font-size: 20px !important;
 }
 
-
 .icon{
     vertical-align: -.1em; !important;
 
@@ -87,20 +86,6 @@ a.project-name {
     color: #07173B !important;
     background-color: white !important;
 
-}
-
-#sprint-btn {
-    width: 40px;
-    height: 32px;
-}
-
-#sprint-edit-btn {
-    width: 100px;
-    height: 32px;
-}
-#sprint-del-btn {
-    width: 100px;
-    height: 32px;
 }
 
 #back-btn{

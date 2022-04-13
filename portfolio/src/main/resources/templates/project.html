@@ -47,17 +47,16 @@
 
   <br>
   <br>
-  <div class = "sprint_header">
-    <!-- use span to make header and button on same line-->
-    <h3>Sprints <span class="pull-right">
+  <div class="container-fluid row">
+    <h3 class="col d-flex">Sprints
       <div th:each="role: ${roles}">
           <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
           <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-            <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
+            <a class="col btn btn-outline-primary ml-1" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}">&#43;</a>
           </div>
        </div>
 
-      </span></h3>
+      </h3>
   </div>
   <br>
 
@@ -85,9 +84,11 @@
             <div th:each="role: ${roles}">
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
               <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-                <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
-                <a class="btn btn-secondary" id="sprint-del-btn" data-toggle="modal"  data-target="#conformationModal"  th:data-projectId = "${project.projectId}"
-                   th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">Delete</a>
+                <a class="btn btn-outline-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
+                  <img class="icon" src="/icons/edit-icon.svg"/> Edit</a>
+                <a class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal"  data-target="#conformationModal"  th:data-projectId = "${project.projectId}"
+                   th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">
+                  <img class="icon" src="/icons/trash-icon.svg"/> Delete</a>
               </div>
             </div>
           </td>
@@ -110,10 +111,10 @@
         <p id="message"></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <form action="" method="post" id="deleteSprint">
-          <button type= "submit" class="btn btn-primary">Delete</button>
+          <button type= "submit" class="btn btn-outline-primary mr-2">Delete</button>
         </form>
+        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
       </div>
     </div>
   </div>
