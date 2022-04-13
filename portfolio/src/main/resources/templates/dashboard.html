@@ -35,7 +35,7 @@
                     <div th:each="role: ${roles}">
                         <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
                         <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-                            <a class="btn btn-outline-primary ms-0" id = "create-btn" th:href="@{/dashboard/newProject}">Create Project</a>
+                            <a class="btn btn-outline-primary ms-0" id = "create-btn" th:href="@{/dashboard/newProject}">+ Create Project</a>
                         </div>
                     </div>
                 </th>
