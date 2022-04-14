@@ -73,6 +73,8 @@ public class SprintController {
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("submissionName", "Create");
+            model.addAttribute("image", "/icons/create-icon.svg");
             return "sprintForm";
 
         } catch (Exception e) {
@@ -126,6 +128,9 @@ public class SprintController {
                 model.addAttribute("sprint", sprint);
                 model.addAttribute("project", currentProject);
                 model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
+                model.addAttribute("submissionName", "Save");
+                model.addAttribute("image", "/icons/save-icon.svg");
+
             model.addAttribute("user", userAccountClientService.getUser(principal));
                 return "sprintForm";
             } catch (Exception e) {

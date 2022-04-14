@@ -30,15 +30,22 @@
                     <input class="form-control" type="text" id="username-field" name="username" required><br><br>
                     <label for="password-field">Password:</label><br>
                     <input class="form-control" type="password" id="password-field" name="password" required><br><br>
-                    <input class="form_submit" type="submit" value="Log In" id="login-form-submit">
+                    <div class="d-flex justify-content-end">
+                        <div class="align-items-start">
+                            <p th:text="${error}" class="error-msg"></p>
+                        </div>
+                        <button class="btn btn-outline-primary" type="submit">
+                            <img class="icon img-color-primary" src="/icons/login-icon.svg"/> Log In</button>
+                    </div>
                 </form>
-                <div class="no-account-warning">
-                    <h3 class="no-account-question">Don't have an account yet?</h3>
-                    <a href="/register"><button type="button" class="close-signup">Sign Up</button></a>
-                </div>
-                <br>
-                <div class="error-msg-holder">
-                    <p th:text="${error}" class="error-msg"></p>
+                <div class="container row align-items-md-center no-account-warning mb-2 p-0">
+                    <div class="col-md-auto px-1">
+                        <label class="no-account-question px-0">Don't have an account yet?</label>
+                    </div>
+                    <div class="col px-3">
+                        <a type="button" class="btn btn-outline-secondary" href="/register">
+                            <img class="icon img-color-secondary" src="/icons/create-user-icon.svg"> Sign Up</a>
+                    </div>
                 </div>
             </div>
         </div>

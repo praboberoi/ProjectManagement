@@ -52,7 +52,8 @@
       <div th:each="role: ${roles}">
           <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
           <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-            <a class="col btn btn-outline-primary ml-1" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}">+</a>
+            <a class="col btn btn-outline-primary ml-1" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}">
+              <img class="icon img-color-primary" src="/icons/create-icon.svg"/></a>
           </div>
        </div>
 
@@ -88,7 +89,7 @@
                   <img class="icon img-color-primary" src="/icons/edit-icon.svg"/> Edit</a>
                 <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal"  data-target="#conformationModal"  th:data-projectId = "${project.projectId}"
                    th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">
-                  <img class="icon" src="/icons/trash-icon.svg"/> Delete</button>
+                  <img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
               </div>
             </div>
           </td>
@@ -112,7 +113,7 @@
       </div>
       <div class="modal-footer">
         <form action="" method="post" id="deleteSprint">
-          <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-primary" src="/icons/trash-icon.svg"/> Delete</button>
+          <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
         </form>
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
       </div>

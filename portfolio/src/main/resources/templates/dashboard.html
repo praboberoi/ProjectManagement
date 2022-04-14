@@ -35,7 +35,8 @@
                     <div th:each="role: ${roles}">
                         <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
                         <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-                            <a class="btn btn-outline-primary ms-0" id = "create-btn" th:href="@{/dashboard/newProject}">+ Create Project</a>
+                            <a class="btn btn-outline-primary ms-0" id = "create-btn" th:href="@{/dashboard/newProject}">
+                                <img class="icon img-color-primary" src="/icons/create-icon.svg"/> Create Project</a>
                         </div>
                     </div>
                 </th>
@@ -74,7 +75,7 @@
                                                         <img class="icon img-color-primary" src="/icons/edit-icon.svg"/> Edit</a>
                                                     <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModal" th:data-id = "${project.projectId}"
                                                             th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'))">
-                                                        <img class="icon" src="/icons/trash-icon.svg"/> Delete</button>
+                                                        <img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
                                                 </div>
                                              </div>
                                         </div>
@@ -105,7 +106,8 @@
                 <form action="" method="post" id="deleteProject">
                     <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-primary" src="/icons/trash-icon.svg"/> Delete</button>
                 </form>
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                    <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</button>
             </div>
         </div>
     </div>
