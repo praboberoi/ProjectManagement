@@ -129,7 +129,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         reply.setPersonalPronouns(user.getPersonalPronouns());
         reply.setBio(user.getBio());
         reply.setEmail(user.getEmail());
-        reply.setProfileImagePath(user.getImage());
+        //reply.setProfileImagePath(user.getImage());
         reply.addAllRoles(user.getRoles());
         reply.setCreated(Timestamp.newBuilder()
                 .setSeconds(user.getDateCreated().getTime())

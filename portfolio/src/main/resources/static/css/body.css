@@ -132,3 +132,7 @@ input:invalid{
     font-size: 14px;
     color: #8a0000;
 }
+
+.profile-photo {
+    border-radius: 50%;
+}

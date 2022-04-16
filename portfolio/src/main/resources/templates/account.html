@@ -13,6 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="/javascript/editAccount.js"></script>
+    <script src="/javascript/profilePhoto.js"></script>
 </head>
     <body>
     <header>
@@ -44,6 +45,10 @@
                             <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
                                 <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
+
+                            <img src="/icons/userr.png" class="profile-photo" id="output" width="200" />
+                            <br>
+                            </br>
                             <!-- start of form -->
                             <!-- edit with @postmapping to update details in database AND screen-->
                             <form>
