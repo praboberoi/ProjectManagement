@@ -70,7 +70,8 @@
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"  onkeyup="match_pass();" required>
                         <p id="confirmPasswordError" th:text="${confirmPasswordError}" class="error-msg"></p>
                     </div><br>
-                        <button class="btn btn-outline-primary" type="submit">
+                        <div class="container-fluid d-flex justify-content-end p-0">
+                        <button class="btn btn-outline-primary me-3" type="submit">
                             <img class="icon img-color-primary" src="/icons/save-icon.svg"/> Submit</button>
                         <a type="button" class="btn btn-outline-secondary" href="/login">
                             <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</a>

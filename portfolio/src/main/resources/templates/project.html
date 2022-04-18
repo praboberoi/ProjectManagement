@@ -47,17 +47,16 @@
 
   <br>
   <br>
-  <div class="container-fluid row">
-    <h3 class="col d-flex">Sprints
-      <div th:each="role: ${roles}">
-          <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-          <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-            <a class="col btn btn-outline-primary ml-1" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}">
-              <img class="icon img-color-primary" src="/icons/create-icon.svg"/></a>
-          </div>
-       </div>
+  <div class="container-fluid d-flex p-0">
+    <h3 class="pe-3">Sprints</h3>
+    <div th:each="role: ${roles}">
+        <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+        <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+          <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}">
+            <img class="icon img-color-primary" src="/icons/create-icon.svg"/></a>
+        </div>
+     </div>
 
-      </h3>
   </div>
   <br>
 
@@ -115,7 +114,8 @@
         <form action="" method="post" id="deleteSprint">
           <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
         </form>
-        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+          <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</button>
       </div>
     </div>
   </div>
