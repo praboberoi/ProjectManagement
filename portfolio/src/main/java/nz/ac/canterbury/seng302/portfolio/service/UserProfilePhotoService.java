@@ -23,7 +23,7 @@ public class UserProfilePhotoService {
     private UserAccountServiceGrpc.UserAccountServiceStub userAccountStub;
 
 
-    StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountStub.uploadUserProfilePhoto(new FileUploadObserver());
+//    StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountStub.uploadUserProfilePhoto(new FileUploadObserver());
 
 //    public FileUploadStatusResponse getImage(
 //            ProfilePhotoUploadMetadata MetaData,
@@ -36,19 +36,28 @@ public class UserProfilePhotoService {
 //    }
 
     //path of the image
-    Path path = Paths.get("");
+//    Path path = Paths.get("/static/icons/user.png");
 
-    // build metadata in UploadUserProfilePhotoRequest proto
-    public UploadUserProfilePhotoRequest getImage(
-            final ProfilePhotoUploadMetadata MetaData) throws StatusRuntimeException, IOException {
-        UploadUserProfilePhotoRequest response = userAccountStub.uploadUserProfilePhoto(UploadUserProfilePhotoRequest.newBuilder()
-                .setMetaData(MetaData.newBuilderForType()
-                        .setUserId()
-                        .setFileType().build())
+//     build metadata in UploadUserProfilePhotoRequest proto
+//    public UploadUserProfilePhotoRequest getImage(
+//            final ProfilePhotoUploadMetadata MetaData) throws StatusRuntimeException, IOException {
+        public void UploadUserProfilePhotoRequest() throws IOException {
+
+
+            StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountStub.uploadUserProfilePhoto(new FileUploadObserver());
+            Path path = Paths.get("/static/icons/user.png");
+
+//            ProfilePhotoUploadMetadata MetaData;
+
+            UploadUserProfilePhotoRequest response = (UploadUserProfilePhotoRequest.newBuilder()
+                .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
+                        .setUserId(1)
+                        .setFileType("png").build())
                 .build());
 
+
         streamObserver.onNext(response);
-//        return response;
+
 
         // upload file
         InputStream inputStream = Files.newInputStream(path);
@@ -63,7 +72,8 @@ public class UserProfilePhotoService {
         inputStream.close();
         streamObserver.onCompleted();
 
-    return
+//    return response;
+//        return response;
     }
 
 
@@ -87,15 +97,15 @@ public class UserProfilePhotoService {
 
 
 
-    public StreamObserver<UploadUserProfilePhotoRequest> getImage(
-            final ProfilePhotoUploadMetadata MetaData,
-            final ByteString fileContent) throws StatusRuntimeException{
-        StreamObserver<UploadUserProfilePhotoRequest> response = userAccountStub.uploadUserProfilePhoto(UploadUserProfilePhotoRequest.newBuilder()
-                .setMetaData(MetaData)
-                .setFileContent(fileContent)
-                .build();
-        return response;
-    }
+//    public StreamObserver<UploadUserProfilePhotoRequest> getImage(
+//            final ProfilePhotoUploadMetadata MetaData,
+//            final ByteString fileContent) throws StatusRuntimeException{
+//        StreamObserver<UploadUserProfilePhotoRequest> response = userAccountStub.uploadUserProfilePhoto(UploadUserProfilePhotoRequest.newBuilder()
+//                .setMetaData(MetaData)
+//                .setFileContent(fileContent)
+//                .build();
+//        return response;
+//    }
 
 
 //
