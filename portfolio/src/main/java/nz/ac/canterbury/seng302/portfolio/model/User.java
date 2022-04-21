@@ -28,13 +28,13 @@ public class User implements Serializable {
 
     private String email;
 
-    private String image;
+    private String profileImagePath;
 
     private List<UserRole> roles = new ArrayList<>();
 
     private Date dateCreated;
 
-    public User(int userId, String username, String firstName, String lastName, String nickname, String bio, String pronouns, String email, String image, List<UserRole> roles, Date dateCreated) {
+    public User(int userId, String username, String firstName, String lastName, String nickname, String bio, String pronouns, String email, String profileImagePath, List<UserRole> roles, Date dateCreated) {
         this.userId = userId;
         this.username = username;
         this.firstName = firstName;
@@ -43,7 +43,7 @@ public class User implements Serializable {
         this.email = email;
         this.bio = bio;
         this.pronouns = pronouns;
-        this.image = image;
+        this.profileImagePath = profileImagePath;
         this.roles = roles;
         this.dateCreated = dateCreated;
     }
@@ -80,7 +80,7 @@ public class User implements Serializable {
         return email;
     }
 
-    public String getImage() { return image; }
+    public String getProfileImagePath() { return profileImagePath; }
 
     public List<UserRole> getRoles() {return roles;}
 
@@ -120,7 +120,7 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public void setImage(String image) {this.image = image; }
+    public void setProfileImagePath(String profileImagePath) {this.profileImagePath = profileImagePath; }
 
     public void setDateCreated(Date dateCreated) {
         this.dateCreated = dateCreated;
@@ -138,7 +138,7 @@ public class User implements Serializable {
         this.email = response.getEmail();
         this.bio = response.getBio();
         this.pronouns = response.getPersonalPronouns();
-        this.image = response.getProfileImagePath();
+        this.profileImagePath = response.getProfileImagePath();
         this.roles = response.getRolesList();
         this.dateCreated = new Date(response.getCreated().getSeconds());
     }
@@ -155,7 +155,7 @@ public class User implements Serializable {
         private String bio;
         private String pronouns;
         private String email = "";
-        private String image = "";
+        private String profileImagePath = "";
         private List<UserRole> roles = new ArrayList<>();
         private Date dateCreated = new Date();
 
@@ -248,13 +248,13 @@ public class User implements Serializable {
         }
 
         /**
-         * Updates the user with the given image
+         * Updates the user with the path to given image
          *
-         * @param image profile photo of the user
+         * @param profileImagePath path of the profile photo of the user
          * @return self
          */
-        public Builder image(String image) {
-            this.image = image;
+        public Builder profileImagePath(String profileImagePath) {
+            this.profileImagePath = profileImagePath;
             return this;
         }
 
@@ -286,7 +286,7 @@ public class User implements Serializable {
          * @return an object of type User
          */
         public User build() {
-            return new User(userId, username, firstName, lastName, nickname, bio, pronouns, email, image, roles, dateCreated);
+            return new User(userId, username, firstName, lastName, nickname, bio, pronouns, email, profileImagePath, roles, dateCreated);
         }
     }
 

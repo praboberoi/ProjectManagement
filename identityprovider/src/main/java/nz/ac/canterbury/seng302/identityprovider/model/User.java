@@ -47,7 +47,7 @@ public class User implements Serializable {
     private String salt;
 
     @Column
-    private String image;
+    private String profileImagePath;
 
     @ElementCollection(fetch = FetchType.EAGER)
     private List<UserRole> roles = new ArrayList<>();
@@ -95,7 +95,7 @@ public class User implements Serializable {
         return salt;
     }
 
-    public String getImage() { return image; }
+    public String getProfileImagePath() { return profileImagePath; }
 
     public List<UserRole> getRoles() {
         return roles;
@@ -145,7 +145,7 @@ public class User implements Serializable {
         this.salt = salt;
     }
 
-    public void setImage(String image) { this.image = image; }
+    public void setProfileImagePath(String profileImagePath) { this.profileImagePath = profileImagePath; }
 
     public void setRoles(List<UserRole> roles) {
         this.roles = roles;
