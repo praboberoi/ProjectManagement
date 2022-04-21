@@ -15,6 +15,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
@@ -152,6 +153,22 @@ public class AccountController {
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
         
         return "editAccount";
+    }
+
+    /**
+     * Place Holder for when backend saving of Pfp is functional
+     * @param principal
+     * @param multipartFile
+     * @param ra
+     * @param model
+     * @return
+     */
+    @PostMapping("/uploadPfp")
+    public String uploadPfp(@AuthenticationPrincipal AuthState principal,
+                            @RequestParam("image")MultipartFile multipartFile, RedirectAttributes ra, Model model) {
+        MultipartFile file1 = multipartFile;
+        addAttributesToModel(principal,model);
+        return "redirect:account";
     }
 
     private void addAttributesToModel(AuthState principal, Model model) {
