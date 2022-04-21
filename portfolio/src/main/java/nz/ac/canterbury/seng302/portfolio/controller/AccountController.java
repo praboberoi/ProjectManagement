@@ -24,6 +24,8 @@ import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -168,7 +170,14 @@ public class AccountController {
                             @RequestParam("image")MultipartFile multipartFile, RedirectAttributes ra, Model model) {
         MultipartFile file1 = multipartFile;
         addAttributesToModel(principal,model);
-        return "redirect:account";
+        String filename = multipartFile.getOriginalFilename();
+        String extension = filename.substring(filename.lastIndexOf(".") + 1);
+        ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList(".jpg", ".jpeg", ".png"));
+        if (acceptedFileTypes.contains(extension)) {
+            return "redirect:account";
+        } else {
+            return "editAccount";
+        }
     }
 
     private void addAttributesToModel(AuthState principal, Model model) {
