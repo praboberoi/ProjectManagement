@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import io.grpc.Server;
+import nz.ac.canterbury.seng302.portfolio.service.UserProfilePhotoService;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -19,6 +21,10 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -37,9 +43,12 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     private final UserAccountClientService userAccountClientService;
+    private final UserProfilePhotoService userProfilePhotoService;
 
-    public AccountController (UserAccountClientService userAccountClientService) {
+    public AccountController (UserAccountClientService userAccountClientService,
+                              UserProfilePhotoService userProfilePhotoService) {
         this.userAccountClientService = userAccountClientService;
+        this.userProfilePhotoService = userProfilePhotoService;
     }
 
     /**
@@ -97,7 +106,6 @@ public class AccountController {
     /**
      * A mapping to a get request to edit the user, which returns the current details of the user to be edited
      * @param principal Authentication information containing user info
-     * @param favouriteColour The favourite colour of the user to be edited
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
@@ -127,6 +135,7 @@ public class AccountController {
     @PostMapping("/editAccount")
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam("image")MultipartFile multipartFile,
             @RequestParam String firstName,
             @RequestParam String lastName,
             @RequestParam String nickname,
@@ -135,7 +144,7 @@ public class AccountController {
             @RequestParam String email,
             Model model,
             RedirectAttributes ra
-    ) {
+    ) throws IOException {
         Integer userId = Integer.parseInt(principal.getClaimsList().stream()
                 .filter(claim -> claim.getType().equals("nameid"))
                 .findFirst().map(ClaimDTO::getValue).orElse("-1"));
@@ -143,6 +152,31 @@ public class AccountController {
                 bio,
                 pronouns,
                 email);
+
+
+//        Start of image
+        MultipartFile file1 = multipartFile;
+        System.out.println(file1);
+//        addAttributesToModel(principal,model);
+        String filename = file1.getOriginalFilename();
+        System.out.println(filename);
+        String extension = filename.substring(filename.lastIndexOf(".") + 1);
+        System.out.println(extension);
+
+        String baseName = filename.substring(0,filename.lastIndexOf("."));
+        System.out.println(baseName);
+
+        String myFile = baseName + "_" + userId + "." + extension;
+        System.out.println(myFile);
+
+//        var path = Path.Combine(Server.MapPath("/static/cachedProfilePhotos"), myFile);
+        File imageFile = new File("/static/cachedprofilephoto" + myFile);
+        Path path = Paths.get(String.valueOf(imageFile));
+
+//       End of image
+
+        userProfilePhotoService.uploadImage(userId, extension, path);
+
 
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {

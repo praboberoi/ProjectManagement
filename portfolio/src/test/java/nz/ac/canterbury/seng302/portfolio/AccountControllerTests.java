@@ -4,6 +4,7 @@ import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.controller.AccountController;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.service.UserProfilePhotoService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
@@ -17,8 +18,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -38,6 +41,7 @@ public class AccountControllerTests {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+    private UserProfilePhotoService userProfilePhotoService;
 
     User user;
 
@@ -179,19 +183,19 @@ public class AccountControllerTests {
      * receives the correct response that it redirects the Html to the right page
      */
     @Test
-    public void GivenNonExistentUser_WhenEditRequestMade_ThenEditAccountReturned()
-    {
+    public void GivenNonExistentUser_WhenEditRequestMade_ThenEditAccountReturned() throws IOException {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
+        UserProfilePhotoService mockUserProfilePhotoService = Mockito.mock(UserProfilePhotoService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(false).build();
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
 
-        AccountController accountController = new AccountController(mockUserAccountClientService);
+        AccountController accountController = new AccountController(mockUserAccountClientService, mockUserProfilePhotoService);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-        assertEquals( "editAccount", accountController.editUser(principal, testString,
+        assertEquals( "editAccount", accountController.editUser(principal, null, testString,
                 testString, testString, testString, testString, testString, mockModel, ra));
 
     }
@@ -201,18 +205,18 @@ public class AccountControllerTests {
      * redirects back to the account page.
      */
     @Test
-    public void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned()
-    {
+    public void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws IOException {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
+        UserProfilePhotoService mockUserProfilePhotoService = Mockito.mock(UserProfilePhotoService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
-        AccountController accountController = new AccountController(mockUserAccountClientService);
+        AccountController accountController = new AccountController(mockUserAccountClientService, mockUserProfilePhotoService);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-        assertEquals( "redirect:account", accountController.editUser(principal, testString,
+        assertEquals( "redirect:account", accountController.editUser(principal, null,testString,
                 testString, testString, testString, testString, testString, mockModel, ra ));
 
     }

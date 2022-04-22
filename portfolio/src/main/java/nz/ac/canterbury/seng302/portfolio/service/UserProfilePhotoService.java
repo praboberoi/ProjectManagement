@@ -41,25 +41,25 @@ public class UserProfilePhotoService {
 //     build metadata in UploadUserProfilePhotoRequest proto
 //    public UploadUserProfilePhotoRequest getImage(
 //            final ProfilePhotoUploadMetadata MetaData) throws StatusRuntimeException, IOException {
-        public void uploadImage (AuthState principal) throws IOException {
+        public void uploadImage (final int id, final String ext, final Path path) throws IOException {
 
 
             StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountStub.uploadUserProfilePhoto(new FileUploadObserver());
 
 
 //            ProfilePhotoUploadMetadata MetaData;
-            int id = Integer.parseInt(principal.getClaimsList().stream()
-                    .filter(claim -> claim.getType().equals("nameid"))
-                    .findFirst()
-                    .map(ClaimDTO::getValue)
-                    .orElse("-100"));
+//            int id = Integer.parseInt(principal.getClaimsList().stream()
+//                    .filter(claim -> claim.getType().equals("nameid"))
+//                    .findFirst()
+//                    .map(ClaimDTO::getValue)
+//                    .orElse("-100"));
 
-            Path path = Paths.get("/static/icons/user" + id + ".png");
+//            Path path = Paths.get("/static/icons/user" + id + ".png");
 
             UploadUserProfilePhotoRequest response = (UploadUserProfilePhotoRequest.newBuilder()
                 .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
                         .setUserId(id)
-                        .setFileType("png").build())
+                        .setFileType(ext).build())
                 .build());
 
 
