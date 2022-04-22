@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
@@ -170,9 +171,12 @@ public class AccountController {
         System.out.println(myFile);
 
 //        var path = Path.Combine(Server.MapPath("/static/cachedProfilePhotos"), myFile);
-        File imageFile = new File("/static/cachedprofilephoto" + myFile);
-        Path path = Paths.get(String.valueOf(imageFile));
+        File imageFile = new File("/static/cachedprofilephoto/" + myFile);
+//        Path path = Paths.get(String.valueOf(imageFile));
+        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + myFile);
 
+        System.out.println(path.toAbsolutePath());
+        Files.write(path, file1.getBytes());
 //       End of image
 
         userProfilePhotoService.uploadImage(userId, extension, path);
