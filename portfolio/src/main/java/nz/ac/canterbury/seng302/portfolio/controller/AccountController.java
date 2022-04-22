@@ -155,31 +155,30 @@ public class AccountController {
                 email);
 
 
-//        Start of image
+//        Start of image upload functionality
         MultipartFile file1 = multipartFile;
         System.out.println(file1);
-//        addAttributesToModel(principal,model);
+        // original filename of image user has uploaded
         String filename = file1.getOriginalFilename();
-        System.out.println(filename);
+        // the extension of the filename
         String extension = filename.substring(filename.lastIndexOf(".") + 1);
-        System.out.println(extension);
-
+        // the name of the image without the extension
         String baseName = filename.substring(0,filename.lastIndexOf("."));
-        System.out.println(baseName);
-
+        // rename the image with the userId appended in case there are multiple images with the same name
         String myFile = baseName + "_" + userId + "." + extension;
-        System.out.println(myFile);
 
-//        var path = Path.Combine(Server.MapPath("/static/cachedProfilePhotos"), myFile);
         File imageFile = new File("/static/cachedprofilephoto/" + myFile);
 //        Path path = Paths.get(String.valueOf(imageFile));
         Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + myFile);
-
+        // prints out the location the image has been saved to
         System.out.println(path.toAbsolutePath());
-        Files.write(path, file1.getBytes());
-//       End of image
 
         userProfilePhotoService.uploadImage(userId, extension, path);
+
+        // write the image to the path
+        // normally files would be written with outputstream in server side Service code(??)
+        Files.write(path, file1.getBytes());
+//       End of image
 
 
         addAttributesToModel(principal, model);
@@ -195,6 +194,9 @@ public class AccountController {
         return "editAccount";
     }
 
+    // Post request for uploading profile photo has been moved to /editAccount
+    // left if want to have to post request for uploading images as its own function
+    // currently only checks filetype
     /**
      * Place Holder for when backend saving of Pfp is functional
      * @param principal

@@ -16,57 +16,37 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+/**
+ * Client service used to communicate to the IDP application relating to uploading user profile photos
+ */
 @Service
 public class UserProfilePhotoService {
 
     @GrpcClient("identity-provider-grpc-server")
     private UserAccountServiceGrpc.UserAccountServiceStub userAccountStub;
 
+    /**
+     * Sends an upload image request to the server
+     * @param id Id of user (required)
+     * @param ext Extension of the image the user has uploaded (required)
+     * @param path Path of the image (required)
+     * @throws IOException Failure to upload the image
+     */
+    public void uploadImage(final int id, final String ext, final Path path) throws IOException {
+        // request observer from UserAccountServiceGrpc
+        StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountStub.uploadUserProfilePhoto(new FileUploadObserver());
 
-//    StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountStub.uploadUserProfilePhoto(new FileUploadObserver());
+        // build metadata from proto in user_accounts.proto
+        UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
+            .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
+                    .setUserId(id)
+                    .setFileType(ext).build())
+            .build());
 
-//    public FileUploadStatusResponse getImage(
-//            ProfilePhotoUploadMetadata MetaData,
-//            final ByteString fileContent) throws StatusRuntimeException{
-//        FileUploadStatusResponse response = userAccountStub.uploadUserProfilePhoto(UploadUserProfilePhotoRequest.newBuilder()
-//                .setMetaData(MetaData)
-//                .setFileContent(fileContent)
-//                .build());
-//        return response;
-//    }
-
-    //path of the image
-//    Path path = Paths.get("/static/icons/user.png");
-
-//     build metadata in UploadUserProfilePhotoRequest proto
-//    public UploadUserProfilePhotoRequest getImage(
-//            final ProfilePhotoUploadMetadata MetaData) throws StatusRuntimeException, IOException {
-        public void uploadImage (final int id, final String ext, final Path path) throws IOException {
-
-
-            StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountStub.uploadUserProfilePhoto(new FileUploadObserver());
+        streamObserver.onNext(metadata);
 
 
-//            ProfilePhotoUploadMetadata MetaData;
-//            int id = Integer.parseInt(principal.getClaimsList().stream()
-//                    .filter(claim -> claim.getType().equals("nameid"))
-//                    .findFirst()
-//                    .map(ClaimDTO::getValue)
-//                    .orElse("-100"));
-
-//            Path path = Paths.get("/static/icons/user" + id + ".png");
-
-            UploadUserProfilePhotoRequest response = (UploadUserProfilePhotoRequest.newBuilder()
-                .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
-                        .setUserId(id)
-                        .setFileType(ext).build())
-                .build());
-
-
-        streamObserver.onNext(response);
-
-
-        // upload file
+        // upload file in chunks and upload as a stream
         InputStream inputStream = Files.newInputStream(path);
         byte[] bytes = new byte[4096];
         int size;
@@ -76,15 +56,13 @@ public class UserProfilePhotoService {
                     .build();
             streamObserver.onNext(uploadImage);
         }
+        // close stream
         inputStream.close();
         streamObserver.onCompleted();
+}
 
-//    return response;
-//        return response;
-    }
-
-
-
+    // return a status update when the file upload is complete
+    // uses proto in file_upload.proto
     private static class FileUploadObserver implements StreamObserver<FileUploadStatusResponse>{
         @Override
         public void onNext(FileUploadStatusResponse fileUploadStatusResponse) {
@@ -103,22 +81,5 @@ public class UserProfilePhotoService {
     }
 
 
-
-//    public StreamObserver<UploadUserProfilePhotoRequest> getImage(
-//            final ProfilePhotoUploadMetadata MetaData,
-//            final ByteString fileContent) throws StatusRuntimeException{
-//        StreamObserver<UploadUserProfilePhotoRequest> response = userAccountStub.uploadUserProfilePhoto(UploadUserProfilePhotoRequest.newBuilder()
-//                .setMetaData(MetaData)
-//                .setFileContent(fileContent)
-//                .build();
-//        return response;
-//    }
-
-
-//
-//    public FileUploadStatusResponse getImage(int id) throws StatusRuntimeException {
-//        StreamObserver<UploadUserProfilePhotoRequest> response = userAccountStub.uploadUserProfilePhoto(UploadUserProfilePhotoRequest);
-//        return response;
-//    }
 
 }
