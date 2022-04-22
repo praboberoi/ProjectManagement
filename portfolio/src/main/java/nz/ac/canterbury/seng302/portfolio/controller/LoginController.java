@@ -18,6 +18,11 @@ public class LoginController {
 
     private final AuthenticateClientService authenticateClientService;
 
+
+    @GetMapping("/")
+    public String redirection() {
+        return "/login";
+    }
     public LoginController (AuthenticateClientService authenticateClientService) {
         this.authenticateClientService = authenticateClientService;
     }

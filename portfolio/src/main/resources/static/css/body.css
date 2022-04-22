@@ -14,6 +14,7 @@ css for the body of each page
     border-radius: 20px !important;
     border: 2px solid !important;
     border-color: #07173B;
+    width: 100%;
 }
 
 .bdr {
@@ -130,4 +131,8 @@ input:invalid{
     padding: 5px;
     font-size: 14px;
     color: #8a0000;
+}
+
+.profile-photo {
+    border-radius: 50%;
 }

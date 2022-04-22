@@ -141,7 +141,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @GetMapping("/project/{projectId}/deleteSprint/{sprintId}")
+    @PostMapping("/project/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,

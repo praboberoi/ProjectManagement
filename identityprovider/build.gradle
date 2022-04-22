@@ -39,6 +39,9 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.grpc:grpc-testing:1.45.0'
+
+    testImplementation "io.cucumber:cucumber-java:6.10.4"
+    testImplementation "io.cucumber:cucumber-junit:6.10.4"
 }
 
 tasks.named('test') {

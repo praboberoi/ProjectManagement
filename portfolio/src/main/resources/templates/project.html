@@ -37,7 +37,7 @@
   <br>
   <div class="card">
     <div class="card-header">
-      Duration: [[${#dates.format(project.startDate,'dd-MM-yyyy')}]] to [[${#dates.format(project.endDate,'dd-MM-yyyy')}]]
+      Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]
     </div>
     <div class="card-body">
       <h5 class="card-title">Project Description:</h5>
@@ -81,14 +81,15 @@
           <td>[[${sprint.sprintLabel}]]</td>
           <td>[[${sprint.sprintName}]]</td>
           <td>[[${sprint.description}]]</td>
-          <td>[[${#dates.format(sprint.startDate, 'dd-MM-yyyy')}]]</td>
-          <td>[[${#dates.format(sprint.endDate, 'dd-MM-yyyy')}]]</td>
+          <td>[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
+          <td>[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
           <td>
             <div th:each="role: ${roles}">
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
               <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
                 <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
-                <a class="btn btn-secondary"  id = "sprint-del-btn" th:href="@{ ${projectId} + '/deleteSprint/' + ${sprint.sprintId}}">Delete</a>
+                <a class="btn btn-secondary" id="sprint-del-btn" data-toggle="modal"  data-target="#conformationModal"  th:data-projectId = "${project.projectId}"
+                   th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">Delete</a>
               </div>
             </div>
           </td>
@@ -97,11 +98,30 @@
       </tbody>
     </table>
   </div>
-
-
+</div>
+<div class="modal fade" id="conformationModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="conformationModalLongTitle">Delete Project</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="message"></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        <form action="" method="post" id="deleteSprint">
+          <button type= "submit" class="btn btn-primary">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-
+<script src="/javascript/project.js"></script>
 </body>
 </html>
