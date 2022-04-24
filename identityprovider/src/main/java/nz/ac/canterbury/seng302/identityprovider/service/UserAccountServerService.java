@@ -137,4 +137,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
+
+    @Override
+    public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
+    }
 }
