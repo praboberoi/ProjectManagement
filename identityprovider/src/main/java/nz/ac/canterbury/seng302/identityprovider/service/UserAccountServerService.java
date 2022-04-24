@@ -138,7 +138,14 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onCompleted();
     }
 
+    /**
+     * Deletes a user's profile photo
+     * @param request Request containing the users id
+     * @param responseObserver Returns to previous method with data
+     */
     @Override
     public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
+        UserProfilePhotoService photoService = new UserProfilePhotoService(userRepository);
+        responseObserver.onNext(photoService.deleteUserProfilePhoto(request.getUserId()));
     }
 }

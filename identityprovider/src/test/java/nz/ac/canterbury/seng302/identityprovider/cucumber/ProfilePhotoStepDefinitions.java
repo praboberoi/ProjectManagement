@@ -5,30 +5,24 @@ import io.cucumber.java.en.*;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserProfilePhotoService;
-import nz.ac.canterbury.seng302.shared.identityprovider.DeleteUserProfilePhotoRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteUserProfilePhotoResponse;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.when;
 
 import org.mockito.Mockito;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class ProfilePhotoStepDefinitions {
 
     private UserProfilePhotoService userProfilePhotoService;
     
-    @MockBean
-    private static final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    private static final UserRepository mockUserRepository = Mockito.mock(UserRepository.class);
     
     private User mockUser;
     private User user;
-    private DeleteUserProfilePhotoRequest request;
     private DeleteUserProfilePhotoResponse deleteResponse;
 
     @Before
@@ -38,8 +32,9 @@ public class ProfilePhotoStepDefinitions {
         
         user = new User();
         user.setUserId(1);
-        userProfilePhotoService = new UserProfilePhotoService();
-        request = DeleteUserProfilePhotoRequest.newBuilder().setUserId(user.getUserId()).build();
+        userProfilePhotoService = new UserProfilePhotoService(mockUserRepository);
+
+        when(mockUserRepository.getUserByUserId(1)).thenReturn(user);
     }
 
     @Given("User exists with profile photo")
@@ -54,8 +49,7 @@ public class ProfilePhotoStepDefinitions {
 
     @When("User deletes their photo")
     public void user_deletes_their_photo() {
-        deleteResponse = userProfilePhotoService.deleteUserProfilePhoto(request);
-        verify(mockUser).setProfileImagePath(null);
+        deleteResponse = userProfilePhotoService.deleteUserProfilePhoto(user.getUserId());
     }
 
     @Then("Photo is deleted")
@@ -71,7 +65,7 @@ public class ProfilePhotoStepDefinitions {
     @Then("Photo not found error is thrown")
     public void photo_not_found_error_is_thrown() {
         assertFalse(deleteResponse.getIsSuccess());
-        assertEquals("User profile photo not found", deleteResponse.getMessage());
+        assertEquals("Could not find a profile photo to delete", deleteResponse.getMessage());
     }
 
 }
