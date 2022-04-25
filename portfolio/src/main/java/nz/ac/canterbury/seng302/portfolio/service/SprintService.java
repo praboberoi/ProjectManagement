@@ -62,13 +62,23 @@ public class SprintService {
         String message;
         if (currentSprint == null) {
             currentSprint = sprint;
-            message = "Successfully Created Sprint " + sprint.getSprintName();
+            message = "Successfully Created " + sprint.getSprintName();
         } else {
             currentSprint.setSprintName(sprint.getSprintName());
             currentSprint.setDescription(sprint.getDescription());
             currentSprint.setStartDate(sprint.getStartDate());
             currentSprint.setEndDate(sprint.getEndDate());
-            message = "Successfully Updated Sprint " + sprint.getSprintName();
+            message = "Successfully Updated " + sprint.getSprintName();
+        }
+        if(currentSprint.getStartDate().before(currentSprint.getProject().getStartDate()))
+            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+
+        if(currentSprint.getStartDate().after(currentSprint.getProject().getEndDate()))
+            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+        List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
+                .filter(spt -> betweenDateRange(spt, currentSprint)).toList();
+        if(sprints.size() > 0) {
+            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
         }
         try {
             sprintRepository.save(currentSprint);
@@ -144,16 +154,17 @@ public class SprintService {
      */
     public List<String> getSprintDateRange(Project project, Sprint sprint) {
         List<Sprint> sprints = getSprintByProject(project.getProjectId());
-        if(sprints.size() == 0)
-            return Arrays.asList(project.getStartDate().toString(), project.getEndDate().toString());
-
-        else if (!sprints.contains(sprint)) {
+        String stringSprintMinDate;
+        String stringSprintMaxDate;
+        if(sprints.size() == 0) {
+            stringSprintMinDate = project.getStartDate().toString();
+            stringSprintMaxDate = project.getEndDate().toString();
+        } else if (!sprints.contains(sprint)) {
             Date previousSprintEndDate = sprints.get(sprints.size() - 1).getEndDate();
             LocalDate sprintMinDate = previousSprintEndDate.toLocalDate().plusDays(1);
-            return Arrays.asList(sprintMinDate.toString(), project.getEndDate().toString());
-        }
-
-        else {
+            stringSprintMinDate = sprintMinDate.toString();
+            stringSprintMaxDate = project.getEndDate().toString();
+        } else {
             Date previousSprintEndDate;
             LocalDate sprintMinDate;
             Date nextSprintStartDate;
@@ -175,9 +186,36 @@ public class SprintService {
                 nextSprintStartDate = project.getEndDate();
                 sprintMaxDate = nextSprintStartDate.toLocalDate();
             }
-            return Arrays.asList(sprintMinDate.toString(), sprintMaxDate.toString());
-
+            stringSprintMinDate = sprintMinDate.toString();
+            stringSprintMaxDate = sprintMaxDate.toString();
         }
+        return Arrays.asList(stringSprintMinDate, stringSprintMaxDate);
+    }
+
+    public boolean betweenDateRange(Sprint compSprint, Sprint currentSprint) {
+        Date currentSprintStartDate = currentSprint.getStartDate();
+        Date currentSprintEndDate = currentSprint.getEndDate();
+
+        Date compSprintStartDate = compSprint.getStartDate();
+        Date compSprintEndDate = compSprint.getEndDate();
+
+        if(currentSprintStartDate.compareTo(compSprintStartDate) == 0)
+            return true;
+
+        else if(currentSprintEndDate.compareTo(compSprintEndDate) == 0)
+            return true;
+
+        else if(currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate))
+            return true;
+
+        else if(currentSprintStartDate.after(compSprintStartDate) && currentSprintStartDate.before(compSprintEndDate))
+            return true;
+
+        else if(currentSprintEndDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate))
+            return true;
+
+        else
+            return false;
     }
 }
 

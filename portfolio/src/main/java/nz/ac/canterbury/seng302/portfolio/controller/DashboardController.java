@@ -38,7 +38,6 @@ public class DashboardController {
         try {
             List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
-            // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "dashboard";

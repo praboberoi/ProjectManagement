@@ -14,6 +14,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -99,12 +100,12 @@ public class SprintController {
         RedirectAttributes ra) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-                sprint.setProject(projectService.getProjectById(projectId));
-                String message = sprintService.saveSprint(sprint);
-                ra.addFlashAttribute("messageSuccess", message);
-            } catch (Exception e) {
-                ra.addFlashAttribute("messageDanger", e.getMessage());
-            }
+            sprint.setProject(projectService.getProjectById(projectId));
+            String message = sprintService.saveSprint(sprint);
+            ra.addFlashAttribute("messageSuccess", message);
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+        }
             return "redirect:/project/{projectId}";
         }
 
