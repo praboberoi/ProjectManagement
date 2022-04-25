@@ -19,22 +19,26 @@ public class SprintService {
     @Autowired private SprintRepository sprintRepository;
     private Sprint currentSprint = null;
 
-    public Sprint getNewSprint(Project project) {
+    public Sprint getNewSprint(Project project) throws Exception {
         int sprintNo = countByProjectId(project.getProjectId()) + 1;
 
         Sprint newSprint = new Sprint();
         newSprint.setSprintName("Sprint " + sprintNo);
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.size() == 0) {
-
             LocalDate startDate = project.getStartDate().toLocalDate();
             newSprint.setStartDate(Date.valueOf(startDate));
             newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
         } else {
-            Sprint last_sprint = listSprints.get(listSprints.size() - 1);
-            LocalDate startDate = last_sprint.getEndDate().toLocalDate();
-            newSprint.setStartDate(Date.valueOf(startDate.plusDays(1)));
-            newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
+            Sprint lastSprint = listSprints.get(listSprints.size() - 1);
+            LocalDate startDate = lastSprint.getEndDate().toLocalDate();
+            if (Date.valueOf(startDate.minusDays(1)).equals(project.getEndDate())) {
+                throw new Exception("Project date limit reached, cannot create a new sprint");
+            }
+            else {
+                newSprint.setStartDate(Date.valueOf(startDate.plusDays(1)));
+                newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
+            }
         }
         return newSprint;
     }
@@ -130,6 +134,5 @@ public class SprintService {
         List<Sprint> sprints = sprintRepository.findByProject(current.get());
         return sprints;
     }
-
 }
 

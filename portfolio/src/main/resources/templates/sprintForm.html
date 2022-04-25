@@ -34,6 +34,7 @@
     <form id="createSprintForm" action="#" th:action="@{'/project/' + ${projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
         <input type="hidden" th:field="*{project.projectId}">
         <div>
+            <input type="hidden" id = "project-start-date" name= "project-start-date" th:value="${project.startDate}">
             <input type="hidden" id = "project-end-date" name= "project-end-date" th:value="${project.endDate}">
         </div>
         <div class="mb-3">
@@ -69,6 +70,9 @@
         </div>
     </form>
 </div>
+<script th:inline="javascript">
+    const sprintList = [[${sprintList}]];
+</script>
 <script src= "/javascript/sprintForm.js"> </script>
 </body>
 </html>

@@ -7,10 +7,13 @@
  * Function that initialises the minimum and maximum date values when the sprint form is first opened.
  */
 function initialDateSetup() {
+    console.log(sprintList);
     const startDate = document.getElementById('startDate').value;
     const endDate = document.getElementById('endDate').value;
 
-    const currentProject = document.getElementById('project-end-date').value;
+    const currentProjectStartDate = document.getElementById('project-start-date').value;
+    const currentProjectEndDate = document.getElementById('project-end-date').value;
+
 
     const startDateInput = document.querySelector('#startDate')
     const endDateInput = document.querySelector('#endDate')
@@ -18,7 +21,7 @@ function initialDateSetup() {
     startDateInput.setAttribute('min', startDate);
     startDateInput.setAttribute('max', endDate);
     endDateInput.setAttribute('min', startDate);
-    endDateInput.setAttribute('max', currentProject);
+    endDateInput.setAttribute('max', currentProjectEndDate);
 }
 const startDateElement = document.querySelector('#startDate');
 
