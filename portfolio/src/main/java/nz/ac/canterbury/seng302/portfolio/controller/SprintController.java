@@ -69,11 +69,15 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
+            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintList", sprintService.getSprintByProject(projectId));
+            model.addAttribute("sprintStartMinDate", sprintRange.get(0));
+            model.addAttribute("sprintStartMaxDate", newSprint.getEndDate());
+            model.addAttribute("sprintEndMinDate", newSprint.getStartDate());
+            model.addAttribute("sprintEndMaxDate", sprintRange.get(1));
             return "sprintForm";
 
         } catch (Exception e) {
@@ -122,13 +126,18 @@ public class SprintController {
             RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-                Project currentProject = projectService.getProjectById(projectId);
-                Sprint sprint = sprintService.getSprint(sprintId);
-                model.addAttribute("sprint", sprint);
-                model.addAttribute("project", currentProject);
-                model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
+            Project currentProject = projectService.getProjectById(projectId);
+            Sprint sprint = sprintService.getSprint(sprintId);
+            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
+            model.addAttribute("sprint", sprint);
+            model.addAttribute("project", currentProject);
+            model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("user", userAccountClientService.getUser(principal));
-                return "sprintForm";
+            model.addAttribute("sprintStartMinDate", sprintRange.get(0));
+            model.addAttribute("sprintStartMaxDate", sprint.getEndDate());
+            model.addAttribute("sprintEndMinDate", sprint.getStartDate());
+            model.addAttribute("sprintEndMaxDate", sprintRange.get(1));
+            return "sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());
                 return "redirect:/project/{projectId}";

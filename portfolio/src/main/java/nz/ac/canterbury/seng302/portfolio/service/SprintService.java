@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -133,6 +134,50 @@ public class SprintService {
         Optional<Project> current = projectRepo.findById(projectId);
         List<Sprint> sprints = sprintRepository.findByProject(current.get());
         return sprints;
+    }
+
+    /**
+     * Method that finds the required date range for the given sprint and project.
+     * @param project of type Project.
+     * @param sprint of type Sprint.
+     * @return a list of Strings containing the date range.
+     */
+    public List<String> getSprintDateRange(Project project, Sprint sprint) {
+        List<Sprint> sprints = getSprintByProject(project.getProjectId());
+        if(sprints.size() == 0)
+            return Arrays.asList(project.getStartDate().toString(), project.getEndDate().toString());
+
+        else if (!sprints.contains(sprint)) {
+            Date previousSprintEndDate = sprints.get(sprints.size() - 1).getEndDate();
+            LocalDate sprintMinDate = previousSprintEndDate.toLocalDate().plusDays(1);
+            return Arrays.asList(sprintMinDate.toString(), project.getEndDate().toString());
+        }
+
+        else {
+            Date previousSprintEndDate;
+            LocalDate sprintMinDate;
+            Date nextSprintStartDate;
+            LocalDate sprintMaxDate;
+
+            int currentSprintIndex = sprints.indexOf(sprint);
+            if(currentSprintIndex > 0 ) {
+                previousSprintEndDate = sprints.get(currentSprintIndex - 1).getEndDate();
+                sprintMinDate = previousSprintEndDate.toLocalDate().plusDays(1);
+            } else {
+                previousSprintEndDate = project.getStartDate();
+                sprintMinDate = previousSprintEndDate.toLocalDate();
+            }
+
+            if(currentSprintIndex < sprints.size() - 1) {
+                nextSprintStartDate = sprints.get(currentSprintIndex + 1).getStartDate();
+                sprintMaxDate = nextSprintStartDate.toLocalDate().minusDays(1);
+            } else {
+                nextSprintStartDate = project.getEndDate();
+                sprintMaxDate = nextSprintStartDate.toLocalDate();
+            }
+            return Arrays.asList(sprintMinDate.toString(), sprintMaxDate.toString());
+
+        }
     }
 }
 
