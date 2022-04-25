@@ -33,19 +33,22 @@ public class SprintService {
         } else {
             Sprint lastSprint = listSprints.get(listSprints.size() - 1);
             LocalDate startDate = lastSprint.getEndDate().toLocalDate();
-            if (Date.valueOf(startDate.minusDays(1)).equals(project.getEndDate())) {
+            if (Date.valueOf(startDate).equals(project.getEndDate()))
                 throw new Exception("Project date limit reached, cannot create a new sprint");
-            }
             else {
                 newSprint.setStartDate(Date.valueOf(startDate.plusDays(1)));
-                newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
+
+                if(Date.valueOf(startDate.plusWeeks(3)).after(project.getEndDate()))
+                    newSprint.setEndDate(project.getEndDate());
+                else
+                    newSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
             }
         }
         return newSprint;
     }
     public void deleteAllSprints(int projectId) {
         List<Sprint> sprintList = getSprintByProject(projectId);
-        sprintList.stream().forEach(sprint -> {
+        sprintList.forEach(sprint -> {
             try {
                 deleteSprint(sprint.getSprintId());
             } catch (Exception e) {
@@ -70,13 +73,20 @@ public class SprintService {
             currentSprint.setEndDate(sprint.getEndDate());
             message = "Successfully Updated " + sprint.getSprintName();
         }
+
+        if(currentSprint.getStartDate().after(currentSprint.getEndDate()))
+            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+
         if(currentSprint.getStartDate().before(currentSprint.getProject().getStartDate()))
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
 
         if(currentSprint.getStartDate().after(currentSprint.getProject().getEndDate()))
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+
+        //TODO : Change te below from sprintName to label once its been added
         List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
-                .filter(spt -> betweenDateRange(spt, currentSprint)).toList();
+                .filter(sp -> !(sp.getSprintName().equals(currentSprint.getSprintName())))
+                .filter(this::betweenDateRange).toList();
         if(sprints.size() > 0) {
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
         }
@@ -90,14 +100,18 @@ public class SprintService {
     }
 
     /**
-     * Returns a sprint object from the database
+     * Returns a sprint object from the database. If the sprint is not present then it throws an exception
      * @param sprintId Key used to find the sprint object
      * @return Sprint object
      */
-    public Sprint getSprint(int sprintId) {
+    public Sprint getSprint(int sprintId) throws Exception {
         Optional<Sprint> result = sprintRepository.findById(sprintId);
-        currentSprint = result.get();
-        return currentSprint;
+        if(result.isPresent()) {
+            currentSprint = result.get();
+            return currentSprint;
+        }
+        else
+            throw new Exception("Failed to locate the sprint in the database");
     }
 
     /**
@@ -119,11 +133,10 @@ public class SprintService {
      */
     public void updateSprintNames(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
-        sprintList.stream().forEach(sprint -> {
+        sprintList.forEach(sprint -> {
             sprint.setSprintName("Sprint " + count.getAndIncrement());
             sprintRepository.save(sprint);
         });
-
     }
 
     /**
@@ -133,7 +146,7 @@ public class SprintService {
      */
     public int countByProjectId(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
-        return sprintRepository.countByProject(current.get());
+        return current.map(project -> sprintRepository.countByProject(project)).orElse(0);
     }
 
     /**
@@ -142,8 +155,7 @@ public class SprintService {
      */
     public List<Sprint> getSprintByProject(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
-        List<Sprint> sprints = sprintRepository.findByProject(current.get());
-        return sprints;
+        return current.map(project -> sprintRepository.findByProject(project)).orElse(List.of());
     }
 
     /**
@@ -192,7 +204,13 @@ public class SprintService {
         return Arrays.asList(stringSprintMinDate, stringSprintMaxDate);
     }
 
-    public boolean betweenDateRange(Sprint compSprint, Sprint currentSprint) {
+    /**
+     * Compares the current sprint start and end dates with the given sprint start and end dates. Returns true if
+     * the current sprint lies between or overlaps with the given sprint's date range otherwise returns false.
+     * @param compSprint Given sprint
+     * @return boolean value
+     */
+    public boolean betweenDateRange(Sprint compSprint) {
         Date currentSprintStartDate = currentSprint.getStartDate();
         Date currentSprintEndDate = currentSprint.getEndDate();
 
