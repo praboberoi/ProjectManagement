@@ -49,7 +49,7 @@ dependencies {
 
 application {
      // Define the main class for the application.
-     mainClass = 'nz.ac.canterbury.seng302.portfoloio.PortfolioApplication'
+     mainClass = 'nz.ac.canterbury.seng302.portfolio.PortfolioApplication'
  }
 
 configurations {

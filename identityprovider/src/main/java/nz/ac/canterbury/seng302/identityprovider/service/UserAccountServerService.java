@@ -147,5 +147,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
         UserProfilePhotoService photoService = new UserProfilePhotoService(userRepository);
         responseObserver.onNext(photoService.deleteUserProfilePhoto(request.getUserId()));
+        responseObserver.onCompleted();
     }
 }

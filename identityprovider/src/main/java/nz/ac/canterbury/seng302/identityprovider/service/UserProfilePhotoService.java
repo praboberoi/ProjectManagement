@@ -20,6 +20,7 @@ public class UserProfilePhotoService {
      * @param request 
      * @return
      */
+    //TODO: remove profile photo from file structure
     public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) {
         DeleteUserProfilePhotoResponse.Builder response = DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true);
         try {
