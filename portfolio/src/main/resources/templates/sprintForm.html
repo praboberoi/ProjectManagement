@@ -34,11 +34,16 @@
     <form id="createSprintForm" action="#" th:action="@{'/project/' + ${projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
         <input type="hidden" th:field="*{project.projectId}">
         <div>
+            <input type="hidden" id = "project-start-date" name= "project-start-date" th:value="${project.startDate}">
             <input type="hidden" id = "project-end-date" name= "project-end-date" th:value="${project.endDate}">
         </div>
         <div class="mb-3">
+            <label for="recipient-name" class="col-form-label required">Sprint Label</label>
+            <input type="text" class="form-control" id="recipient-label" th:field="*{sprintLabel}" readonly>
+        </div>
+        <div class="mb-3">
             <label for="recipient-name" class="col-form-label required">Sprint Name</label>
-            <input type="text" class="form-control" id="recipient-name" th:field="*{sprintName}" readonly>
+            <input type="text" class="form-control" id="recipient-name" th:field="*{sprintName}" >
         </div>
 
         <div style="height:30px;" class="row">
@@ -51,10 +56,10 @@
         </div>
         <div class="row">
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="startDate" data-provide="datepicker" th:field="*{startDate}">
+                <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" th:min="${sprintStartDateMin}" th:max="${sprintStartDateMax}">
             </div>
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="endDate" data-provide="datepicker" th:field="*{endDate}">
+                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintEndDateMin}" th:max="${sprintEndDateMax}">
             </div>
         </div>
 
@@ -63,12 +68,15 @@
             <label for="message-text" class="col-form-label" >Sprint Description</label>
             <textarea class="form-control" id="message-text" th:field="*{description}"></textarea>
         </div>
-        <div class="footer" align="right">
-            <button type="submit" value="Submit" class="btn btn-primary">Save</button>
-            <a class="btn btn-secondary" th:href="@{'/project/' + ${projectId}}">Close</a>
+        <div class="d-flex flex-row justify-content-end p-0">
+            <button type= "submit" class="btn btn-outline-primary me-3">
+                <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
+            <a type="button" class="btn btn-outline-secondary" th:href="@{'/project/' + ${projectId}}">
+                <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</a>
         </div>
     </form>
 </div>
-<script src= "/javascript/sprintFormDateConstraints.js"> </script>
+<script src= "/javascript/sprintForm.js"> </script>
+</div>
 </body>
 </html>

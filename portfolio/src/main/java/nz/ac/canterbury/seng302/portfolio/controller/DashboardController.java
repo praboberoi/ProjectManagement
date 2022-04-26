@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.sql.Date;
 import java.util.List;
 
 @Controller
@@ -35,15 +36,14 @@ public class DashboardController {
     @GetMapping("/dashboard")
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
-        List<Project> listProjects = null;
         try {
-            listProjects = dashboardService.getAllProjects();
+            List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
-            // Add the list of the current users roles to model so they can be used in dashboard.html with thymeleaf.
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "dashboard";
         } catch (Exception e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }
@@ -56,10 +56,16 @@ public class DashboardController {
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        model.addAttribute("project", new Project());
+        Project newProject = dashboardService.getNewProject();
+        model.addAttribute("project", newProject);
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
+        model.addAttribute("image", "/icons/create-icon.svg");
         model.addAttribute("user", userAccountClientService.getUser(principal));
+        model.addAttribute("projectStartDateMin", dashboardService.getProjectMinDate());
+        model.addAttribute("projectStartDateMax", Date.valueOf(newProject.getEndDate().toLocalDate().minusDays(1)));
+        model.addAttribute("projectEndDateMin", Date.valueOf(newProject.getStartDate().toLocalDate().plusDays(1)));
+        model.addAttribute("projectEndDateMax", dashboardService.getProjectMaxDate());
         return "projectForm";
     }
 
@@ -77,6 +83,7 @@ public class DashboardController {
             @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
+            dashboardService.verifyProject(project);
             String message =  dashboardService.saveProject(project);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
@@ -105,10 +112,15 @@ public class DashboardController {
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
+            model.addAttribute("image", "/icons/save-icon.svg");
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectStartDateMin", dashboardService.getProjectMinDate());
+            model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
+            model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
+            model.addAttribute("projectEndDateMax", dashboardService.getProjectMaxDate());
             return "projectForm";
-        } catch (NullPointerException e) {
-            ra.addFlashAttribute("messageDanger", "No Project Found");
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
         }
     }
@@ -119,7 +131,7 @@ public class DashboardController {
      * @return
      * @throws Exception If project is not found in the database
      */
-    @GetMapping("/dashboard/deleteProject/{projectId}")
+    @PostMapping("/dashboard/deleteProject/{projectId}")
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,
@@ -134,6 +146,7 @@ public class DashboardController {
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
         } catch (Exception e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }

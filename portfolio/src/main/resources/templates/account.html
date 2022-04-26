@@ -13,6 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <script src="/javascript/editAccount.js"></script>
+    <script src="/javascript/profilePhoto.js"></script>
 </head>
     <body>
     <header>
@@ -44,53 +45,61 @@
                             <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
                                 <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
+
+                            <img src="/icons/userr.png" class="profile-photo" id="output" width="200" height="200" />
+                            <br>
+                            </br>
                             <!-- start of form -->
                             <!-- edit with @postmapping to update details in database AND screen-->
                             <form>
                                 <div class="row mb-3">
                                     <label for="username" class = "col-sm-2 col-form-label"><h6>Username: </h6></label>
-                                    <div class = "col-sm-6">
+                                    <div class = "col-sm">
                                         <input type="text" readonly class="form-control" id="username" th:placeholder="${user.username}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="firstName" class = "col-sm-2 col-form-label"><h6>First Name: </h6></label>
-                                    <div class = "col-sm-6">
+                                    <div class = "col-sm">
                                         <input type="text" id="firstName" readonly class="form-control" th:placeholder="${user.firstName}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="lastName" class = "col-sm-2 col-form-label"><h6>Last Name: </h6></label>
-                                    <div class = "col-sm-6">
+                                    <div class = "col-sm">
                                         <input type="text" id="lastName" readonly class="form-control" th:placeholder="${user.lastName}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="pronouns" class = "col-sm-2 col-form-label"><h6>Pronouns: </h6></label>
-                                    <div class = "col-sm-6">
+                                    <div class = "col-sm">
                                         <input type="text" id="pronouns" readonly class="form-control" th:placeholder="${user.pronouns}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="nickname" class = "col-sm-2 col-form-label"><h6>Nicknames: </h6></label>
-                                    <div class = "col-sm-6">
+                                    <div class = "col-sm">
                                         <input type="text" id="nickname" readonly class="form-control" th:placeholder="${user.nickname}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class = "col-sm-2 col-form-label"><h6>Email: </h6></label>
-                                    <div class = "col-sm-6">
+                                    <div class = "col-sm">
                                         <input type="text" id="email" readonly class="form-control" th:placeholder="${user.email}">
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="bio" class = "col-sm-2 col-form-label"><h6>Bio: </h6></label>
-                                    <div class = "col-sm-6">
+                                    <div class = "col-sm">
                                         <textarea readonly class="form-control" id="bio" th:placeholder="${user.bio}"></textarea>
                                     </div>
                                 </div>
-                                <a class="btn btn-primary" href="/editAccount">Edit</a>
-                                <a class="btn btn-secondary" href="/dashboard">Close</a>
+                                <div class="d-flex flex-row justify-content-end p-0">
+                                    <a type="button" class="btn btn-outline-primary mr-3" href="/editAccount">
+                                        <img class="icon img-color-primary" src="/icons/edit-icon.svg"/> Edit</a>
+                                    <a type="button" class="btn btn-outline-secondary" href="/dashboard">
+                                        <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</a>
+                                </div>
                             </form>
                         </div>
                     </div>
