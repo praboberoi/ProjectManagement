@@ -25,8 +25,8 @@
 <header>
     <div th:replace="fragments :: header"></div>
 </header>
-<div th:replace="fragments :: account"></div>
 <div class = "main">
+    <div th:replace="fragments :: account"></div>
     <div class="content_account">
         <div class="box1">
             <div class="page-title">
@@ -116,8 +116,10 @@
                                     </div>
                                 </div>
                                 <br>
-                                <button type="submit" class="btn btn-primary" href="/account">Save</button>
-                                <a class="btn btn-secondary" href="/account">Cancel</a>
+                                <button type="submit" class="btn btn-outline-primary mr-2" href="/account">
+                                    <img class="icon img-color-primary" src="/icons/save-icon.svg"/> Save</button>
+                                <a type="button" class="btn btn-outline-secondary" href="/account">
+                                    <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Cancel</a>
                             </form>
                         </div>
                     </div>
