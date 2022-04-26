@@ -167,7 +167,7 @@ public class SprintController {
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        sprintService.updateSprintNames(sprintService.getSprintByProject(projectId));
+        sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         model.addAttribute("listSprints", listSprints);
         return "redirect:/project/{projectId}";

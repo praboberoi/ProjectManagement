@@ -3,13 +3,12 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;;
+import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,6 +31,7 @@ public class SprintService {
         int sprintNo = countByProjectId(project.getProjectId()) + 1;
 
         currentSprint = new Sprint();
+        currentSprint.setSprintLabel("Sprint " + sprintNo);
         currentSprint.setSprintName("Sprint " + sprintNo);
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.size() == 0) {
@@ -61,7 +61,7 @@ public class SprintService {
      */
     public void deleteAllSprints(int projectId) {
         List<Sprint> sprintList = getSprintByProject(projectId);
-        sprintList.forEach(sprint -> {
+        sprintList.stream().forEach(sprint -> {
             try {
                 deleteSprint(sprint.getSprintId());
             } catch (Exception e) {
@@ -77,9 +77,9 @@ public class SprintService {
     public String saveSprint() throws Exception {
         String message;
         if (isNew)
-            message = "Successfully Created " + currentSprint.getSprintName();
+            message = "Successfully Created " + currentSprint.getSprintLabel();
         else
-            message = "Successfully Updated " + currentSprint.getSprintName();
+            message = "Successfully Updated " + currentSprint.getSprintLabel();
 
         isNew = false;
         try {
@@ -125,9 +125,10 @@ public class SprintService {
     public void updateSprintNames(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.forEach(sprint -> {
-            sprint.setSprintName("Sprint " + count.getAndIncrement());
+            sprint.setSprintLabel("Sprint " + count.getAndIncrement());
             sprintRepository.save(sprint);
         });
+
     }
 
     /**
