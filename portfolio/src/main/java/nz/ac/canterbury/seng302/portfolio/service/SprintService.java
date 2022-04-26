@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -61,7 +62,7 @@ public class SprintService {
      */
     public void deleteAllSprints(int projectId) {
         List<Sprint> sprintList = getSprintByProject(projectId);
-        sprintList.stream().forEach(sprint -> {
+        sprintList.forEach(sprint -> {
             try {
                 deleteSprint(sprint.getSprintId());
             } catch (Exception e) {
@@ -72,7 +73,6 @@ public class SprintService {
 
     /**
      * Saves a sprint object to the database
-     * @param sprint
      */
     public String saveSprint() throws Exception {
         String message;
@@ -111,8 +111,13 @@ public class SprintService {
      */
     public String deleteSprint(int sprintId) throws Exception {
         try {
-            sprintRepository.deleteById(sprintId);
-            return "Sprint Deleted Successfully";
+            Optional<Sprint> sprint = sprintRepository.findById(sprintId);
+            if(sprint.isPresent()) {
+                sprintRepository.deleteById(sprintId);
+                return "Successfully deleted " + sprint.get().getSprintLabel();
+            }
+            else
+                throw new Exception("Could not find the given sprint");
         } catch (Exception e) {
             throw new Exception("Failure Deleting Sprint");
         }
@@ -122,7 +127,7 @@ public class SprintService {
      * If the project sprint list is edited in some way, change the names of sprints accordingly.
      * @param sprintList a list of all the sprints
      */
-    public void updateSprintNames(List<Sprint> sprintList) {
+    public void updateSprintLabels(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.forEach(sprint -> {
             sprint.setSprintLabel("Sprint " + count.getAndIncrement());
