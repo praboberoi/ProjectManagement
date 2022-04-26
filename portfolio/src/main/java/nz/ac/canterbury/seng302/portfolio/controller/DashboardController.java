@@ -59,6 +59,7 @@ public class DashboardController {
         model.addAttribute("project", dashboardService.getNewProject());
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
+        model.addAttribute("image", "/icons/create-icon.svg");
         model.addAttribute("user", userAccountClientService.getUser(principal));
         return "projectForm";
     }
@@ -105,6 +106,7 @@ public class DashboardController {
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
+            model.addAttribute("image", "/icons/save-icon.svg");
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "projectForm";
         } catch (NullPointerException e) {

@@ -42,6 +42,7 @@ public class Sprint {
     /**
      * Description of sprint
      */
+    @Lob
     @Column
     private String description;
 
