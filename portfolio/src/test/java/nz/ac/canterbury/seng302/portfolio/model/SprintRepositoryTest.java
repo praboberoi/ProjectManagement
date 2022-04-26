@@ -32,7 +32,6 @@ class SprintRepositoryTest {
                 .build();
 
         sprint1 = new Sprint.Builder()
-                .sprintLabel("Sprint 1")
                 .sprintName("Sprint 1")
                 .description("Attempt 1")
                 .project(project)
@@ -41,7 +40,6 @@ class SprintRepositoryTest {
                 .build();
 
         sprint2 = new Sprint.Builder()
-                .sprintLabel("Sprint 2")
                 .sprintName("Sprint 2")
                 .description("Attempt 2")
                 .project(project)
