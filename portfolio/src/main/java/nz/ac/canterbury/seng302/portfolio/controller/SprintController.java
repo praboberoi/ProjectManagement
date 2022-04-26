@@ -99,7 +99,9 @@ public class SprintController {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             sprint.setProject(projectService.getProjectById(projectId));
-            String message = sprintService.saveSprint(sprint);
+            sprintService.updateCurrentSprint(sprint);
+            sprintService.verifySprint();
+            String message = sprintService.saveSprint();
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());

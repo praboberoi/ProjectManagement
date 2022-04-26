@@ -18,7 +18,7 @@ public class DashboardService {
     private Project currentProject;
     private Date projectMinDate;
     private Date projectMaxDate;
-    private Boolean isNew;
+    private Boolean isNew = false;
 
     /**
      * Returns list of all Project objects in the database
@@ -107,7 +107,7 @@ public class DashboardService {
     }
 
     /**
-     * Verifies the project dates to make sure the date ranges have not been changed at the client/
+     * Verifies the project dates to make sure the date ranges have not been changed at the client.
      * @param project of type Project
      * @throws Exception indicating page values of the HTML page are manually changed.
      */
