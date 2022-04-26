@@ -46,6 +46,11 @@ public class SprintService {
         }
         return newSprint;
     }
+
+    /**
+     * Deletes all the sprints of the given project ID
+     * @param projectId of type int
+     */
     public void deleteAllSprints(int projectId) {
         List<Sprint> sprintList = getSprintByProject(projectId);
         sprintList.forEach(sprint -> {
@@ -129,7 +134,7 @@ public class SprintService {
 
     /**
      * If the project sprint list is edited in some way, change the names of sprints accordingly.
-     * @param sprintList
+     * @param sprintList a list of all the sprints
      */
     public void updateSprintNames(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
@@ -141,7 +146,7 @@ public class SprintService {
 
     /**
      * Return the number of sprints created under a project.
-     * @param projectId
+     * @param projectId of type int
      * @return total number of sprints in a project.
      */
     public int countByProjectId(int projectId) {
@@ -150,7 +155,8 @@ public class SprintService {
     }
 
     /**
-     * @param projectId
+     * Returns a list of sprints that are related to the given project ID
+     * @param projectId of type int
      * @return a list of sprints from a project specified by its Id.
      */
     public List<Sprint> getSprintByProject(int projectId) {

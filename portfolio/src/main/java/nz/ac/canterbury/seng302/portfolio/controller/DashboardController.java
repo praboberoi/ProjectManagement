@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.sql.Date;
 import java.util.List;
 
 @Controller
@@ -55,10 +56,16 @@ public class DashboardController {
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        model.addAttribute("project", dashboardService.getNewProject());
+        Project newProject = dashboardService.getNewProject();
+        model.addAttribute("project", newProject);
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
         model.addAttribute("user", userAccountClientService.getUser(principal));
+        model.addAttribute("projectStartDateMin", Date.valueOf(newProject.getStartDate().toLocalDate().minusYears(1)));
+        model.addAttribute("projectStartDateMax", Date.valueOf(newProject.getEndDate().toLocalDate().minusDays(1)));
+        model.addAttribute("projectEndDateMin", Date.valueOf(newProject.getStartDate().toLocalDate().plusDays(1)));
+        model.addAttribute("projectEndDateMax", Date.valueOf(newProject.getStartDate().toLocalDate().plusYears(10)));
+
         return "projectForm";
     }
 
@@ -76,6 +83,7 @@ public class DashboardController {
             @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
+            dashboardService.verifyProject(project);
             String message =  dashboardService.saveProject(project);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
@@ -105,9 +113,13 @@ public class DashboardController {
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectStartDateMin", Date.valueOf(project.getStartDate().toLocalDate().minusYears(1)));
+            model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
+            model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
+            model.addAttribute("projectEndDateMax", Date.valueOf(project.getStartDate().toLocalDate().plusYears(10)));
             return "projectForm";
-        } catch (NullPointerException e) {
-            ra.addFlashAttribute("messageDanger", "No Project Found");
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
         }
     }

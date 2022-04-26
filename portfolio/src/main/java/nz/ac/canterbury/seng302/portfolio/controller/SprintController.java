@@ -14,7 +14,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -32,7 +31,6 @@ public class SprintController {
      * @param principal - Current User.
      * @param model
      * @return - name of the html page to display
-     * @throws Exception
      */
     @GetMapping("/project/{projectId}")
     public String showSprintList(
@@ -75,10 +73,10 @@ public class SprintController {
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintStartMinDate", sprintRange.get(0));
-            model.addAttribute("sprintStartMaxDate", newSprint.getEndDate());
-            model.addAttribute("sprintEndMinDate", newSprint.getStartDate());
-            model.addAttribute("sprintEndMaxDate", sprintRange.get(1));
+            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
+            model.addAttribute("sprintStartDateMax", newSprint.getEndDate());
+            model.addAttribute("sprintEndDateMin", newSprint.getStartDate());
+            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             return "sprintForm";
 
         } catch (Exception e) {
@@ -134,10 +132,10 @@ public class SprintController {
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintStartMinDate", sprintRange.get(0));
-            model.addAttribute("sprintStartMaxDate", sprint.getEndDate());
-            model.addAttribute("sprintEndMinDate", sprint.getStartDate());
-            model.addAttribute("sprintEndMaxDate", sprintRange.get(1));
+            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
+            model.addAttribute("sprintStartDateMax", sprint.getEndDate());
+            model.addAttribute("sprintEndDateMin", sprint.getStartDate());
+            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             return "sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());

@@ -55,4 +55,4 @@ endDateElement.addEventListener('change',(event) => {
     startDateElement.setAttribute("max", `${startDateMax.toISOString().slice(0, 10)}`);
 });
 
-initialDateSetup();
+//initialDateSetup();
