@@ -50,10 +50,10 @@
             </div>
             <div class="row">
                 <div class="col-md-6 ms-auto">
-                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" required>
+                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectStartDateMin}" th:max="${projectStartDateMax}" required>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" required>
+                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectEndDateMin}" th:max="${projectEndDateMax}" required>
                 </div>
             </div>
 
