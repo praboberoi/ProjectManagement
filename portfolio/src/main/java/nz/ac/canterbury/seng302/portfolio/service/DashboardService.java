@@ -15,11 +15,15 @@ import java.util.Optional;
 @Service
 public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
-    private Project currentProject = null;
+    private Project currentProject;
+    private Date projectMinDate;
+    private Date projectMaxDate;
+    private Boolean isNew = false;
 
     /**
-     * Returns list of all Project objecs in the database
+     * Returns list of all Project objects in the database
      * @return list of project objects
+     * @throws Exception caught from underlining method calls
      */
     public List<Project> getAllProjects() throws Exception {
         List<Project> listProjects = (List<Project>) projectRepo.findAll();
@@ -31,14 +35,17 @@ public class DashboardService {
     }
 
     /**
-     * Saves a project object to the database
-     * @param project
+     * Saves a project object to the database and returns an appropriate message depending upon if the project is created
+     * or updated
+     * @param project of type Project
+     * @throws Exception is thrown if unable to save the object in the database
      */
     public String saveProject(Project project) throws Exception {
             String message;
-            if (currentProject == null) {
+            if (isNew) {
                 currentProject = project;
                 message = "Successfully Created Project: " + project.getProjectName();
+                isNew = false;
 
             } else {
                 currentProject.setProjectName(project.getProjectName());
@@ -50,7 +57,6 @@ public class DashboardService {
             }
             try {
                 projectRepo.save(currentProject);
-                currentProject = null;
                 return message;
             } catch (Exception e) {
                 throw new Exception("Failure Saving Project");
@@ -59,19 +65,25 @@ public class DashboardService {
 
     /**
      * Gets project object from the database
-     * @param id
-     * @return
+     * @param id of type int
+     * @return of type Project
+     * @throws Exception If the given project ID does not exist
      */
-    public Project getProject(int id) {
+    public Project getProject(int id) throws Exception {
         Optional<Project> result = projectRepo.findById(id);
-        currentProject = result.get();
-        return currentProject;
+        if(result.isPresent()) {
+            currentProject = result.get();
+            projectMinDate = Date.valueOf(currentProject.getStartDate().toLocalDate().minusYears(1));
+            projectMaxDate = Date.valueOf(currentProject.getEndDate().toLocalDate().plusYears(10));
+            return currentProject;
+        }
+        else
+            throw new Exception("Failed to locate the project in the database");
     }
 
     /**
      * Deletes a project object from the database
-     * @param projectId
-     * @throws Exception
+     * @param projectId of type int
      */
     public void deleteProject(int projectId) {
         projectRepo.deleteById(projectId);
@@ -88,7 +100,37 @@ public class DashboardService {
         newProject.setProjectName("Project " + now.getYear());
         newProject.setStartDate(Date.valueOf(now));
         newProject.setEndDate(Date.valueOf(now.plusMonths(8)));
+        projectMinDate = Date.valueOf(LocalDate.now().minusYears(1));
+        projectMaxDate = Date.valueOf(LocalDate.now().plusYears(10));
+        isNew = true;
         return newProject;
     }
+
+    /**
+     * Verifies the project dates to make sure the date ranges have not been changed at the client.
+     * @param project of type Project
+     * @throws Exception indicating page values of the HTML page are manually changed.
+     */
+    public void verifyProject(Project project) throws Exception {
+        if(project.getStartDate().before(projectMinDate) || project.getEndDate().after(projectMaxDate))
+            throw new Exception("HTML page values manually changed. Cannot save the given project");
+    }
+
+    /**
+     * To get the minimum date value the current project can have.
+     * @return of type Date
+     */
+    public Date getProjectMinDate() {
+        return projectMinDate;
+    }
+
+    /**
+     * To get the maximum date value the current project can have.
+     * @return of type Date
+     */
+    public Date getProjectMaxDate() {
+        return projectMaxDate;
+    }
+
 }
 

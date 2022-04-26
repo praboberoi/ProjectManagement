@@ -62,6 +62,9 @@ startDateElement.addEventListener('change', (event) => {
     endDateElement.setAttribute("max", `${endDateMax.toISOString().slice(0, 10)}`);
 });
 
+/**
+ * An Event listener for triggering the required change for setting minimum and maximum values of dates.
+ */
 endDateElement.addEventListener('change',(event) => {
 
     const startDateMin = new Date(document.getElementById("startDate").value);

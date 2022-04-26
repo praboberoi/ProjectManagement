@@ -31,7 +31,6 @@ public class SprintController {
      * @param principal - Current User.
      * @param model
      * @return - name of the html page to display
-     * @throws Exception
      */
     @GetMapping("/project/{projectId}")
     public String showSprintList(
@@ -44,8 +43,7 @@ public class SprintController {
             Project project = projectService.getProjectById(projectId);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
-            model.addAttribute("roles",
-                    userAccountClientService.getUserRole(principal));
+            model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "project";
         } catch (Exception e) {
@@ -69,10 +67,17 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
+            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
+            model.addAttribute("sprintStartDateMax", newSprint.getEndDate());
+            model.addAttribute("sprintEndDateMin", newSprint.getStartDate());
+            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
+            model.addAttribute("submissionName", "Create");
+            model.addAttribute("image", "/icons/create-icon.svg");
             return "sprintForm";
 
         } catch (Exception e) {
@@ -94,12 +99,14 @@ public class SprintController {
         RedirectAttributes ra) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-                sprint.setProject(projectService.getProjectById(projectId));
-                String message = sprintService.saveSprint(sprint);
-                ra.addFlashAttribute("messageSuccess", message);
-            } catch (Exception e) {
-                ra.addFlashAttribute("messageDanger", e.getMessage());
-            }
+            sprint.setProject(projectService.getProjectById(projectId));
+            sprintService.updateCurrentSprint(sprint);
+            sprintService.verifySprint();
+            String message = sprintService.saveSprint();
+            ra.addFlashAttribute("messageSuccess", message);
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+        }
             return "redirect:/project/{projectId}";
         }
 
@@ -121,13 +128,20 @@ public class SprintController {
             RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-                Project currentProject = projectService.getProjectById(projectId);
-                Sprint sprint = sprintService.getSprint(sprintId);
-                model.addAttribute("sprint", sprint);
-                model.addAttribute("project", currentProject);
-                model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
+            Project currentProject = projectService.getProjectById(projectId);
+            Sprint sprint = sprintService.getSprint(sprintId);
+            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
+            model.addAttribute("sprint", sprint);
+            model.addAttribute("project", currentProject);
+            model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("user", userAccountClientService.getUser(principal));
-                return "sprintForm";
+            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
+            model.addAttribute("sprintStartDateMax", sprint.getEndDate());
+            model.addAttribute("sprintEndDateMin", sprint.getStartDate());
+            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
+            model.addAttribute("submissionName", "Save");
+            model.addAttribute("image", "/icons/save-icon.svg");
+            return "sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());
                 return "redirect:/project/{projectId}";
@@ -150,12 +164,13 @@ public class SprintController {
         RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
+            Project currentProject = projectService.getProjectById(projectId);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        sprintService.updateSprintNames(sprintService.getSprintByProject(projectId));
+        sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         model.addAttribute("listSprints", listSprints);
         return "redirect:/project/{projectId}";
