@@ -37,8 +37,12 @@
             <input type="hidden" id = "project-end-date" name= "project-end-date" th:value="${project.endDate}">
         </div>
         <div class="mb-3">
+            <label for="recipient-name" class="col-form-label required">Sprint Label</label>
+            <input type="text" class="form-control" id="recipient-label" th:field="*{sprintLabel}" readonly>
+        </div>
+        <div class="mb-3">
             <label for="recipient-name" class="col-form-label required">Sprint Name</label>
-            <input type="text" class="form-control" id="recipient-name" th:field="*{sprintName}" readonly>
+            <input type="text" class="form-control" id="recipient-name" th:field="*{sprintName}" >
         </div>
 
         <div style="height:30px;" class="row">
@@ -70,5 +74,6 @@
     </form>
 </div>
 <script src= "/javascript/sprintForm.js"> </script>
+</div>
 </body>
 </html>
