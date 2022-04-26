@@ -66,7 +66,6 @@ public class DashboardController {
         model.addAttribute("projectStartDateMax", Date.valueOf(newProject.getEndDate().toLocalDate().minusDays(1)));
         model.addAttribute("projectEndDateMin", Date.valueOf(newProject.getStartDate().toLocalDate().plusDays(1)));
         model.addAttribute("projectEndDateMax", dashboardService.getProjectMaxDate());
-
         return "projectForm";
     }
 
