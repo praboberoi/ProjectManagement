@@ -43,8 +43,7 @@ public class SprintController {
             Project project = projectService.getProjectById(projectId);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
-            model.addAttribute("roles",
-                    userAccountClientService.getUserRole(principal));
+            model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "project";
         } catch (Exception e) {
