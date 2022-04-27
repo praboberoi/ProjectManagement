@@ -88,6 +88,7 @@ gradlew bootRun
 
 By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 
+``Note - Please replace line 139 with claims.put(ROLE_CLAIM_TYPE, "TEACHER"); to obtain teachers access to add/update/delete sprints.``
 ## Contributors
 
 - SENG302 teaching team

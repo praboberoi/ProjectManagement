@@ -27,6 +27,7 @@ public class Project {
     /**
      * Description of the project.
      */
+    @Lob
     @Column
     private String description;
 
