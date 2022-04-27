@@ -173,11 +173,12 @@ public class AccountController {
         // prints out the location the image has been saved to
         System.out.println(path.toAbsolutePath());
 
-        userProfilePhotoService.uploadImage(userId, extension, path);
-
         // write the image to the path
         // normally files would be written with outputstream in server side Service code(??)
         Files.write(path, file1.getBytes());
+
+        userProfilePhotoService.uploadImage(userId, extension, path);
+
 //       End of image
 
 
