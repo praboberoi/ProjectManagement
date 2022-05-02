@@ -13,7 +13,7 @@ import java.util.NoSuchElementException;
 @GrpcService
 public class UserProfilePhotoServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase{
 
-    @Override
+    
     public StreamObserver<UploadUserProfilePhotoRequest> UploadUserProfilePhoto(StreamObserver<FileUploadStatusResponse> responseObserver){
         return new StreamObserver<UploadUserProfilePhotoRequest>() {
             //TODO Update Messages
