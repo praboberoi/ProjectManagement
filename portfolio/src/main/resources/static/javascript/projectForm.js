@@ -3,12 +3,17 @@
  * Check and display errors in project name, min and max dates.
  */
 
+// Regular expression for Project Name field. No leading white spaces or empty field.
 const projectNameRegex = /^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$/
 
 const startDateElement = document.querySelector('#startDate');
 const endDateElement = document.querySelector('#endDate');
 
-function check_projectName() {
+/**
+ * Function for error validation of Project Name field.
+ * Display error message if input is invalid.
+ */
+function checkProjectName() {
     let projectName = document.getElementById('project-name');
     let projectNameError = document.getElementById('projectNameError');
     if (projectName.value.length < 1) {
