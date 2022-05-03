@@ -132,5 +132,13 @@ public class DashboardService {
         return projectMaxDate;
     }
 
+    /**
+     * Clear the cached data by setting the currentProject and isNew to default
+     */
+    public void clearCache() {
+        currentProject = null;
+        isNew = false;
+    }
+
 }
 
