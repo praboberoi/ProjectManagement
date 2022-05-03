@@ -44,7 +44,7 @@ public class DashboardService {
             String message;
             if (isNew) {
                 currentProject = project;
-                message = "Successfully Created Project: " + project.getProjectName();
+                message = "Successfully Created " + project.getProjectName();
                 isNew = false;
 
             } else {
@@ -52,7 +52,7 @@ public class DashboardService {
                 currentProject.setDescription(project.getDescription());
                 currentProject.setStartDate(project.getStartDate());
                 currentProject.setEndDate(project.getEndDate());
-                message = "Successfully Saved Project " + project.getProjectName();
+                message = "Successfully Saved " + project.getProjectName();
 
             }
             try {
@@ -72,6 +72,7 @@ public class DashboardService {
     public Project getProject(int id) throws Exception {
         Optional<Project> result = projectRepo.findById(id);
         if(result.isPresent()) {
+            isNew = false;
             currentProject = result.get();
             projectMinDate = Date.valueOf(currentProject.getStartDate().toLocalDate().minusYears(1));
             projectMaxDate = Date.valueOf(currentProject.getEndDate().toLocalDate().plusYears(10));
