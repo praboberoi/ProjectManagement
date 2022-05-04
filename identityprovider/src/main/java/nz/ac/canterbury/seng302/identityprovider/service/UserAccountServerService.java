@@ -129,11 +129,17 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         reply.setPersonalPronouns(user.getPersonalPronouns());
         reply.setBio(user.getBio());
         reply.setEmail(user.getEmail());
-//        reply.setProfileImagePath(user.getProfileImagePath());
         reply.addAllRoles(user.getRoles());
         reply.setCreated(Timestamp.newBuilder()
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
+
+        if(user.getProfileImagePath() == null){
+            reply.setProfileImagePath("portfolio/src/main/resources/static/icons/userr.png");
+        } else {
+            reply.setProfileImagePath(user.getProfileImagePath());
+        }
+
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }

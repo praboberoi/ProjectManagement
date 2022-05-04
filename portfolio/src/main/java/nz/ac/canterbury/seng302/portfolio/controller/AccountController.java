@@ -177,7 +177,7 @@ public class AccountController {
         // normally files would be written with outputstream in server side Service code(??)
         Files.write(path, file1.getBytes());
 
-        userProfilePhotoService.uploadImage(userId, extension, path);
+        userAccountClientService.uploadImage(userId, extension, path);
 
 //       End of image
 

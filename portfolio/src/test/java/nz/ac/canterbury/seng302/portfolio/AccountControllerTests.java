@@ -16,12 +16,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -41,6 +43,7 @@ public class AccountControllerTests {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+    @MockBean
     private UserProfilePhotoService userProfilePhotoService;
 
     User user;
@@ -193,9 +196,11 @@ public class AccountControllerTests {
         AccountController accountController = new AccountController(mockUserAccountClientService, mockUserProfilePhotoService);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
+
+        MockMultipartFile file0 = new MockMultipartFile("file", "image.png", "image", "image.png".getBytes(StandardCharsets.UTF_8));
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-        assertEquals( "editAccount", accountController.editUser(principal, null, testString,
+        assertEquals( "editAccount", accountController.editUser(principal, file0, testString,
                 testString, testString, testString, testString, testString, mockModel, ra));
 
     }
