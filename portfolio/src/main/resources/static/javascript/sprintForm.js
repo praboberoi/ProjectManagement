@@ -75,7 +75,7 @@ function verifyOverlap(startDate, endDate) {
             if (httpRequest.status === 200) {
                 console.log(httpRequest);
                 if (httpRequest.response == "false") {
-                    dateError.innerText = "Start date must be before the end date.";
+                    dateError.innerText = "Sprint cannot occur during another sprint.";
                     startDateElement.classList.add("form_error");
                     endDateElement.classList.add("form_error");
                 }

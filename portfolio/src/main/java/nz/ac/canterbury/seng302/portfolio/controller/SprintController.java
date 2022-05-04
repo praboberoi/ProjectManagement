@@ -105,7 +105,9 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         Sprint currentSprint = new Sprint();
+        Project project = projectService.getProjectById(projectId);
         try {
+            currentSprint.setProject(project);
             currentSprint.setStartDate(Date.valueOf(startDate));
             currentSprint.setEndDate(Date.valueOf(endDate));
             return ResponseEntity.status(HttpStatus.OK).body(sprintService.verifySprint(currentSprint));
@@ -141,12 +143,12 @@ public class SprintController {
 
 
 
-        /**
-         * Directs to page for editing a sprint
-         * @param sprintId ID for sprint being edited
-         * @param model
-         * @return
-         */
+    /**
+     * Directs to page for editing a sprint
+     * @param sprintId ID for sprint being edited
+     * @param model
+     * @return
+     */
     /*make sure to update project.html for path*/
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
@@ -160,23 +162,24 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
-            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
-            model.addAttribute("sprintStartDateMax", sprint.getEndDate());
-            model.addAttribute("sprintEndDateMin", sprint.getStartDate());
-            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
+
+            model.addAttribute("sprintStartDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintStartDateMax", currentProject.getEndDate());
+            model.addAttribute("sprintEndDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintEndDateMax", currentProject.getEndDate());
+
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", "/icons/save-icon.svg");
             return "sprintForm";
-            } catch (Exception e) {
-                ra.addFlashAttribute("messageDanger", e.getMessage());
-                return "redirect:/project/{projectId}";
-            }
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
         }
+    }
 
 
     /**

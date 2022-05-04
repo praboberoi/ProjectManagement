@@ -31,8 +31,8 @@
         <h2>[[${pageTitle}]]</h2>
     </div>
     <div class="projectForm">
-    <form id="createSprintForm" action="#" th:action="@{'/project/' + ${projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
-        <input type="hidden" id="projectId" th:field="*{project.projectId}">
+    <form id="createSprintForm" onsubmit="return validateForm()" action="#" th:action="@{'/project/' + ${project.projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
+        <input type="hidden" id="projectId" name="projectId" th:value="${project.projectId}">
         <div>
             <input type="hidden" id = "project-start-date" name= "project-start-date" th:value="${project.startDate}">
             <input type="hidden" id = "project-end-date" name= "project-end-date" th:value="${project.endDate}">
@@ -81,6 +81,8 @@
     </form>
 </div>
 <script src= "/javascript/sprintForm.js">
+</script>
+<script src= "/javascript/form.js">
 </script>
 </div>
 </body>

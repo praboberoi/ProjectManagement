@@ -208,17 +208,21 @@ public class SprintService {
      * @throws Exception indicating page values of the HTML page are manually changed.
      */
     public boolean verifySprint(Sprint currentSprint) throws Exception {
-        if(currentSprint.getStartDate().after(currentSprint.getEndDate()))
+        if(currentSprint.getStartDate().after(currentSprint.getEndDate())) {
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+        }
 
-        if(currentSprint.getStartDate().before(currentSprint.getProject().getStartDate()))
+        if(currentSprint.getStartDate().before(currentSprint.getProject().getStartDate())) {
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+        }
 
-        if(currentSprint.getStartDate().after(currentSprint.getProject().getEndDate()))
+        if(currentSprint.getStartDate().after(currentSprint.getProject().getEndDate())) {
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+        }
 
-        if(currentSprint.getEndDate().after(currentSprint.getProject().getEndDate()))
+        if(currentSprint.getEndDate().after(currentSprint.getProject().getEndDate())) {
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+        }
 
         //TODO : Change the below from sprintName to label once its been added
         List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
@@ -233,6 +237,7 @@ public class SprintService {
     /**
      * Compares the current sprint start and end dates with the given sprint start and end dates. Returns true if
      * the current sprint lies between or overlaps with the given sprint's date range otherwise returns false.
+     * @param currentSprint The sprint to be compared against
      * @param compSprint Given sprint
      * @return boolean value
      */
@@ -244,23 +249,11 @@ public class SprintService {
         Date compSprintStartDate = compSprint.getStartDate();
         Date compSprintEndDate = compSprint.getEndDate();
 
-        if(startDate.compareTo(compSprintStartDate) == 0)
-            return true;
-
-        else if(endDate.compareTo(compSprintEndDate) == 0)
-            return true;
-
-        else if(startDate.after(compSprintStartDate) && endDate.before(compSprintEndDate))
-            return true;
-
-        else if(startDate.after(compSprintStartDate) && startDate.before(compSprintEndDate))
-            return true;
-
-        else if(endDate.after(compSprintStartDate) && endDate.before(compSprintEndDate))
-            return true;
-
-        else
-            return false;
+        // Check for overlaping dates retrived from https://www.codespeedy.com/check-if-two-date-ranges-overlap-or-not-in-java/
+        return startDate.before(compSprintStartDate) && endDate.after(compSprintStartDate) ||
+        startDate.before(compSprintEndDate) && endDate.after(compSprintEndDate) ||
+        startDate.before(compSprintStartDate) && endDate.after(compSprintEndDate) ||
+        startDate.after(compSprintStartDate) && endDate.before(compSprintEndDate) ;
     }
 
     /**
