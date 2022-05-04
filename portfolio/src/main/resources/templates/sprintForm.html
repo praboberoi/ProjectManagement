@@ -32,7 +32,7 @@
     </div>
     <div class="projectForm">
     <form id="createSprintForm" action="#" th:action="@{'/project/' + ${projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
-        <input type="hidden" th:field="*{project.projectId}">
+        <input type="hidden" id="projectId" th:field="*{project.projectId}">
         <div>
             <input type="hidden" id = "project-start-date" name= "project-start-date" th:value="${project.startDate}">
             <input type="hidden" id = "project-end-date" name= "project-end-date" th:value="${project.endDate}">
@@ -57,11 +57,14 @@
         </div>
         <div class="row">
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" th:min="${sprintStartDateMin}" th:max="${sprintStartDateMax}">
+                <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" th:min="${sprintStartDateMin}" th:max="${sprintStartDateMax}" onchange="checkDates()">
+                <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
             </div>
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintEndDateMin}" th:max="${sprintEndDateMax}">
+                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintEndDateMin}" th:max="${sprintEndDateMax}" onchange="checkDates()">
+                <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
             </div>
+            <p id="dateError" th:text="${dateError}" class="error-msg"></p>
         </div>
 
         <br>

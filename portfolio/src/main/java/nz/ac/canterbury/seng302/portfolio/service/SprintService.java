@@ -207,7 +207,7 @@ public class SprintService {
      * been made to the HTML page at the client.
      * @throws Exception indicating page values of the HTML page are manually changed.
      */
-    public void verifySprint() throws Exception {
+    public boolean verifySprint(Sprint currentSprint) throws Exception {
         if(currentSprint.getStartDate().after(currentSprint.getEndDate()))
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
 
@@ -220,13 +220,14 @@ public class SprintService {
         if(currentSprint.getEndDate().after(currentSprint.getProject().getEndDate()))
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
 
-        //TODO : Change te below from sprintName to label once its been added
+        //TODO : Change the below from sprintName to label once its been added
         List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
                 .filter(sp -> !(sp.getSprintName().equals(currentSprint.getSprintName())))
-                .filter(this::betweenDateRange).toList();
+                .filter(sp -> betweenDateRange(currentSprint, sp)).toList();
         if(sprints.size() > 0) {
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
         }
+        return true;
     }
 
     /**
@@ -235,26 +236,27 @@ public class SprintService {
      * @param compSprint Given sprint
      * @return boolean value
      */
-    private boolean betweenDateRange(Sprint compSprint) {
-        Date currentSprintStartDate = currentSprint.getStartDate();
-        Date currentSprintEndDate = currentSprint.getEndDate();
+    private boolean betweenDateRange(Sprint currentSprint, Sprint compSprint) {
+
+        Date startDate = currentSprint.getStartDate();
+        Date endDate = currentSprint.getEndDate();
 
         Date compSprintStartDate = compSprint.getStartDate();
         Date compSprintEndDate = compSprint.getEndDate();
 
-        if(currentSprintStartDate.compareTo(compSprintStartDate) == 0)
+        if(startDate.compareTo(compSprintStartDate) == 0)
             return true;
 
-        else if(currentSprintEndDate.compareTo(compSprintEndDate) == 0)
+        else if(endDate.compareTo(compSprintEndDate) == 0)
             return true;
 
-        else if(currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate))
+        else if(startDate.after(compSprintStartDate) && endDate.before(compSprintEndDate))
             return true;
 
-        else if(currentSprintStartDate.after(compSprintStartDate) && currentSprintStartDate.before(compSprintEndDate))
+        else if(startDate.after(compSprintStartDate) && startDate.before(compSprintEndDate))
             return true;
 
-        else if(currentSprintEndDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate))
+        else if(endDate.after(compSprintStartDate) && endDate.before(compSprintEndDate))
             return true;
 
         else

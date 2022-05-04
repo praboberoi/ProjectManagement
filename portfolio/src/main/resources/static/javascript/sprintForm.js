@@ -3,7 +3,13 @@
  */
 
 // Regular expression for Sprint Name field. No leading white spaces or empty field.
-const sprintNameRegex = /^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$/
+const sprintNameRegex = /^\S/;
+const projectId = document.getElementById("projectId").value;
+const startDateElement = document.getElementById('startDate');
+const endDateElement = document.getElementById('endDate');
+const dateError = document.getElementById('dateError');
+const startDateError = document.getElementById('startDateError');
+const endDateError = document.getElementById('endDateError');
 
 /**
  * Function for error validation of Sprint Name field.
@@ -17,50 +23,68 @@ function checkSprintName() {
         sprintNameError.innerText = "Sprint Name must not be empty";
     } else if (! sprintNameRegex.test(sprintName.value)) {
         sprintName.classList.add("form_error");
-        sprintNameError.innerText = "Sprint Name must not start or end with space characters";
+        sprintNameError.innerText = "Sprint Name must not start with empty space";
     } else {
         sprintName.classList.remove("form_error");
         sprintNameError.innerText = null;
     }
 }
 
-/**
- * Function that initialises the minimum and maximum date values when the sprint form is first opened.
- */
-function initialDateSetup() {
-    const startDate = document.getElementById('startDate').value;
-    const endDate = document.getElementById('endDate').value;
+function checkDates() {
+    const startDate = startDateElement.value;
+    const endDate = endDateElement.value;
 
-    const currentProject = document.getElementById('project-end-date').value;
+    if (startDate > endDate ) {
+        dateError.innerText = "Start date must be before the end date.";
+        startDateElement.classList.add("form_error");
+        endDateElement.classList.add("form_error");
+        return;
+    } else {
+        dateError.innerText = "";
+    }
 
-    const startDateInput = document.querySelector('#startDate')
-    const endDateInput = document.querySelector('#endDate')
+    checkStartDate();
+    checkEndDate();
 
-    startDateInput.setAttribute('min', startDate);
-    startDateInput.setAttribute('max', endDate);
-    endDateInput.setAttribute('min', startDate);
-    endDateInput.setAttribute('max', currentProject);
+    if (dateError.innerText == "" &&
+    startDateError.innerText == "" &&
+    endDateError.innerText == "" ) {
+        verifyOverlap(startDate, endDate);
+    }
 }
-const startDateElement = document.querySelector('#startDate');
 
-/**
- * An Event listener for triggering the required change for setting minimum values of dates.
- */
-startDateElement.addEventListener('change', (event) => {
-    const startDate = document.getElementById("startDate").value
-    const endDate = document.querySelector('#endDate');
-    endDate.setAttribute("min", startDate);
-});
+function checkStartDate() {
+    const startDate = new Date(startDateElement.value);
+    
+    startDateError.innerText = "";
+    startDateElement.classList.remove("form_error")
+}
 
-const endDateElement = document.querySelector('#endDate');
+function checkEndDate() {
+    const endDate = new Date(endDateElement.value);
+    
+    endDateError.innerText = "";
+    endDateElement.classList.remove("form_error")
+}
 
+function verifyOverlap(startDate, endDate) {
+    httpRequest = new XMLHttpRequest();
 
-/**
- * An Event listener for triggering the required change for setting maximum values of dates.
- */
-endDateElement.addEventListener('change',(event) => {
-    const endDate = document.getElementById("endDate").value
-    const startDate = document.querySelector('#startDate')
-    startDate.setAttribute("max", endDate)
-});
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                if (!httpRequest.response) {
+                    dateError.innerText = "Start date must be before the end date.";
+                    startDateElement.classList.add("form_error");
+                    endDateElement.classList.add("form_error");
+                }
+            } else {
+                console.log(httpRequest);
+            }
+        }
+    }
 
+    httpRequest.open('POST', '/project/' + projectId + '/verifySprint', true);
+    httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+}

@@ -8,6 +8,8 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.sql.Date;
 import java.util.List;
 
 @Controller
@@ -41,6 +44,7 @@ public class SprintController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             Project project = projectService.getProjectById(projectId);
+            
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
@@ -64,18 +68,20 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
-            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
-            model.addAttribute("sprintStartDateMax", newSprint.getEndDate());
-            model.addAttribute("sprintEndDateMin", newSprint.getStartDate());
-            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
+
+            model.addAttribute("sprintStartDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintStartDateMax", currentProject.getEndDate());
+            model.addAttribute("sprintEndDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintEndDateMax", currentProject.getEndDate());
+
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", "/icons/create-icon.svg");
             return "sprintForm";
@@ -91,6 +97,28 @@ public class SprintController {
      * @param sprint
      * @return
      */
+    @PostMapping("/project/{projectId}/verifySprint")
+    public ResponseEntity<Boolean> verifySprint(
+        @PathVariable int projectId,
+        String startDate,
+        String endDate,
+        @AuthenticationPrincipal AuthState principal) {
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+        Sprint currentSprint = new Sprint();
+        try {
+            currentSprint.setStartDate(Date.valueOf(startDate));
+            currentSprint.setEndDate(Date.valueOf(endDate));
+            return ResponseEntity.status(HttpStatus.OK).body(sprintService.verifySprint(currentSprint));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(false);
+        }
+    }
+
+    /**
+     * Saves a sprint and redirects to project page
+     * @param sprint
+     * @return
+     */
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
@@ -98,15 +126,16 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        try {
-            sprint.setProject(projectService.getProjectById(projectId));
-            sprintService.updateCurrentSprint(sprint);
-            sprintService.verifySprint();
-            String message = sprintService.saveSprint();
-            ra.addFlashAttribute("messageSuccess", message);
-        } catch (Exception e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-        }
+        
+            try {
+                sprint.setProject(projectService.getProjectById(projectId));
+                sprintService.updateCurrentSprint(sprint);
+                sprintService.verifySprint(sprint);
+                String message = sprintService.saveSprint();
+                ra.addFlashAttribute("messageSuccess", message);
+            } catch (Exception e) {
+                ra.addFlashAttribute("messageDanger", e.getMessage());
+            }
             return "redirect:/project/{projectId}";
         }
 
@@ -127,6 +156,7 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
@@ -163,8 +193,8 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+
         try {
-            Project currentProject = projectService.getProjectById(projectId);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
