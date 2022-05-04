@@ -1,13 +1,22 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
+import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 
+import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 
 @GrpcService
@@ -22,7 +31,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     /**
      * This method registers a user in the database based off a UserRegisterRequest, and uses the StreamObserver to
      * contain it's UserRegisterResponse as the result of the operation
-     * @param request The request containing details of the user to be registered
+     *
+     * @param request          The request containing details of the user to be registered
      * @param responseObserver The response observer records the result of the operation
      */
     @Override
@@ -73,7 +83,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * This method builds a user based off an EditUserRequest, first it checks that the user exists in the database,
      * if the user from the edit request exists, it saves the new details to the user from the request and saves the
      * user back into the repository.
-     * @param request A proto containing all the details of the user to be edited, such as the userId, first name etc
+     *
+     * @param request          A proto containing all the details of the user to be edited, such as the userId, first name etc
      * @param responseObserver The streamObserver contains the edit user response which will be passed back down the line with details of the operation
      */
     @Override
@@ -112,7 +123,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     /**
      * Gets a user object from the db and sets the template elements with the user's details
-     * @param request Request containing the users id
+     *
+     * @param request          Request containing the users id
      * @param responseObserver Returns to previous method with data
      */
     @Override
@@ -142,5 +154,99 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
+    }
+
+    /**
+     * This method gets data about a User Profile image from a StreamObserver and returns
+     * a StreamObserver about the FileUploadStatus response. It sends the image data to UserProfilePhotoService
+     * to be saved.
+     * @param responseObserver The request containing image information
+     * @return The response observer records the result of the operation
+     */
+    @Override
+    public StreamObserver<UploadUserProfilePhotoRequest> uploadUserProfilePhoto(StreamObserver<FileUploadStatusResponse> responseObserver) {
+        return new StreamObserver<>() {
+            OutputStream writer;
+            FileUploadStatus status = FileUploadStatus.IN_PROGRESS;
+
+            /**
+             * Sets the OutputStream on the first request and then sends
+             * the data to be saved on subsequent requests
+             *
+             * @param request Request containing image information
+             */
+            @Override
+            public void onNext(UploadUserProfilePhotoRequest request) {
+                try {
+                    if (request.hasMetaData()) {
+                        writer = getFilePath(request);
+                    } else {
+                        writeFile(writer, request.getFileContent());
+                    }
+                } catch (IOException e) {
+                    this.onError(e);
+                }
+            }
+
+            /**
+             * Updates file upload status
+             *
+             * @param t the error occurred on the stream
+             */
+            @Override
+            public void onError(Throwable t) {
+                status = FileUploadStatus.FAILED;
+                this.onCompleted();
+            }
+
+            /**
+             * Compiles file upload status response
+             */
+            @Override
+            public void onCompleted() {
+                closeFile(writer);
+                status = FileUploadStatus.IN_PROGRESS.equals(status) ? FileUploadStatus.SUCCESS : status;
+                FileUploadStatusResponse response = FileUploadStatusResponse.newBuilder()
+                        .setStatus(status)
+                        .setMessage("File upload progress: " + status)
+                        .build();
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+            }
+        };
+
+        }
+
+    /**
+     * Writes image file to profilePhotos
+     * @param writer OutputStream containing pathway
+     * @param content Image content
+     */
+    private void writeFile(OutputStream writer, ByteString content) throws IOException {
+        writer.write(content.toByteArray());
+        writer.flush();
+    }
+
+    /**
+     * Creates file name and writer
+     * @param request Contains image information
+     * @return Writer containing information to save file
+     */
+    private  OutputStream getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
+        final Path SERVER_BASE_PATH = Paths.get("src/main/resources/profilePhotos");
+        var fileName = request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+        return Files.newOutputStream(SERVER_BASE_PATH.resolve(fileName), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+    }
+
+    /**
+     * Closes OutputStream
+     * @param writer The OutputStream
+     */
+    private void closeFile(OutputStream writer){
+        try {
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
