@@ -73,7 +73,8 @@ function verifyOverlap(startDate, endDate) {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                if (!httpRequest.response) {
+                console.log(httpRequest);
+                if (httpRequest.response == "false") {
                     dateError.innerText = "Start date must be before the end date.";
                     startDateElement.classList.add("form_error");
                     endDateElement.classList.add("form_error");
