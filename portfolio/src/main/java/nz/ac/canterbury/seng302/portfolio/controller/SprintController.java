@@ -105,8 +105,8 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         Sprint currentSprint = new Sprint();
-        Project project = projectService.getProjectById(projectId);
         try {
+            Project project = projectService.getProjectById(projectId);
             currentSprint.setProject(project);
             currentSprint.setStartDate(Date.valueOf(startDate));
             currentSprint.setEndDate(Date.valueOf(endDate));
