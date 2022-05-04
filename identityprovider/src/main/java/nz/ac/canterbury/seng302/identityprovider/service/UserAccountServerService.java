@@ -159,30 +159,32 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      */
     @Override
     public StreamObserver<UploadUserProfilePhotoRequest> uploadUserProfilePhoto(StreamObserver<FileUploadStatusResponse> responseObserver) {
-        return new StreamObserver<UploadUserProfilePhotoRequest>() {
+        return new StreamObserver<>() {
             OutputStream writer;
             FileUploadStatus status = FileUploadStatus.IN_PROGRESS;
 
             /**
              * Sets the OutputStream on the first request and then sends
              * the data to be saved on subsequent requests
+             *
              * @param request Request containing image information
              */
             @Override
             public void onNext(UploadUserProfilePhotoRequest request) {
-                try{
-                    if(request.hasMetaData()){
+                try {
+                    if (request.hasMetaData()) {
                         writer = getFilePath(request);
-                    }else {
+                    } else {
                         writeFile(writer, request.getFileContent());
                     }
-                }catch (IOException e){
+                } catch (IOException e) {
                     this.onError(e);
                 }
             }
 
             /**
              * Updates file upload status
+             *
              * @param t the error occurred on the stream
              */
             @Override
@@ -213,7 +215,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * Writes image file to profilePhotos
      * @param writer OutputStream containing pathway
      * @param content Image content
-     * @throws IOException
      */
     private void writeFile(OutputStream writer, ByteString content) throws IOException {
         writer.write(content.toByteArray());
@@ -222,9 +223,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     /**
      * Creates file name and writer
-     * @param request
+     * @param request Contains image information
      * @return Writer containing information to save file
-     * @throws IOException
      */
     private  OutputStream getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
         final Path SERVER_BASE_PATH = Paths.get("src/main/resources/profilePhotos");
@@ -234,7 +234,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     /**
      * Closes OutputStream
-     * @param writer
+     * @param writer The OutputStream
      */
     private void closeFile(OutputStream writer){
         try {
