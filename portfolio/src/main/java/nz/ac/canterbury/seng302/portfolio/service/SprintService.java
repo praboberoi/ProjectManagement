@@ -52,6 +52,7 @@ public class SprintService {
                 else
                     currentSprint.setEndDate(Date.valueOf(lastSprintEndDate.plusWeeks(3)));
             }
+
         }
         return currentSprint;
     }
@@ -220,13 +221,12 @@ public class SprintService {
         if(currentSprint.getEndDate().after(currentSprint.getProject().getEndDate()))
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
 
-        //TODO : Change te below from sprintName to label once its been added
         List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
-                .filter(sp -> !(sp.getSprintName().equals(currentSprint.getSprintName())))
+                .filter(sp -> !(sp.getSprintLabel().equals(currentSprint.getSprintLabel())))
                 .filter(this::betweenDateRange).toList();
-        if(sprints.size() > 0) {
+        if(sprints.size() > 0)
             throw new Exception("HTML page values manually changed. Cannot save the given sprint");
-        }
+
     }
 
     /**
