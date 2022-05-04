@@ -10,6 +10,17 @@
 
   <!-- do not include fragments that are not in use PARSING ERROR -->
   <!--<head th:replace="fragments :: content"></head>-->
+  <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const calendarEl = document.getElementById('calendar');
+      const calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth'
+      });
+      calendar.render();
+    });
+  </script>
 </head>
 
 <!--fragments-->
@@ -25,6 +36,7 @@
   <div class="page-title">
     <h2 id="name">[[${project.projectName}]] </h2>
   </div>
+  <div id='calendar'>
   <div>
     <br>
     <div th:if="${messageSuccess}" class="alert alert-success text-center">
