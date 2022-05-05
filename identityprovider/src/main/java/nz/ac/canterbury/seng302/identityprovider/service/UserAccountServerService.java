@@ -146,11 +146,11 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
 
-        if(user.getProfileImagePath() == null){
-            reply.setProfileImagePath("portfolio/src/main/resources/static/icons/userr.png");
-        } else {
-            reply.setProfileImagePath(user.getProfileImagePath());
-        }
+//        if(user.getProfileImagePath() == null){
+//            reply.setProfileImagePath("portfolio/src/main/resources/static/icons/userr.png");
+//        } else {
+//            reply.setProfileImagePath(user.getProfileImagePath());
+//        }
 
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
