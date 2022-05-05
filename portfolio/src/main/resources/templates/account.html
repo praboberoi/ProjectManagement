@@ -46,7 +46,7 @@
                                 <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
 
-                            <img src="/icons/profile-photo.png" class="profile-photo" id="output" width="200" height="200" />
+                            <img th:src="${user.profileImagePath}" class="profile-photo" id="output" width="200" height="200" />
                             <br>
                             </br>
                             <!-- start of form -->

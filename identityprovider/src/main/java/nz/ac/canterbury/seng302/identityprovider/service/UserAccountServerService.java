@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
@@ -18,6 +19,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
+
+import static nz.ac.canterbury.seng302.identityprovider.service.UserProfilePhotoService.*;
 
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
@@ -212,41 +215,15 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                         .build();
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
+
             }
         };
 
         }
 
-    /**
-     * Writes image file to profilePhotos
-     * @param writer OutputStream containing pathway
-     * @param content Image content
-     */
-    private void writeFile(OutputStream writer, ByteString content) throws IOException {
-        writer.write(content.toByteArray());
-        writer.flush();
-    }
 
-    /**
-     * Creates file name and writer
-     * @param request Contains image information
-     * @return Writer containing information to save file
-     */
-    private  OutputStream getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
-        final Path SERVER_BASE_PATH = Paths.get("src/main/resources/profilePhotos");
-        var fileName = request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
-        return Files.newOutputStream(SERVER_BASE_PATH.resolve(fileName), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-    }
 
-    /**
-     * Closes OutputStream
-     * @param writer The OutputStream
-     */
-    private void closeFile(OutputStream writer){
-        try {
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+
+
+
 }
