@@ -29,7 +29,7 @@ public class Sprint {
     /**
      * Label of Sprint
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String sprintLabel;
 
 
@@ -89,6 +89,14 @@ public class Sprint {
      */
     public int getSprintId() {
         return sprintId;
+    }
+
+    /**
+     * To update the id of the current sprint with the given id
+     * @param id of type int
+     */
+    public void setSprintId(int id) {
+        this.sprintId = id;
     }
 
     /**
