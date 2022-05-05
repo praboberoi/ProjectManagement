@@ -29,7 +29,6 @@
   <div class="page-title">
     <h2 id="name">[[${project.projectName}]] </h2>
   </div>
-  <div id='calendar'>
   <div>
     <br>
     <div th:if="${messageSuccess}" class="alert alert-success text-center">
@@ -61,7 +60,6 @@
             <img class="icon img-color-primary" src="/icons/create-icon.svg"/></a>
         </div>
      </div>
-
   </div>
   <br>
 
@@ -104,7 +102,15 @@
       </tbody>
     </table>
   </div>
+
+  <br>
+  <div id="cal">
+    <div id='calendar'/>
+  </div>
+  <br>
 </div>
+
+
 <div class="modal fade" id="conformationModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
