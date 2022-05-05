@@ -10,6 +10,8 @@ const endDateElement = document.getElementById('endDate');
 const dateError = document.getElementById('dateError');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
+const projectStartDate = document.getElementById("project-start-date");
+const projectEndDate = document.getElementById("project-end-date");
 
 /**
  * Function for error validation of Sprint Name field.
@@ -54,7 +56,17 @@ function checkDates() {
 }
 
 function checkStartDate() {
-    const startDate = new Date(startDateElement.value);
+    const startDate = startDateElement.value;
+
+    if (startDate < projectStartDate) {
+        startDateError.innerText = "Project must start after " + projectStartDate;
+        startDateElement.classList.add("form_error");
+        return;
+    } else if (startDate > projectEndDate) {
+        startDateError.innerText = "Project must finish before " + projectEndDate;
+        startDateElement.classList.add("form_error");
+        return;
+    }
     
     startDateError.innerText = "";
     startDateElement.classList.remove("form_error")
@@ -62,6 +74,16 @@ function checkStartDate() {
 
 function checkEndDate() {
     const endDate = new Date(endDateElement.value);
+
+    if (endDate < projectStartDate) {
+        startDateError.innerText = "Project must start after " + projectStartDate;
+        startDateElement.classList.add("form_error");
+        return;
+    } else if (endDate > projectEndDate) {
+        endDateError.innerText = "Project must finish before " + projectEndDate;
+        endDateElement.classList.add("form_error");
+        return;
+    }
     
     endDateError.innerText = "";
     endDateElement.classList.remove("form_error")
@@ -79,8 +101,6 @@ function verifyOverlap(startDate, endDate) {
                     startDateElement.classList.add("form_error");
                     endDateElement.classList.add("form_error");
                 }
-            } else {
-                console.log(httpRequest);
             }
         }
     }
