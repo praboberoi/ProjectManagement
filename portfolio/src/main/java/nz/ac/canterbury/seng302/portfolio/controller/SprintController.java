@@ -77,10 +77,8 @@ public class SprintController {
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
 
-            model.addAttribute("sprintStartDateMin", currentProject.getStartDate());
-            model.addAttribute("sprintStartDateMax", currentProject.getEndDate());
-            model.addAttribute("sprintEndDateMin", currentProject.getStartDate());
-            model.addAttribute("sprintEndDateMax", currentProject.getEndDate());
+            model.addAttribute("sprintDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintDateMax", currentProject.getEndDate());
 
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", "/icons/create-icon.svg");

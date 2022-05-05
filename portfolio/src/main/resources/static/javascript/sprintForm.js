@@ -10,8 +10,8 @@ const endDateElement = document.getElementById('endDate');
 const dateError = document.getElementById('dateError');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
-const projectStartDate = document.getElementById("project-start-date");
-const projectEndDate = document.getElementById("project-end-date");
+const projectStartDate = document.getElementById("project-start-date").value;
+const projectEndDate = document.getElementById("project-end-date").value;
 
 /**
  * Function for error validation of Sprint Name field.
@@ -32,9 +32,15 @@ function checkSprintName() {
     }
 }
 
+/**
+ * Checks that the start and end dates of the sprint are valid
+ */
 function checkDates() {
     const startDate = startDateElement.value;
     const endDate = endDateElement.value;
+
+    checkStartDate();
+    checkEndDate();
 
     if (startDate > endDate ) {
         dateError.innerText = "Start date must be before the end date.";
@@ -45,8 +51,6 @@ function checkDates() {
         dateError.innerText = "";
     }
 
-    checkStartDate();
-    checkEndDate();
 
     if (dateError.innerText == "" &&
     startDateError.innerText == "" &&
@@ -55,6 +59,9 @@ function checkDates() {
     }
 }
 
+/**
+ * Checks that the start date of the project is valid
+ */
 function checkStartDate() {
     const startDate = startDateElement.value;
 
@@ -72,6 +79,9 @@ function checkStartDate() {
     startDateElement.classList.remove("form_error")
 }
 
+/**
+ * Checks that the end date of the project is valid
+ */
 function checkEndDate() {
     const endDate = new Date(endDateElement.value);
 
@@ -89,6 +99,9 @@ function checkEndDate() {
     endDateElement.classList.remove("form_error")
 }
 
+/**
+ * Calls the server to test sprint for overlap
+ */
 function verifyOverlap(startDate, endDate) {
     httpRequest = new XMLHttpRequest();
 

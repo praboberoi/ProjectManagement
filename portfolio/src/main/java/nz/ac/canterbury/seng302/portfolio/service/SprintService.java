@@ -209,19 +209,19 @@ public class SprintService {
      */
     public boolean verifySprint(Sprint currentSprint) throws Exception {
         if(currentSprint.getStartDate().after(currentSprint.getEndDate())) {
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+            throw new Exception("Start date must be before the end date.");
         }
 
         if(currentSprint.getStartDate().before(currentSprint.getProject().getStartDate())) {
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+            throw new Exception("Sprint must start after the project.");
         }
 
         if(currentSprint.getStartDate().after(currentSprint.getProject().getEndDate())) {
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+            throw new Exception("Sprint must start before the project ends.");
         }
 
         if(currentSprint.getEndDate().after(currentSprint.getProject().getEndDate())) {
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+            throw new Exception("Sprint must end before the project.");
         }
 
         //TODO : Change the below from sprintName to label once its been added
@@ -229,7 +229,7 @@ public class SprintService {
                 .filter(sp -> !(sp.getSprintName().equals(currentSprint.getSprintName())))
                 .filter(sp -> betweenDateRange(currentSprint, sp)).toList();
         if(sprints.size() > 0) {
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+            throw new Exception("Sprint overlaps another sprint.");
         }
         return true;
     }
