@@ -20,8 +20,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 
-import static nz.ac.canterbury.seng302.identityprovider.service.UserProfilePhotoService.*;
-
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
 
@@ -171,6 +169,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         return new StreamObserver<>() {
             OutputStream writer;
             FileUploadStatus status = FileUploadStatus.IN_PROGRESS;
+            User user;
+            Path path;
 
             /**
              * Sets the OutputStream on the first request and then sends
@@ -182,7 +182,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             public void onNext(UploadUserProfilePhotoRequest request) {
                 try {
                     if (request.hasMetaData()) {
-                        writer = getFilePath(request);
+                        path = getFilePath(request);
+                        writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                        user = userRepository.getUserByUserId(request.getMetaData().getUserId());
                     } else {
                         writeFile(writer, request.getFileContent());
                     }
@@ -213,6 +215,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                         .setStatus(status)
                         .setMessage("File upload progress: " + status)
                         .build();
+                user.setProfileImagePath(String.valueOf(path));
+                userRepository.save(user);
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
 
@@ -220,6 +224,39 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         };
 
         }
+
+    /**
+     * Writes image file to profilePhotos
+     * @param writer OutputStream containing pathway
+     * @param content Image content
+     */
+    private void writeFile(OutputStream writer, ByteString content) throws IOException {
+        writer.write(content.toByteArray());
+        writer.flush();
+    }
+
+    /**
+     * Creates file name and writer
+     * @param request Contains image information
+     * @return Writer containing information to save file
+     */
+    private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
+        Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
+        var fileName = request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+        return SERVER_BASE_PATH.resolve(fileName);
+    }
+
+    /**
+     * Closes OutputStream
+     * @param writer The OutputStream
+     */
+    private void closeFile(OutputStream writer){
+        try {
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
 
 
