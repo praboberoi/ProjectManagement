@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.file.Files;
@@ -182,7 +183,18 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             public void onNext(UploadUserProfilePhotoRequest request) {
                 try {
                     if (request.hasMetaData()) {
+
                         path = getFilePath(request);
+
+                        File f = new File(String.valueOf(path));
+                        if (f.exists()) {
+                            try {
+                                Files.delete(path);
+                            } catch (IOException e) {
+                                this.onError(e);
+                            }
+                        }
+
                         writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                         user = userRepository.getUserByUserId(request.getMetaData().getUserId());
                     } else {
@@ -215,6 +227,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                         .setStatus(status)
                         .setMessage("File upload progress: " + status)
                         .build();
+
                 user.setProfileImagePath(String.valueOf(path));
                 userRepository.save(user);
                 responseObserver.onNext(response);
