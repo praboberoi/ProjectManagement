@@ -7,5 +7,5 @@
 */bin/
 .vs/
 
-
 *.db
+node_modules/
