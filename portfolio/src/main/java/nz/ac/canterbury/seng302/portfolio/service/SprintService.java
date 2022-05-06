@@ -201,7 +201,7 @@ public class SprintService {
      * been made to the HTML page at the client.
      * @throws Exception indicating page values of the HTML page are manually changed.
      */
-    public void verifySprint(Sprint currentSprint) throws Exception {
+    public boolean verifySprint(Sprint currentSprint) throws Exception {
         if(currentSprint.getStartDate().after(currentSprint.getEndDate())) {
             throw new Exception("Start date must be before the end date.");
         }
@@ -218,12 +218,13 @@ public class SprintService {
             throw new Exception("Sprint must end before the project.");
         }
 
-        List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject()).stream()
-                .filter(sp -> !(sp.getSprintLabel().equals(sprint.getSprintLabel())))
-                .filter(sp -> (betweenDateRange(sp, sprint))).toList();
+        List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
+                .filter(sp -> !(sp.getSprintLabel().equals(currentSprint.getSprintLabel())))
+                .filter(sp -> (betweenDateRange(sp, currentSprint))).toList();
         if(sprints.size() > 0) {
             throw new Exception("Sprint overlaps another sprint.");
         }
+        return true;
     }
 
     /**
