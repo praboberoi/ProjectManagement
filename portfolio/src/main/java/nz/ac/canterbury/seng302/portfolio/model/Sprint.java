@@ -29,7 +29,7 @@ public class Sprint {
     /**
      * Label of Sprint
      */
-    @Column(nullable = false, unique = true)
+    @Column(nullable = false)
     private String sprintLabel;
 
 

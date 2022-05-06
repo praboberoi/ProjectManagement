@@ -27,10 +27,10 @@ public class SprintService {
      */
     public Sprint getNewSprint(Project project) throws Exception {
         int sprintNo = countByProjectId(project.getProjectId()) + 1;
+        Sprint sprint = new Sprint.Builder()
+                                  .sprintLabel("Sprint " + sprintNo)
+                                  .sprintName("Sprint " + sprintNo).build();
 
-        Sprint sprint = new Sprint();
-        sprint.setSprintLabel("Sprint " + sprintNo);
-        sprint.setSprintName("Sprint " + sprintNo);
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.size() == 0) {
             LocalDate startDate = project.getStartDate().toLocalDate();
@@ -58,19 +58,22 @@ public class SprintService {
      * Deletes all the sprints of the given project ID
      * @param projectId of type int
      */
-    public void deleteAllSprints(int projectId) {
+    public void deleteAllSprints(int projectId) throws Exception {
         List<Sprint> sprintList = getSprintByProject(projectId);
         sprintList.forEach(sprint -> {
             try {
                 deleteSprint(sprint.getSprintId());
             } catch (Exception e) {
-                throw new RuntimeException("Failure Saving Sprint");
+                throw new RuntimeException("Failure Deleting All Sprints");
             }
         });
     }
 
     /**
      * Saves a sprint object to the database
+     * @param sprint of type Sprint
+     * @return appropriate message depending on if the sprint is created or updated
+     * @throws Exception
      */
     public String saveSprint(Sprint sprint) throws Exception {
         String message;
@@ -78,13 +81,9 @@ public class SprintService {
             message = "Successfully Created " + sprint.getSprintLabel();
         else
             message = "Successfully Updated " + sprint.getSprintLabel();
+        sprintRepository.save(sprint);
+        return message;
 
-        try {
-            sprintRepository.save(sprint);
-            return message;
-        } catch (Exception e) {
-            throw new Exception("Failure Saving Sprint");
-        }
     }
 
     /**

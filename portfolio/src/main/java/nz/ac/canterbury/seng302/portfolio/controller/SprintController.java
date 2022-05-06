@@ -99,7 +99,7 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-         try {
+        try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
             String message = sprintService.saveSprint(sprint);
@@ -109,8 +109,6 @@ public class SprintController {
         }
             return "redirect:/project/{projectId}";
         }
-
-
 
         /**
          * Directs to page for editing a sprint
