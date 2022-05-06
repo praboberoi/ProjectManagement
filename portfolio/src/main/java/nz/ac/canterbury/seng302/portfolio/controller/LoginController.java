@@ -18,11 +18,15 @@ public class LoginController {
 
     private final AuthenticateClientService authenticateClientService;
 
-
+    /**
+     * If the user is not logged in redirects the user to the login page
+     * @return the login page
+     */
     @GetMapping("/")
     public String redirection() {
         return "/login";
     }
+
     public LoginController (AuthenticateClientService authenticateClientService) {
         this.authenticateClientService = authenticateClientService;
     }
