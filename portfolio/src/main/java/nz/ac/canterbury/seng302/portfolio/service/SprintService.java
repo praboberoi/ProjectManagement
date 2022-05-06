@@ -18,8 +18,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SprintService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintRepository sprintRepository;
-    private Sprint currentSprint;
-    private Boolean isNew = false;
 
     /**
      * To get a new sprint with the appropriate default values.
@@ -28,66 +26,64 @@ public class SprintService {
      * @throws Exception if no more sprints can be created with the current project date range.
      */
     public Sprint getNewSprint(Project project) throws Exception {
-        isNew = true;
         int sprintNo = countByProjectId(project.getProjectId()) + 1;
+        Sprint sprint = new Sprint.Builder()
+                                  .sprintLabel("Sprint " + sprintNo)
+                                  .sprintName("Sprint " + sprintNo).build();
 
-        currentSprint = new Sprint();
-        currentSprint.setSprintLabel("Sprint " + sprintNo);
-        currentSprint.setSprintName("Sprint " + sprintNo);
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.size() == 0) {
             LocalDate startDate = project.getStartDate().toLocalDate();
-            currentSprint.setStartDate(Date.valueOf(startDate));
-            currentSprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
+            sprint.setStartDate(Date.valueOf(startDate));
+            sprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
         } else {
             Sprint lastSprint = listSprints.get(listSprints.size() - 1);
             LocalDate lastSprintEndDate = lastSprint.getEndDate().toLocalDate();
             if (Date.valueOf(lastSprintEndDate).equals(project.getEndDate()))
                 throw new Exception("Project date limit reached, cannot create a new sprint");
             else {
-                currentSprint.setStartDate(Date.valueOf(lastSprintEndDate.plusDays(1)));
+                sprint.setStartDate(Date.valueOf(lastSprintEndDate.plusDays(1)));
 
                 if(Date.valueOf(lastSprintEndDate.plusWeeks(3)).after(project.getEndDate()))
-                    currentSprint.setEndDate(project.getEndDate());
+                    sprint.setEndDate(project.getEndDate());
                 else
-                    currentSprint.setEndDate(Date.valueOf(lastSprintEndDate.plusWeeks(3)));
+                    sprint.setEndDate(Date.valueOf(lastSprintEndDate.plusWeeks(3)));
             }
+
         }
-        return currentSprint;
+        return sprint;
     }
 
     /**
      * Deletes all the sprints of the given project ID
      * @param projectId of type int
      */
-    public void deleteAllSprints(int projectId) {
+    public void deleteAllSprints(int projectId) throws Exception {
         List<Sprint> sprintList = getSprintByProject(projectId);
         sprintList.forEach(sprint -> {
             try {
                 deleteSprint(sprint.getSprintId());
             } catch (Exception e) {
-                throw new RuntimeException("Failure Saving Sprint");
+                throw new RuntimeException("Failure Deleting All Sprints");
             }
         });
     }
 
     /**
      * Saves a sprint object to the database
+     * @param sprint of type Sprint
+     * @return appropriate message depending on if the sprint is created or updated
+     * @throws Exception
      */
-    public String saveSprint() throws Exception {
+    public String saveSprint(Sprint sprint) throws Exception {
         String message;
-        if (isNew)
-            message = "Successfully Created " + currentSprint.getSprintLabel();
+        if (sprint.getSprintId() == 0)
+            message = "Successfully Created " + sprint.getSprintLabel();
         else
-            message = "Successfully Updated " + currentSprint.getSprintLabel();
+            message = "Successfully Updated " + sprint.getSprintLabel();
+        sprintRepository.save(sprint);
+        return message;
 
-        isNew = false;
-        try {
-            sprintRepository.save(currentSprint);
-            return message;
-        } catch (Exception e) {
-            throw new Exception("Failure Saving Sprint");
-        }
     }
 
     /**
@@ -97,12 +93,11 @@ public class SprintService {
      */
     public Sprint getSprint(int sprintId) throws Exception {
         Optional<Sprint> result = sprintRepository.findById(sprintId);
-        if(result.isPresent()) {
-            currentSprint = result.get();
-            return currentSprint;
-        }
+        if(result.isPresent())
+            return result.get();
         else
             throw new Exception("Failed to locate the sprint in the database");
+
     }
 
     /**
@@ -133,7 +128,6 @@ public class SprintService {
             sprint.setSprintLabel("Sprint " + count.getAndIncrement());
             sprintRepository.save(sprint);
         });
-
     }
 
     /**
@@ -207,7 +201,7 @@ public class SprintService {
      * been made to the HTML page at the client.
      * @throws Exception indicating page values of the HTML page are manually changed.
      */
-    public boolean verifySprint(Sprint currentSprint) throws Exception {
+    public void verifySprint(Sprint currentSprint) throws Exception {
         if(currentSprint.getStartDate().after(currentSprint.getEndDate())) {
             throw new Exception("Start date must be before the end date.");
         }
@@ -224,14 +218,12 @@ public class SprintService {
             throw new Exception("Sprint must end before the project.");
         }
 
-        //TODO : Change the below from sprintName to label once its been added
-        List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
-                .filter(sp -> !(sp.getSprintName().equals(currentSprint.getSprintName())))
-                .filter(sp -> betweenDateRange(currentSprint, sp)).toList();
+        List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject()).stream()
+                .filter(sp -> !(sp.getSprintLabel().equals(sprint.getSprintLabel())))
+                .filter(sp -> (betweenDateRange(sp, sprint))).toList();
         if(sprints.size() > 0) {
             throw new Exception("Sprint overlaps another sprint.");
         }
-        return true;
     }
 
     /**
@@ -241,34 +233,18 @@ public class SprintService {
      * @param compSprint Given sprint
      * @return boolean value
      */
-    private boolean betweenDateRange(Sprint currentSprint, Sprint compSprint) {
-
-        Date startDate = currentSprint.getStartDate();
-        Date endDate = currentSprint.getEndDate();
+    private boolean betweenDateRange(Sprint compSprint, Sprint currentSprint) {
+        Date currentSprintStartDate = currentSprint.getStartDate();
+        Date currentSprintEndDate = currentSprint.getEndDate();
 
         Date compSprintStartDate = compSprint.getStartDate();
         Date compSprintEndDate = compSprint.getEndDate();
 
         // Check for overlaping dates retrived from https://www.codespeedy.com/check-if-two-date-ranges-overlap-or-not-in-java/
-        return startDate.before(compSprintStartDate) && endDate.after(compSprintStartDate) ||
-        startDate.before(compSprintEndDate) && endDate.after(compSprintEndDate) ||
-        startDate.before(compSprintStartDate) && endDate.after(compSprintEndDate) ||
-        startDate.after(compSprintStartDate) && endDate.before(compSprintEndDate) ;
-    }
-
-    /**
-     * Updates the currentSprint to the given sprint
-     * @param sprint of type Sprint
-     */
-    public void updateCurrentSprint(Sprint sprint) {
-        if (isNew) {
-            currentSprint = sprint;
-        } else {
-            currentSprint.setSprintName(sprint.getSprintName());
-            currentSprint.setDescription(sprint.getDescription());
-            currentSprint.setStartDate(sprint.getStartDate());
-            currentSprint.setEndDate(sprint.getEndDate());
-        }
+        return currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintStartDate) ||
+        currentSprintStartDate.before(compSprintEndDate) && currentSprintEndDate.after(compSprintEndDate) ||
+        currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintEndDate) ||
+        currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate) ;
     }
 }
 
