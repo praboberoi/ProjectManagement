@@ -22,6 +22,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.sql.Date;
 import java.util.List;
 
+/**
+ * Accepts requests relating to sprints from the client and redirects it to the correct service.
+ */
 @Controller
 public class SprintController {
     @Autowired private SprintService sprintService;
@@ -145,7 +148,6 @@ public class SprintController {
      * @param model
      * @return
     */    
-    /*make sure to update project.html for path*/
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,

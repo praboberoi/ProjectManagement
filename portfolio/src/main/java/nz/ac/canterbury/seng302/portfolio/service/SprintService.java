@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Contains the majority of the business logic that relates to sprints.
+ */
 @Service
 public class SprintService {
     @Autowired private ProjectRepository projectRepo;
@@ -175,7 +178,7 @@ public class SprintService {
             LocalDate sprintMaxDate;
 
             int currentSprintIndex = sprints.indexOf(sprint);
-            if(currentSprintIndex > 0 ) {
+            if (currentSprintIndex > 0 ) {
                 previousSprintEndDate = sprints.get(currentSprintIndex - 1).getEndDate();
                 sprintMinDate = previousSprintEndDate.toLocalDate().plusDays(1);
             } else {
@@ -183,7 +186,7 @@ public class SprintService {
                 sprintMinDate = previousSprintEndDate.toLocalDate();
             }
 
-            if(currentSprintIndex < sprints.size() - 1) {
+            if (currentSprintIndex < sprints.size() - 1) {
                 nextSprintStartDate = sprints.get(currentSprintIndex + 1).getStartDate();
                 sprintMaxDate = nextSprintStartDate.toLocalDate().minusDays(1);
             } else {
@@ -199,7 +202,8 @@ public class SprintService {
     /**
      * Verifies the current sprint against other sprints in the project to make sure there is no manual changes have
      * been made to the HTML page at the client.
-     * @throws Exception indicating page values of the HTML page are manually changed.
+     * @throws Exception indicating what validation problem exists.
+     * @return If the object was successfully validated
      */
     public boolean verifySprint(Sprint currentSprint) throws Exception {
         if(currentSprint.getStartDate().after(currentSprint.getEndDate())) {
@@ -232,7 +236,7 @@ public class SprintService {
      * the current sprint lies between or overlaps with the given sprint's date range otherwise returns false.
      * @param currentSprint The sprint to be compared against
      * @param compSprint Given sprint
-     * @return boolean value
+     * @return If the currentSprint overlaps with the compSprint
      */
     private boolean betweenDateRange(Sprint compSprint, Sprint currentSprint) {
         Date currentSprintStartDate = currentSprint.getStartDate();

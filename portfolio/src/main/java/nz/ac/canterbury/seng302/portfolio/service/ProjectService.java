@@ -10,6 +10,9 @@ import java.util.Optional;
 
 // more info here https://codebun.com/spring-boot-crud-application-using-thymeleaf-and-spring-data-jpa/
 
+/**
+ * Contains the majority of the business logic that relates to projects.
+ */
 @Service
 public class ProjectService {
     @Autowired private ProjectRepository repository;
