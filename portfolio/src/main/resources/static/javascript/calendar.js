@@ -1,6 +1,7 @@
 const PROJECT_ID = window.location.pathname.split('/').slice(-1)
 const PROJECT_START_DATE = document.getElementById("startDate").value
 const PROJECT_END_DATE = document.getElementById('endDate').value
+const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'mediumVioletRed', 'mediumSeaGreen', 'orangeRed']
 
 document.addEventListener('DOMContentLoaded', function() {
     let httpRequest = new XMLHttpRequest();
@@ -19,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         title: sprint.sprintLabel + ": " + sprint.sprintName,
                         start: sprint.startDate,
                         end: tempEndDate,
-                        backgroundColor: "black",
+                        backgroundColor: SPRINT_COLOURS[i % SPRINT_COLOURS.length],
                         overlap: false,
                         allDay: true
                     }
