@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -98,23 +99,20 @@ public class SprintController {
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
-        Sprint sprint,
+        @ModelAttribute Sprint sprint,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             sprint.setProject(projectService.getProjectById(projectId));
-            sprintService.updateCurrentSprint(sprint);
-            sprintService.verifySprint();
-            String message = sprintService.saveSprint();
+            sprintService.verifySprint(sprint);
+            String message = sprintService.saveSprint(sprint);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
             return "redirect:/project/{projectId}";
         }
-
-
 
         /**
          * Directs to page for editing a sprint

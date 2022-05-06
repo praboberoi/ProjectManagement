@@ -91,8 +91,8 @@
               <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
                 <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                   <img class="icon img-color-primary" src="/icons/edit-icon.svg"/> Edit</a>
-                <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal"  data-target="#conformationModal"  th:data-projectId = "${project.projectId}"
-                   th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">
+                <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
+                        th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">
                   <img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
               </div>
             </div>
