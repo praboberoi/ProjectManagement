@@ -1,4 +1,6 @@
 const PROJECT_ID = window.location.pathname.split('/').slice(-1)
+const PROJECT_START_DATE = document.getElementById("startDate").value
+const PROJECT_END_DATE = document.getElementById('endDate').value
 
 document.addEventListener('DOMContentLoaded', function() {
     let httpRequest = new XMLHttpRequest();
@@ -29,14 +31,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 firstDay: 1,
                 events: responseList,
                 validRange: {
-                    start: '2022-05-01',
-                    end: '2022-07-03'
+                    start: PROJECT_START_DATE,
+                    end: PROJECT_END_DATE
                 }
             });
-            console.log(responseList)
             calendar.render();
         } else {
-            console.log(httpRequest.response)
         }
     }
 
