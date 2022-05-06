@@ -94,7 +94,6 @@ public class AccountController {
     /**
      * A mapping to a get request to edit the user, which returns the current details of the user to be edited
      * @param principal Authentication information containing user info
-     * @param favouriteColour The favourite colour of the user to be edited
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
@@ -158,6 +157,11 @@ public class AccountController {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
+        if (user.getProfileImagePath() == null) {
+            user.setProfileImagePath("portfolio/resources/static/icons/user.png");
+        } else {
+            user.setProfileImagePath("portfolio/resources/cachedProfilePicture/" + user.getProfileImagePath());
+        }
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
 
