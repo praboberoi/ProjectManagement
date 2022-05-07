@@ -16,9 +16,42 @@ function renderCalendar(sprintList) {
         validRange: {
             start: PROJECT_START_DATE,
             end: PROJECT_END_DATE
+        },
+        eventClick: function(info) {
+            console.log(info);
+            makeEventEditable(info.event);
+        },
+        eventResize: function(info) {
+            editEventDuration(info.event);
         }
     });
     calendar.render();
+}
+
+function makeEventEditable(event) {
+    // event._context.options.eventResizableFromStart = true;
+    console.log(event);
+}
+
+function editEventDuration(event) {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            console.log(httpRequest.response);
+        }
+    }
+
+    httpRequest.open('POST', '/sprint/' + event.id + '/editSprint')
+
+    // Need to remove 1 day
+    let endDate = new Date(event.end);
+    endDate.setDate(endDate.getDate() - 1);
+
+    var params = new FormData();
+    params.append('startDate', event.start.getTime());
+    params.append('endDate', endDate.getTime());
+
+    httpRequest.send(params);
 }
 
 /**
@@ -50,7 +83,9 @@ function getSprintList(sprintJson) {
                 end: tempEndDate,
                 backgroundColor: SPRINT_COLOURS[i % SPRINT_COLOURS.length],
                 overlap: false,
-                allDay: true
+                allDay: true,
+                editable: true,
+                resizableFromStart: true
             }
         );
     });
