@@ -15,6 +15,7 @@ function renderCalendar(sprintList) {
         initialView: 'dayGridMonth',
         firstDay: 1,
         events: sprintList,
+        eventResizableFromStart: true,
         validRange: {
             start: PROJECT_START_DATE,
             end: PROJECT_END_DATE
@@ -32,14 +33,23 @@ function renderCalendar(sprintList) {
     calendar.render();
 }
 
+/**
+ * On Click, set the events editable on the calendar.
+ * @param info
+ */
 function makeEventEditable(info) {
     calendar.getEvents().forEach((event, i) => {
         event.setProp('editable', false)
     });
 
     info.event.setProp('editable', true)
+    info.event.setProp('eventResizableFromStart', true)
 }
 
+/**
+ * Send an HTTP request to update the event's start and end date.
+ * @param info
+ */
 function editEventDuration(info) {
     let event = info.event;
     let httpRequest = new XMLHttpRequest();
@@ -50,7 +60,7 @@ function editEventDuration(info) {
                 CALENDAR_ERROR.innerText = "";
             } else {
                 CALENDAR_ERROR.hidden = false;
-                CALENDAR_ERROR.innerText = "An error occured and the event could not be saved.";
+                CALENDAR_ERROR.innerText = "An error occurred and the event could not be saved.";
                 info.revert();
             }
         }
@@ -99,7 +109,6 @@ function getSprintList(sprintJson) {
                 backgroundColor: SPRINT_COLOURS[i % SPRINT_COLOURS.length],
                 overlap: false,
                 allDay: true,
-                resizableFromStart: true
             }
         );
     });
