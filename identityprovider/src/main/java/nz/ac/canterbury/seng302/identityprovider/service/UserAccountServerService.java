@@ -270,13 +270,18 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         }
     }
 
+    /**
+     * Uses request to find image path, and sends the image data back to the portfolio to be stored in the cache.
+     * @param responseObserver Used to send image data to the portfolio
+     * @param request Contains user id and file type
+     */
 
-    public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, ProfilePhotoUploadMetadata request) {
+    public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, UploadUserProfilePhotoRequest request) {
 
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
                 .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
-                        .setUserId(request.getUserId())
-                        .setFileType(request.getFileType()).build())
+                        .setUserId(request.getMetaData().getUserId())
+                        .setFileType(request.getMetaData().getFileType()).build())
                 .build());
 
         responseObserver.onNext(metadata);
