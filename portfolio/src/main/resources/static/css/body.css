@@ -133,5 +133,10 @@ input:invalid{
 }
 
 .fc-event-draggable {
+    border-color: black;
     border-width: 3px;
+    border-left-width: 5px;
+    border-right-width: 5px;
+    border-left-color: rgb(185, 182, 163);
+    border-right-color: rgb(185, 182, 163);
   }

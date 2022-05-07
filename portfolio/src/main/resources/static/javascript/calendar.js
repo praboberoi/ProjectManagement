@@ -21,11 +21,11 @@ function renderCalendar(sprintList) {
             end: PROJECT_END_DATE
         },
         eventMouseEnter: function (info) {
-            info.event.setProp("borderColor",  'black');
+            // info.event.setProp("borderColor",  'black');
             makeEventEditable(info);
         },
         eventMouseLeave: function (info) {
-            info.event.setProp("borderColor",  null);
+            // info.event.setProp("borderColor",  null);
             removeEventEditable(info);
         },
         eventResize: function(info) {
