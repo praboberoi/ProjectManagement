@@ -180,6 +180,13 @@ public class SprintController {
         return "redirect:/project/{projectId}";
     }
 
+    /**
+     * Tries to set the selected sprint's start and end date to those provided
+     * @param sprintId Sprint to change
+     * @param startDate New start date of the sprint
+     * @param endDate New end date of the sprint
+     * @return An error message if sprint can't save
+     */
     @PostMapping("/sprint/{sprintId}/editSprint")
     public ResponseEntity<String> editSprint( 
         @PathVariable("sprintId") int sprintId,
