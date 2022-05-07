@@ -49,7 +49,7 @@ public class SprintController {
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "project";
-        } catch (Exception e) {
+        } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
         }
@@ -91,14 +91,19 @@ public class SprintController {
 
     /**
      * Saves a sprint and redirects to project page
-     * @param sprint
-     * @return
+     * @param projectId of type int
+     * @param sprint of type Sprint
+     * @param principal of type AuthState
+     * @param model of type Model
+     * @param ra of type RedirectAttributes
+     * @return To the project page or error page
      */
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
         @AuthenticationPrincipal AuthState principal,
+        Model model,
         RedirectAttributes ra) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
@@ -111,17 +116,17 @@ public class SprintController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }
 
-        /**
-         * Directs to page for editing a sprint
-         * @param sprintId ID for sprint being edited
-         * @param model
-         * @return
-         */
-    /*make sure to update project.html for path*/
+    /**
+     * Directs to page for editing a sprint
+     * @param sprintId ID for sprint being edited
+     * @param model
+     * @return
+     */
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
@@ -176,6 +181,7 @@ public class SprintController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
 

@@ -214,7 +214,7 @@ public class SprintService {
 
         List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
 
-        if(sprint.getSprintId() == 0 && !sprint.getSprintLabel().equals("Sprint "+ (sprints.size() + 1)))
+        if(sprint.getSprintId() == 0 && !Objects.equals(sprint.getSprintLabel(),"Sprint "+ (sprints.size() + 1)))
             throw new IncorrectDetailsException("Sprint labels can not be modified");
 
         else if(sprint.getSprintId() > 0 && !Objects.equals(getSprint(sprint.getSprintId()).getSprintLabel(), sprint.getSprintLabel()))
