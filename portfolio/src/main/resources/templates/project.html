@@ -39,8 +39,6 @@
   <br>
   <div class="card">
     <div class="card-header">
-      <input type="hidden" id="startDate" th:value="*{project.startDate}" />
-      <input type="hidden" id="endDate" th:value="*{project.endDate}" />
       Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]
     </div>
     <div class="card-body">
