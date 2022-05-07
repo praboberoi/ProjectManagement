@@ -2,9 +2,10 @@ const PROJECT_ID = window.location.pathname.split('/').slice(-1);
 const PROJECT_START_DATE = document.getElementById("startDate").value;
 const PROJECT_END_DATE = document.getElementById('endDate').value;
 const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'mediumVioletRed', 'mediumSeaGreen', 'orangeRed'];
-const CALENDAR_ERROR = document.getElementById('calendarError');
+const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
 let calendar;
+let clicked = false;
 
 /**
  * Renders the calendar onto the page with sprints
@@ -21,18 +22,22 @@ function renderCalendar(sprintList) {
             end: PROJECT_END_DATE
         },
         eventMouseEnter: function (info) {
-            // info.event.setProp("borderColor",  'black');
             makeEventEditable(info);
         },
         eventMouseLeave: function (info) {
-            // info.event.setProp("borderColor",  null);
-            removeEventEditable(info);
+            if (!clicked) {
+                removeEventEditable(info);
+            }
         },
         eventResize: function(info) {
             editEventDuration(info);
         },
         eventDrop: function(info) {
             editEventDuration(info);
+        },
+        eventClick: function(info) {
+            makeEventEditable(info);
+            clicked = true;
         }
     });
     calendar.render();
@@ -67,12 +72,16 @@ function editEventDuration(info) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.response == 'true') {
-                CALENDAR_ERROR.hidden = true;
-                CALENDAR_ERROR.innerText = "";
+            if (httpRequest.response == "") {
+                CALENDAR_MESSAGE.hidden = false;
+                CALENDAR_MESSAGE.classList.remove("alert-danger");
+                CALENDAR_MESSAGE.classList.add("alert-success");
+                CALENDAR_MESSAGE.innerText = "Event saved successfully";
             } else {
-                CALENDAR_ERROR.hidden = false;
-                CALENDAR_ERROR.innerText = "An error occurred and the event could not be saved.";
+                CALENDAR_MESSAGE.hidden = false;
+                CALENDAR_MESSAGE.classList.add("alert-danger");
+                CALENDAR_MESSAGE.classList.remove("alert-success");
+                CALENDAR_MESSAGE.innerText = httpRequest.response;
                 info.revert();
             }
         }

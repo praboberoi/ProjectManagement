@@ -181,7 +181,7 @@ public class SprintController {
     }
 
     @PostMapping("/sprint/{sprintId}/editSprint")
-    public ResponseEntity<Boolean> editSprint( 
+    public ResponseEntity<String> editSprint( 
         @PathVariable("sprintId") int sprintId,
         String startDate,
         String endDate
@@ -197,9 +197,9 @@ public class SprintController {
             sprintService.verifySprint(sprint);
             sprintService.saveSprint(sprint);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.OK).body(false);
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(true);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
 
