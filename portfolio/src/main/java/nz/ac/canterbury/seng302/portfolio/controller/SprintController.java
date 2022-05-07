@@ -30,9 +30,9 @@ public class SprintController {
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
      * to the individual project pages.
-     * @param projectId - ID of the project selected to view.
-     * @param principal - Current User.
-     * @param model
+     * @param projectId ID of the project selected to view
+     * @param principal Current User of type {@link AuthState}
+     * @param model Of type {@link Model}
      * @return - name of the html page to display
      */
     @GetMapping("/project/{projectId}")
@@ -56,9 +56,12 @@ public class SprintController {
     }
 
     /**
-     * Displays page for adding a new sprint
-     * @param model
-     * @return
+     * Maps a new sprint, current user, user's role and button info to sprintForm.html
+     * @param model Of type {@link Model}
+     * @param projectId Of type int
+     * @param principal Of type {@link AuthState}
+     * @param ra Of type {@link RedirectAttributes}
+     * @return sprintForm.html or project.html
      */
     @GetMapping("/project/{projectId}/newSprint")
     public String newSprint(
@@ -92,11 +95,11 @@ public class SprintController {
     /**
      * Saves a sprint and redirects to project page
      * @param projectId of type int
-     * @param sprint of type Sprint
-     * @param principal of type AuthState
-     * @param model of type Model
-     * @param ra of type RedirectAttributes
-     * @return To the project page or error page
+     * @param sprint of type {@link Sprint}
+     * @param principal of type {@link AuthState}
+     * @param model of type {@link Model}
+     * @param ra of type {@link RedirectAttributes}
+     * @return project.html or error.html
      */
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(
@@ -122,10 +125,13 @@ public class SprintController {
     }
 
     /**
-     * Directs to page for editing a sprint
-     * @param sprintId ID for sprint being edited
-     * @param model
-     * @return
+     * Maps an existing sprint, current user, user's role and button info to sprintForm.html
+     * @param sprintId Of type int
+     * @param projectId Of type int
+     * @param model Of type {@link Model}
+     * @param principal Of type {@link AuthState}
+     * @param ra Of type {@link RedirectAttributes}
+     * @return sprintForm.html or project.html
      */
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
@@ -157,10 +163,12 @@ public class SprintController {
     }
 
     /**
-     * Deletes a sprint and redirects back to project page
-     * @param sprintId ID of sprint being deleted
-     * @param model
-     * @return
+     * Deletes the sprint and redirects back to project page
+     * @param model Of type {@link Model}
+     * @param projectId Of type int
+     * @param principal Of type {@link AuthState}
+     * @param ra Of type {@link RedirectAttributes}
+     * @return project.html or error.html
      */
     @PostMapping("/project/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(

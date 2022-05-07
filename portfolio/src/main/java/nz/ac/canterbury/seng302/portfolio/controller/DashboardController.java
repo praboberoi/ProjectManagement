@@ -28,12 +28,10 @@ public class DashboardController {
     @Autowired private SprintService sprintService;
 
     /**
-     * Adds the project list to the Dashboard.
-     * Gets the list of the current user's roles
-     * Opens dashboard.html
-     * @param model of type Model
-     * @param principal - current user.
-     * @return name of the dashboard html file.
+     * Maps all the projects, current user and user's role to the dashboard.html page
+     * @param model Of type {@link Model}
+     * @param principal Current user of type {@link AuthState}
+     * @return dashboard.html file
      */
     @GetMapping("/dashboard")
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
@@ -45,10 +43,12 @@ public class DashboardController {
         return "dashboard";
     }
 
+
     /**
-     * Opens project.html and populates it with a new Project object
-     * @param model
-     * @return
+     * Maps a new project, current user, user's role and button info to projectForm.html
+     * @param model Of type {@link Model}
+     * @param principal Of type{@link AuthState}
+     * @return projectForm.html file
      */
     @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
@@ -67,11 +67,13 @@ public class DashboardController {
         return "projectForm";
     }
 
-
     /**
      * Saves project object to the database and redirects to dashboard page
-     * @param project
-     * @return
+     * @param project Of type {@link Project}
+     * @param model Of type {@link Model}
+     * @param ra Of type {@link RedirectAttributes}
+     * @param principal Of type {@link AuthState}
+     * @return Either the dashboard.html file or error.html file
      */
     @PostMapping("/dashboard/saveProject")
     public String saveProject(
@@ -95,10 +97,12 @@ public class DashboardController {
     }
 
     /**
-     * Opens edit page (project.html) and populates with given project
-     * @param projectId ID of project selected
-     * @param model
-     * @return
+     * Maps an existing project, current user, user's role and button info to projectForm.html
+     * @param projectId Of type int
+     * @param model Of type {@link Model}
+     * @param ra Of type {@link RedirectAttributes}
+     * @param principal Of type {@link AuthState}
+     * @return projectForm.html file or dashboard.html file
      */
     @GetMapping("/dashboard/editProject/{projectId}")
     public String showEditForm(
@@ -128,9 +132,12 @@ public class DashboardController {
     }
 
     /**
-     * Deletes project from the database using projectId
-     * @param projectId ID for selected project
-     * @return
+     * Deletes the project and all the related sprints
+     * @param projectId Of type int
+     * @param ra Of type {@link RedirectAttributes}
+     * @param model of type {@link Model}
+     * @param principal of type {@link AuthState}
+     * @return dashboard.html file or error.html file
      */
     @PostMapping("/dashboard/deleteProject/{projectId}")
     public String deleteProject(

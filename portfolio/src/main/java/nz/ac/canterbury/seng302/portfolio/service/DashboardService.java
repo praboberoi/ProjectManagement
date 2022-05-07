@@ -106,10 +106,8 @@ public class DashboardService {
 
             if(project.getStartDate().after(project.getEndDate()))
                 throw new IncorrectDetailsException("Start date of the project cannot be after the end date of the project");
+
         }
-
-
-
     }
 
     /**
