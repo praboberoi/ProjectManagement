@@ -191,8 +191,12 @@ public class SprintController {
     public ResponseEntity<String> editSprint( 
         @PathVariable("sprintId") int sprintId,
         String startDate,
-        String endDate
+        String endDate,
+        @AuthenticationPrincipal AuthState principal
     ) {
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) 
+            return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
+
         try {
             Date newStartDate = new Date(Long.parseLong(startDate));
             Date newEndDate = new Date(Long.parseLong(endDate));

@@ -1,9 +1,7 @@
-const PROJECT_ID = window.location.pathname.split('/').slice(-1);
-const PROJECT_START_DATE = document.getElementById("startDate").value;
-const PROJECT_END_DATE = document.getElementById('endDate').value;
 const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'mediumVioletRed', 'mediumSeaGreen', 'orangeRed'];
 const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
+const adminRoles = ['TEACHER', 'COURSE_ADMINISTRATOR'];
 let calendar;
 let clicked = true;
 
@@ -18,15 +16,19 @@ function renderCalendar(sprintList) {
         events: sprintList,
         eventResizableFromStart: true,
         validRange: {
-            start: PROJECT_START_DATE,
-            end: PROJECT_END_DATE
+            start: projectStartDate,
+            end: projectEndDate
         },
         eventMouseEnter: function (info) {
-            makeEventEditable(info);
+            if (userRoles.some(role => adminRoles.indexOf(role) >= 0)) {
+                makeEventEditable(info);
+            }
         },
         eventMouseLeave: function (info) {
-            if (!info.event.extendedProps.clicked) {
-                removeEventEditable(info);
+            if (userRoles.some(role => adminRoles.indexOf(role) >= 0)) {
+                if (!info.event.extendedProps.clicked) {
+                    removeEventEditable(info);
+                }
             }
         },
         eventResize: function(info) {
@@ -36,9 +38,11 @@ function renderCalendar(sprintList) {
             editEventDuration(info);
         },
         eventClick: function(info) {
-            clicked = false;
-            makeEventEditable(info);
-            clicked = true;
+            if (userRoles.some(role => adminRoles.indexOf(role) >= 0)) {
+                clicked = false;
+                makeEventEditable(info);
+                clicked = true;
+            }
         }
     });
     calendar.render();
@@ -153,6 +157,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    httpRequest.open('GET', '/project/' + PROJECT_ID + '/getAllSprints/')
+    httpRequest.open('GET', '/project/' + projectId + '/getAllSprints/')
     httpRequest.send()
 });
