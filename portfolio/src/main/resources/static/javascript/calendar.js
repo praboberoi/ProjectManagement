@@ -5,7 +5,7 @@ const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'medium
 const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
 let calendar;
-let clicked = false;
+let clicked = true;
 
 /**
  * Renders the calendar onto the page with sprints
@@ -25,7 +25,7 @@ function renderCalendar(sprintList) {
             makeEventEditable(info);
         },
         eventMouseLeave: function (info) {
-            if (!clicked) {
+            if (!info.event.extendedProps.clicked) {
                 removeEventEditable(info);
             }
         },
@@ -36,6 +36,7 @@ function renderCalendar(sprintList) {
             editEventDuration(info);
         },
         eventClick: function(info) {
+            clicked = false;
             makeEventEditable(info);
             clicked = true;
         }
@@ -48,10 +49,13 @@ function renderCalendar(sprintList) {
  * @param info
  */
 function makeEventEditable(info) {
-    calendar.getEvents().forEach((event, i) => {
-        event.setProp('editable', false)
-    });
-
+    if (!clicked) {
+        calendar.getEvents().forEach((event, i) => {
+            event.setExtendedProp("clicked", false);
+            event.setProp('editable', false)
+        });
+        info.event.setExtendedProp("clicked", true)
+    }
     info.event.setProp('editable', true)
 }
 
@@ -130,6 +134,7 @@ function getSprintList(sprintJson) {
                 backgroundColor: SPRINT_COLOURS[i % SPRINT_COLOURS.length],
                 overlap: false,
                 allDay: true,
+                clicked: false
             }
         );
     });
