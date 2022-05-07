@@ -283,7 +283,6 @@ public class UserAccountClientService {
 
         streamObserver.onNext(metadata);
 
-        System.out.println("asdfgd");
         // upload file in chunks and upload as a stream
 //        InputStream inputStream = Files.newInputStream(path);
         InputStream inputStream = file.getInputStream();

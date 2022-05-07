@@ -12,9 +12,7 @@ import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 
-import java.io.File;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -172,7 +170,10 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             OutputStream writer;
             FileUploadStatus status = FileUploadStatus.IN_PROGRESS;
             User user;
+            String fileName;
             Path path;
+            Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
+
 
             /**
              * Sets the OutputStream on the first request and then sends
@@ -185,8 +186,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                 try {
                     if (request.hasMetaData()) {
 
-                        path = getFilePath(request);
-
+                        fileName = getFileName(request);
+                        path = SERVER_BASE_PATH.resolve(fileName);
                         File f = new File(String.valueOf(path));
                         if (f.exists()) {
                             try {
@@ -229,7 +230,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                         .setMessage("File upload progress: " + status)
                         .build();
 
-                user.setProfileImagePath(String.valueOf(path));
+                user.setProfileImagePath(String.valueOf(fileName));
                 userRepository.save(user);
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
@@ -254,10 +255,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * @param request Contains image information
      * @return Writer containing information to save file
      */
-    private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
-        Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
-        var fileName = request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
-        return SERVER_BASE_PATH.resolve(fileName);
+    private String getFileName(UploadUserProfilePhotoRequest request) throws IOException {
+        var fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+        return fileName;
     }
 
     /**
@@ -273,8 +273,36 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     }
 
 
+    public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, ProfilePhotoUploadMetadata request) {
 
+        UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
+                .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
+                        .setUserId(request.getUserId())
+                        .setFileType(request.getFileType()).build())
+                .build());
 
+        responseObserver.onNext(metadata);
+        try {
+            String fileName = getFileName(metadata);
+            // upload file in chunks and upload as a stream
+            InputStream inputStream = new FileInputStream(String.valueOf(Paths.get("identityprovider/src/main/resources/profilePhotos").resolve(fileName)));
 
+            byte[] bytes = new byte[4096];
+            int size;
+            while((size = inputStream.read(bytes)) > 0){
+                UploadUserProfilePhotoRequest uploadImage = UploadUserProfilePhotoRequest.newBuilder()
+                        .setFileContent(ByteString.copyFrom(bytes,0,size))
+                        .build();
+                responseObserver.onNext(uploadImage);
+            }
+            // close stream
+            inputStream.close();
+
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(e.fillInStackTrace());
+        }
+    }
 
 }
