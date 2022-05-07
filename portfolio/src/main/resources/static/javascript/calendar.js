@@ -1,7 +1,8 @@
-const PROJECT_ID = window.location.pathname.split('/').slice(-1)
-const PROJECT_START_DATE = document.getElementById("startDate").value
-const PROJECT_END_DATE = document.getElementById('endDate').value
-const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'mediumVioletRed', 'mediumSeaGreen', 'orangeRed']
+const PROJECT_ID = window.location.pathname.split('/').slice(-1);
+const PROJECT_START_DATE = document.getElementById("startDate").value;
+const PROJECT_END_DATE = document.getElementById('endDate').value;
+const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'mediumVioletRed', 'mediumSeaGreen', 'orangeRed'];
+const CALENDAR_ERROR = document.getElementById('calendarError');
 
 /**
  * Renders the calendar onto the page with sprints
@@ -22,22 +23,33 @@ function renderCalendar(sprintList) {
             makeEventEditable(info.event);
         },
         eventResize: function(info) {
-            editEventDuration(info.event);
+            editEventDuration(info);
+        },
+        eventDrop: function(info) {
+            editEventDuration(info);
         }
     });
     calendar.render();
 }
 
 function makeEventEditable(event) {
-    // event._context.options.eventResizableFromStart = true;
     console.log(event);
 }
 
-function editEventDuration(event) {
+function editEventDuration(info) {
+    let event = info.event;
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             console.log(httpRequest.response);
+            if (httpRequest.response == 'true') {
+                CALENDAR_ERROR.hidden = true;
+                CALENDAR_ERROR.innerText = "";
+            } else {
+                CALENDAR_ERROR.hidden = false;
+                CALENDAR_ERROR.innerText = "An error occured and the event could not be saved.";
+                info.revert();
+            }
         }
     }
 
