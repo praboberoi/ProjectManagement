@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -155,13 +157,15 @@ public class AccountController {
 
     private void addAttributesToModel(AuthState principal, Model model) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
-
         User user = new User(idpResponse);
         if (user.getProfileImagePath() == null) {
-            user.setProfileImagePath("portfolio/resources/static/icons/user.png");
+            Path imagePath = Paths.get("portfolio/resources/static/cachedProfilePicture/default-image.png");
+            user.setProfileImagePath(imagePath.toString());
         } else {
-            user.setProfileImagePath("portfolio/resources/cachedProfilePicture/" + user.getProfileImagePath());
+            Path imagePath = Paths.get("portfolio/resources/static/cachedProfilePicture/" + user.getProfileImagePath());
+            user.setProfileImagePath(imagePath.toString());
         }
+        System.out.println(user.getProfileImagePath());
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
 
