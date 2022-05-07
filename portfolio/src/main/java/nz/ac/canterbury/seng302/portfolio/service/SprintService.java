@@ -213,13 +213,14 @@ public class SprintService {
             throw new IncorrectDetailsException("Sprint end date can not be after project end date");
 
         List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
-        String[] labelList = sprint.getSprintLabel().split(" ", -1);
 
-        if(labelList.length > 2 || Integer.parseInt(labelList[1]) > sprints.size() - 1 ||
-            sprints.stream().filter(sp -> Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel())).count() > 1)
+        if(sprint.getSprintId() == 0 && !sprint.getSprintLabel().equals("Sprint "+ (sprints.size() + 1)))
             throw new IncorrectDetailsException("Sprint labels can not be modified");
 
-        if(sprints.stream().filter(sp -> !(sp.getSprintLabel().equals(sprint.getSprintLabel())))
+        else if(sprint.getSprintId() > 0 && !Objects.equals(getSprint(sprint.getSprintId()).getSprintLabel(), sprint.getSprintLabel()))
+            throw new IncorrectDetailsException("Sprint labels can not be modified");
+
+        if(sprints.stream().filter(sp -> !Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel()))
                             .anyMatch(sp -> (betweenDateRange(sp, sprint))))
             throw new IncorrectDetailsException("Sprint dates can not overlap with another sprint");
     }
