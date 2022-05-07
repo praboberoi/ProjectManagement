@@ -130,6 +130,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) throws NoSuchElementException {
         UserResponse.Builder reply = UserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getId());
+        Path imagePath;
         if (user == null) {
             throw new NoSuchElementException("User doesn't exist");
         }
@@ -145,12 +146,14 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
 
-//        reply.setProfileImagePath("icons/userr.png");
-//        if(user.getProfileImagePath() == ""){
-//            reply.setProfileImagePath("icons/userr.png");
-//        } else {
-//            reply.setProfileImagePath(user.getProfileImagePath());
-//        }
+        if (user.getProfileImagePath() == null) {
+             imagePath = Paths.get("cachedprofilephoto/default-image.png");
+
+        } else {
+             imagePath = Paths.get("cachedprofilephoto/" + user.getProfileImagePath());
+
+        }
+        reply.setProfileImagePath(imagePath.toString());
 
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
