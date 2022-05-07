@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
@@ -172,7 +171,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             User user;
             String fileName;
             Path path;
-            Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
+            final Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
 
 
             /**
@@ -256,8 +255,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * @return Writer containing information to save file
      */
     private String getFileName(UploadUserProfilePhotoRequest request) throws IOException {
-        var fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
-        return fileName;
+        return "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
     }
 
     /**
