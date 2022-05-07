@@ -148,8 +148,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
 
-//        if(user.getProfileImagePath() == null){
-//            reply.setProfileImagePath("portfolio/src/main/resources/static/icons/userr.png");
+//        reply.setProfileImagePath("icons/userr.png");
+//        if(user.getProfileImagePath() == ""){
+//            reply.setProfileImagePath("icons/userr.png");
 //        } else {
 //            reply.setProfileImagePath(user.getProfileImagePath());
 //        }

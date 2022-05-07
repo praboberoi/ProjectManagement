@@ -175,10 +175,10 @@ public class AccountController {
 
         // write the image to the path
         // normally files would be written with outputstream in server side Service code(??)
-        Files.write(path, file1.getBytes());
+//        Files.write(path, file1.getBytes());
 //        System.out.println("save cache");
 
-        userAccountClientService.uploadImage(userId, extension, path);
+        userAccountClientService.uploadImage(userId, extension, file1);
 
 //       End of image
 
@@ -228,6 +228,7 @@ public class AccountController {
         User user = new User(idpResponse);
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+//        model.addAttribute("image", user.getProfileImagePath());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
