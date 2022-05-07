@@ -58,7 +58,7 @@ a.project-name {
 }
 
 .icon {
-    vertical-align: -.1em; !important;
+    vertical-align: -.1em !important;
 }
 
 
@@ -131,3 +131,7 @@ input:invalid{
 .profile-photo {
     border-radius: 50%;
 }
+
+.fc-event-draggable {
+    border-width: 3px;
+  }

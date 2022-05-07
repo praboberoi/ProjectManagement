@@ -21,12 +21,12 @@ function renderCalendar(sprintList) {
             end: PROJECT_END_DATE
         },
         eventMouseEnter: function (info) {
-            info.el.style.borderColor = 'black';
-            info.el.style.borderWidth = '3px';
+            info.event.setProp("borderColor",  'black');
             makeEventEditable(info);
         },
         eventMouseLeave: function (info) {
-            info.el.style.border = null;
+            info.event.setProp("borderColor",  null);
+            removeEventEditable(info);
         },
         eventResize: function(info) {
             editEventDuration(info);
@@ -39,7 +39,7 @@ function renderCalendar(sprintList) {
 }
 
 /**
- * On Click, set the events editable on the calendar.
+ * Makes the event editable on the calendar.
  * @param info
  */
 function makeEventEditable(info) {
@@ -48,6 +48,14 @@ function makeEventEditable(info) {
     });
 
     info.event.setProp('editable', true)
+}
+
+/**
+ * Makes the event uneditable on the calendar.
+ * @param info
+ */
+ function removeEventEditable(info) {
+    info.event.setProp('editable', false)
 }
 
 /**
