@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.persistence.PersistenceException;
 import java.util.List;
 
 @Controller
@@ -53,10 +55,6 @@ public class SprintController {
         }
     }
 
-
-
-
-
     /**
      * Displays page for adding a new sprint
      * @param model
@@ -85,7 +83,7 @@ public class SprintController {
             model.addAttribute("image", "/icons/create-icon.svg");
             return "sprintForm";
 
-        } catch (Exception e) {
+        } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         }
@@ -108,11 +106,14 @@ public class SprintController {
             sprintService.verifySprint(sprint);
             String message = sprintService.saveSprint(sprint);
             ra.addFlashAttribute("messageSuccess", message);
-        } catch (Exception e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-        }
             return "redirect:/project/{projectId}";
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
+        } catch (PersistenceException e) {
+            return "error";
         }
+    }
 
         /**
          * Directs to page for editing a sprint
@@ -144,12 +145,11 @@ public class SprintController {
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", "/icons/save-icon.svg");
             return "sprintForm";
-            } catch (Exception e) {
-                ra.addFlashAttribute("messageDanger", e.getMessage());
-                return "redirect:/project/{projectId}";
-            }
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
         }
-
+    }
 
     /**
      * Deletes a sprint and redirects back to project page
@@ -166,16 +166,19 @@ public class SprintController {
         RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            Project currentProject = projectService.getProjectById(projectId);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
-        } catch (Exception e) {
+            sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
+            List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            model.addAttribute("listSprints", listSprints);
+            return "redirect:/project/{projectId}";
+        } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
+        } catch (PersistenceException e) {
+            return "error";
         }
-        sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
-        model.addAttribute("listSprints", listSprints);
-        return "redirect:/project/{projectId}";
+
     }
 
 }
