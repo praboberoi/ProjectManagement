@@ -156,29 +156,34 @@ public class AccountController {
 
 
 //        Start of image upload functionality
+
         MultipartFile file1 = multipartFile;
-        System.out.println(file1);
-        // original filename of image user has uploaded
-        String filename = file1.getOriginalFilename();
-        // the extension of the filename
-        String extension = filename.substring(filename.lastIndexOf(".") + 1);
-        // the name of the image without the extension
-        String baseName = filename.substring(0,filename.lastIndexOf("."));
-        // rename the image with the userId appended in case there are multiple images with the same name
-        String myFile = baseName + "_" + userId + "." + extension;
+        boolean b = !(file1.isEmpty());
+        if (b) {
+//        System.out.println(file1);
+            // original filename of image user has uploaded
+            String filename = file1.getOriginalFilename();
+//        System.out.println(filename);
+            // the extension of the filename
+            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            // the name of the image without the extension
+            String baseName = filename.substring(0, filename.lastIndexOf("."));
+            // rename the image with the userId appended in case there are multiple images with the same name
+            String myFile = "UserProfile" + userId + "." + extension;
 
-        File imageFile = new File("/static/cachedprofilephoto/" + myFile);
+            File imageFile = new File("/static/cachedprofilephoto/" + myFile);
 //        Path path = Paths.get(String.valueOf(imageFile));
-        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + myFile);
-        // prints out the location the image has been saved to
-        System.out.println(path.toAbsolutePath());
+            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + myFile);
+            // prints out the location the image has been saved to
+            System.out.println(path.toAbsolutePath());
 
-        // write the image to the path
-        // normally files would be written with outputstream in server side Service code(??)
-//        Files.write(path, file1.getBytes());
-//        System.out.println("save cache");
+            // write the image to the path)
+            Files.write(path, file1.getBytes());
 
-        userAccountClientService.uploadImage(userId, extension, file1);
+            userAccountClientService.uploadImage(userId, extension, file1);
+        }
+
+
 
 //       End of image
 
@@ -226,6 +231,18 @@ public class AccountController {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
+
+//        if (user.getProfileImagePath() == null) {
+//            Path imagePath = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/default-image.png");
+//            user.setProfileImagePath(imagePath.toString());
+//
+//        } else {
+//            Path imagePath = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + user.getProfileImagePath());
+//            user.setProfileImagePath(imagePath.toString());
+//
+//        }
+        System.out.println(user.getProfileImagePath());
+
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
 //        model.addAttribute("image", user.getProfileImagePath());
