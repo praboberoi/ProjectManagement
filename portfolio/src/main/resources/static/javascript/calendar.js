@@ -20,8 +20,13 @@ function renderCalendar(sprintList) {
             start: PROJECT_START_DATE,
             end: PROJECT_END_DATE
         },
-        eventClick: function(info) {
+        eventMouseEnter: function (info) {
+            info.el.style.borderColor = 'black';
+            info.el.style.borderWidth = '3px';
             makeEventEditable(info);
+        },
+        eventMouseLeave: function (info) {
+            info.el.style.border = null;
         },
         eventResize: function(info) {
             editEventDuration(info);
@@ -43,7 +48,6 @@ function makeEventEditable(info) {
     });
 
     info.event.setProp('editable', true)
-    info.event.setProp('eventResizableFromStart', true)
 }
 
 /**
