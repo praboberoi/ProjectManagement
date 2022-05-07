@@ -3,14 +3,15 @@ const PROJECT_START_DATE = document.getElementById("startDate").value;
 const PROJECT_END_DATE = document.getElementById('endDate').value;
 const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'mediumVioletRed', 'mediumSeaGreen', 'orangeRed'];
 const CALENDAR_ERROR = document.getElementById('calendarError');
+const CALENDAR_EL = document.getElementById('calendar');
+let calendar;
 
 /**
  * Renders the calendar onto the page with sprints
  * @param sprintList A list of all the sprints in the project
  */
 function renderCalendar(sprintList) {
-    const calendarEl = document.getElementById('calendar');
-    const calendar = new FullCalendar.Calendar(calendarEl, {
+    calendar = new FullCalendar.Calendar(CALENDAR_EL, {
         initialView: 'dayGridMonth',
         firstDay: 1,
         events: sprintList,
@@ -19,8 +20,7 @@ function renderCalendar(sprintList) {
             end: PROJECT_END_DATE
         },
         eventClick: function(info) {
-            console.log(info);
-            makeEventEditable(info.event);
+            makeEventEditable(info);
         },
         eventResize: function(info) {
             editEventDuration(info);
@@ -32,8 +32,12 @@ function renderCalendar(sprintList) {
     calendar.render();
 }
 
-function makeEventEditable(event) {
-    console.log(event);
+function makeEventEditable(info) {
+    calendar.getEvents().forEach((event, i) => {
+        event.setProp('editable', false)
+    });
+
+    info.event.setProp('editable', true)
 }
 
 function editEventDuration(info) {
@@ -41,7 +45,6 @@ function editEventDuration(info) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            console.log(httpRequest.response);
             if (httpRequest.response == 'true') {
                 CALENDAR_ERROR.hidden = true;
                 CALENDAR_ERROR.innerText = "";
@@ -96,7 +99,6 @@ function getSprintList(sprintJson) {
                 backgroundColor: SPRINT_COLOURS[i % SPRINT_COLOURS.length],
                 overlap: false,
                 allDay: true,
-                editable: true,
                 resizableFromStart: true
             }
         );
