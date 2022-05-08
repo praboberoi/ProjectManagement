@@ -158,14 +158,7 @@ public class AccountController {
     private void addAttributesToModel(AuthState principal, Model model) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
         User user = new User(idpResponse);
-        Path imagePath;
-        // TODO: Remove if-else block/image path?
-        if (user.getProfileImagePath() == "") {
-            imagePath = Paths.get("/cachedProfilePhoto/default-image.png");
-        } else {
-            imagePath = Paths.get(user.getProfileImagePath());
-        }
-        user.setProfileImagePath(imagePath.toString());
+
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
 
