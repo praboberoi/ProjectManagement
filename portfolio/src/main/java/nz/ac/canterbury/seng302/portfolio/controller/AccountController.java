@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import io.grpc.Server;
-import nz.ac.canterbury.seng302.portfolio.service.UserProfilePhotoService;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -44,12 +42,9 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     private final UserAccountClientService userAccountClientService;
-    private final UserProfilePhotoService userProfilePhotoService;
 
-    public AccountController (UserAccountClientService userAccountClientService,
-                              UserProfilePhotoService userProfilePhotoService) {
+    public AccountController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
-        this.userProfilePhotoService = userProfilePhotoService;
     }
 
     /**
