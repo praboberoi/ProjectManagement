@@ -147,7 +147,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                 .build());
 
         if (user.getProfileImagePath() == null) {
-             imagePath = Paths.get("cachedprofilephoto/user.png");
+             imagePath = Paths.get("cachedprofilephoto/user-icon.svg");
 
         } else {
              imagePath = Paths.get("cachedprofilephoto/" + user.getProfileImagePath());
