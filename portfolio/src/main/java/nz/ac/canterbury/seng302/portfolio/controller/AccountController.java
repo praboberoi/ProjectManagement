@@ -158,16 +158,9 @@ public class AccountController {
             // original filename of image user has uploaded
             String filename = file1.getOriginalFilename();
             String extension = filename.substring(filename.lastIndexOf(".") + 1);
-            String baseName = filename.substring(0, filename.lastIndexOf("."));
-            // rename the image with the userId appended in case there are multiple images with the same name
-            String myFile = "UserProfile" + userId + "." + extension;
-
-            File imageFile = new File("/static/cachedprofilephoto/" + myFile);
-            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + myFile);
-
+            // check if file is an accepted image type
             ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList("jpg", "jpeg", "png"));
             if (acceptedFileTypes.contains(extension)) {
-                Files.write(path, file1.getBytes());
                 userAccountClientService.uploadImage(userId, extension, file1);
             } else {
                 String msgString;

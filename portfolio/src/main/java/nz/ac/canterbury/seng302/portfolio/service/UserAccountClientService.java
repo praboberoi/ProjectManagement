@@ -297,6 +297,10 @@ public class UserAccountClientService {
         // close stream
         inputStream.close();
         streamObserver.onCompleted();
+        // write image to portfolio when image has been successfully uploaded
+        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
+        Files.write(path, file.getBytes());
+
     }
 
     // return a status update when the file upload is complete
