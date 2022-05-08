@@ -10,6 +10,8 @@
 
   <!-- do not include fragments that are not in use PARSING ERROR -->
   <!--<head th:replace="fragments :: content"></head>-->
+  <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
 </head>
 
 <!--fragments-->
@@ -37,6 +39,8 @@
   <br>
   <div class="card">
     <div class="card-header">
+      <input type="hidden" id="startDate" th:value="*{project.startDate}" />
+      <input type="hidden" id="endDate" th:value="*{project.endDate}" />
       Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]
     </div>
     <div class="card-body">
@@ -56,7 +60,6 @@
             <img class="icon img-color-primary" src="/icons/create-icon.svg"/></a>
         </div>
      </div>
-
   </div>
   <br>
 
@@ -99,7 +102,15 @@
       </tbody>
     </table>
   </div>
+
+  <br>
+  <div id="cal">
+    <div id='calendar'/>
+  </div>
+  <br>
 </div>
+
+
 <div class="modal fade" id="conformationModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -125,5 +136,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script src="/javascript/project.js"></script>
+<script src='/javascript/calendar.js'></script>
 </body>
 </html>
