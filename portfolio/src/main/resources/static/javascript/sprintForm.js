@@ -10,8 +10,9 @@ const endDateElement = document.getElementById('endDate');
 const dateError = document.getElementById('dateError');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
-const projectStartDate = document.getElementById("project-start-date").value;
-const projectEndDate = document.getElementById("project-end-date").value;
+const projectStartDate = document.getElementById("projectStartDate").value;
+const projectEndDate = document.getElementById("projectEndDate").value;
+const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
 
 /**
  * Function for error validation of Sprint Name field.
@@ -43,16 +44,16 @@ function checkDates() {
     checkEndDate();
 
     if (startDate > endDate ) {
-        dateError.innerText = "Start date must be before the end date.";
+        startDateError.innerText = "Start date must be before the end date.";
+        endDateError.innerText = "End date must be after the start date";
+        startDateElement.setCustomValidity("Start date must be before the end date.");
+        endDateElement.setCustomValidity("Start date must be before the end date.");
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
         return;
-    } else {
-        dateError.innerText = "";
     }
 
-
-    if (dateError.innerText == "" &&
+    if (
     startDateError.innerText == "" &&
     endDateError.innerText == "" ) {
         verifyOverlap(startDate, endDate);
@@ -60,18 +61,20 @@ function checkDates() {
 }
 
 /**
- * Checks that the start date of the project is valid
+ * Checks that the start date of the sprint is within the project
  */
 function checkStartDate() {
     const startDate = startDateElement.value;
 
     if (startDate < projectStartDate) {
-        startDateError.innerText = "Project must start after " + projectStartDate;
+        startDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
         startDateElement.classList.add("formError");
+        startDateElement.setCustomValidity("Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS));
         return;
     } else if (startDate > projectEndDate) {
-        startDateError.innerText = "Project must finish before " + projectEndDate;
+        startDateError.innerText = "Sprint must start before the project ends";
         startDateElement.classList.add("formError");
+        startDateElement.setCustomValidity("Sprint must start before the project ends");
         return;
     }
     
@@ -80,18 +83,20 @@ function checkStartDate() {
 }
 
 /**
- * Checks that the end date of the project is valid
+ * Checks that the end date of the sprint is within the project
  */
 function checkEndDate() {
     const endDate = new Date(endDateElement.value);
 
     if (endDate < projectStartDate) {
-        startDateError.innerText = "Project must start after " + projectStartDate;
-        startDateElement.classList.add("formError");
+        endDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+        endDateElement.classList.add("formError");
+        endDateElement.setCustomValidity("Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS));
         return;
     } else if (endDate > projectEndDate) {
-        endDateError.innerText = "Project must finish before " + projectEndDate;
+        endDateError.innerText = "Sprint must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
         endDateElement.classList.add("formError");
+        endDateElement.setCustomValidity("Sprint must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS));
         return;
     }
     
@@ -109,7 +114,7 @@ function verifyOverlap(startDate, endDate) {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 if (httpRequest.response != "") {
-                    dateError.innerText = httpRequest.response;
+                    startDateError.innerText = httpRequest.response;
                     startDateElement.classList.add("formError");
                     endDateElement.classList.add("formError");
                 }

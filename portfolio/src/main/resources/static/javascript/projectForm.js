@@ -8,7 +8,6 @@ const projectNameRegex = /^\S/
 
 const startDateElement = document.querySelector('#startDate');
 const endDateElement = document.querySelector('#endDate');
-const dateError = document.getElementById('dateError');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
 
@@ -23,11 +22,13 @@ function checkDates() {
     checkEndDate();
 
     if (startDate > endDate ) {
-        dateError.innerText = "Start date must be before the end date.";
+        startDateError.innerText = "Start date must be before the end date.";
+        endDateError.innerText = "End date must be after the start date";
+        startDateElement.setCustomValidity("Start date must be before the end date.");
+        endDateElement.setCustomValidity("Start date must be before the end date.");
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
-    } else {
-        dateError.innerText = "";
+        return;
     }
 
 }
@@ -45,14 +46,16 @@ function checkStartDate() {
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     if (startDate > tenYearsFromNow) {
-        startDateError.innerText = "Project must end in the next 10 years.";
+        startDateError.innerText = "Project must start in the next 10 years.";
         startDateElement.classList.add("formError")
+        startDateElement.setCustomValidity("Project must start in the next 10 years.");
         return;
     }
     
     if (startDate < oneYearAgo) {
         startDateError.innerText = "Project must have started in the last year.";
         startDateElement.classList.add("formError");
+        startDateElement.setCustomValidity("Project must have started in the last year.");
         return;
     }
     
@@ -75,12 +78,14 @@ function checkEndDate() {
     if (endDate < oneYearAgo) {
         endDateError.innerText = "Project must have started in the last year.";
         endDateElement.classList.add("formError");
+        endDateElement.setCustomValidity("Project must have started in the last year.");
         return;
     }
 
     if (endDate > tenYearsFromNow) {
         endDateError.innerText = "Project must end in the next 10 years.";
         endDateElement.classList.add("formError")
+        endDateElement.setCustomValidity("Project must end in the next 10 years.");
         return;
     }
 
