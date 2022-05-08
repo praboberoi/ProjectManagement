@@ -28,7 +28,7 @@ editBtn.addEventListener('click', function(e) {
     }
 });
 
-function check_firstName() {
+function checkFirstName() {
     let firstNameElement = document.getElementById("firstName");
     let firstNameErrorElement = document.getElementById("firstNameError");
     if (firstNameElement.value.length < 3
@@ -36,15 +36,15 @@ function check_firstName() {
         || names.test(firstNameElement.value)
         || digit.test(firstNameElement.value))
     {
-        firstNameElement.classList.add("form_error")
+        firstNameElement.classList.add("formError")
         firstNameErrorElement.innerText = "First name must be between 3 and 32 characters with no special characters or digits."
     } else {
-        firstNameElement.classList.remove("form_error");
+        firstNameElement.classList.remove("formError");
         firstNameErrorElement.innerText = null;
     }
 };
 
-function check_lastName() {
+function checkLastName() {
     let lastNameElement = document.getElementById("lastName");
     let lastNameErrorElement = document.getElementById("lastNameError");
     if (lastNameElement.value.length < 3
@@ -52,62 +52,62 @@ function check_lastName() {
         || names.test(lastNameElement.value)
         || digit.test(lastNameElement.value))
     {
-        lastNameElement.classList.add("form_error")
+        lastNameElement.classList.add("formError")
         lastNameErrorElement.innerText = "Last name must be between 3 and 32 characters with no special characters or digits."
     } else {
-        lastNameElement.classList.remove("form_error");
+        lastNameElement.classList.remove("formError");
         lastNameErrorElement.innerText = null;
     }
 };
 
-function check_nickname() {
+function checkNickname() {
     let nicknameElement = document.getElementById("nickname");
     let nicknameErrorElement = document.getElementById("nicknameError");
     if (nicknameElement.value.length > 32)
     {
-        nicknameElement.classList.add("form_error")
+        nicknameElement.classList.add("formError")
         nicknameErrorElement.innerText = "Nickname must be less than 32 characters."
     } else {
-        nicknameElement.classList.remove("form_error");
+        nicknameElement.classList.remove("formError");
         nicknameErrorElement.innerText = null;
     }
 };
 
-function check_email() {
+function checkEmail() {
     let emailElement = document.getElementById("email");
     let emailErrorElement = document.getElementById("emailError");
     if (!email.test(emailElement.value))
     {
-        emailElement.classList.add("form_error")
+        emailElement.classList.add("formError")
         emailErrorElement.innerText = "Email must be in the form username@domainName.domain."
     } else {
-        emailElement.classList.remove("form_error");
+        emailElement.classList.remove("formError");
         emailErrorElement.innerText = null;
     }
 };
 
-function check_pronouns() {
+function checkPronouns() {
     let pronounsElement = document.getElementById("pronouns");
     let pronounsErrorElement = document.getElementById("personalPronounsError");
     if (pronounsElement.value.length > 32)
     {
-        pronounsElement.classList.add("form_error")
+        pronounsElement.classList.add("formError")
         pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
     } else {
-        pronounsElement.classList.remove("form_error");
+        pronounsElement.classList.remove("formError");
         pronounsErrorElement.innerText = null;
     }
 };
 
-function check_bio() {
+function checkBio() {
     let bioElement = document.getElementById("bio");
     let bioErrorElement = document.getElementById("bioError");
     if (bioElement.value.length > 250)
     {
-        bioErrorElement.classList.add("form_error");
+        bioErrorElement.classList.add("formError");
         bioErrorElement.innerText = "Bio must be less than 250 characters."
     } else {
-        bioErrorElement.classList.remove("form_error");
+        bioErrorElement.classList.remove("formError");
         bioErrorElement.innerText = null;
     }
 };

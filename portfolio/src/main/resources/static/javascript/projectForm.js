@@ -24,8 +24,8 @@ function checkDates() {
 
     if (startDate > endDate ) {
         dateError.innerText = "Start date must be before the end date.";
-        startDateElement.classList.add("form_error");
-        endDateElement.classList.add("form_error");
+        startDateElement.classList.add("formError");
+        endDateElement.classList.add("formError");
     } else {
         dateError.innerText = "";
     }
@@ -45,19 +45,19 @@ function checkStartDate() {
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     if (startDate > tenYearsFromNow) {
-        startDateError.innerText = "Project must finish in the next 10 years.";
-        startDateElement.classList.add("form_error")
+        startDateError.innerText = "Project must end in the next 10 years.";
+        startDateElement.classList.add("formError")
         return;
     }
     
     if (startDate < oneYearAgo) {
-        startDateError.innerText = "Project must have occured within the last year.";
-        startDateElement.classList.add("form_error");
+        startDateError.innerText = "Project must have started in the last year.";
+        startDateElement.classList.add("formError");
         return;
     }
     
     startDateError.innerText = "";
-    startDateElement.classList.remove("form_error")
+    startDateElement.classList.remove("formError")
 }
 
 /**
@@ -73,19 +73,19 @@ function checkEndDate() {
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     if (endDate < oneYearAgo) {
-        endDateError.innerText = "Project must have occured within the last year.";
-        endDateElement.classList.add("form_error");
+        endDateError.innerText = "Project must have started in the last year.";
+        endDateElement.classList.add("formError");
         return;
     }
 
     if (endDate > tenYearsFromNow) {
-        endDateError.innerText = "Project must finish in the next 10 years.";
-        endDateElement.classList.add("form_error")
+        endDateError.innerText = "Project must end in the next 10 years.";
+        endDateElement.classList.add("formError")
         return;
     }
 
     endDateError.innerText = "";
-    endDateElement.classList.remove("form_error")
+    endDateElement.classList.remove("formError")
 }
 
 /**
@@ -96,13 +96,13 @@ function checkProjectName() {
     let projectName = document.getElementById('project-name');
     let projectNameError = document.getElementById('projectNameError');
     if (projectName.value.length < 1) {
-        projectName.classList.add("form_error");
+        projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not be empty";
     } else if (projectNameRegex.test(projectName.value)) {
-        projectName.classList.add("form_error");
+        projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not start with space characters";
     } else {
-        projectName.classList.remove("form_error");
+        projectName.classList.remove("formError");
         projectNameError.innerText = null;
     }
 }

@@ -1,5 +1,5 @@
 function validateForm() {
-    errors = document.getElementsByClassName("form_error");
+    errors = document.getElementsByClassName("formError");
     if (errors.length == 0) {
         return true;
     }

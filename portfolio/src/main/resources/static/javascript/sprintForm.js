@@ -21,13 +21,13 @@ function checkSprintName() {
     let sprintName = document.getElementById('sprint-name');
     let sprintNameError = document.getElementById('sprintNameError');
     if (sprintName.value.length < 1) {
-        sprintName.classList.add("form_error");
+        sprintName.classList.add("formError");
         sprintNameError.innerText = "Sprint Name must not be empty";
     } else if (! sprintNameRegex.test(sprintName.value)) {
-        sprintName.classList.add("form_error");
+        sprintName.classList.add("formError");
         sprintNameError.innerText = "Sprint Name must not start with empty space";
     } else {
-        sprintName.classList.remove("form_error");
+        sprintName.classList.remove("formError");
         sprintNameError.innerText = null;
     }
 }
@@ -44,8 +44,8 @@ function checkDates() {
 
     if (startDate > endDate ) {
         dateError.innerText = "Start date must be before the end date.";
-        startDateElement.classList.add("form_error");
-        endDateElement.classList.add("form_error");
+        startDateElement.classList.add("formError");
+        endDateElement.classList.add("formError");
         return;
     } else {
         dateError.innerText = "";
@@ -67,16 +67,16 @@ function checkStartDate() {
 
     if (startDate < projectStartDate) {
         startDateError.innerText = "Project must start after " + projectStartDate;
-        startDateElement.classList.add("form_error");
+        startDateElement.classList.add("formError");
         return;
     } else if (startDate > projectEndDate) {
         startDateError.innerText = "Project must finish before " + projectEndDate;
-        startDateElement.classList.add("form_error");
+        startDateElement.classList.add("formError");
         return;
     }
     
     startDateError.innerText = "";
-    startDateElement.classList.remove("form_error")
+    startDateElement.classList.remove("formError")
 }
 
 /**
@@ -87,16 +87,16 @@ function checkEndDate() {
 
     if (endDate < projectStartDate) {
         startDateError.innerText = "Project must start after " + projectStartDate;
-        startDateElement.classList.add("form_error");
+        startDateElement.classList.add("formError");
         return;
     } else if (endDate > projectEndDate) {
         endDateError.innerText = "Project must finish before " + projectEndDate;
-        endDateElement.classList.add("form_error");
+        endDateElement.classList.add("formError");
         return;
     }
     
     endDateError.innerText = "";
-    endDateElement.classList.remove("form_error")
+    endDateElement.classList.remove("formError")
 }
 
 /**
@@ -110,8 +110,8 @@ function verifyOverlap(startDate, endDate) {
             if (httpRequest.status === 200) {
                 if (httpRequest.response != "") {
                     dateError.innerText = httpRequest.response;
-                    startDateElement.classList.add("form_error");
-                    endDateElement.classList.add("form_error");
+                    startDateElement.classList.add("formError");
+                    endDateElement.classList.add("formError");
                 }
             }
         }

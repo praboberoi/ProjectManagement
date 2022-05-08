@@ -5,7 +5,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.content_square {
+.contentSquare {
     width: 50%;
     height: auto;
     background-color: white;
@@ -14,7 +14,7 @@
     /*margin-top:100px;*/
 }
 
-.content_account {
+.contentAccount {
     /*width: 100%;*/
     height: auto;
     background-color: white;
@@ -62,7 +62,7 @@
 }
 
 
-.login-container, .content_container {
+.login-container, .contentContainer {
     align-items: center;
     margin: 40px auto;
     text-align: left;
@@ -103,7 +103,7 @@ label {
     border-style: solid;
 }
 
-.form_error {
+.formError {
     border-color: #ff0010 !important;
 }
 

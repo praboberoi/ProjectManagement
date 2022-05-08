@@ -58,9 +58,8 @@ a.project-name {
 }
 
 .icon {
-    vertical-align: -.1em; !important;
+    vertical-align: -.1em !important;
 }
-
 
 .img-color-primary{
    filter: invert(8%) sepia(100%) saturate(7420%) hue-rotate(248deg) brightness(96%) contrast(143%);
@@ -109,7 +108,7 @@ input:invalid{
     color: red;
 }
 
-.form_error {
+.formError {
     border-color: #ff0010 !important;
 }
 
