@@ -120,6 +120,7 @@ public class AccountController {
     /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
+     * @param multipartFile  The image file of the user
      * @param firstName The first name of the user
      * @param lastName The last name of the user
      * @param nickname The nickname of the user

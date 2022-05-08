@@ -157,11 +157,11 @@ public class UserAccountClientService {
 
 
     /**
-     * Send Id and filetype to idp and recieves Metadata
-     * @param
-     * @param
+     * This method gets data about a User Profile image from a StreamObserver and returns
+     * a StreamObserver about the FileUploadStatus response.
+     * @param responseObserver The request containing image information
+     * @return The response observer records the result of the operation
      */
-
     public StreamObserver<UploadUserProfilePhotoRequest> getImage(StreamObserver<FileUploadStatusResponse> responseObserver){
         return new StreamObserver<>() {
 
@@ -259,10 +259,6 @@ public class UserAccountClientService {
 
 
 
-
-
-
-
     /**
      * Sends an upload image request to the server
      * @param id Id of user (required)
@@ -302,9 +298,9 @@ public class UserAccountClientService {
         Files.write(path, file.getBytes());
 
     }
-
-    // return a status update when the file upload is complete
-    // uses proto in file_upload.proto
+    /**
+     * Returns a status update when the file upload is complete using protos
+     */
     private static class FileUploadObserver implements StreamObserver<FileUploadStatusResponse>{
         @Override
         public void onNext(FileUploadStatusResponse fileUploadStatusResponse) {
