@@ -163,7 +163,7 @@ public class Project {
          * @param projectId Id of the project of type int
          * @return Builder
          */
-        public Builder prijectId(int projectId) {
+        public Builder projectId(int projectId) {
             this.projectId = projectId;
             return this;
         }
