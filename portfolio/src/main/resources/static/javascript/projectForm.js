@@ -61,6 +61,8 @@ function checkStartDate() {
     
     startDateError.innerText = "";
     startDateElement.classList.remove("formError")
+    startDateElement.setCustomValidity("");
+
 }
 
 /**
@@ -91,6 +93,7 @@ function checkEndDate() {
 
     endDateError.innerText = "";
     endDateElement.classList.remove("formError")
+    endDateElement.setCustomValidity("");
 }
 
 /**

@@ -10,8 +10,8 @@ const endDateElement = document.getElementById('endDate');
 const dateError = document.getElementById('dateError');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
-const projectStartDate = document.getElementById("projectStartDate").value;
-const projectEndDate = document.getElementById("projectEndDate").value;
+const projectStartDate = new Date(document.getElementById("projectStartDate").value);
+const projectEndDate = new Date(document.getElementById("projectEndDate").value);
 const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
 
 /**
@@ -47,7 +47,7 @@ function checkDates() {
         startDateError.innerText = "Start date must be before the end date.";
         endDateError.innerText = "End date must be after the start date";
         startDateElement.setCustomValidity("Start date must be before the end date.");
-        endDateElement.setCustomValidity("Start date must be before the end date.");
+        endDateElement.setCustomValidity("End date must be after the start date.");
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
         return;
@@ -56,6 +56,7 @@ function checkDates() {
     if (
     startDateError.innerText == "" &&
     endDateError.innerText == "" ) {
+        console.log("test");
         verifyOverlap(startDate, endDate);
     }
 }
@@ -64,7 +65,7 @@ function checkDates() {
  * Checks that the start date of the sprint is within the project
  */
 function checkStartDate() {
-    const startDate = startDateElement.value;
+    const startDate = new Date(startDateElement.value);
 
     if (startDate < projectStartDate) {
         startDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
@@ -80,6 +81,7 @@ function checkStartDate() {
     
     startDateError.innerText = "";
     startDateElement.classList.remove("formError")
+    endDateElement.setCustomValidity("");
 }
 
 /**
@@ -102,6 +104,7 @@ function checkEndDate() {
     
     endDateError.innerText = "";
     endDateElement.classList.remove("formError")
+    endDateElement.setCustomValidity("");
 }
 
 /**
