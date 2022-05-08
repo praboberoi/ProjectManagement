@@ -108,8 +108,8 @@ function verifyOverlap(startDate, endDate) {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                if (httpRequest.response == "false") {
-                    dateError.innerText = "Sprint cannot occur during another sprint.";
+                if (httpRequest.response != "") {
+                    dateError.innerText = httpRequest.response;
                     startDateElement.classList.add("form_error");
                     endDateElement.classList.add("form_error");
                 }

@@ -100,7 +100,7 @@ public class SprintController {
      * @return
      */
     @PostMapping("/project/{projectId}/verifySprint")
-    public ResponseEntity<Boolean> verifySprint(
+    public ResponseEntity<String> verifySprint(
         @PathVariable int projectId,
         String startDate,
         String endDate,
@@ -112,9 +112,10 @@ public class SprintController {
             currentSprint.setProject(project);
             currentSprint.setStartDate(Date.valueOf(startDate));
             currentSprint.setEndDate(Date.valueOf(endDate));
-            return ResponseEntity.status(HttpStatus.OK).body(sprintService.verifySprint(currentSprint));
+            sprintService.verifySprint(currentSprint);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.OK).body(false);
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
     }
 
