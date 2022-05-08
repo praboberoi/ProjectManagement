@@ -15,7 +15,7 @@ import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Contains the majority of the business logic that relates to sprints.
+ * Client service used to communicate to the database and perform business logic for sprints
  */
 @Service
 public class SprintService {
