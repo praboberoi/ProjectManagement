@@ -21,11 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -229,23 +229,9 @@ public class AccountController {
 
     private void addAttributesToModel(AuthState principal, Model model) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
-
         User user = new User(idpResponse);
-
-//        if (user.getProfileImagePath() == null) {
-//            Path imagePath = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/default-image.png");
-//            user.setProfileImagePath(imagePath.toString());
-//
-//        } else {
-//            Path imagePath = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + user.getProfileImagePath());
-//            user.setProfileImagePath(imagePath.toString());
-//
-//        }
-        System.out.println(user.getProfileImagePath());
-
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
-//        model.addAttribute("image", user.getProfileImagePath());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
