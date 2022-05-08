@@ -4,7 +4,6 @@ import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.controller.AccountController;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
-import nz.ac.canterbury.seng302.portfolio.service.UserProfilePhotoService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
@@ -43,8 +42,6 @@ public class AccountControllerTests {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
-    @MockBean
-    private UserProfilePhotoService userProfilePhotoService;
 
     User user;
 
@@ -188,12 +185,11 @@ public class AccountControllerTests {
     @Test
     public void GivenNonExistentUser_WhenEditRequestMade_ThenEditAccountReturned() throws IOException {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
-        UserProfilePhotoService mockUserProfilePhotoService = Mockito.mock(UserProfilePhotoService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(false).build();
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
 
-        AccountController accountController = new AccountController(mockUserAccountClientService, mockUserProfilePhotoService);
+        AccountController accountController = new AccountController(mockUserAccountClientService);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
 
@@ -212,13 +208,14 @@ public class AccountControllerTests {
     @Test
     public void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws IOException {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
-        UserProfilePhotoService mockUserProfilePhotoService = Mockito.mock(UserProfilePhotoService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
-        AccountController accountController = new AccountController(mockUserAccountClientService, mockUserProfilePhotoService);
+        AccountController accountController = new AccountController(mockUserAccountClientService);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
+        MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "file", "some image".getBytes());
+        MockMultipartFile test = null;
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
         assertEquals( "redirect:account", accountController.editUser(principal, null,testString,
