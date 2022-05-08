@@ -21,11 +21,11 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
@@ -124,6 +124,7 @@ public class AccountController {
     /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
+     * @param multipartFile  The image file of the user
      * @param firstName The first name of the user
      * @param lastName The last name of the user
      * @param nickname The nickname of the user
@@ -156,31 +157,22 @@ public class AccountController {
 
 
 //        Start of image upload functionality
-
         MultipartFile file1 = multipartFile;
         boolean b = !(file1.isEmpty());
         if (b) {
-//        System.out.println(file1);
             // original filename of image user has uploaded
             String filename = file1.getOriginalFilename();
-//        System.out.println(filename);
-            // the extension of the filename
             String extension = filename.substring(filename.lastIndexOf(".") + 1);
-            // the name of the image without the extension
-            String baseName = filename.substring(0, filename.lastIndexOf("."));
-            // rename the image with the userId appended in case there are multiple images with the same name
-            String myFile = "UserProfile" + userId + "." + extension;
-
-            File imageFile = new File("/static/cachedprofilephoto/" + myFile);
-//        Path path = Paths.get(String.valueOf(imageFile));
-            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + myFile);
-            // prints out the location the image has been saved to
-            System.out.println(path.toAbsolutePath());
-
-            // write the image to the path)
-            Files.write(path, file1.getBytes());
-
-            userAccountClientService.uploadImage(userId, extension, file1);
+            // check if file is an accepted image type
+            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList("jpg", "jpeg", "png"));
+            if (acceptedFileTypes.contains(extension)) {
+                userAccountClientService.uploadImage(userId, extension, file1);
+            } else {
+                String msgString;
+                msgString = String.format("File must be an image of type jpg, jpeg or png");
+                ra.addFlashAttribute("messageDanger", msgString);
+                return "redirect:editAccount";
+            }
         }
 
 
@@ -201,37 +193,15 @@ public class AccountController {
         return "editAccount";
     }
 
-    // Post request for uploading profile photo has been moved to /editAccount
-    // left if want to have to post request for uploading images as its own function
-    // currently only checks filetype
-    /**
-     * Place Holder for when backend saving of Pfp is functional
-     * @param principal
-     * @param multipartFile
-     * @param ra
-     * @param model
-     * @return
-     */
-    @PostMapping("/uploadPfp")
-    public String uploadPfp(@AuthenticationPrincipal AuthState principal,
-                            @RequestParam("image")MultipartFile multipartFile, RedirectAttributes ra, Model model) {
-        MultipartFile file1 = multipartFile;
-        addAttributesToModel(principal,model);
-        String filename = multipartFile.getOriginalFilename();
-        String extension = filename.substring(filename.lastIndexOf(".") + 1);
-        ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList(".jpg", ".jpeg", ".png"));
-        if (acceptedFileTypes.contains(extension)) {
-            return "redirect:account";
-        } else {
-            return "editAccount";
-        }
-    }
 
     private void addAttributesToModel(AuthState principal, Model model) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
+
         User user = new User(idpResponse);
+
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+//        model.addAttribute("image", user.getProfileImagePath());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()

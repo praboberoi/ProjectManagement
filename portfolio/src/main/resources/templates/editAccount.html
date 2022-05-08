@@ -32,6 +32,9 @@
             <div class="page-title">
                 <h2>Your LENSfolio Account</h2>
             </div>
+            <div th:if="${messageDanger}" class="alert alert-danger text-center">
+                [[${messageDanger}]]
+            </div>
         </div>
 
         <div class="content_container">
