@@ -1,23 +1,29 @@
 # Team300 Bolt Development's README
 Endpoints implemented <br />
 
-- "/login" GET - Sends the user to the login page. <br />
-- "/login" POST - Attemps to connect to server and then authenticate user's username and password. If successful the a token is created for the users's session. If unsuccessful the user is redirected to the login page. <br />
-- "/account" GET - Populates the user's page with thier details.
+- "/login" GET - Returns the login page.
+- "/login" POST – Authenticates the provided username and password of the user. If this is correct, a token is provided as a cookie and the user is sent to their dashboard. <br/>
+
+- "/account" GET – Returns an account page with the user’s information.
 - "/editAccount" GET - Populates the edit page with a user's details. 
-- "/editAccount" POST - Attempts to save the edited user's details into the database, if successful it redirects the user to thier account page, otherwise it leaves them on the edit page.
-- "/dashboard" GET - Populates the users dashboard with projects they have.
-- "/dashboard/newProject" GET - If the user has the correct role to create a project they are directed to the project form, if not they are redirected to the dashboard.
-- "dashboard/saveProject" POST - Checks that the user has the correct role to be saving a project, if not they are are redirected to dashboard. If they do, they project is saved then the user is redirected to the dashboard.<br />
-- "dashboard/editProject/{projectId}" GET - Opens the edit page and populates it with the given projects details.
-- "dashboard/deleteProject/{projectId}" GET - Deletes the project with the specified id from the database.
-- "/register" GET - The get message to return an empty registration page.
-- "/register" POST - Attemps to register the user with the given details provided in the form on the page, if successful the user is redirected to the login page. If not, then errors are displaye as to why it was unsuccessful. 
-- "/project/{projectId}" GET - This call adds project details, sprints and current user roles to the project page.
-- "/project/{projectId}/newSprint" GET - This calls displays a page for adding a new sprint.
-- "/project/{projectId}/saveSprint" POST - This calls saves a sprint and redirects the user to the project page.
-- "/project/{projectId}/editSprint/{sprintId}" GET - This call directs the user to a page specifically for editing a sprint.
-- "/project/{projectId}/deleteSprint/{sprintId}" GET - This call deletes a sprint and redirects back to the project page.
+- "/editAccount" POST – Modifies the user’s information to match those provided.<br/>
+
+- "/dashboard" GET – Returns the dashboard page with the projects the user is enrolled in.
+- "/dashboard/newProject" GET – Returns a page with a form used to create a new project.
+- "dashboard/saveProject" POST – Saves or creates a new project with the provided details.<br/>
+
+- "dashboard/editProject/{projectId}" GET – Returns a form to modify a projects information.
+- "dashboard/deleteProject/{projectId}" GET - Deletes the project with the specified id from the database.<br/>
+
+- "/register" GET – Returns the registration page.
+- "/register" POST – Creates a new user with the provided information. <br/>
+
+- "/project/{projectId}" GET – Returns the project page with the projects information.
+- "/project/{projectId}/newSprint" GET - Returns a page with a form used to create a new sprint under the specified project.
+- "/project/{projectId}/saveSprint" POST - Saves or creates a new sprint with the provided details.
+- "/project/{projectId}/editSprint/{sprintId}" GET – Returns a form to modify a sprints information.
+- "/project/{projectId}/deleteSprint/{sprintId}" GET - Deletes the sprint with the specified id from the database. <br/>
+
 
 Basic project template using `gradle`, `Spring Boot`, `Thymeleaf` and `Gitlab CI`.
 
@@ -28,7 +34,6 @@ Basic project template using `gradle`, `Spring Boot`, `Thymeleaf` and `Gitlab CI
 - `shared/` - Contains (initially) some `.proto` contracts that are used to generate Java classes and stubs that the following modules will import and build on.
 - `identityprovider/` - The Identity Provider (IdP) is built with Spring Boot, and uses gRPC to communicate with other modules. The IdP is where we will store user information (such as usernames, passwords, names, ids, etc.).
 - `portfolio/` - The Portfolio module is another fully fledged Java application running Spring Boot. It also uses gRPC to communicate with other modules.
-
 
 ## How to run
 
@@ -88,6 +93,7 @@ gradlew bootRun
 
 By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 
+``Note - Please replace line 139 with claims.put(ROLE_CLAIM_TYPE, "TEACHER"); to obtain teachers access to add/update/delete sprints.``
 ## Contributors
 
 - SENG302 teaching team
@@ -108,3 +114,4 @@ Apache 2.0
 - [Spring JPA docs](https://docs.spring.io/spring-data/jpa/docs/current/reference/html/)
 - [Thymeleaf Docs](https://www.thymeleaf.org/documentation.html)
 - [Learn resources](https://learn.canterbury.ac.nz/course/view.php?id=13269&section=9)
+

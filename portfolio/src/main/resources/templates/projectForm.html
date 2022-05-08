@@ -50,10 +50,10 @@
             </div>
             <div class="row">
                 <div class="col-md-6 ms-auto">
-                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" required>
+                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectStartDateMin}" th:max="${projectStartDateMax}" required>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" required>
+                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectEndDateMin}" th:max="${projectEndDateMax}" required>
                 </div>
             </div>
 
@@ -62,9 +62,11 @@
                 <label style="font-size:20px;" for="inputProjectDescription" class="form-label">Project Description</label>
                 <textarea class="form-control mt-50" id="inputProjectDescription" rows="5" th:field="*{description}"></textarea>
             </div>
-            <div class="d-flex flex-row justify-content-end p-1">
-                <button type="submit" value="Submit" class="btn btn-primary">[[${submissionName}]]</button>
-                <a class="btn btn-secondary" href="/dashboard">Close</a>
+            <div class="d-flex flex-row justify-content-end p-0">
+                <button type= "submit" class="btn btn-outline-primary me-3">
+                    <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
+                <a type="button" class="btn btn-outline-secondary" href="/dashboard">
+                    <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</a>
             </div>
         </form>
     </div>

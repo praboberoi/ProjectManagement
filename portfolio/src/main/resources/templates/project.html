@@ -10,6 +10,8 @@
 
   <!-- do not include fragments that are not in use PARSING ERROR -->
   <!--<head th:replace="fragments :: content"></head>-->
+  <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
+  <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
 </head>
 
 <!--fragments-->
@@ -37,6 +39,8 @@
   <br>
   <div class="card">
     <div class="card-header">
+      <input type="hidden" id="startDate" th:value="*{project.startDate}" />
+      <input type="hidden" id="endDate" th:value="*{project.endDate}" />
       Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]
     </div>
     <div class="card-body">
@@ -47,17 +51,15 @@
 
   <br>
   <br>
-  <div class = "sprint_header">
-    <!-- use span to make header and button on same line-->
-    <h3>Sprints <span class="pull-right">
-      <div th:each="role: ${roles}">
-          <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-          <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-            <a class="btn btn-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}"> + </a>
-          </div>
-       </div>
-
-      </span></h3>
+  <div class="container-fluid d-flex p-0">
+    <h3 class="pe-3">Sprints</h3>
+    <div th:each="role: ${roles}">
+        <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+        <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+          <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}">
+            <img class="icon img-color-primary" src="/icons/create-icon.svg"/></a>
+        </div>
+     </div>
   </div>
   <br>
 
@@ -66,8 +68,9 @@
     <table class="table table-bordered table-hover">
       <thead class = "table-light">
       <tr>
-        <th scope="col" style="width:15%">Sprint Name</th>
-        <th scope="col" style="width:45%">Description</th>
+        <th scope="col" style="width:10%">Sprint Label</th>
+        <th scope="col" style="width:10%">Sprint Name</th>
+        <th scope="col" style="width:40%">Description</th>
         <th scope="col" style="width:10%">Start Date</th>
         <th scope="col" style="width:10%">End Date</th>
         <th style="width:20%"></th>
@@ -77,6 +80,7 @@
       
       <th:block th:each="sprint : ${listSprints}">
         <tr>
+          <td>[[${sprint.sprintLabel}]]</td>
           <td>[[${sprint.sprintName}]]</td>
           <td>[[${sprint.description}]]</td>
           <td>[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
@@ -85,9 +89,11 @@
             <div th:each="role: ${roles}">
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
               <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-                <a class="btn btn-primary" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">Edit</a>
-                <a class="btn btn-secondary" id="sprint-del-btn" data-toggle="modal"  data-target="#conformationModal"  th:data-projectId = "${project.projectId}"
-                   th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">Delete</a>
+                <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
+                  <img class="icon img-color-primary" src="/icons/edit-icon.svg"/> Edit</a>
+                <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
+                        th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">
+                  <img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
               </div>
             </div>
           </td>
@@ -96,7 +102,15 @@
       </tbody>
     </table>
   </div>
+
+  <br>
+  <div id="cal">
+    <div id='calendar'/>
+  </div>
+  <br>
 </div>
+
+
 <div class="modal fade" id="conformationModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -110,10 +124,11 @@
         <p id="message"></p>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
         <form action="" method="post" id="deleteSprint">
-          <button type= "submit" class="btn btn-primary">Delete</button>
+          <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
         </form>
+        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+          <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</button>
       </div>
     </div>
   </div>
@@ -121,5 +136,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script src="/javascript/project.js"></script>
+<script src='/javascript/calendar.js'></script>
 </body>
 </html>

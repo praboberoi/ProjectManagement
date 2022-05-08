@@ -14,6 +14,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
    <script src="/javascript/editAccount.js"></script>
+    <script src="/javascript/profilePhoto.js"></script>
 </head>
 
 <!--    add/fragments -->
@@ -24,8 +25,8 @@
 <header>
     <div th:replace="fragments :: header"></div>
 </header>
-<div th:replace="fragments :: account"></div>
 <div class = "main">
+    <div th:replace="fragments :: account"></div>
     <div class="content_account">
         <div class="box1">
             <div class="page-title">
@@ -48,6 +49,21 @@
                             <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
                                 <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
+
+
+
+                            <img src="/icons/userr.png" class="profile-photo" id="output" width="200" height="200" />
+                            <br>
+                            </br>
+                            <div class="row mb-3">
+                                <label for="formFile" class = "col-sm-2 col-form-label"><h6>Profile Photo: </h6></label>
+                                <div class = "col-sm-6">
+                                    <input type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)">
+                                </div>
+                            </div>
+
+
+
                             <!-- start of form -->
                             <!-- edit with @postmapping to update details in database AND screen-->
                             <form action="/editAccount" method="post">
@@ -100,8 +116,10 @@
                                     </div>
                                 </div>
                                 <br>
-                                <button type="submit" class="btn btn-primary" href="/account">Save</button>
-                                <a class="btn btn-secondary" href="/account">Cancel</a>
+                                <button type="submit" class="btn btn-outline-primary mr-2" href="/account">
+                                    <img class="icon img-color-primary" src="/icons/save-icon.svg"/> Save</button>
+                                <a type="button" class="btn btn-outline-secondary" href="/account">
+                                    <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Cancel</a>
                             </form>
                         </div>
                     </div>
