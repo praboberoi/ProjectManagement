@@ -52,7 +52,8 @@ branch-build:
 deploy-staging-identityprovider:
   stage: deploy
   script:
-    - echo "$H2DB_USERNAME" and "$H2DB_PASSWORD"
+    - echo "$MARIADB_USERNAME" 
+    - echo "$MARIADB_PASSWORD"
     - cd identityprovider
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/staging-identityprovider/ || true
@@ -70,7 +71,8 @@ deploy-staging-identityprovider:
 deploy-staging-portfolio:
   stage: deploy
   script:
-    - echo "$H2DB_USERNAME" and "$H2DB_PASSWORD"
+    - echo "$MARIADB_USERNAME" 
+    - echo "$MARIADB_PASSWORD"
     - cd portfolio
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/staging-portfolio/ || true
@@ -88,7 +90,8 @@ deploy-staging-portfolio:
 deploy-production-identityprovider:
   stage: deploy
   script:
-    - echo "$MARIADB_USERNAME" and "$MARIADB_PASSWORD"
+    - echo "$MARIADB_USERNAME"
+    - echo "$MARIADB_PASSWORD"
     - cd identityprovider
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/production-identityprovider/ || true
@@ -107,7 +110,8 @@ deploy-production-identityprovider:
 deploy-production-portfolio:
   stage: deploy
   script:
-    - echo "$MARIADB_USERNAME" and "$MARIADB_PASSWORD"
+    - echo "$MARIADB_USERNAME"
+    - echo "$MARIADB_PASSWORD"
     - cd portfolio
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/production-portfolio/ || true
