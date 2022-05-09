@@ -72,8 +72,9 @@ deploy-staging-portfolio:
   stage: deploy
   script:
     - cd portfolio
-    - echo "$MARIADB_USERNAME"
-    - echo "$MARIADB_PASSWORD"
+    - echo "$MARIADB_USERNAME" > .env
+    - echo "$MARIADB_PASSWORD" >> .env
+    - source .env
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/staging-portfolio/ || true
     - mkdir /home/gitlab-runner/staging-portfolio/
