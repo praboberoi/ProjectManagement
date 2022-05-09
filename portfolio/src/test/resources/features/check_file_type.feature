@@ -1,17 +1,12 @@
 Feature: Restricting file type for profile picture to images
 
-  Scenario Outline: User tries to save a photo as their profile picture (AC1, UUiii)
-    Given User selects browse under profile photo
-    When User selects an <imageFile>
-    Then Error message should be <error>
-    Examples:
-    |imageFile| error|
-    | ".jpg" | "null" |
+  Scenario: User tries to save an image as their profile picture (AC1, UUiii)
+    Given User selects a "jpg"
+    When The file is an accepted type
+    Then Image is uploaded successfully
 
-  Scenario Outline: User tries to save a file as their profile picture (AC1, UUiii)
-    Given User selects browse under profile photo
-    When User selects an <imageFile>
-    Then Account page should display <error>
-    Examples:
-    |imageFile| error|
-    | ".txt" | "File type must be jpg" |
+
+  Scenario: User tries to save a file as their profile picture (AC1, UUiii)
+    Given User selects a "txt"
+    When The file is not an accepted type
+    Then Image is not uploaded successfully
