@@ -36,7 +36,6 @@ publish-protos-to-maven-local:
 branch-build:
   stage: build
   script:
-    -
     - cd identityprovider
     - ./gradlew bootJar
     - cd ../portfolio
