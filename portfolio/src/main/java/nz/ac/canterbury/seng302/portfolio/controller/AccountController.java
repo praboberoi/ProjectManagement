@@ -15,14 +15,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -94,7 +102,6 @@ public class AccountController {
     /**
      * A mapping to a get request to edit the user, which returns the current details of the user to be edited
      * @param principal Authentication information containing user info
-     * @param favouriteColour The favourite colour of the user to be edited
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
@@ -112,6 +119,7 @@ public class AccountController {
     /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
+     * @param multipartFile  The image file of the user
      * @param firstName The first name of the user
      * @param lastName The last name of the user
      * @param nickname The nickname of the user
@@ -124,6 +132,7 @@ public class AccountController {
     @PostMapping("/editAccount")
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
+            @RequestParam("image")MultipartFile multipartFile,
             @RequestParam String firstName,
             @RequestParam String lastName,
             @RequestParam String nickname,
@@ -132,7 +141,7 @@ public class AccountController {
             @RequestParam String email,
             Model model,
             RedirectAttributes ra
-    ) {
+    ) throws IOException {
         Integer userId = Integer.parseInt(principal.getClaimsList().stream()
                 .filter(claim -> claim.getType().equals("nameid"))
                 .findFirst().map(ClaimDTO::getValue).orElse("-1"));
@@ -140,6 +149,31 @@ public class AccountController {
                 bio,
                 pronouns,
                 email);
+
+
+//        Start of image upload functionality
+        MultipartFile file1 = multipartFile;
+        boolean b = !(file1.isEmpty());
+        if (b) {
+            // original filename of image user has uploaded
+            String filename = file1.getOriginalFilename();
+            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            // check if file is an accepted image type
+            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList("jpg", "jpeg", "png"));
+            if (acceptedFileTypes.contains(extension)) {
+                userAccountClientService.uploadImage(userId, extension, file1);
+            } else {
+                String msgString;
+                msgString = String.format("File must be an image of type jpg, jpeg or png");
+                ra.addFlashAttribute("messageDanger", msgString);
+                return "redirect:editAccount";
+            }
+        }
+
+
+
+//       End of image
+
 
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
@@ -154,12 +188,15 @@ public class AccountController {
         return "editAccount";
     }
 
+
     private void addAttributesToModel(AuthState principal, Model model) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
+
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+//        model.addAttribute("image", user.getProfileImagePath());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()

@@ -32,6 +32,9 @@
             <div class="page-title">
                 <h2>Your LENSfolio Account</h2>
             </div>
+            <div th:if="${messageDanger}" class="alert alert-danger text-center">
+                [[${messageDanger}]]
+            </div>
         </div>
 
         <div class="content_container">
@@ -51,10 +54,13 @@
                             <br>
 
 
-
-                            <img src="/icons/userr.png" class="profile-photo" id="output" width="200" height="200" />
+                            <!-- Display Image -->
+                            <img th:src="${user.profileImagePath}" class="profile-photo" id="output" width="200" height="200" />
                             <br>
-                            </br>
+
+                            <form action="/editAccount" enctype="multipart/form-data" method="post">
+
+                            <!-- Upload image functionality -->
                             <div class="row mb-3">
                                 <label for="formFile" class = "col-sm-2 col-form-label"><h6>Profile Photo: </h6></label>
                                 <div class = "col-sm-6">
@@ -66,7 +72,7 @@
 
                             <!-- start of form -->
                             <!-- edit with @postmapping to update details in database AND screen-->
-                            <form action="/editAccount" method="post">
+
                                 <div class="row mb-3">
                                     <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-6">
@@ -128,7 +134,6 @@
                 <br>
             </div>
         </div>
-
     </div>
 </div>
 </body>
