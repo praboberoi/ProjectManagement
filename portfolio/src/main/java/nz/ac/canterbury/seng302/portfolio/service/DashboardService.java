@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +16,7 @@ import java.util.Optional;
 @Service
 public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
+    @Autowired private SprintService sprintService;
     private Project currentProject;
     private Date projectMinDate;
     private Date projectMaxDate;
@@ -112,6 +115,13 @@ public class DashboardService {
      * @throws Exception indicating page values of the HTML page are manually changed.
      */
     public void verifyProject(Project project) throws Exception {
+        List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
+        if (sprints.stream().anyMatch(sprint -> sprint.getStartDate().before(project.getStartDate()))) {
+            throw new Exception("A sprint cannot exist before the project starts.");
+        }
+        if (sprints.stream().anyMatch(sprint -> sprint.getEndDate().after(project.getEndDate()))) {
+            throw new Exception("A sprint cannot exist after the project ends.");
+        }
         if(project.getStartDate().before(projectMinDate) || project.getEndDate().after(projectMaxDate))
             throw new Exception("HTML page values manually changed. Cannot save the given project");
     }

@@ -107,6 +107,14 @@ public class Project {
      * Sets the name of the Project
      * @param projectName of type String
      */
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
+    }
+
+    /**
+     * Sets the name of the Project
+     * @param projectName of type String
+     */
     public void setProjectName(String projectName) {
         this.projectName = projectName;
     }

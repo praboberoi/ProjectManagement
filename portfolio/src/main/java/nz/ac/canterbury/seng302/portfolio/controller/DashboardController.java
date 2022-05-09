@@ -34,8 +34,9 @@ public class DashboardController {
      * @return name of the dashboard html file.
      */
     @GetMapping("/dashboard")
-    public String showProjectList( @AuthenticationPrincipal AuthState principal,
-                                   Model model) {
+    public String showProjectList( 
+        @AuthenticationPrincipal AuthState principal,
+        Model model) {
         try {
             dashboardService.clearCache();
             List<Project> listProjects = dashboardService.getAllProjects();

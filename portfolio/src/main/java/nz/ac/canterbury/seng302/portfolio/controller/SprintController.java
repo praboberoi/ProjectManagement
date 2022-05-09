@@ -95,9 +95,12 @@ public class SprintController {
     }
 
     /**
-     * Saves a sprint and redirects to project page
-     * @param sprint
-     * @return
+     * Checks if a sprints dates are valid and returns a Response containing a message
+     * @param projectId ID of the project to check
+     * @param startDate New start date of the project
+     * @param endDate New end date of the project
+     * @param principal
+     * @return ResponseEntity containing a string message
      */
     @PostMapping("/project/{projectId}/verifySprint")
     public ResponseEntity<String> verifySprint(

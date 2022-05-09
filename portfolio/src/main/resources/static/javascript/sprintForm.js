@@ -39,6 +39,8 @@ function checkSprintName() {
 function checkDates() {
     const startDate = startDateElement.value;
     const endDate = endDateElement.value;
+    startDateElement.setCustomValidity("");
+    endDateElement.setCustomValidity("");
 
     checkStartDate();
     checkEndDate();
@@ -46,8 +48,6 @@ function checkDates() {
     if (startDate > endDate ) {
         startDateError.innerText = "Start date must be before the end date.";
         endDateError.innerText = "End date must be after the start date";
-        startDateElement.setCustomValidity("Start date must be before the end date.");
-        endDateElement.setCustomValidity("End date must be after the start date.");
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
         return;
@@ -56,7 +56,6 @@ function checkDates() {
     if (
     startDateError.innerText == "" &&
     endDateError.innerText == "" ) {
-        console.log("test");
         verifyOverlap(startDate, endDate);
     }
 }
@@ -70,18 +69,15 @@ function checkStartDate() {
     if (startDate < projectStartDate) {
         startDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
         startDateElement.classList.add("formError");
-        startDateElement.setCustomValidity("Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS));
         return;
     } else if (startDate > projectEndDate) {
         startDateError.innerText = "Sprint must start before the project ends";
         startDateElement.classList.add("formError");
-        startDateElement.setCustomValidity("Sprint must start before the project ends");
         return;
     }
     
     startDateError.innerText = "";
     startDateElement.classList.remove("formError")
-    endDateElement.setCustomValidity("");
 }
 
 /**
@@ -93,18 +89,15 @@ function checkEndDate() {
     if (endDate < projectStartDate) {
         endDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
         endDateElement.classList.add("formError");
-        endDateElement.setCustomValidity("Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS));
         return;
     } else if (endDate > projectEndDate) {
         endDateError.innerText = "Sprint must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
         endDateElement.classList.add("formError");
-        endDateElement.setCustomValidity("Sprint must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS));
         return;
     }
     
     endDateError.innerText = "";
     endDateElement.classList.remove("formError")
-    endDateElement.setCustomValidity("");
 }
 
 /**

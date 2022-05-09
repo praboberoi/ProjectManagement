@@ -10,6 +10,7 @@ const startDateElement = document.querySelector('#startDate');
 const endDateElement = document.querySelector('#endDate');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
+const projectId = document.getElementById('projectId').value;
 
 /**
  * Checks the start date and end date of the project and displays an error if it is invalid
@@ -17,6 +18,8 @@ const endDateError = document.getElementById('endDateError');
 function checkDates() {
     const startDate = startDateElement.value;
     const endDate = endDateElement.value;
+    startDateElement.setCustomValidity("");
+    endDateElement.setCustomValidity("");
 
     checkStartDate();
     checkEndDate();
@@ -24,13 +27,16 @@ function checkDates() {
     if (startDate > endDate ) {
         startDateError.innerText = "Start date must be before the end date.";
         endDateError.innerText = "End date must be after the start date";
-        startDateElement.setCustomValidity("Start date must be before the end date.");
-        endDateElement.setCustomValidity("Start date must be before the end date.");
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
         return;
     }
 
+    if (
+        startDateError.innerText == "" &&
+        endDateError.innerText == "" ) {
+            verifyOverlap(startDate, endDate);
+        }
 }
 
 /**
@@ -48,20 +54,17 @@ function checkStartDate() {
     if (startDate > tenYearsFromNow) {
         startDateError.innerText = "Project must start in the next 10 years.";
         startDateElement.classList.add("formError")
-        startDateElement.setCustomValidity("Project must start in the next 10 years.");
         return;
     }
     
     if (startDate < oneYearAgo) {
         startDateError.innerText = "Project must have started in the last year.";
         startDateElement.classList.add("formError");
-        startDateElement.setCustomValidity("Project must have started in the last year.");
         return;
     }
     
     startDateError.innerText = "";
     startDateElement.classList.remove("formError")
-    startDateElement.setCustomValidity("");
 
 }
 
@@ -80,20 +83,17 @@ function checkEndDate() {
     if (endDate < oneYearAgo) {
         endDateError.innerText = "Project must have started in the last year.";
         endDateElement.classList.add("formError");
-        endDateElement.setCustomValidity("Project must have started in the last year.");
         return;
     }
 
     if (endDate > tenYearsFromNow) {
         endDateError.innerText = "Project must end in the next 10 years.";
         endDateElement.classList.add("formError")
-        endDateElement.setCustomValidity("Project must end in the next 10 years.");
         return;
     }
 
     endDateError.innerText = "";
     endDateElement.classList.remove("formError")
-    endDateElement.setCustomValidity("");
 }
 
 /**
@@ -106,7 +106,7 @@ function checkProjectName() {
     if (projectName.value.length < 1) {
         projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not be empty";
-    } else if (projectNameRegex.test(projectName.value)) {
+    } else if (! projectNameRegex.test(projectName.value)) {
         projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not start with space characters";
     } else {
@@ -115,3 +115,30 @@ function checkProjectName() {
     }
 }
 
+/**
+ * Calls the server to test for sprints falling outside of the project
+ */
+ function verifyOverlap(startDate, endDate) {
+    httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                console.log(httpRequest.response);
+                if (httpRequest.response != "") {
+                    if (httpRequest.response.includes("ends")) {
+                        endDateError.innerText = httpRequest.response;
+                    } else {
+                        startDateError.innerText = httpRequest.response;
+                    }
+                    startDateElement.classList.add("formError");
+                    endDateElement.classList.add("formError");
+                }
+            }
+        }
+    }
+
+    httpRequest.open('POST', '/verifyProject/' + projectId, true);
+    httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+}
