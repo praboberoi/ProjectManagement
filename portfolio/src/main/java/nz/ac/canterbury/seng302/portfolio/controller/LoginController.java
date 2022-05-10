@@ -4,6 +4,7 @@ import io.grpc.StatusRuntimeException;
 import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,11 +19,15 @@ public class LoginController {
 
     private final AuthenticateClientService authenticateClientService;
 
-
+    /**
+     * If the user is not logged in redirects the user to the login page
+     * @return the login page
+     */
     @GetMapping("/")
     public String redirection() {
-        return "/login";
+        return "redirect:/login";
     }
+
     public LoginController (AuthenticateClientService authenticateClientService) {
         this.authenticateClientService = authenticateClientService;
     }
@@ -83,8 +88,7 @@ public class LoginController {
             );
             return "redirect:/dashboard";
         }
-
-        model.addAttribute("error", loginReply.getMessage());
+            model.addAttribute("error", loginReply.getMessage());
         return "login";
     }
 

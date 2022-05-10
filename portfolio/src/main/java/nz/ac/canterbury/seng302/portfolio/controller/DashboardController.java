@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -8,6 +9,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +27,7 @@ public class DashboardController {
     @Autowired private UserAccountClientService userAccountClientService;
     @Autowired private SprintService sprintService;
 
+
     /**
      * Adds the project list to the Dashboard.
      * Gets the list of the current user's roles
@@ -37,6 +40,7 @@ public class DashboardController {
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
+            dashboardService.clearCache();
             List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
@@ -118,7 +122,7 @@ public class DashboardController {
             model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
             model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
             model.addAttribute("projectEndDateMax", dashboardService.getProjectMaxDate());
-            return "projectForm";
+            return "/projectForm";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
@@ -150,5 +154,7 @@ public class DashboardController {
             return "error";
         }
     }
+
+
 
 }

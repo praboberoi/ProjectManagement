@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -32,7 +33,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @GetMapping("/project/{projectId}")
+    @GetMapping("{apiPrefix}/project/{projectId}")
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -45,12 +46,16 @@ public class SprintController {
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "project";
+            return "/project";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
         }
     }
+
+
+
+
 
     /**
      * Displays page for adding a new sprint
@@ -78,7 +83,7 @@ public class SprintController {
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", "/icons/create-icon.svg");
-            return "sprintForm";
+            return "/sprintForm";
 
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -94,23 +99,20 @@ public class SprintController {
     @PostMapping("/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
-        Sprint sprint,
+        @ModelAttribute Sprint sprint,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             sprint.setProject(projectService.getProjectById(projectId));
-            sprintService.updateCurrentSprint(sprint);
-            sprintService.verifySprint();
-            String message = sprintService.saveSprint();
+            sprintService.verifySprint(sprint);
+            String message = sprintService.saveSprint(sprint);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
             return "redirect:/project/{projectId}";
         }
-
-
 
         /**
          * Directs to page for editing a sprint
@@ -141,7 +143,7 @@ public class SprintController {
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", "/icons/save-icon.svg");
-            return "sprintForm";
+            return "/sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());
                 return "redirect:/project/{projectId}";
