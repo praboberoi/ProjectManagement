@@ -141,9 +141,9 @@ public class UserAccountClientService {
     }
 
     /**
-     * Checks whether the current user has a teacher or course administrator role.
+     * Check whether the current user has a teacher or course administrator role.
      * @param principal - current user
-     * @return true if has role teacher or course administrator
+     * @return true if the user has role teacher or course administrator
      */
     public boolean checkUserIsTeacherOrAdmin(@AuthenticationPrincipal AuthState principal) {
         List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
