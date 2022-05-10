@@ -33,7 +33,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @GetMapping("/project/{projectId}")
+    @GetMapping("{apiPrefix}/project/{projectId}")
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -46,7 +46,7 @@ public class SprintController {
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "project";
+            return "/project";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
@@ -83,7 +83,7 @@ public class SprintController {
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", "/icons/create-icon.svg");
-            return "sprintForm";
+            return "/sprintForm";
 
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -143,7 +143,7 @@ public class SprintController {
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", "/icons/save-icon.svg");
-            return "sprintForm";
+            return "/sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());
                 return "redirect:/project/{projectId}";
