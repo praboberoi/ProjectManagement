@@ -29,7 +29,7 @@
         <h2>[[${pageTitle}]]</h2>
     </div>
     <div class="projectForm">
-        <form id="createProjectForm" th:action="@{~/dashboard/saveProject}" method="post" th:object="${project}" >
+        <form id="createProjectForm" th:action="@{/dashboard/saveProject}" method="post" th:object="${project}" >
             <input type="hidden" th:field="*{projectId}">
 
             <div class="mb-3">
@@ -64,12 +64,12 @@
                 <button type= "submit" class="btn btn-outline-primary me-3">
                     <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
                 <a type="button" class="btn btn-outline-secondary" th:href="@{/dashboard}">
-                    <img class="icon img-color-secondary" th:src="@{~/icons/close-icon.svg}"/> Close</a>
+                    <img class="icon img-color-secondary" th:src="@{/icons/close-icon.svg}"/> Close</a>
             </div>
         </form>
     </div>
 
 </div>
-<script th:src="@{~/javascript/projectForm.js}"></script>
+<script th:src="@{/javascript/projectForm.js}"></script>
 </body>
 </html>
