@@ -4,7 +4,7 @@
         <title>LENSfolio - Register</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
-        <link rel="stylesheet" th:action="@{~/css/style.css}" />
+        <link rel="stylesheet" th:href="@{/css/style.css}" />
         <script th:src="@{~/javascript/register.js}"></script>
 
         <!-- Bootstrap CSS -->
@@ -73,7 +73,7 @@
                         <div class="container-fluid d-flex justify-content-end p-0">
                         <button class="btn btn-outline-primary me-3" type="submit">
                             <img class="icon img-color-primary" th:src="@{~/icons/save-icon.svg}"/> Submit</button>
-                        <a type="button" class="btn btn-outline-secondary" th:action="@{~/login}">
+                        <a type="button" class="btn btn-outline-secondary" th:href="@{/login}">
                             <img class="icon img-color-secondary" th:src="@{~/icons/close-icon.svg}"/> Close</a>
                         </div>
                 </form>
