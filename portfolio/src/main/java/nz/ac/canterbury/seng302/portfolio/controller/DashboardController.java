@@ -26,7 +26,7 @@ public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Autowired private SprintService sprintService;
-    @Value("${apiPrefix}") private String apiPrefix;
+
 
     /**
      * Adds the project list to the Dashboard.
@@ -42,7 +42,6 @@ public class DashboardController {
         try {
             dashboardService.clearCache();
             List<Project> listProjects = dashboardService.getAllProjects();
-            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("listProjects", listProjects);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -58,11 +57,10 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping("{apiPrefix}/dashboard/newProject")
+    @GetMapping("/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         Project newProject = dashboardService.getNewProject();
-        model.addAttribute("apiPrefix", apiPrefix);
         model.addAttribute("project", newProject);
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
@@ -81,7 +79,7 @@ public class DashboardController {
      * @param project
      * @return
      */
-    @PostMapping("{apiPrefix}/dashboard/saveProject")
+    @PostMapping("/dashboard/saveProject")
     public String saveProject(
             Project project,
             Model model,
@@ -89,7 +87,6 @@ public class DashboardController {
             @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
             dashboardService.verifyProject(project);
             String message =  dashboardService.saveProject(project);
             ra.addFlashAttribute("messageSuccess", message);
@@ -106,7 +103,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping("{apiPrefix}/dashboard/editProject/{projectId}")
+    @GetMapping("/dashboard/editProject/{projectId}")
     public String showEditForm(
         @PathVariable(
         value = "projectId") int projectId,
@@ -115,7 +112,6 @@ public class DashboardController {
         @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
             Project project  = dashboardService.getProject(projectId);
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
@@ -139,7 +135,7 @@ public class DashboardController {
      * @return
      * @throws Exception If project is not found in the database
      */
-    @PostMapping("{apiPrefix}/dashboard/deleteProject/{projectId}")
+    @PostMapping("/dashboard/deleteProject/{projectId}")
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,
@@ -147,7 +143,6 @@ public class DashboardController {
         @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
             Project project  = dashboardService.getProject(projectId);
             String message = "Successfully Deleted " + project.getProjectName();
             sprintService.deleteAllSprints(projectId);
