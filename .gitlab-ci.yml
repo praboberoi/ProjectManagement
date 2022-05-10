@@ -126,6 +126,7 @@ deploy-production-portfolio:
     - tags
     - master
 
+# Runs the SonarQube evaluation. Commented out due to incorrect routing of csse sonarqube server.
 # sonarqube-report:
 #   stage: sonarqube
 #   script:
