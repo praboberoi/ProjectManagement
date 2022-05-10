@@ -36,7 +36,7 @@ public class DashboardController {
      * @param principal - current user.
      * @return name of the dashboard html file.
      */
-    @GetMapping("{apiPrefix}/dashboard")
+    @GetMapping("/dashboard")
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
