@@ -26,7 +26,7 @@ public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Autowired private SprintService sprintService;
-    @Value("apiPrefix") String apiPrefix;
+    @Value("${apiPrefix}") String apiPrefix;
 
     /**
      * Adds the project list to the Dashboard.
