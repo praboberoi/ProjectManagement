@@ -56,7 +56,7 @@ public class checkFileTypeTest {
                 .build());
     }
     @Given("User selects a {string}")
-    public void givenUserSelectsImage(String imageType){
+    public void given_user_selects_image(String imageType){
         testFile = new MockMultipartFile("image." + imageType, "image." + imageType, "multipart/form-data", "some image".getBytes());
         ra = Mockito.mock(RedirectAttributes.class);
         mockModel = Mockito.mock(Model.class);
@@ -64,13 +64,13 @@ public class checkFileTypeTest {
     }
 
     @When("The file is an accepted type")
-    public void whenTheFileIsAnAcceptedType() {
+    public void when_the_file_is_an_accepted_type() {
         String extension = testFile.getName().substring(testFile.getName().lastIndexOf(".") + 1);
         assertTrue(acceptedFileTypes.contains(extension));
     }
 
     @Then("Image is uploaded successfully")
-    public void imageIsUploadedSuccessfully() {
+    public void image_is_uploaded_successfully() {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         AccountController controller = new AccountController(mockUserAccountClientService);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
