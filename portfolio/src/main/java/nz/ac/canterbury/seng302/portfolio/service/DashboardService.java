@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -44,7 +43,7 @@ public class DashboardService {
             String message;
             if (isNew) {
                 currentProject = project;
-                message = "Successfully Created Project: " + project.getProjectName();
+                message = "Successfully Created " + project.getProjectName();
                 isNew = false;
 
             } else {
@@ -52,7 +51,7 @@ public class DashboardService {
                 currentProject.setDescription(project.getDescription());
                 currentProject.setStartDate(project.getStartDate());
                 currentProject.setEndDate(project.getEndDate());
-                message = "Successfully Saved Project " + project.getProjectName();
+                message = "Successfully Saved " + project.getProjectName();
 
             }
             try {
@@ -72,6 +71,7 @@ public class DashboardService {
     public Project getProject(int id) throws Exception {
         Optional<Project> result = projectRepo.findById(id);
         if(result.isPresent()) {
+            isNew = false;
             currentProject = result.get();
             projectMinDate = Date.valueOf(currentProject.getStartDate().toLocalDate().minusYears(1));
             projectMaxDate = Date.valueOf(currentProject.getEndDate().toLocalDate().plusYears(10));
@@ -130,6 +130,14 @@ public class DashboardService {
      */
     public Date getProjectMaxDate() {
         return projectMaxDate;
+    }
+
+    /**
+     * Clear the cached data by setting the currentProject and isNew to default
+     */
+    public void clearCache() {
+        currentProject = null;
+        isNew = false;
     }
 
 }

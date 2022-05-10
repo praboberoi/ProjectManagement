@@ -38,6 +38,7 @@ public class DashboardController {
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
+            dashboardService.clearCache();
             List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
@@ -151,5 +152,7 @@ public class DashboardController {
             return "error";
         }
     }
+
+
 
 }
