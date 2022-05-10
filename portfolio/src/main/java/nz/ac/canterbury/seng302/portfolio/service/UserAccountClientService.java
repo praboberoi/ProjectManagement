@@ -302,7 +302,6 @@ public class UserAccountClientService {
     private static class FileUploadObserver implements StreamObserver<FileUploadStatusResponse>{
         @Override
         public void onNext(FileUploadStatusResponse fileUploadStatusResponse) {
-            System.out.println("File upload status" + fileUploadStatusResponse.getStatus());
         }
 
         @Override
