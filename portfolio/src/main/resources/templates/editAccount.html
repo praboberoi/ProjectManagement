@@ -9,12 +9,12 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
 
     Custom css for body
-    <link rel="stylesheet" type="text/css" th:href="@{css/body.css}"/>
+    <link rel="stylesheet" type="text/css" th:href="@{/css/body.css}"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-   <script th:src="@{javascript/editAccount.js}"></script>
-    <script th:src="@{javascript/profilePhoto.js}"></script>
+   <script th:src="@{/javascript/editAccount.js}"></script>
+    <script th:src="@{/javascript/profilePhoto.js}"></script>
 </head>
 
 <!--    add/fragments -->
@@ -52,7 +52,7 @@
 
 
 
-                            <img th:src="@{icons/userr.png}" class="profile-photo" id="output" width="200" height="200" />
+                            <img th:src="@{/icons/userr.png}" class="profile-photo" id="output" width="200" height="200" />
                             <br>
                             </br>
                             <div class="row mb-3">
@@ -117,9 +117,9 @@
                                 </div>
                                 <br>
                                 <button type="submit" class="btn btn-outline-primary mr-2" th:href="@{account}">
-                                    <img class="icon img-color-primary" th:src="@{icons/save-icon.svg}"/> Save</button>
+                                    <img class="icon img-color-primary" th:src="@{/icons/save-icon.svg}"/> Save</button>
                                 <a type="button" class="btn btn-outline-secondary" th:href="@{account}">
-                                    <img class="icon img-color-secondary" th:src="@{icons/close-icon.svg}"/> Cancel</a>
+                                    <img class="icon img-color-secondary" th:src="@{/icons/close-icon.svg}"/> Cancel</a>
                             </form>
                         </div>
                     </div>
