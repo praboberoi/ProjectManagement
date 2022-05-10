@@ -6,10 +6,7 @@
   <!-- Bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
   <!-- Custom css for body-->
-  <link rel="stylesheet" type="text/css" th:href="@{/css/body.css}" href="/css/body.css"/>
-
-  <!-- do not include fragments that are not in use PARSING ERROR -->
-  <!--<head th:replace="fragments :: content"></head>-->
+  <link rel="stylesheet" type="text/css" th:href="@{css/body.css}"/>
   <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
   <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
 </head>
@@ -21,7 +18,6 @@
 <div th:replace="fragments :: project-and-sprint"></div>
 
 <body>
-<!--<header></header>-->
 <div class="main">
   <br>
   <div class="page-title">
@@ -56,8 +52,8 @@
     <div th:each="role: ${roles}">
         <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
         <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-          <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{ '/project/' + ${projectId} + '/newSprint'}">
-            <img class="icon img-color-primary" src="/icons/create-icon.svg"/></a>
+          <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{ 'project/' + ${projectId} + '/newSprint'}">
+            <img class="icon img-color-primary" th:src="@{icons/create-icon.svg}"/></a>
         </div>
      </div>
   </div>
@@ -90,10 +86,10 @@
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
               <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
                 <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{ ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
-                  <img class="icon img-color-primary" src="/icons/edit-icon.svg"/> Edit</a>
+                  <img class="icon img-color-primary" th:src="@{icons/edit-icon.svg}"/> Edit</a>
                 <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
-                        th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))">
-                  <img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
+                        th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))" >
+                  <img class="icon img-color-secondary" th:src="@{icons/trash-icon.svg}"/> Delete</button>
               </div>
             </div>
           </td>
@@ -102,7 +98,6 @@
       </tbody>
     </table>
   </div>
-
   <br>
   <div id="cal">
     <div id='calendar'/>
@@ -125,17 +120,17 @@
       </div>
       <div class="modal-footer">
         <form action="" method="post" id="deleteSprint">
-          <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-secondary" src="/icons/trash-icon.svg"/> Delete</button>
+          <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-secondary" th:src="@{icons/trash-icon.svg}"/> Delete</button>
         </form>
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
-          <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</button>
+          <img class="icon img-color-secondary" th:src="@{icons/close-icon.svg}"/> Close</button>
       </div>
     </div>
   </div>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
-<script src="/javascript/project.js"></script>
-<script src='/javascript/calendar.js'></script>
+<script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js}" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+<script th:src="@{javascript/project.js}"></script>
+<script th:src='@{/javascript/calendar.js}'></script>
 </body>
 </html>
