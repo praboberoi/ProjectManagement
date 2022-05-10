@@ -29,7 +29,7 @@
         <h2>[[${pageTitle}]]</h2>
     </div>
     <div class="projectForm">
-        <form id="createProjectForm" th:action="@{dashboard/saveProject}" method="post" th:object="${project}" >
+        <form id="createProjectForm" th:action="@{/dashboard/saveProject}" method="post" th:object="${project}" >
             <input type="hidden" th:field="*{projectId}">
 
             <div class="mb-3">
