@@ -123,9 +123,7 @@ public class UserAccountClientService {
                 .findFirst()
                 .map(ClaimDTO::getValue)
                 .orElse("-100"));
-
         UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
-//        getImage();
         return response;
     }
 

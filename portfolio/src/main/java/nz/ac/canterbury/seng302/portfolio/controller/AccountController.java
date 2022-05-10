@@ -188,15 +188,12 @@ public class AccountController {
         return "editAccount";
     }
 
-
     private void addAttributesToModel(AuthState principal, Model model) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
-
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
-//        model.addAttribute("image", user.getProfileImagePath());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
