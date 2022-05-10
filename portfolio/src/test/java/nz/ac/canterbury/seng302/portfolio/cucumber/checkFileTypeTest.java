@@ -95,7 +95,7 @@ public class checkFileTypeTest {
     public void image_is_not_uploaded_successfully() {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         AccountController controller = new AccountController(mockUserAccountClientService);
-        EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(false).build();
+        EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
 
