@@ -24,7 +24,7 @@ public class LoginController {
      */
     @GetMapping("/")
     public String redirection() {
-        return "/login";
+        return "redirect:/login";
     }
 
     public LoginController (AuthenticateClientService authenticateClientService) {
