@@ -72,7 +72,7 @@
                                             <p class="date-color" th:text="${project.description}"/>
                                             <div th:each="role: ${roles}">
                                                 <div class="container-fluid p-0" th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-                                                    <a type="button" class="btn btn-outline-primary me-2"  th:href="@{'/dashboard/editProject/'+ ${project.projectId}}">
+                                                    <a type="button" class="btn btn-outline-primary me-2"  th:href="@{${baseurl} + '/dashboard/editProject/'+ ${project.projectId}}">
                                                         <img class="icon img-color-primary" th:src="@{/icons/edit-icon.svg}"/> Edit</a>
                                                     <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModal" th:data-id = "${project.projectId}"
                                                             th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'))">

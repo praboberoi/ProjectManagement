@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -25,6 +26,7 @@ public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Autowired private SprintService sprintService;
+    @Value("${baseurl}") private String baseurl;
 
     /**
      * Adds the project list to the Dashboard.
@@ -40,6 +42,7 @@ public class DashboardController {
         try {
             dashboardService.clearCache();
             List<Project> listProjects = dashboardService.getAllProjects();
+            model.addAttribute("baseurl", baseurl);
             model.addAttribute("listProjects", listProjects);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -59,6 +62,7 @@ public class DashboardController {
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         Project newProject = dashboardService.getNewProject();
+        model.addAttribute("baseurl", baseurl);
         model.addAttribute("project", newProject);
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
@@ -111,6 +115,7 @@ public class DashboardController {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project project  = dashboardService.getProject(projectId);
+            model.addAttribute("baseurl", baseurl);
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
@@ -142,6 +147,7 @@ public class DashboardController {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project project  = dashboardService.getProject(projectId);
+            model.addAttribute("baseurl", baseurl);
             String message = "Successfully Deleted " + project.getProjectName();
             sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
