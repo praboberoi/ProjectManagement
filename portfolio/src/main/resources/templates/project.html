@@ -52,7 +52,7 @@
     <div th:each="role: ${roles}">
         <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
         <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-          <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{'project/' + ${projectId} + '/newSprint'}">
+          <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{'/project/' + ${projectId} + '/newSprint'}">
             <img class="icon img-color-primary" th:src="@{/icons/create-icon.svg}"/></a>
         </div>
      </div>
@@ -85,7 +85,7 @@
             <div th:each="role: ${roles}">
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
               <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-                <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${projectId} + '/editSprint/' + ${sprint.sprintId}}">
+                <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{'/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                   <img class="icon img-color-primary" th:src="@{/icons/edit-icon.svg}"/> Edit</a>
                 <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
                         th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'))" >
