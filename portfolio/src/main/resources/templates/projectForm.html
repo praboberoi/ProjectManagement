@@ -63,8 +63,8 @@
             <div class="d-flex flex-row justify-content-end p-0">
                 <button type= "submit" class="btn btn-outline-primary me-3">
                     <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
-                <a type="button" class="btn btn-outline-secondary" href="/dashboard">
-                    <img class="icon img-color-secondary" src="/icons/close-icon.svg"/> Close</a>
+                <a type="button" class="btn btn-outline-secondary" th:href="@{dashboard}">
+                    <img class="icon img-color-secondary" th:src="@{icons/close-icon.svg}"/> Close</a>
             </div>
         </form>
     </div>
