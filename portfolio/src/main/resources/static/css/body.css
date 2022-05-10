@@ -127,6 +127,10 @@ input:invalid{
     color: #8a0000;
 }
 
+.profilePhoto{
+    margin-left: 200px;
+}
+
 .profile-photo {
     border-radius: 50%;
 }

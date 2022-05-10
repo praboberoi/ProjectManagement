@@ -8,8 +8,6 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -19,12 +17,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.sql.Date;
 import java.util.List;
 
-/**
- * Accepts requests relating to sprints from the client and redirects it to the correct service.
- */
 @Controller
 public class SprintController {
     @Autowired private SprintService sprintService;
@@ -39,7 +33,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @GetMapping("/project/{projectId}")
+    @GetMapping("{apiPrefix}/project/{projectId}")
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -48,17 +42,20 @@ public class SprintController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             Project project = projectService.getProjectById(projectId);
-            
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "project";
+            return "/project";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
         }
     }
+
+
+
+
 
     /**
      * Displays page for adding a new sprint
@@ -72,53 +69,25 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
+            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
-
-            model.addAttribute("sprintDateMin", currentProject.getStartDate());
-            model.addAttribute("sprintDateMax", currentProject.getEndDate());
-
+            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
+            model.addAttribute("sprintStartDateMax", newSprint.getEndDate());
+            model.addAttribute("sprintEndDateMin", newSprint.getStartDate());
+            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", "/icons/create-icon.svg");
-            return "sprintForm";
+            return "/sprintForm";
 
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
-        }
-    }
-
-    /**
-     * Checks if a sprints dates are valid and returns a Response containing a message
-     * @param projectId ID of the project to check
-     * @param startDate New start date of the project
-     * @param endDate New end date of the project
-     * @param principal
-     * @return ResponseEntity containing a string message
-     */
-    @PostMapping("/project/{projectId}/verifySprint")
-    public ResponseEntity<String> verifySprint(
-        @PathVariable int projectId,
-        String startDate,
-        String endDate,
-        @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
-        Sprint currentSprint = new Sprint();
-        try {
-            Project project = projectService.getProjectById(projectId);
-            currentSprint.setProject(project);
-            currentSprint.setStartDate(Date.valueOf(startDate));
-            currentSprint.setEndDate(Date.valueOf(endDate));
-            sprintService.verifySprint(currentSprint);
-            return ResponseEntity.status(HttpStatus.OK).body(null);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
     }
 
@@ -145,13 +114,13 @@ public class SprintController {
             return "redirect:/project/{projectId}";
         }
 
-        
-    /**
-     * Directs to page for editing a sprint
-     * @param sprintId ID for sprint being edited
-     * @param model
-     * @return
-    */    
+        /**
+         * Directs to page for editing a sprint
+         * @param sprintId ID for sprint being edited
+         * @param model
+         * @return
+         */
+    /*make sure to update project.html for path*/
     @GetMapping("/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
@@ -160,28 +129,26 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
+            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("user", userAccountClientService.getUser(principal));
-
-            model.addAttribute("sprintStartDateMin", currentProject.getStartDate());
-            model.addAttribute("sprintStartDateMax", currentProject.getEndDate());
-            model.addAttribute("sprintEndDateMin", currentProject.getStartDate());
-            model.addAttribute("sprintEndDateMax", currentProject.getEndDate());
-
+            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
+            model.addAttribute("sprintStartDateMax", sprint.getEndDate());
+            model.addAttribute("sprintEndDateMin", sprint.getStartDate());
+            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", "/icons/save-icon.svg");
-            return "sprintForm";
-        } catch (Exception e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/{projectId}";
+            return "/sprintForm";
+            } catch (Exception e) {
+                ra.addFlashAttribute("messageDanger", e.getMessage());
+                return "redirect:/project/{projectId}";
+            }
         }
-    }
 
 
     /**
@@ -198,8 +165,8 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-
         try {
+            Project currentProject = projectService.getProjectById(projectId);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
