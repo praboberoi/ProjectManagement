@@ -59,7 +59,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping("{apiPrefix}/dashboard/newProject")
+    @GetMapping(path="{apiPrefix}/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         model.addAttribute("apiPrefix", apiPrefix);
