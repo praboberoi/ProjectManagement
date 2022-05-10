@@ -49,11 +49,8 @@
                             <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
                                 <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
-
-
-
-                            <img src="/icons/userr.png" class="profile-photo" id="output" width="200" height="200" />
-                            <br>
+                            <!-- Display Image -->
+                            <img th:src="${user.profileImagePath}" class="profile-photo" id="output" width="200" height="200" />
                             </br>
                             <div class="row mb-3">
                                 <label for="formFile" class = "col-sm-2 col-form-label"><h6>Profile Photo: </h6></label>
