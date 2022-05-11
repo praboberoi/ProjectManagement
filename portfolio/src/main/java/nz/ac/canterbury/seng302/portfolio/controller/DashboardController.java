@@ -37,7 +37,7 @@ public class DashboardController {
      * @param principal - current user.
      * @return name of the dashboard html file.
      */
-    @GetMapping("/dashboard")
+    @GetMapping("${apiPrefix}/dashboard")
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
@@ -59,7 +59,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping(path="/dashboard/newProject")
+    @GetMapping("${apiPrefix}/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         model.addAttribute("apiPrefix", apiPrefix);
@@ -82,7 +82,7 @@ public class DashboardController {
      * @param project
      * @return
      */
-    @PostMapping("/dashboard/saveProject")
+    @PostMapping("${apiPrefix}/dashboard/saveProject")
     public String saveProject(
             Project project,
             Model model,
@@ -108,7 +108,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping("/dashboard/editProject/{projectId}")
+    @GetMapping("${apiPrefix}/dashboard/editProject/{projectId}")
     public String showEditForm(
         @PathVariable(
         value = "projectId") int projectId,
@@ -141,7 +141,7 @@ public class DashboardController {
      * @return
      * @throws Exception If project is not found in the database
      */
-    @PostMapping("/dashboard/deleteProject/{projectId}")
+    @PostMapping("${apiPrefix}/dashboard/deleteProject/{projectId}")
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,

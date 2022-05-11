@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,7 +39,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @GetMapping("/project/{projectId}")
+    @GetMapping("${apiPrefix}/project/{projectId}")
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -68,7 +69,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @GetMapping("/project/{projectId}/newSprint")
+    @GetMapping("${apiPrefix}/project/{projectId}/newSprint")
     public String newSprint(
             Model model,
             @PathVariable ("projectId") int projectId,
@@ -106,7 +107,7 @@ public class SprintController {
      * @param principal
      * @return ResponseEntity containing a string message
      */
-    @PostMapping("/project/{projectId}/verifySprint")
+    @PostMapping("${apiPrefix}/project/{projectId}/verifySprint")
     public ResponseEntity<String> verifySprint(
             @PathVariable int projectId,
             String startDate,
@@ -131,7 +132,7 @@ public class SprintController {
      * @param sprint
      * @return
      */
-    @PostMapping("/project/{projectId}/saveSprint")
+    @PostMapping("${apiPrefix}/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
@@ -156,7 +157,7 @@ public class SprintController {
          * @return
          */
     /*make sure to update project.html for path*/
-    @GetMapping("/project/{projectId}/editSprint/{sprintId}")
+    @GetMapping("${apiPrefix}/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
             @PathVariable("projectId") int projectId,
@@ -169,7 +170,6 @@ public class SprintController {
             Sprint sprint = sprintService.getSprint(sprintId);
             List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
             model.addAttribute("apiPrefix", apiPrefix);
-
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
@@ -194,7 +194,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @PostMapping("/project/{projectId}/deleteSprint/{sprintId}")
+    @PostMapping("${apiPrefix}/project/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,
@@ -212,6 +212,7 @@ public class SprintController {
         sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         model.addAttribute("listSprints", listSprints);
+        model.addAttribute("apiPrefix", apiPrefix);
         return "redirect:/project/{projectId}";
     }
 

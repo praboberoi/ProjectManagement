@@ -130,10 +130,10 @@ label {
 
 .error-msg {
     width: 100%;
-    text-align: justify;
+    text-align: center;
     margin: 0;
     padding: 5px;
-    font-size: 14px;
+    font-size: 18px;
     color: #8a0000;
 }
 

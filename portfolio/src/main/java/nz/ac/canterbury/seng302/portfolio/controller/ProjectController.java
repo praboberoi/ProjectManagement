@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,6 +26,7 @@ import java.util.List;
 @Controller
 public class ProjectController {
     @Autowired private SprintService sprintService;
+    @Value("${apiPrefix}") private String apiPrefix;
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
 
@@ -33,7 +35,7 @@ public class ProjectController {
      * @param projectId The Id of the project to get sprints from
      * @return A ResponseEntity containing a list of sprints
      */
-    @GetMapping("/project/{projectId}/getAllSprints")
+    @GetMapping("${apiPrefix}/project/{projectId}/getAllSprints")
     public ResponseEntity<List<Sprint>> getAllSprints(
             @PathVariable("projectId") int projectId) {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
@@ -48,7 +50,7 @@ public class ProjectController {
      * @param principal
      * @return ResponseEntity containing a string message
      */
-    @PostMapping("/verifyProject/{projectId}")
+    @PostMapping("${apiPrefix}/verifyProject/{projectId}")
     public ResponseEntity<String> verifyProject(
         @PathVariable int projectId,
         String startDate,

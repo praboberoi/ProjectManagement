@@ -13,8 +13,8 @@
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-   <script th:src="@{/javascript/editAccount.js}"></script>
-    <script th:src="@{/javascript/profilePhoto.js}"></script>
+   <script th:src="@{{apiPrefix}/javascript/editAccount.js(apiPrefix=${apiPrefix})}"></script>
+    <script th:src="@{{apiPrefix}/javascript/profilePhoto.js(apiPrefix=${apiPrefix})}"></script>
 </head>
 
 <!--    add/fragments -->
@@ -63,7 +63,7 @@
 
                             <!-- start of form -->
                             <!-- edit with @postmapping to update details in database AND screen-->
-                            <form action="/editAccount" method="post">
+                            <form th:action="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}" method="post">
                                 <div class="row mb-3">
                                     <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-6">
@@ -113,10 +113,10 @@
                                     </div>
                                 </div>
                                 <br>
-                                <button type="submit" class="btn btn-outline-primary mr-2" th:href="@{/account}">
-                                    <img class="icon img-color-primary" th:src="@{/icons/save-icon.svg}"/> Save</button>
-                                <a type="button" class="btn btn-outline-secondary" th:href="@{/account}">
-                                    <img class="icon img-color-secondary" th:src="@{/icons/close-icon.svg}"/> Cancel</a>
+                                <button type="submit" class="btn btn-outline-primary mr-2" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
+                                    <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
+                                <a type="button" class="btn btn-outline-secondary" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
+                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Cancel</a>
                             </form>
                         </div>
                     </div>
