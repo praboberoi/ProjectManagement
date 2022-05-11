@@ -50,12 +50,12 @@
   <div class="container-fluid d-flex p-0">
     <h3 class="pe-3">Sprints</h3>
     <div th:each="role: ${roles}">
-        <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-        <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
-          <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newSprint'}">
-            <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
-        </div>
-     </div>
+      <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+      <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+        <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newSprint'}">
+          <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
+      </div>
+    </div>
   </div>
   <br>
 
