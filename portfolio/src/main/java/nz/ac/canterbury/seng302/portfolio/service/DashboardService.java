@@ -117,13 +117,17 @@ public class DashboardService {
     public void verifyProject(Project project) throws Exception {
         List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
         if (sprints.stream().anyMatch(sprint -> sprint.getStartDate().before(project.getStartDate()))) {
-            throw new Exception("A sprint cannot exist before the project starts.");
+            throw new Exception("You are trying to start the project after you have started a sprint.");
         }
         if (sprints.stream().anyMatch(sprint -> sprint.getEndDate().after(project.getEndDate()))) {
-            throw new Exception("A sprint cannot exist after the project ends.");
+            throw new Exception("You are trying to end the project before the last sprint has ended.");
         }
-        if(project.getStartDate().before(projectMinDate) || project.getEndDate().after(projectMaxDate))
-            throw new Exception("HTML page values manually changed. Cannot save the given project");
+        if(project.getStartDate().before(projectMinDate)) {
+            throw new Exception("A project cannot start more than a year ago.");
+        }
+        if ( project.getEndDate().after(projectMaxDate) ) {
+            throw new Exception("A project cannot end more than ten years from now.");
+        }
     }
 
     /**
