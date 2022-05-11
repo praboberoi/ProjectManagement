@@ -95,6 +95,7 @@ public class DashboardController {
             return "redirect:/dashboard";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
+            model.addAttribute("apiPrefix", apiPrefix);
             return "redirect:/dashboard";
         }
     }
@@ -158,7 +159,5 @@ public class DashboardController {
             return "error";
         }
     }
-
-
 
 }

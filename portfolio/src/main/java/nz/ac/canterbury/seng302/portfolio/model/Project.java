@@ -89,7 +89,7 @@ public class Project {
 
     /**
      * Obtains the start date of the project
-     * @return startDate of type String
+     * @return startDate of type Date
      */
     public Date getStartDate() {
         return startDate;
@@ -97,10 +97,18 @@ public class Project {
 
     /**
      * Obtains the end date of the project
-     * @return endDate of type string
+     * @return endDate of type Date
      */
     public Date getEndDate() {
         return endDate;
+    }
+
+    /**
+     * Sets the name of the Project
+     * @param projectName of type String
+     */
+    public void setProjectId(Integer projectId) {
+        this.projectId = projectId;
     }
 
     /**
