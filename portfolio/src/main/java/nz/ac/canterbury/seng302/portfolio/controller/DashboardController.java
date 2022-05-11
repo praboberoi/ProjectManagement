@@ -125,7 +125,7 @@ public class DashboardController {
             model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
             model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
             model.addAttribute("projectEndDateMax", dashboardService.getProjectMaxDate());
-            return "/projectForm";
+            return "projectForm";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             model.addAttribute("apiPrefix", apiPrefix);
