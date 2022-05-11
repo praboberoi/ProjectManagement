@@ -11,4 +11,3 @@ var loadFile = function (event) {
     reader.readAsDataURL(event.target.files[0]);
 
 };
-
