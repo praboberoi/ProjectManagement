@@ -64,7 +64,7 @@
                                             <!-- make a link to go to project detail page -->
                                             <!--<h2 th:text="'Name:  '  + ${project.projectName}"/>-->
                                             <h5 class="card-title">
-                                                <a class=project-name th:href="@{${apiPrefix} + '/project/'+ ${project.projectId}}" th:text="${project.projectName}">Project Name</a>
+                                                <a class=project-name th:href="@{{apiPrefix}/project/{projectId}(apiPrefix=${apiPrefix} projectId=${project.projectId})}" th:text="${project.projectName}">Project Name</a>
                                             </h5>
                                             <h6 class="card-subtitle mb-2 text-muted"> <!-- displays the date start - finish -->
                                                 <p class="date-color"  th:text="${#dates.format(project.startDate, 'dd MMM yyyy')} + ' to ' + ${#dates.format(project.endDate, 'dd MMM yyyy')}"></p>
