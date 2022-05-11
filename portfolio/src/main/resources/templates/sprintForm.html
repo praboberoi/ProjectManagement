@@ -28,7 +28,7 @@
         <h2>[[${pageTitle}]]</h2>
     </div>
     <form action="#" th:action="@{'/project/' + ${projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
-        <input type="hidden" th:field="*{project.projectId}"/>
+        <input type="hidden" th:field="*{project.projectId}" id="projectId"/>
         <input type="hidden" th:field="*{sprintId}" />
         <div class="mb-3">
             <label for="recipient-label" class="col-form-label required">Sprint Label</label>
