@@ -292,20 +292,18 @@ public class UserAccountClientService {
         inputStream.close();
         streamObserver.onCompleted();
 //        // write image to portfolio when image has been successfully uploaded
-//        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
-//        Files.write(path, file.getBytes());
+        String extension = null;
+        if (ext.equals("jpg")){
+            extension = "jpg";
 
-        if (ext == "jpg"){
-            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + "jpg");
-            Files.write(path, file.getBytes());
-        } else if (ext == "jpeg"){
-            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + "jpeg");
-            Files.write(path, file.getBytes());
-        } else if (ext == "png"){
-            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + "png");
-            Files.write(path, file.getBytes());
+        } else if (ext.equals("jpeg")){
+            extension = "jpeg";
+
+        } else if (ext.equals("png")){
+            extension = "png";
         }
-
+        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + extension);
+        Files.write(path, file.getBytes());
     }
     /**
      * Returns a status update when the file upload is complete using protos
