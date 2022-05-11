@@ -28,7 +28,7 @@ public class ProjectController {
      * @param projectId The Id of the project to get sprints from
      * @return A ResponseEntity containing a list of sprints
      */
-    @RequestMapping(path="${apiPrefix}/project/{projectId}/getAllSprints", method = RequestMethod.GET)
+    @RequestMapping(path="/project/{projectId}/getAllSprints", method = RequestMethod.GET)
     public ResponseEntity<List<Sprint>> getAllSprints(
             @PathVariable("projectId") int projectId) {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);

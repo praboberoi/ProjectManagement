@@ -35,7 +35,7 @@ public class DashboardController {
      * @param principal - current user.
      * @return name of the dashboard html file.
      */
-    @RequestMapping(path = "${apiPrefix}/dashboard",method = RequestMethod.GET)
+    @RequestMapping(path = "/dashboard",method = RequestMethod.GET)
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
@@ -57,7 +57,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @RequestMapping(path="${apiPrefix}/dashboard/newProject", method = RequestMethod.GET)
+    @RequestMapping(path="/dashboard/newProject", method = RequestMethod.GET)
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         model.addAttribute("apiPrefix", apiPrefix);
@@ -80,7 +80,7 @@ public class DashboardController {
      * @param project
      * @return
      */
-    @RequestMapping(path="${apiPrefix}/dashboard/saveProject", method = RequestMethod.POST)
+    @RequestMapping(path="/dashboard/saveProject", method = RequestMethod.POST)
     public String saveProject(
             Project project,
             Model model,
@@ -105,7 +105,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @RequestMapping(path="${apiPrefix}/dashboard/editProject/{projectId}", method = RequestMethod.GET)
+    @RequestMapping(path="/dashboard/editProject/{projectId}", method = RequestMethod.GET)
     public String showEditForm(
         @PathVariable(
         value = "projectId") int projectId,
@@ -138,7 +138,7 @@ public class DashboardController {
      * @return
      * @throws Exception If project is not found in the database
      */
-    @RequestMapping(path="${apiPrefix}/dashboard/deleteProject/{projectId}", method = RequestMethod.POST)
+    @RequestMapping(path="/dashboard/deleteProject/{projectId}", method = RequestMethod.POST)
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,
