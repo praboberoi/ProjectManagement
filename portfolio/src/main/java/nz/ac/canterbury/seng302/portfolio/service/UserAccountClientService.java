@@ -125,7 +125,6 @@ public class UserAccountClientService {
                 .orElse("-100"));
 
         UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
-//        getImage();
         return response;
     }
 

@@ -17,10 +17,6 @@
     <script th:src="@{{apiPrefix}/javascript/profilePhoto.js(apiPrefix=${apiPrefix})}"></script>
 </head>
 
-<!--    add/fragments -->
-
-<!--<div th:replace="fragments :: menu"></div>-->
-
 <body>
 <header>
     <div th:replace="fragments :: header"></div>
@@ -51,18 +47,14 @@
                             <br>
                             <!-- Display Image -->
                             <img th:src="${user.profileImagePath}" class="profile-photo" id="output" width="200" height="200" />
-                            </br>
-                            <div class="row mb-3">
-                                <label for="formFile" class = "col-sm-2 col-form-label"><h6>Profile Photo: </h6></label>
+                            <br>
+                            <div class="row mb-3" hidden>
+                                <label for="formFile" class = "col-sm-2 col-form-label" ><h6>Profile Photo: </h6></label>
                                 <div class = "col-sm-6">
-                                    <input type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)">
+                                    <input type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)" >
                                 </div>
                             </div>
 
-
-
-                            <!-- start of form -->
-                            <!-- edit with @postmapping to update details in database AND screen-->
                             <form th:action="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}" method="post">
                                 <div class="row mb-3">
                                     <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>

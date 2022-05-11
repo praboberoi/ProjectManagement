@@ -78,7 +78,7 @@ public class SprintService {
      * @return appropriate message depending on if the sprint is created or updated
      * @throws Exception
      */
-    public String saveSprint() throws Exception {
+    public String saveSprint(Sprint sprint) throws Exception {
         String message;
         if (sprint.getSprintId() == 0)
             message = "Successfully Created " + sprint.getSprintLabel();
