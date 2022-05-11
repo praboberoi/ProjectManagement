@@ -2,6 +2,7 @@ const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'medium
 const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
 const adminRoles = ['TEACHER', 'COURSE_ADMINISTRATOR'];
+DATE_OPTIONS = {year: 'numeric', month: 'short', day: 'numeric'};
 let calendar;
 let clicked = true;
 
@@ -81,10 +82,18 @@ function editEventDuration(info) {
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.response == "") {
+                let sprintStartDateElement = document.getElementById('sprint' + info.event.id + "StartDate");
+                let sprintEndDateElement = document.getElementById('sprint' + info.event.id + "EndDate");
+                let sprintStartDate = new Date(event.start);
+                let sprintEndDate = new Date(event.end);
+                sprintEndDate.setDate(sprintEndDate.getDate() - 1);
+                sprintStartDateElement.innerText = sprintStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+                sprintEndDateElement.innerText = sprintEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
                 CALENDAR_MESSAGE.hidden = false;
                 CALENDAR_MESSAGE.classList.remove("alert-danger");
                 CALENDAR_MESSAGE.classList.add("alert-success");
                 CALENDAR_MESSAGE.innerText = "Event saved successfully";
+
             } else {
                 CALENDAR_MESSAGE.hidden = false;
                 CALENDAR_MESSAGE.classList.add("alert-danger");

@@ -77,12 +77,12 @@
       <tbody>
       
       <th:block th:each="sprint : ${listSprints}">
-        <tr>
-          <td>[[${sprint.sprintLabel}]]</td>
-          <td>[[${sprint.sprintName}]]</td>
-          <td>[[${sprint.description}]]</td>
-          <td>[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
-          <td>[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
+        <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'">
+          <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">[[${sprint.sprintLabel}]]</td>
+          <td th:id="'sprint' + ${sprint.sprintId} + 'Name'">[[${sprint.sprintName}]]</td>
+          <td th:id="'sprint' + ${sprint.sprintId} + 'Description'">[[${sprint.description}]]</td>
+          <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
+          <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
           <td>
             <div th:each="role: ${roles}">
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
