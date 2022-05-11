@@ -5,7 +5,7 @@
     font-family: 'Poppins', sans-serif;
 }
 
-.content_square {
+.contentSquare {
     width: 50%;
     height: auto;
     background-color: white;
@@ -14,13 +14,35 @@
     /*margin-top:100px;*/
 }
 
-.content_account {
+.contentAccount {
     /*width: 100%;*/
     height: auto;
     background-color: white;
     margin: 100px auto;
     border-radius: 30px;
     /*margin-top:100px;*/
+}
+
+.btn {
+    width: auto;
+    height: auto;
+    border-radius: 40px !important;
+}
+
+.icon {
+    vertical-align: -.1em; !important;
+}
+
+
+.img-color-primary{
+    filter: invert(8%) sepia(100%) saturate(7420%) hue-rotate(248deg) brightness(96%) contrast(143%);
+}
+
+.img-color-secondary{
+    filter: invert(57%) sepia(8%) saturate(14%) hue-rotate(348deg) brightness(87%) contrast(92%);
+}
+.btn:hover > .icon{
+    filter: invert(100%) sepia(75%) saturate(0%) hue-rotate(280deg) brightness(115%) contrast(101%);
 }
 
 .page-title-container {
@@ -40,12 +62,13 @@
 }
 
 
-.login-container, .content_container {
+.login-container, .contentContainer {
     align-items: center;
-    margin: 40px auto;
+    margin: auto;
     text-align: left;
-    padding-left: 120px;
     width:80%;
+    padding-left: 5%;
+    padding-right: 5%;
 
     border-radius: 30px;
     border-color: #07173B;
@@ -59,11 +82,11 @@
 }
 
 #login-form, #registration_form, #content {
-    margin: 0 auto;
+    margin: auto;
     color: #07173B;
     display: inline-block;
     padding-bottom: 30px;
-    width:80%;
+    width:100%;
 }
 
 label {
@@ -81,7 +104,7 @@ label {
     border-style: solid;
 }
 
-.form_error {
+.formError {
     border-color: #ff0010 !important;
 }
 
@@ -107,10 +130,10 @@ label {
 
 .error-msg {
     width: 100%;
-    text-align: justify;
+    text-align: center;
     margin: 0;
     padding: 5px;
-    font-size: 14px;
+    font-size: 18px;
     color: #8a0000;
 }
 
@@ -185,7 +208,6 @@ label {
     .login_square, .login-container{
         width: 90%;
     }
-    .login-container{ padding-left:10px;}
 
     .box1 {
         padding: 10px 10px;

@@ -19,7 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         security
             .addFilterBefore(new JwtAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers("/dashboard").permitAll()
+                    .antMatchers("/login*").permitAll()
                     .anyRequest()
                     .authenticated()
                     .and()
@@ -38,10 +38,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         security.cors();
         security.csrf().disable();
 
-        // Disable basic http security and the spring security login form
-        security
-            .httpBasic().disable()
-            .formLogin().disable();
     }
 
     @Override
