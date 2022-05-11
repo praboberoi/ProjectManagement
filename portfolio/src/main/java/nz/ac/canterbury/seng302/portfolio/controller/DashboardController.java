@@ -60,7 +60,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping(path="{apiPrefix}/dashboard/newProject")
+    @GetMapping(path="/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         model.addAttribute("apiPrefix", apiPrefix);
@@ -83,7 +83,7 @@ public class DashboardController {
      * @param project
      * @return
      */
-    @PostMapping("{apiPrefix}/dashboard/saveProject")
+    @PostMapping("/dashboard/saveProject")
     public String saveProject(
             Project project,
             Model model,
@@ -108,7 +108,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping("{apiPrefix}/dashboard/editProject/{projectId}")
+    @GetMapping("/dashboard/editProject/{projectId}")
     public String showEditForm(
         @PathVariable(
         value = "projectId") int projectId,
@@ -141,7 +141,7 @@ public class DashboardController {
      * @return
      * @throws Exception If project is not found in the database
      */
-    @PostMapping("{apiPrefix}/dashboard/deleteProject/{projectId}")
+    @PostMapping("/dashboard/deleteProject/{projectId}")
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,
