@@ -82,6 +82,14 @@ public class Sprint {
     }
 
     /**
+     * To update the id of the current sprint with the given id
+     * @param id of type int
+     */
+    public void setSprintId(int id) {
+        this.sprintId = id;
+    }
+
+    /**
      * To obtain the project connected with the sprint
      * @return Project connected with the sprint.
      */

@@ -17,3 +17,4 @@ enum FileUploadStatus {
     FileUploadStatus Status = 1;
     string Message = 2;
  }
+

@@ -9,3 +9,6 @@
 
 
 *.db
+.env
+node_modules/
+env.bat
