@@ -8,6 +8,8 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -200,7 +202,6 @@ public class SprintController {
         RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            Project currentProject = projectService.getProjectById(projectId);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
@@ -212,5 +213,39 @@ public class SprintController {
         model.addAttribute("apiPrefix", apiPrefix);
         return "redirect:/project/{projectId}";
     }
+
+    /**
+     * Tries to set the selected sprint's start and end date to those provided
+     * @param sprintId Sprint to change
+     * @param startDate New start date of the sprint
+     * @param endDate New end date of the sprint
+     * @return An error message if sprint can't save
+     */
+    @PostMapping("${apiPrefix}/sprint/{sprintId}/editSprint")
+    public ResponseEntity<String> editSprint(
+        @PathVariable("sprintId") int sprintId,
+        String startDate,
+        String endDate,
+        @AuthenticationPrincipal AuthState principal
+    ) {
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal))
+            return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
+
+        try {
+            Date newStartDate = new Date(Long.parseLong(startDate));
+            Date newEndDate = new Date(Long.parseLong(endDate));
+
+            Sprint sprint = sprintService.getSprint(sprintId);
+
+            sprint.setStartDate(newStartDate);
+            sprint.setEndDate(newEndDate);
+            sprintService.verifySprint(sprint);
+            sprintService.saveSprint(sprint);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
 
 }

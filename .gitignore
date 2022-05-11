@@ -6,8 +6,6 @@
 */src/generated/
 */bin/
 .vs/
-
-
 *.db
 .env
 node_modules/
