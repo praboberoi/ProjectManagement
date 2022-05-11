@@ -32,7 +32,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @RequestMapping(value="${apiPrefix}/project/{projectId}", method = RequestMethod.GET)
+    @RequestMapping(path="${apiPrefix}/project/{projectId}", method = RequestMethod.GET)
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -62,7 +62,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @RequestMapping(value="${apiPrefix}/project/{projectId}/newSprint", method = RequestMethod.GET)
+    @RequestMapping(path="${apiPrefix}/project/{projectId}/newSprint", method = RequestMethod.GET)
     public String newSprint(
             Model model,
             @PathVariable ("projectId") int projectId,
@@ -97,7 +97,7 @@ public class SprintController {
      * @param sprint
      * @return
      */
-    @RequestMapping(value="${apiPrefix}/project/{projectId}/saveSprint",method = RequestMethod.POST)
+    @RequestMapping(path="${apiPrefix}/project/{projectId}/saveSprint",method = RequestMethod.POST)
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
@@ -122,7 +122,7 @@ public class SprintController {
          * @return
          */
     /*make sure to update project.html for path*/
-    @RequestMapping(value="${apiPrefix}/project/{projectId}/editSprint/{sprintId}", method = RequestMethod.GET)
+    @RequestMapping(path="${apiPrefix}/project/{projectId}/editSprint/{sprintId}", method = RequestMethod.GET)
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
             @PathVariable("projectId") int projectId,
@@ -159,7 +159,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @RequestMapping(value="${apiPrefix}/project/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
+    @RequestMapping(path="${apiPrefix}/project/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,
