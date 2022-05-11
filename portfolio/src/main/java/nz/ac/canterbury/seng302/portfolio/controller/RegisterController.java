@@ -78,7 +78,7 @@ public class RegisterController {
             idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
             if (idpResponse.getIsSuccess()) {
                 model.addAttribute("apiPrefix", apiPrefix);
-                return "redirect:login";
+                return "redirect:/login";
             } else {
                 validationErrors = idpResponse.getValidationErrorsList();
             }
