@@ -89,7 +89,7 @@ public class SprintController {
             model.addAttribute("sprintEndDateMin", newSprint.getStartDate());
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Create");
-            model.addAttribute("image", "/icons/create-icon.svg");
+            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
             return "sprintForm";
 
         } catch (Exception e) {
@@ -178,7 +178,7 @@ public class SprintController {
             model.addAttribute("sprintEndDateMin", sprint.getStartDate());
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Save");
-            model.addAttribute("image", "/icons/save-icon.svg");
+            model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
             return "sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());

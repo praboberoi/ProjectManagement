@@ -96,7 +96,7 @@
                                     </div>
                                 </div>
                                 <div class="d-flex flex-row justify-content-end p-0">
-                                    <a type="button" class="btn btn-outline-primary mr-3" th:href="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}">
+                                    <a type="button" class="btn btn-outline-primary mr-3" th:href="@{{apiPrefix} + '/editAccount'}">
                                         <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
                                     <a type="button" class="btn btn-outline-secondary" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
                                         <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
