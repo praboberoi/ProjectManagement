@@ -14,6 +14,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Client service used to communicate to the database and perform business logic for sprints
+ */
 @Service
 public class SprintService {
     @Autowired private ProjectRepository projectRepo;
@@ -175,7 +178,7 @@ public class SprintService {
             LocalDate sprintMaxDate;
 
             int currentSprintIndex = sprints.indexOf(sprint);
-            if(currentSprintIndex > 0 ) {
+            if (currentSprintIndex > 0 ) {
                 previousSprintEndDate = sprints.get(currentSprintIndex - 1).getEndDate();
                 sprintMinDate = previousSprintEndDate.toLocalDate().plusDays(1);
             } else {
@@ -183,7 +186,7 @@ public class SprintService {
                 sprintMinDate = previousSprintEndDate.toLocalDate();
             }
 
-            if(currentSprintIndex < sprints.size() - 1) {
+            if (currentSprintIndex < sprints.size() - 1) {
                 nextSprintStartDate = sprints.get(currentSprintIndex + 1).getStartDate();
                 sprintMaxDate = nextSprintStartDate.toLocalDate().minusDays(1);
             } else {
@@ -199,34 +202,41 @@ public class SprintService {
     /**
      * Verifies the current sprint against other sprints in the project to make sure there is no manual changes have
      * been made to the HTML page at the client.
-     * @throws Exception indicating page values of the HTML page are manually changed.
+     * @throws Exception indicating what validation problem exists.
+     * @return If the object was successfully validated
      */
-    public void verifySprint(Sprint sprint) throws Exception {
-        if(sprint.getStartDate().after(sprint.getEndDate()))
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+    public boolean verifySprint(Sprint currentSprint) throws Exception {
+        if(currentSprint.getStartDate().after(currentSprint.getEndDate())) {
+            throw new Exception("Start date must be before the end date.");
+        }
 
-        if(sprint.getStartDate().before(sprint.getProject().getStartDate()))
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+        if(currentSprint.getStartDate().before(currentSprint.getProject().getStartDate())) {
+            throw new Exception("Sprint must start after the project.");
+        }
 
-        if(sprint.getStartDate().after(sprint.getProject().getEndDate()))
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+        if(currentSprint.getStartDate().after(currentSprint.getProject().getEndDate())) {
+            throw new Exception("Sprint must start before the project ends.");
+        }
 
-        if(sprint.getEndDate().after(sprint.getProject().getEndDate()))
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
+        if(currentSprint.getEndDate().after(currentSprint.getProject().getEndDate())) {
+            throw new Exception("Sprint must end before the project.");
+        }
 
-        List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject()).stream()
-                .filter(sp -> !(sp.getSprintLabel().equals(sprint.getSprintLabel())))
-                .filter(sp -> (betweenDateRange(sp, sprint))).toList();
-        if(sprints.size() > 0)
-            throw new Exception("HTML page values manually changed. Cannot save the given sprint");
-
+        List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
+                .filter(sp -> !(sp.getSprintLabel().equals(currentSprint.getSprintLabel())))
+                .filter(sp -> (betweenDateRange(sp, currentSprint))).toList();
+        if(sprints.size() > 0) {
+            throw new Exception("Sprint overlaps another sprint.");
+        }
+        return true;
     }
 
     /**
      * Compares the current sprint start and end dates with the given sprint start and end dates. Returns true if
      * the current sprint lies between or overlaps with the given sprint's date range otherwise returns false.
+     * @param currentSprint The sprint to be compared against
      * @param compSprint Given sprint
-     * @return boolean value
+     * @return If the currentSprint overlaps with the compSprint
      */
     private boolean betweenDateRange(Sprint compSprint, Sprint currentSprint) {
         Date currentSprintStartDate = currentSprint.getStartDate();
@@ -235,23 +245,11 @@ public class SprintService {
         Date compSprintStartDate = compSprint.getStartDate();
         Date compSprintEndDate = compSprint.getEndDate();
 
-        if(currentSprintStartDate.compareTo(compSprintStartDate) == 0)
-            return true;
-
-        else if(currentSprintEndDate.compareTo(compSprintEndDate) == 0)
-            return true;
-
-        else if(currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate))
-            return true;
-
-        else if(currentSprintStartDate.after(compSprintStartDate) && currentSprintStartDate.before(compSprintEndDate))
-            return true;
-
-        else if(currentSprintEndDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate))
-            return true;
-
-        else
-            return false;
+        // Check for overlaping dates retrived from https://www.codespeedy.com/check-if-two-date-ranges-overlap-or-not-in-java/
+        return currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintStartDate) ||
+        currentSprintStartDate.before(compSprintEndDate) && currentSprintEndDate.after(compSprintEndDate) ||
+        currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintEndDate) ||
+        currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate) ;
     }
 }
 

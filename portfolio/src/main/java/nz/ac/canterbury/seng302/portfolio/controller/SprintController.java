@@ -11,13 +11,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
@@ -38,7 +38,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @GetMapping("${apiPrefix}/project/{projectId}")
+    @RequestMapping(path="/project/{projectId}", method = RequestMethod.GET)
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -47,11 +47,11 @@ public class SprintController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             Project project = projectService.getProjectById(projectId);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("apiPrefix", apiPrefix);
             return "/project";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -68,7 +68,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @GetMapping("${apiPrefix}/project/{projectId}/newSprint")
+    @RequestMapping(path="/project/{projectId}/newSprint", method = RequestMethod.GET)
     public String newSprint(
             Model model,
             @PathVariable ("projectId") int projectId,
@@ -79,8 +79,8 @@ public class SprintController {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
             List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
-            model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("apiPrefix", apiPrefix);
+            model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -99,11 +99,39 @@ public class SprintController {
     }
 
     /**
+     * Checks if a sprints dates are valid and returns a Response containing a message
+     * @param projectId ID of the project to check
+     * @param startDate New start date of the project
+     * @param endDate New end date of the project
+     * @param principal
+     * @return ResponseEntity containing a string message
+     */
+    @PostMapping("${apiPrefix}/project/{projectId}/verifySprint")
+    public ResponseEntity<String> verifySprint(
+            @PathVariable int projectId,
+            String startDate,
+            String endDate,
+            @AuthenticationPrincipal AuthState principal) {
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+        Sprint currentSprint = new Sprint();
+        try {
+            Project project = projectService.getProjectById(projectId);
+            currentSprint.setProject(project);
+            currentSprint.setStartDate(Date.valueOf(startDate));
+            currentSprint.setEndDate(Date.valueOf(endDate));
+            sprintService.verifySprint(currentSprint);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+    }
+
+    /**
      * Saves a sprint and redirects to project page
      * @param sprint
      * @return
      */
-    @PostMapping("${apiPrefix}/project/{projectId}/saveSprint")
+    @RequestMapping(path="/project/{projectId}/saveSprint",method = RequestMethod.POST)
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
@@ -128,7 +156,7 @@ public class SprintController {
          * @return
          */
     /*make sure to update project.html for path*/
-    @GetMapping("${apiPrefix}/project/{projectId}/editSprint/{sprintId}")
+    @RequestMapping(path="/project/{projectId}/editSprint/{sprintId}", method = RequestMethod.GET)
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
             @PathVariable("projectId") int projectId,
@@ -165,7 +193,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @PostMapping("${apiPrefix}/project/{projectId}/deleteSprint/{sprintId}")
+    @RequestMapping(path="/project/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,

@@ -53,7 +53,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Account html page
      */
-    @GetMapping("${apiPrefix}/account")
+    @RequestMapping(path="/account", method = RequestMethod.GET)
     public String account(
             @AuthenticationPrincipal AuthState principal,
             Model model
@@ -106,7 +106,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
-    @GetMapping("${apiPrefix}/editAccount")
+    @RequestMapping(path="/editAccount", method = RequestMethod.GET)
     public String showNewForm(
             @AuthenticationPrincipal AuthState principal,
             Model model
@@ -131,7 +131,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
-    @PostMapping("${apiPrefix}/editAccount")
+    @RequestMapping(path="/editAccount", method = RequestMethod.POST)
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam("image")MultipartFile multipartFile,
