@@ -202,6 +202,7 @@ public class SprintController {
         RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
+            model.addAttribute("apiPrefix", apiPrefix);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
