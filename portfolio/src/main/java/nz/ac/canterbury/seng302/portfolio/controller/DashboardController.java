@@ -119,7 +119,7 @@ public class DashboardController {
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
-            model.addAttribute("image", "/icons/save-icon.svg");
+            model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
             model.addAttribute("user", userAccountClientService.getUser(principal));
             model.addAttribute("projectStartDateMin", dashboardService.getProjectMinDate());
             model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
