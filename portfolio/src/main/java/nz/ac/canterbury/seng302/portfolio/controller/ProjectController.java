@@ -16,6 +16,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import java.sql.Date;
 import java.util.List;
@@ -35,7 +37,7 @@ public class ProjectController {
      * @param projectId The Id of the project to get sprints from
      * @return A ResponseEntity containing a list of sprints
      */
-    @GetMapping("${apiPrefix}/project/{projectId}/getAllSprints")
+    @RequestMapping(path="${apiPrefix}/project/{projectId}/getAllSprints", method = RequestMethod.GET)
     public ResponseEntity<List<Sprint>> getAllSprints(
             @PathVariable("projectId") int projectId) {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);

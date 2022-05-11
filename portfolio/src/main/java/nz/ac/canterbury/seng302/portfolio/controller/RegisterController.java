@@ -7,9 +7,7 @@ import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,7 +34,7 @@ public class RegisterController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Registration html page
      */
-    @GetMapping("${apiPrefix}/register")
+    @RequestMapping(path="${apiPrefix}/register", method = RequestMethod.GET)
     public String register(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -60,7 +58,7 @@ public class RegisterController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return HTML page corresponding to correct handling
      */
-    @PostMapping("${apiPrefix}/register")
+    @RequestMapping(path="${apiPrefix}/register", method = RequestMethod.POST)
     public String createUser(
             HttpServletResponse response,
             @RequestParam String username,
