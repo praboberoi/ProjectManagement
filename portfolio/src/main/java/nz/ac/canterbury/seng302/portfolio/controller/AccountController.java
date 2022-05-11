@@ -53,7 +53,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Account html page
      */
-    @GetMapping("${apiPrefix}/account")
+    @RequestMapping(path="${apiPrefix}/account", method = RequestMethod.GET)
     public String account(
             @AuthenticationPrincipal AuthState principal,
             Model model
