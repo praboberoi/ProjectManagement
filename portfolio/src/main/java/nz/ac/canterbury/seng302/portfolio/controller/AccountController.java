@@ -106,7 +106,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
-    @GetMapping("${apiPrefix}/editAccount")
+    @RequestMapping(path="${apiPrefix}/editAccount", method = RequestMethod.GET)
     public String showNewForm(
             @AuthenticationPrincipal AuthState principal,
             Model model
