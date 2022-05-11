@@ -8,6 +8,8 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -50,7 +52,7 @@ public class SprintController {
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "/project";
+            return "project";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
@@ -83,8 +85,8 @@ public class SprintController {
             model.addAttribute("sprintEndDateMin", newSprint.getStartDate());
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Create");
-            model.addAttribute("image", "/icons/create-icon.svg");
-            return "/sprintForm";
+            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
+            return "sprintForm";
 
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -172,8 +174,8 @@ public class SprintController {
             model.addAttribute("sprintEndDateMin", sprint.getStartDate());
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Save");
-            model.addAttribute("image", "/icons/save-icon.svg");
-            return "/sprintForm";
+            model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
+            return "sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());
                 return "redirect:/project/{projectId}";
@@ -196,7 +198,6 @@ public class SprintController {
         RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            Project currentProject = projectService.getProjectById(projectId);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
@@ -208,5 +209,39 @@ public class SprintController {
         model.addAttribute("apiPrefix", apiPrefix);
         return "redirect:/project/{projectId}";
     }
+
+    /**
+     * Tries to set the selected sprint's start and end date to those provided
+     * @param sprintId Sprint to change
+     * @param startDate New start date of the sprint
+     * @param endDate New end date of the sprint
+     * @return An error message if sprint can't save
+     */
+    @PostMapping("${apiPrefix}/sprint/{sprintId}/editSprint")
+    public ResponseEntity<String> editSprint(
+        @PathVariable("sprintId") int sprintId,
+        String startDate,
+        String endDate,
+        @AuthenticationPrincipal AuthState principal
+    ) {
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal))
+            return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
+
+        try {
+            Date newStartDate = new Date(Long.parseLong(startDate));
+            Date newEndDate = new Date(Long.parseLong(endDate));
+
+            Sprint sprint = sprintService.getSprint(sprintId);
+
+            sprint.setStartDate(newStartDate);
+            sprint.setEndDate(newEndDate);
+            sprintService.verifySprint(sprint);
+            sprintService.saveSprint(sprint);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
 
 }

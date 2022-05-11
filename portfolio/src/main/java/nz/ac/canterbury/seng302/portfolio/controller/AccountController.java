@@ -168,7 +168,7 @@ public class AccountController {
                 String msgString;
                 msgString = String.format("File must be an image of type jpg, jpeg or png");
                 ra.addFlashAttribute("messageDanger", msgString);
-                return "redirect:editAccount";
+                return "redirect:/editAccount";
             }
         }
 
@@ -182,7 +182,7 @@ public class AccountController {
             String msgString;
             msgString = String.format("Successfully updated details");
             ra.addFlashAttribute("messageSuccess", msgString);
-            return "redirect:account";
+            return "redirect:/account";
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));

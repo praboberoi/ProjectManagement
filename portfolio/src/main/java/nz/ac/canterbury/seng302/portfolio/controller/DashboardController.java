@@ -64,7 +64,7 @@ public class DashboardController {
         model.addAttribute("project", newProject);
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
-        model.addAttribute("image", "/icons/create-icon.svg");
+        model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
         model.addAttribute("user", userAccountClientService.getUser(principal));
         model.addAttribute("projectStartDateMin", dashboardService.getProjectMinDate());
         model.addAttribute("projectStartDateMax", Date.valueOf(newProject.getEndDate().toLocalDate().minusDays(1)));
@@ -115,16 +115,17 @@ public class DashboardController {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project project  = dashboardService.getProject(projectId);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
-            model.addAttribute("image", "/icons/save-icon.svg");
+            model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
             model.addAttribute("user", userAccountClientService.getUser(principal));
             model.addAttribute("projectStartDateMin", dashboardService.getProjectMinDate());
             model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
             model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
             model.addAttribute("projectEndDateMax", dashboardService.getProjectMaxDate());
-            return "/projectForm";
+            return "projectForm";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             model.addAttribute("apiPrefix", apiPrefix);
