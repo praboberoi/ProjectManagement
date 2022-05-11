@@ -26,7 +26,7 @@
         </li>
         <div class="nav-item dropdown" >
           <a class="navbar-brand nav-link dropdown-toggle"  href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">[[${user.username}]]
-            <img th:src="${user.profileImagePath}" alt="Account" height="28 width=20" class="d-inline-block align-text-top profile-photo">
+            <img th:src="@{${apiPrefix} + '/' + ${user.profileImagePath}}" alt="Account" height="28 width=20" class="d-inline-block align-text-top profile-photo">
           </a>
           <div class="bg-dark navbar-dark dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown" style="background-color: #07173B !important;">
             <a class="navbar-brand dropdown-item" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account</a>
