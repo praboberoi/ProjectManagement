@@ -1,0 +1,7 @@
+export MARIADB_USERNAME={get from Slack}
+export MARIADB_PASSWORD={get from Slack}
+export H2DB_USERNAME={get from another team member}
+export H2DB_PASSWORD={get from another team member}
+
+to use the environment variables, check `echo ${MARIADB_USERNAME}` if nothing returned, then go:
+`source .env`

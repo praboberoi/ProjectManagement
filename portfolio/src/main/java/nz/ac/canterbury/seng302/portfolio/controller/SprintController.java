@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +28,7 @@ public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
+    @Value("${apiPrefix}") private String apiPrefix;
 
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
@@ -36,7 +38,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @GetMapping("/project/{projectId}")
+    @GetMapping("${apiPrefix}/project/{projectId}")
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -49,7 +51,8 @@ public class SprintController {
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "project";
+            model.addAttribute("apiPrefix", apiPrefix);
+            return "/project";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
@@ -65,7 +68,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @GetMapping("/project/{projectId}/newSprint")
+    @GetMapping("${apiPrefix}/project/{projectId}/newSprint")
     public String newSprint(
             Model model,
             @PathVariable ("projectId") int projectId,
@@ -77,6 +80,7 @@ public class SprintController {
             Sprint newSprint = sprintService.getNewSprint(currentProject);
             List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
             model.addAttribute("pageTitle", "Add New Sprint");
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -86,7 +90,7 @@ public class SprintController {
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", "/icons/create-icon.svg");
-            return "sprintForm";
+            return "/sprintForm";
 
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -99,7 +103,7 @@ public class SprintController {
      * @param sprint
      * @return
      */
-    @PostMapping("/project/{projectId}/saveSprint")
+    @PostMapping("${apiPrefix}/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
@@ -124,7 +128,7 @@ public class SprintController {
          * @return
          */
     /*make sure to update project.html for path*/
-    @GetMapping("/project/{projectId}/editSprint/{sprintId}")
+    @GetMapping("${apiPrefix}/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
             @PathVariable("projectId") int projectId,
@@ -136,6 +140,7 @@ public class SprintController {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
             List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
@@ -146,7 +151,7 @@ public class SprintController {
             model.addAttribute("sprintEndDateMax", sprintRange.get(1));
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", "/icons/save-icon.svg");
-            return "sprintForm";
+            return "/sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());
                 return "redirect:/project/{projectId}";
@@ -160,7 +165,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @PostMapping("/project/{projectId}/deleteSprint/{sprintId}")
+    @PostMapping("${apiPrefix}/project/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,
@@ -177,6 +182,7 @@ public class SprintController {
         sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         model.addAttribute("listSprints", listSprints);
+        model.addAttribute("apiPrefix", apiPrefix);
         return "redirect:/project/{projectId}";
     }
 
@@ -187,20 +193,20 @@ public class SprintController {
      * @param endDate New end date of the sprint
      * @return An error message if sprint can't save
      */
-    @PostMapping("/sprint/{sprintId}/editSprint")
-    public ResponseEntity<String> editSprint( 
+    @PostMapping("${apiPrefix}/sprint/{sprintId}/editSprint")
+    public ResponseEntity<String> editSprint(
         @PathVariable("sprintId") int sprintId,
         String startDate,
         String endDate,
         @AuthenticationPrincipal AuthState principal
     ) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) 
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal))
             return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
 
         try {
             Date newStartDate = new Date(Long.parseLong(startDate));
             Date newEndDate = new Date(Long.parseLong(endDate));
-            
+
             Sprint sprint = sprintService.getSprint(sprintId);
 
             sprint.setStartDate(newStartDate);
