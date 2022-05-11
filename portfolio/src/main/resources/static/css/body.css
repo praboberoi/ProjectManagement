@@ -74,7 +74,7 @@ a.project-name {
 }
 /* Style for primary buttons which guide the user through common tasks*/
 .btn-primary {
-    color: white !important;
+    colour: white !important;
     background-color: #07173B !important;
     vertical-align: middle !important;
 }

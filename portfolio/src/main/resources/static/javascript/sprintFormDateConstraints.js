@@ -75,7 +75,7 @@ function checkStartDate() {
         startDateElement.classList.add("formError");
         return;
     }
-    
+
     startDateError.innerText = "";
     startDateElement.classList.remove("formError")
 }
@@ -95,7 +95,7 @@ function checkEndDate() {
         endDateElement.classList.add("formError");
         return;
     }
-    
+
     endDateError.innerText = "";
     endDateElement.classList.remove("formError")
 }
