@@ -75,7 +75,7 @@
                                                     <a type="button" class="btn btn-outline-primary me-2"  th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
                                                         <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
                                                     <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModal" th:data-id = "${project.projectId}"
-                                                            th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), ${apiPrefix})">
+                                                            th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
                                                         <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
                                                 </div>
                                             </div>
