@@ -65,7 +65,7 @@ public class DashboardController {
         model.addAttribute("project", newProject);
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
-        model.addAttribute("image", "/icons/create-icon.svg");
+        model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
         model.addAttribute("user", userAccountClientService.getUser(principal));
         model.addAttribute("projectStartDateMin", dashboardService.getProjectMinDate());
         model.addAttribute("projectStartDateMax", Date.valueOf(newProject.getEndDate().toLocalDate().minusDays(1)));
