@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,13 +19,14 @@ import java.util.List;
 @Controller
 public class ProjectController {
     @Autowired private SprintService sprintService;
+    @Value("${apiPrefix}") private String apiPrefix;
 
     /**
      * Gets all of the sprints and returns it in a ResponseEntity
      * @param projectId The Id of the project to get sprints from
      * @return A ResponseEntity containing a list of sprints
      */
-    @GetMapping("/project/{projectId}/getAllSprints")
+    @GetMapping("${apiPrefix}/project/{projectId}/getAllSprints")
     public ResponseEntity<List<Sprint>> getAllSprints(
             @PathVariable("projectId") int projectId) {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);

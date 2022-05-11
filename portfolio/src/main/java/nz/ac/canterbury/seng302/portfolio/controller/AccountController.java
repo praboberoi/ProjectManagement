@@ -9,12 +9,11 @@ import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -42,6 +41,7 @@ import java.util.stream.Collectors;
 public class AccountController {
 
     private final UserAccountClientService userAccountClientService;
+    @Value("${apiPrefix}") private String apiPrefix;
 
     public AccountController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
@@ -53,12 +53,13 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Account html page
      */
-    @GetMapping("/account")
+    @GetMapping("${apiPrefix}/account")
     public String account(
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
         this.addAttributesToModel(principal, model);
+        model.addAttribute("apiPrefix", apiPrefix);
         return "account";
     }
 
@@ -105,11 +106,12 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
-    @GetMapping("/editAccount")
+    @GetMapping("${apiPrefix}/editAccount")
     public String showNewForm(
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
+        model.addAttribute("apiPrefix", apiPrefix);
         this.addAttributesToModel(principal, model);
 
         return "editAccount";
@@ -129,7 +131,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
-    @PostMapping("/editAccount")
+    @PostMapping("${apiPrefix}/editAccount")
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam("image")MultipartFile multipartFile,
