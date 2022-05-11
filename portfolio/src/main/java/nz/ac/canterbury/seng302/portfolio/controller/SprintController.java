@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,7 @@ public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
+    @Value("${apiPrefix}") private String apiPrefix;
 
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
@@ -42,6 +44,7 @@ public class SprintController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             Project project = projectService.getProjectById(projectId);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
@@ -73,6 +76,7 @@ public class SprintController {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
             List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
@@ -133,6 +137,8 @@ public class SprintController {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
             List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
+            model.addAttribute("apiPrefix", apiPrefix);
+
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());

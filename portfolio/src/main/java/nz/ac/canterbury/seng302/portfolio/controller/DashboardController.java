@@ -38,9 +38,8 @@ public class DashboardController {
      * @return name of the dashboard html file.
      */
     @GetMapping("/dashboard")
-    public String showProjectList( 
-        @AuthenticationPrincipal AuthState principal,
-        Model model) {
+    public String showProjectList( @AuthenticationPrincipal AuthState principal,
+                                   Model model) {
         try {
             dashboardService.clearCache();
             model.addAttribute("apiPrefix", apiPrefix);
@@ -98,6 +97,7 @@ public class DashboardController {
             return "redirect:/dashboard";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
+            model.addAttribute("apiPrefix", apiPrefix);
             return "redirect:/dashboard";
         }
     }
