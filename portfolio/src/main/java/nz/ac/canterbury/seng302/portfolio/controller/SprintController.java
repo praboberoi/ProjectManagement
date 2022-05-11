@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -35,7 +32,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @GetMapping("${apiPrefix}/project/{projectId}")
+    @RequestMapping(value="${apiPrefix}/project/{projectId}", method = RequestMethod.GET)
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -65,7 +62,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @GetMapping("${apiPrefix}/project/{projectId}/newSprint")
+    @RequestMapping(value="${apiPrefix}/project/{projectId}/newSprint", method = RequestMethod.GET)
     public String newSprint(
             Model model,
             @PathVariable ("projectId") int projectId,
@@ -100,7 +97,7 @@ public class SprintController {
      * @param sprint
      * @return
      */
-    @PostMapping("${apiPrefix}/project/{projectId}/saveSprint")
+    @RequestMapping(value="${apiPrefix}/project/{projectId}/saveSprint",method = RequestMethod.POST)
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
@@ -125,7 +122,7 @@ public class SprintController {
          * @return
          */
     /*make sure to update project.html for path*/
-    @GetMapping("${apiPrefix}/project/{projectId}/editSprint/{sprintId}")
+    @RequestMapping(value="${apiPrefix}/project/{projectId}/editSprint/{sprintId}", method = RequestMethod.GET)
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
             @PathVariable("projectId") int projectId,
@@ -162,7 +159,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @PostMapping("${apiPrefix}/project/{projectId}/deleteSprint/{sprintId}")
+    @RequestMapping(value="${apiPrefix}/project/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,

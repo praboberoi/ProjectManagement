@@ -13,9 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
@@ -37,7 +35,7 @@ public class DashboardController {
      * @param principal - current user.
      * @return name of the dashboard html file.
      */
-    @GetMapping("${apiPrefix}/dashboard")
+    @RequestMapping(value = "${apiPrefix}/dashboard",method = RequestMethod.GET)
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
@@ -59,7 +57,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping("${apiPrefix}/dashboard/newProject")
+    @RequestMapping(value="${apiPrefix}/dashboard/newProject", method = RequestMethod.GET)
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         model.addAttribute("apiPrefix", apiPrefix);
@@ -82,7 +80,7 @@ public class DashboardController {
      * @param project
      * @return
      */
-    @PostMapping("${apiPrefix}/dashboard/saveProject")
+    @RequestMapping(value="${apiPrefix}/dashboard/saveProject", method = RequestMethod.POST)
     public String saveProject(
             Project project,
             Model model,
@@ -107,7 +105,7 @@ public class DashboardController {
      * @param model
      * @return
      */
-    @GetMapping("${apiPrefix}/dashboard/editProject/{projectId}")
+    @RequestMapping(value="${apiPrefix}/dashboard/editProject/{projectId}", method = RequestMethod.GET)
     public String showEditForm(
         @PathVariable(
         value = "projectId") int projectId,
@@ -140,7 +138,7 @@ public class DashboardController {
      * @return
      * @throws Exception If project is not found in the database
      */
-    @PostMapping("${apiPrefix}/dashboard/deleteProject/{projectId}")
+    @RequestMapping(value="${apiPrefix}/dashboard/deleteProject/{projectId}", method = RequestMethod.POST)
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,

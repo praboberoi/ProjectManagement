@@ -131,7 +131,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
-    @PostMapping("${apiPrefix}/editAccount")
+    @RequestMapping(value="${apiPrefix}/editAccount", method = RequestMethod.POST)
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam("image")MultipartFile multipartFile,
