@@ -11,9 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,16 +71,15 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
-            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
             model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
-            model.addAttribute("sprintStartDateMax", newSprint.getEndDate());
-            model.addAttribute("sprintEndDateMin", newSprint.getStartDate());
-            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
+
+            model.addAttribute("sprintDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintDateMax", currentProject.getEndDate());
+
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
             return "sprintForm";
@@ -94,6 +90,7 @@ public class SprintController {
         }
     }
 
+
     /**
      * Checks if a sprints dates are valid and returns a Response containing a message
      * @param projectId ID of the project to check
@@ -102,7 +99,7 @@ public class SprintController {
      * @param principal
      * @return ResponseEntity containing a string message
      */
-    @PostMapping("${apiPrefix}/project/{projectId}/verifySprint")
+    @PostMapping("/project/{projectId}/verifySprint")
     public ResponseEntity<String> verifySprint(
             @PathVariable int projectId,
             String startDate,
@@ -163,16 +160,13 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
-            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
             model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
-            model.addAttribute("sprintStartDateMax", sprint.getEndDate());
-            model.addAttribute("sprintEndDateMin", sprint.getStartDate());
-            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
+            model.addAttribute("sprintDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintDateMax", currentProject.getEndDate());
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
             return "sprintForm";
