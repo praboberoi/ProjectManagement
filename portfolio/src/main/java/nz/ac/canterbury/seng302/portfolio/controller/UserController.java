@@ -11,7 +11,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Controller for the account page
+ * Controller for user related pages excluding the current
  */
 @Controller
 public class UserController {
@@ -24,10 +24,10 @@ public class UserController {
     }
 
     /**
-     * Get method for users personal page
+     * Get method for the list of users
      * @param principal Authentication information containing user info
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return Account html page
+     * @return userList html page
      */
     @GetMapping("/users")
     public String users(
