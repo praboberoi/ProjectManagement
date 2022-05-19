@@ -43,16 +43,17 @@
               <th scope="col" style="width:25%">Roles</th>
             </tr>
           </thead>
-          <!-- <tbody>
-            <th:block th:each="">
-              <tr th:id="">
-                <td th:id=""></td>
-                <td th:id=""></td>
-                <td th:id=""></td>
-                <td th:id=""></td>
+          <tbody>
+            <th:block th:each="user : $(usersList)">
+              <tr th:id="'user' + ${user.userId} + 'Row'">
+                <td th:id="'user' + ${user.firstName} + 'Row'"></td>
+                <td th:id="'user' + ${user.lastName} + 'Row'"></td>
+                <td th:id="'user' + ${user.username} + 'Row'"></td>
+                <td th:id="'user' + ${user.nickname} + 'Row'"></td>
+                <td th:id="'user' + ${user.roles} + 'Row'"></td>
               </tr>
             </th:block>
-          </tbody> -->
+          </tbody>
         </table>
     </div>
   </div>
