@@ -102,6 +102,11 @@ function checkPronouns() {
 function checkBio() {
     let bioElement = document.getElementById("bio");
     let bioErrorElement = document.getElementById("bioError");
+
+    let charMessage = document.getElementById("charCount");
+    let charRemaining = 250 - bioElement.value.length;
+    charMessage.innerText = charRemaining + ' '
+
     if (bioElement.value.length > 250)
     {
         bioErrorElement.classList.add("formError");

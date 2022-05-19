@@ -51,14 +51,15 @@
                         <p id="emailError" th:text="${emailError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
-                        <label for="bio">Bio:</label>
-                        <input type="text" th:value="${bio}" class="form-control" id="bio" name="bio" onkeyup="checkBio();">
-                        <p id="bioError" th:text="${bioError}" class="error-msg"></p>
-                    </div>
-                    <div class="mb-3">
                         <label for="pronouns">Pronouns:</label>
                         <input type="text" th:value="${personalPronouns}" class="form-control" id="pronouns" name="pronouns" onkeyup="checkPronouns();">
                         <p id="personalPronounsError" th:text="${personalPronounsError}" class="error-msg"></p>
+                    </div>
+                    <div class="mb-3">
+                        <label for="bio">Bio:</label>
+                        <textarea type="text" th:value="${bio}" id="bio" name="bio" class="form-control" maxlength="250" onkeyup="checkBio();"></textarea>
+                        <span id="charCount" th:value="${charCount}">250 </span> characters remaining.
+                        <p id="bioError" th:text="${bioError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
                         <label for="password" class="required">Password:</label>
