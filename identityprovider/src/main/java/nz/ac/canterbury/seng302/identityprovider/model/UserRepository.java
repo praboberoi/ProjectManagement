@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.identityprovider.model;
 
+import java.util.List;
+
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -10,4 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends CrudRepository<User, Integer> {
     User getUserByUserId(int id);
     User getUserByUsername(String username);
+    List<User> findAll();
 }

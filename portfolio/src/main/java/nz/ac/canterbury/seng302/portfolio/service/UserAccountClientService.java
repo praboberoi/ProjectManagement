@@ -112,16 +112,13 @@ public class UserAccountClientService {
         return response;
     }
 
+    /**
+     * Request a list of users from the IDP server and prepares them for use
+     * @return List of unpackaged users
+     * @throws StatusRuntimeException
+     */
     public List<User> getUsers() throws StatusRuntimeException{
-        // PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().build());
-        UserResponse testUser = UserResponse.newBuilder()
-        .setBio("test")
-        .setUsername("username")
-        .setFirstName("First")
-        .setLastName("Last")
-        .setNickname("Tester")
-        .build();
-        PaginatedUsersResponse response = PaginatedUsersResponse.newBuilder().addUsers(testUser).build();
+        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().build());
         List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
         return usersList;
     }
