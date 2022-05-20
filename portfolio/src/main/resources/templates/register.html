@@ -58,7 +58,7 @@
                     <div class="mb-3">
                         <label for="bio">Bio:</label>
                         <textarea th:value="${bio}" id="bio" name="bio" class="form-control" maxlength="250" oninput="checkBio();"></textarea>
-                        <span id="charCount" th:value="${charCount}">250 </span> characters remaining.
+                        <span> id="charCount" th:value="${charCount}">[[*{user.bio.length}]] </span> / 250 characters used.
                         <p id="bioError" th:text="${bioError}" class="error-msg"></p>
                     </div>
                     <div class="mb-3">
