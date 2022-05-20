@@ -104,6 +104,10 @@ public class RegistrationService {
             errorBuilder.setFieldName("personalPronounsError");
             errorBuilder.setErrorText("Personal pronouns cannot be more than 32 characters.");
             result.add(errorBuilder.build());
+        }else if (ValidationUtilities.hasPronounSpecial(personalPronouns) || ValidationUtilities.hasDigit(personalPronouns)) {
+            errorBuilder.setFieldName("personalPronounsError");
+            errorBuilder.setErrorText("Personal pronouns cannot contain special characters or digits.");
+            result.add(errorBuilder.build());
         }
 
         //Password validation
