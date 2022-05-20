@@ -100,7 +100,7 @@
                                 <div class="row mb-3">
                                     <label for="bio" class = "col-sm-2 col-form-label"><h6>Bio: </h6></label>
                                     <div class = "col-sm-6">
-                                        <textarea type="bio" id="bio" name="bio" class="form-control" maxlength="250" onkeyup="checkBio();">[[${user.bio}]]</textarea>
+                                        <textarea type="bio" th:value ="${bio}" id="bio" name="bio" class="form-control" maxlength="250" oninput="checkBio();">[[${user.bio}]]</textarea>
                                         <span id="charCount" th:value="${charCount}">250 </span> characters remaining.
                                         <p id="bioError" th:text="${bioError}" class="error-msg"></p>
                                     </div>
