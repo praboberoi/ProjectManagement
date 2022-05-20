@@ -5,7 +5,6 @@ import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
 import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
-import nz.ac.canterbury.seng302.identityprovider.util.ValidationUtilities;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.GetPaginatedUsersRequest;
@@ -42,7 +41,7 @@ class UserAccountServerServiceTests {
     /**
      * Helper function which creates a new user for testing with
      * @param userId The user id to set the user, this effects nearly all of the user's attributes
-     * @return
+     * @return A new User object
      */
     User createTestUser(int userId) {
         User user = new User();

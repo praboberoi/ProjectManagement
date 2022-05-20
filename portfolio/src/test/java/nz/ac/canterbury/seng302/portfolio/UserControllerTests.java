@@ -1,42 +1,44 @@
 package nz.ac.canterbury.seng302.portfolio;
 
-import nz.ac.canterbury.seng302.portfolio.controller.AccountController;
+import nz.ac.canterbury.seng302.portfolio.controller.UserController;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.testingUtils.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserAccountServiceGrpc;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserAccountServiceGrpc.UserAccountServiceStub;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.test.web.servlet.MockMvc;
 
-import net.devh.boot.grpc.client.inject.GrpcClient;
-
 import static org.mockito.ArgumentMatchers.any;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Date;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-
-@WebMvcTest(controllers = AccountController.class)
+// @WebMvcTest(controllers = UserController.class)
+@SpringBootTest
 @AutoConfigureMockMvc(addFilters = false)
 public class UserControllerTests {
     @Autowired
     private MockMvc mockMvc;
-
-    @MockBean
-    private UserAccountClientService userAccountClientService;
     
-    private UserAccountServiceStub userAccountServiceStub;
+    @Mock
+    private UserAccountServiceGrpc.UserAccountServiceBlockingStub userAccountStub;
 
     private PaginatedUsersResponse response;
 
@@ -55,6 +57,24 @@ public class UserControllerTests {
                 .build();
     }
 
+    /**
+     * Helper function which creates a new user for testing with
+     * @param userId The user id to set the user, this effects nearly all of the user's attributes
+     * @return A new User object
+     */
+    User createTestUser(int userId) {
+        User user = new User();
+        user.setUserId(userId);
+        user.setFirstName("First" + userId);
+        user.setLastName("Last" + userId);
+        user.setNickname("Nick" + userId);
+        user.setUsername("User" + userId);
+        user.setBio("Bio " + userId);
+        user.setPersonalPronouns("Pronoun " + userId);
+        user.setEmail("test" + userId + "@gmail.com");
+        user.setDateCreated(new Date());
+        return user;
+    }
 
     @BeforeEach
     public void init() {
@@ -73,7 +93,7 @@ public class UserControllerTests {
      * @throws Exception
      */
     @Test
-    void getUsers_whenStudent() throws Exception {
+    void getUsers_whenStudent_thenUsersDisplayed() throws Exception {
 
         AuthState authState = createValidAuthStateWithId("1");
 
@@ -81,9 +101,14 @@ public class UserControllerTests {
         Mockito.when(mockedSecurityContext.getAuthentication()).thenReturn(new PreAuthenticatedAuthenticationToken(authState,""));
         SecurityContextHolder.setContext(mockedSecurityContext);
 
-        Mockito.doReturn(response).when(userAccountServiceStub).getPaginatedUsers(any(), any());
+        Mockito.doReturn(response).when(userAccountStub).getPaginatedUsers(any());
+        Mockito.doReturn(ResponseUtils.prepareUserResponse(createTestUser(1))).when(userAccountStub).getUserAccountById(any());
 
-        mockMvc.perform(get("/users").param("targetUserId", "1"))
-                .andExpect(content().string("users"));
+        // UserResponse test1 = userAccountClientService.getUser(authState);
+
+
+        Object test = mockMvc.perform(get("/users"));
+                // .andExpect(model().attribute("userList", "first"));
+        System.out.println(test);
     }
 }
