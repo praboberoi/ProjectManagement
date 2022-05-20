@@ -6,14 +6,18 @@ import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.GetPaginatedUsersRequest;
+import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
+import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -29,9 +33,24 @@ import static org.mockito.Mockito.when;
 @SpringBootTest
 class UserAccountServerServiceTests {
 
-    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    @Mock
+    private UserRepository userRepository;
 
     private UserAccountServerService userAccountServerService;
+
+    User createTestUser(int userId) {
+        User user = new User();
+        user.setUserId(userId);
+        user.setFirstName("First" + userId);
+        user.setLastName("Last" + userId);
+        user.setNickname("Nick" + userId);
+        user.setUsername("User" + userId);
+        user.setBio("Bio " + userId);
+        user.setPersonalPronouns("Pronoun " + userId);
+        user.setEmail("test" + userId + "@gmail.com");
+        user.setDateCreated(new Date());
+        return user;
+    }
 
     @BeforeEach
     void initUAServerService() {
@@ -128,5 +147,21 @@ class UserAccountServerServiceTests {
         assertEquals("Test", user.getBio());
         assertEquals("Test", user.getPersonalPronouns());
         assertEquals("Test@gmail.com", user.getEmail());
+    }
+
+    @Test
+    void givenPaginatedUsersRequest_whenNoConstraints_thenAllUsersReturned() {
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+        List<User> userList = Arrays.asList(
+            createTestUser(1),
+            createTestUser(2),
+            createTestUser(3)
+        );
+
+        when(userRepository.findAll()).thenReturn(userList);
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(3, response.getResultSetSize());
     }
 }
