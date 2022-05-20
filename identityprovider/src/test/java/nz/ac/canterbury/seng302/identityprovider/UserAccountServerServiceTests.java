@@ -4,6 +4,8 @@ import io.grpc.internal.testing.StreamRecorder;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
+import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
+import nz.ac.canterbury.seng302.identityprovider.util.ValidationUtilities;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.GetPaginatedUsersRequest;
@@ -19,7 +21,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
@@ -38,6 +39,11 @@ class UserAccountServerServiceTests {
 
     private UserAccountServerService userAccountServerService;
 
+    /**
+     * Helper function which creates a new user for testing with
+     * @param userId The user id to set the user, this effects nearly all of the user's attributes
+     * @return
+     */
     User createTestUser(int userId) {
         User user = new User();
         user.setUserId(userId);
@@ -49,6 +55,8 @@ class UserAccountServerServiceTests {
         user.setPersonalPronouns("Pronoun " + userId);
         user.setEmail("test" + userId + "@gmail.com");
         user.setDateCreated(new Date());
+        user.setPassword(EncryptionUtilities.encryptPassword("", "Password123"));
+        user.setSalt("");
         return user;
     }
 
@@ -68,15 +76,11 @@ class UserAccountServerServiceTests {
                 .setFirstName("Test")
                 .setLastName("User")
                 .setEmail("TestUser@canterbury.ac.nz")
-                .setPassword("Paassword123")
+                .setPassword("Password123")
                 .build();
         StreamRecorder<UserRegisterResponse> responseObserver = StreamRecorder.create();
         when(userRepository.save(any(User.class))).then(returnsFirstArg());
         userAccountServerService.register(request, responseObserver);
-
-        if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
-            fail("The call did not terminate in time");
-        }
 
         assertNull(responseObserver.getError());
         List<UserRegisterResponse> results = responseObserver.getValues();
@@ -111,13 +115,7 @@ class UserAccountServerServiceTests {
       EditUserRequest request =
               EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
-        User user = new User();
-        user.setFirstName("Replace");
-        user.setLastName("Replace");
-        user.setNickname("Replace");
-        user.setBio("Replace");
-        user.setPersonalPronouns("Replace");
-        user.setEmail("test@gmail.com");
+        User user = createTestUser(1);
         when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
@@ -132,13 +130,7 @@ class UserAccountServerServiceTests {
         EditUserRequest request =
                 EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
-        User user = new User();
-        user.setFirstName("Replace");
-        user.setLastName("Replace");
-        user.setNickname("Replace");
-        user.setBio("Replace");
-        user.setPersonalPronouns("Replace");
-        user.setEmail("Replace@gmail.com");
+        User user = createTestUser(1);
         when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
         userAccountServerService.editUser(request, responseObserver);
         assertEquals("Test", user.getFirstName());
@@ -149,6 +141,10 @@ class UserAccountServerServiceTests {
         assertEquals("Test@gmail.com", user.getEmail());
     }
 
+    /**
+     * Tests that the correct number of users are returned when no constrainst are 
+     * specified in the paginated users request
+     */
     @Test
     void givenPaginatedUsersRequest_whenNoConstraints_thenAllUsersReturned() {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().build();
