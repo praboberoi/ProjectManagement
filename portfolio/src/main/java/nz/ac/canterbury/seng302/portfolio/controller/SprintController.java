@@ -183,7 +183,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @RequestMapping(path="/project/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
+    @RequestMapping(path="/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,
