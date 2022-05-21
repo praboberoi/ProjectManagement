@@ -51,7 +51,7 @@ public class ProjectController {
      * @param principal
      * @return ResponseEntity containing a string message
      */
-    @PostMapping("${apiPrefix}/verifyProject/{projectId}")
+    @PostMapping("/verifyProject/{projectId}")
     public ResponseEntity<String> verifyProject(
         @PathVariable int projectId,
         String startDate,

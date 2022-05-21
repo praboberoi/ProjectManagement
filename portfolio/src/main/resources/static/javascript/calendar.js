@@ -166,6 +166,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    httpRequest.open('GET', apiPrefix  + '/project/' + projectId + '/getAllSprints/')
+    httpRequest.open('GET', apiPrefix  + '/project/' + projectId + '/getAllSprints')
     httpRequest.send()
 });
