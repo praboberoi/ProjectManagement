@@ -212,7 +212,7 @@ public class SprintController {
      * @param endDate New end date of the sprint
      * @return An error message if sprint can't save
      */
-    @PostMapping("${apiPrefix}/sprint/{sprintId}/editSprint")
+    @PostMapping("/sprint/{sprintId}/editSprint")
     public ResponseEntity<String> editSprint(
         @PathVariable("sprintId") int sprintId,
         String startDate,
