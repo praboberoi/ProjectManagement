@@ -124,7 +124,7 @@ public class SprintController {
      * @param sprint
      * @return
      */
-    @RequestMapping(path="/project/{projectId}/saveSprint",method = RequestMethod.POST)
+    @PostMapping(path="/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
