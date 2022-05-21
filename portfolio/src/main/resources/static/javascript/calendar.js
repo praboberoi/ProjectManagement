@@ -104,7 +104,7 @@ function editEventDuration(info) {
         }
     }
 
-    httpRequest.open('POST', '/sprint/' + event.id + '/editSprint')
+    httpRequest.open('POST', apiPrefix +'/sprint/' + event.id + '/editSprint')
 
     // Need to remove 1 day
     let endDate = new Date(event.end);
@@ -166,6 +166,6 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
-    httpRequest.open('GET', '/project/' + projectId + '/getAllSprints/')
+    httpRequest.open('GET', apiPrefix  + '/project/' + projectId + '/getAllSprints/')
     httpRequest.send()
 });
