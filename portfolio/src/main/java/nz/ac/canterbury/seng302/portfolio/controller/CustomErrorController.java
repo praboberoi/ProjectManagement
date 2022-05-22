@@ -16,5 +16,4 @@ public class CustomErrorController implements ErrorController {
         model.addAttribute("apiPrefix", apiPrefix);
         return "error";
     }
-
 }
