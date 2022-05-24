@@ -195,16 +195,21 @@ public class AccountController {
     @DeleteMapping("/deleteProfilePhoto")
     public ResponseEntity<Long> deleteUserProfilePhoto(@AuthenticationPrincipal AuthState principal, Model model) {
         int userId = PrincipalUtils.getUserId(principal);
-        DeleteUserProfilePhotoResponse idpResponse = userAccountClientService.deleteUserProfilePhoto(userId);
+        try {
+            DeleteUserProfilePhotoResponse idpResponse = userAccountClientService.deleteUserProfilePhoto(userId);
 
-        if (idpResponse.getIsSuccess()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+            if (idpResponse.getIsSuccess()) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            if (("Could not find user").equals(idpResponse.getMessage())
+                    || ("Could not find a profile photo to delete").equals(idpResponse.getMessage())) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
         }
-        if (("Could not find user").equals(idpResponse.getMessage())
-            || ("Could not find a profile photo to delete").equals(idpResponse.getMessage())) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     private void addAttributesToModel(AuthState principal, Model model) {

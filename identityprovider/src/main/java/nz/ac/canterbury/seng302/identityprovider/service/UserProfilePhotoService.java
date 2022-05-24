@@ -36,19 +36,20 @@ public class UserProfilePhotoService {
             User user = userRepository.getUserByUserId(userId);
 
             if (user == null) {
-                response.setIsSuccess(false).setMessage("Could not find user");
+                response.setIsSuccess(false).setMessage(("Could not find user"));
             } else if (user.getProfileImagePath() == null) {
-                response.setIsSuccess(false).setMessage("Could not find a profile photo to delete");
+                response.setIsSuccess(false).setMessage(("Could not find a profile photo to delete"));
             } else {
                 Path imagePath = imageBasePath.resolve(user.getProfileImagePath());
                 Files.deleteIfExists(imagePath);
                 response.setIsSuccess(true).setMessage("File deleted");
+
             }
 
             user.setProfileImagePath(null);
             userRepository.save(user);
         } catch (Exception e) {
-            response.setIsSuccess(false).setMessage("An error occured while deleting the profile photo" + e.getMessage());
+            response.setIsSuccess(false).setMessage(("An error occurred while deleting the profile photo" + e.getMessage()));
         }
         return response.build();
     }

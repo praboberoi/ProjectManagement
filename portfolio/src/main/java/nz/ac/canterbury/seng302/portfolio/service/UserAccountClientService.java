@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Service
 public class UserAccountClientService {
-
+    Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
     @GrpcClient("identity-provider-grpc-server")
     private UserAccountServiceGrpc.UserAccountServiceBlockingStub userAccountStub;
     @GrpcClient("identity-provider-grpc-server")
@@ -132,10 +132,13 @@ public class UserAccountClientService {
      * @param userId The id of the user
      * @return
      */
-    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) {
+    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) throws IOException {
         DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
             DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
             );
+        UserResponse user = getUser(userId);
+        Path imagePath = SERVER_BASE_PATH.resolve(user.getProfileImagePath());
+        Files.deleteIfExists(imagePath);
         return response;
     }
 
@@ -250,7 +253,6 @@ public class UserAccountClientService {
      * @return Writer containing information to save file
      */
     private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
-        Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
         var fileName = "UesrProfle" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
         return SERVER_BASE_PATH.resolve(fileName);
     }
