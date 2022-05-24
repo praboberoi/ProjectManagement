@@ -54,6 +54,22 @@
             </th:block>
           </tbody>
         </table>
+        <nav>
+          <ul class="pagination">
+            <li class="page-item">
+              <a role='button' class="page-link" tabindex="-1" onclick="prevPage()">Previous</a>
+            </li>
+            <li class="page-item active">
+              <a role='button' class="page-link" onClick="getUserDataTable(1)">1</a>
+            </li>
+            <li class="page-item" aria-current="page">
+              <a role='button' class="page-link" onClick="getUserDataTable(2)">2</a>
+            </li>
+            <li class="page-item">
+              <a role='button' class="page-link" onclick="nextPage()">Next</a>
+            </li>
+          </ul>
+        </nav>
     </div>
   </div>
 
