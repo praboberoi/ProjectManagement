@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import com.google.protobuf.ByteString;
+
+import org.springframework.data.domain.PageRequest;
+
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
@@ -297,9 +300,17 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      */
     @Override
     public void getPaginatedUsers(GetPaginatedUsersRequest request, StreamObserver<PaginatedUsersResponse> responseObserver) {
-        List<User> users = userRepository.findAll();
-        List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user)).collect(Collectors.toList());
+        List<User> users;
+        
+        if (request.getLimit() == 0) {
+            users = userRepository.findAll();
+        } else {
+            PageRequest pageable = PageRequest.of(request.getOffset(), request.getLimit());
+            users = userRepository.findAll(pageable).getContent();
+        }
 
+        List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user)).collect(Collectors.toList());
+        
         PaginatedUsersResponse reply = ResponseUtils.preparePaginatedUsersResponse(preparedUsers);
 
         responseObserver.onNext(reply);
