@@ -28,7 +28,7 @@ import java.util.List;
  */
 @Service
 public class UserAccountClientService {
-    Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
+    Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/");
     @GrpcClient("identity-provider-grpc-server")
     private UserAccountServiceGrpc.UserAccountServiceBlockingStub userAccountStub;
     @GrpcClient("identity-provider-grpc-server")
@@ -133,12 +133,13 @@ public class UserAccountClientService {
      * @return
      */
     public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) throws IOException {
+        UserResponse user = getUser(userId);
+        System.out.println(user.getProfileImagePath());
+        Path imagePath = SERVER_BASE_PATH.resolve(user.getProfileImagePath());
+        Files.deleteIfExists(imagePath);
         DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
             DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
             );
-        UserResponse user = getUser(userId);
-        Path imagePath = SERVER_BASE_PATH.resolve(user.getProfileImagePath());
-        Files.deleteIfExists(imagePath);
         return response;
     }
 
@@ -309,17 +310,8 @@ public class UserAccountClientService {
 //        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
 //        Files.write(path, file.getBytes());
 
-        if (ext == "jpg"){
-            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + "jpg");
-            Files.write(path, file.getBytes());
-        } else if (ext == "jpeg"){
-            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + "jpeg");
-            Files.write(path, file.getBytes());
-        } else if (ext == "png"){
-            Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + "png");
-            Files.write(path, file.getBytes());
-        }
-
+        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
+        Files.write(path, file.getBytes());
     }
     /**
      * Returns a status update when the file upload is complete using protos
