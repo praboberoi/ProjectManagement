@@ -8,8 +8,8 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
 
@@ -33,14 +33,34 @@ public class UserController {
      * @return Account html page
      */
     @GetMapping("/users")
-    public String users(
+    public ModelAndView users(
             @AuthenticationPrincipal AuthState principal,
-            Model model
+            ModelAndView mv
     ) {
-        List<User> usersList = userAccountClientService.getUsers();
-        model.addAttribute("usersList", usersList);
-        model.addAttribute("user", userAccountClientService.getUser(principal));
-        model.addAttribute("apiPrefix", apiPrefix);
-        return "userList";
+        List<User> usersList = userAccountClientService.getUsers(0, 5);
+        mv = new ModelAndView("userList");
+        mv.addObject("usersList", usersList);
+        mv.addObject("user", userAccountClientService.getUser(principal));
+        mv.addObject("apiPrefix", apiPrefix);
+        return mv;
+    }
+
+    /**
+     * Get method for users personal page
+     * @param principal Authentication information containing user info
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Account html page
+     */
+    @GetMapping("/usersList")
+    public ModelAndView usersList(
+            @AuthenticationPrincipal AuthState principal,
+            @RequestParam Integer page,
+            @RequestParam Integer limit,
+            ModelAndView mv
+    ) {
+        List<User> usersList = userAccountClientService.getUsers(page, limit);
+        mv = new ModelAndView("userList::userListDataTable");
+        mv.addObject("usersList", usersList);
+        return mv;
     }
 }

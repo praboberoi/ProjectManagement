@@ -112,13 +112,16 @@ public class UserAccountClientService {
         return response;
     }
 
+
     /**
      * Request a list of users from the IDP server and prepares them for use
+     * @param page The page to retrive, indexing starts at 0
+     * @param limit The number of users to retrieve, 0 for no limit
      * @return List of unpackaged users
      * @throws StatusRuntimeException
      */
-    public List<User> getUsers() throws StatusRuntimeException{
-        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().build());
+    public List<User> getUsers(int page, int limit) throws StatusRuntimeException{
+        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setLimit(limit).setOffset(page).build());
         List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
         return usersList;
     }
