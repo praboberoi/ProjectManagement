@@ -53,10 +53,6 @@ public class UserProfilePhotoService {
         return response.build();
     }
 
-
-public class UserProfilePhotoService {
-
-
     public List<ValidationError> validateImageType(UploadUserProfilePhotoRequest req) {
         ProfilePhotoUploadMetadata data = req.getMetaData();
         String fileType = data.getFileType();
