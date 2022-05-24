@@ -1,13 +1,21 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
+import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 
+import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 
 @GrpcService
@@ -119,6 +127,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) throws NoSuchElementException {
         UserResponse.Builder reply = UserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getId());
+        Path imagePath;
         if (user == null) {
             throw new NoSuchElementException("User doesn't exist");
         }
@@ -129,14 +138,138 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         reply.setPersonalPronouns(user.getPersonalPronouns());
         reply.setBio(user.getBio());
         reply.setEmail(user.getEmail());
-//        reply.setProfileImagePath(user.getProfileImagePath());
         reply.addAllRoles(user.getRoles());
         reply.setCreated(Timestamp.newBuilder()
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
+
+        if (user.getProfileImagePath() == null) {
+             imagePath = Paths.get("cachedprofilephoto/default-image.png");
+
+        } else {
+             imagePath = Paths.get("cachedprofilephoto/" + user.getProfileImagePath());
+
+        }
+        reply.setProfileImagePath(imagePath.toString());
+
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
+
+    /**
+     * This method gets data about a User Profile image from a StreamObserver and returns
+     * a StreamObserver about the FileUploadStatus response. It sends the image data to UserProfilePhotoService
+     * to be saved.
+     * @param responseObserver The request containing image information
+     * @return The response observer records the result of the operation
+     */
+    @Override
+    public StreamObserver<UploadUserProfilePhotoRequest> uploadUserProfilePhoto(StreamObserver<FileUploadStatusResponse> responseObserver) {
+        return new StreamObserver<>() {
+            OutputStream writer;
+            FileUploadStatus status = FileUploadStatus.IN_PROGRESS;
+            User user;
+            String fileName;
+            Path path;
+            final Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
+
+
+            /**
+             * Sets the OutputStream on the first request and then sends
+             * the data to be saved on subsequent requests
+             *
+             * @param request Request containing image information
+             */
+            @Override
+            public void onNext(UploadUserProfilePhotoRequest request) {
+                try {
+                    if (request.hasMetaData()) {
+
+                        fileName = getFileName(request);
+                        path = SERVER_BASE_PATH.resolve(fileName);
+                        File f = new File(String.valueOf(path));
+                        if (f.exists()) {
+                            try {
+                                Files.delete(path);
+                            } catch (IOException e) {
+                                this.onError(e);
+                            }
+                        }
+
+                        writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+                        user = userRepository.getUserByUserId(request.getMetaData().getUserId());
+                    } else {
+                        writeFile(writer, request.getFileContent());
+                    }
+                } catch (IOException e) {
+                    this.onError(e);
+                }
+            }
+
+            /**
+             * Updates file upload status
+             *
+             * @param t the error occurred on the stream
+             */
+            @Override
+            public void onError(Throwable t) {
+                status = FileUploadStatus.FAILED;
+                this.onCompleted();
+            }
+
+            /**
+             * Compiles file upload status response
+             */
+            @Override
+            public void onCompleted() {
+                closeFile(writer);
+                status = FileUploadStatus.IN_PROGRESS.equals(status) ? FileUploadStatus.SUCCESS : status;
+                FileUploadStatusResponse response = FileUploadStatusResponse.newBuilder()
+                        .setStatus(status)
+                        .setMessage("File upload progress: " + status)
+                        .build();
+
+                user.setProfileImagePath(String.valueOf(fileName));
+                userRepository.save(user);
+                responseObserver.onNext(response);
+                responseObserver.onCompleted();
+
+            }
+        };
+
+        }
+
+    /**
+     * Writes image file to profilePhotos
+     * @param writer OutputStream containing pathway
+     * @param content Image content
+     */
+    private void writeFile(OutputStream writer, ByteString content) throws IOException {
+        writer.write(content.toByteArray());
+        writer.flush();
+    }
+
+    /**
+     * Creates file name and writer
+     * @param request Contains image information
+     * @return Writer containing information to save file
+     */
+    private String getFileName(UploadUserProfilePhotoRequest request) throws IOException {
+        return "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+    }
+
+    /**
+     * Closes OutputStream
+     * @param writer The OutputStream
+     */
+    private void closeFile(OutputStream writer){
+        try {
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     /**
      * Deletes a user's profile photo

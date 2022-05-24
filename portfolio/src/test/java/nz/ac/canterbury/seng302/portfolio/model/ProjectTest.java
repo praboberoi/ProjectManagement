@@ -15,7 +15,7 @@ class ProjectTest {
     @BeforeEach
     public void setup() {
         project1 = new Project.Builder()
-                .prijectId(1)
+                .projectId(1)
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new Date(2020, 3, 12))
@@ -23,7 +23,7 @@ class ProjectTest {
                 .build();
 
         project2 = new Project.Builder()
-                .prijectId(2)
+                .projectId(2)
                 .projectName("Project 2021")
                 .description("Second Attempt")
                 .startDate(new Date(2021, 1, 9))

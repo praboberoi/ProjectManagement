@@ -24,15 +24,12 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
     implementation 'org.springframework:spring-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
-    // https://mvnrepository.com/artifact/com.h2database/h2
-    implementation 'com.h2database:h2:1.4.200'
-    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2' // Maria DB
 
 
     // JWT dependencies
     implementation 'io.jsonwebtoken:jjwt-api:0.11.0'
-    implementation 'io.jsonwebtoken:jjwt-impl:0.11.0'
-    implementation 'io.jsonwebtoken:jjwt-jackson:0.11.0'
+	implementation 'io.jsonwebtoken:jjwt-impl:0.11.0'
+	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.0'
 
     implementation 'net.devh:grpc-spring-boot-starter:2.13.1.RELEASE' // GRPC server / client dependencies
     implementation 'nz.ac.canterbury.seng302:shared:1.0' // Local package containing .proto files
@@ -42,38 +39,12 @@ dependencies {
     testImplementation 'io.grpc:grpc-testing:1.45.0'
 
     testImplementation "io.cucumber:cucumber-java:6.10.4"
-}
+    testImplementation "io.cucumber:cucumber-junit:6.10.4"
 
-configurations {
-    cucumberRuntime {
-        extendsFrom testImplementation
-    }
-}
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
 
-sourceSets {
-    test {
-        resources.srcDirs = ['src/test/resources']
-        java.srcDirs = ['src/test/java', 'src/main/java']
-        runtimeClasspath = project.sourceSets.main.compileClasspath +
-                project.sourceSets.test.runtimeClasspath +
-                project.sourceSets.test.compileClasspath +
-                fileTree("src/test/resources/test") +
-                project.sourceSets.test.output + project.sourceSets.main.output
-    }
-}
-
-task cucumber() {
-    dependsOn assemble, testClasses
-    doLast {
-        javaexec {
-            main = "io.cucumber.core.cli.Main"
-            classpath = configurations.cucumberRuntime  + sourceSets.test.output
-            args = ['--plugin', 'pretty', '--glue', 'nz.ac.canterbury.seng302.identityprovider.cucumber', 'src/test/resources']
-        }
-    }
 }
 
 tasks.named('test') {
     useJUnitPlatform()
-    finalizedBy cucumber
 }
