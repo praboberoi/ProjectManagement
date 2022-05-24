@@ -38,7 +38,7 @@ public class ValidationUtilities {
      * @return true if str contains disallowed characters.
      */
     public static boolean hasPronounSpecial(String str) {
-        Pattern pattern = Pattern.compile("[^a-zA-Z0-9 ',+&-]");
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9 ,+&-]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
