@@ -27,10 +27,10 @@ public class UserController {
     }
 
     /**
-     * Get method for users personal page
+     * Get method for the first page of the list of users
      * @param principal Authentication information containing user info
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return Account html page
+     * @return The user list page
      */
     @GetMapping("/users")
     public ModelAndView users(
@@ -46,10 +46,10 @@ public class UserController {
     }
 
     /**
-     * Get method for users personal page
+     * Get method for the current page of users from the list
      * @param principal Authentication information containing user info
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return Account html page
+     * @return The list of user fragment
      */
     @GetMapping("/usersList")
     public ModelAndView usersList(
