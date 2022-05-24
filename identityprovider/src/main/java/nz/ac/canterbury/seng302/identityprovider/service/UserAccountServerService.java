@@ -301,6 +301,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     @Override
     public void getPaginatedUsers(GetPaginatedUsersRequest request, StreamObserver<PaginatedUsersResponse> responseObserver) {
         List<User> users;
+
+        long resultSetSize = userRepository.count();
         
         if (request.getLimit() == 0) {
             users = userRepository.findAll();
@@ -311,7 +313,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
         List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user)).collect(Collectors.toList());
         
-        PaginatedUsersResponse reply = ResponseUtils.preparePaginatedUsersResponse(preparedUsers);
+        PaginatedUsersResponse reply = ResponseUtils.preparePaginatedUsersResponse(preparedUsers, resultSetSize);
 
         responseObserver.onNext(reply);
         responseObserver.onCompleted();

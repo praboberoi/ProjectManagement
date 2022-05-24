@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
+import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
 import org.springframework.beans.factory.annotation.Value;
@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller for the account page
@@ -37,11 +38,17 @@ public class UserController {
             @AuthenticationPrincipal AuthState principal,
             ModelAndView mv
     ) {
-        List<User> usersList = userAccountClientService.getUsers(0, 5);
+        PaginatedUsersResponse response = userAccountClientService.getUsers(0, 5);
+        List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
+
         mv = new ModelAndView("userList");
         mv.addObject("usersList", usersList);
         mv.addObject("user", userAccountClientService.getUser(principal));
         mv.addObject("apiPrefix", apiPrefix);
+        mv.addObject("page", (Integer) 0);
+        mv.addObject("limit", (Integer) 5);
+        mv.addObject("pages", (response.getResultSetSize() + 5 - 1)/5);
+        mv.addObject("userCount", response.getResultSetSize());
         return mv;
     }
 
@@ -58,9 +65,15 @@ public class UserController {
             @RequestParam Integer limit,
             ModelAndView mv
     ) {
-        List<User> usersList = userAccountClientService.getUsers(page, limit);
+        PaginatedUsersResponse response = userAccountClientService.getUsers(page, limit);
+        List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
+
         mv = new ModelAndView("userList::userListDataTable");
         mv.addObject("usersList", usersList);
+        mv.addObject("page", page);
+        mv.addObject("limit", limit);
+        mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
+        mv.addObject("userCount", response.getResultSetSize());
         return mv;
     }
 }

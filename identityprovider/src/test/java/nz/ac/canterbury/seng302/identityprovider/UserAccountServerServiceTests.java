@@ -159,7 +159,7 @@ class UserAccountServerServiceTests {
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
-        assertEquals(5, response.getResultSetSize());
+        assertEquals(5, response.getUsersCount());
     }
 
     /**
@@ -173,7 +173,7 @@ class UserAccountServerServiceTests {
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
-        assertEquals(3, response.getResultSetSize());
+        assertEquals(3, response.getUsersCount());
     }
 
     /**
@@ -189,7 +189,7 @@ class UserAccountServerServiceTests {
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
-        assertEquals(2, response.getResultSetSize());
+        assertEquals(2, response.getUsersCount());
     }
 
     /**

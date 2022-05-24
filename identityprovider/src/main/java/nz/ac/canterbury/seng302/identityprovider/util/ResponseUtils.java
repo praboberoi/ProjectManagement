@@ -23,6 +23,7 @@ public class ResponseUtils {
     public static UserResponse prepareUserResponse(User user) {
         UserResponse.Builder response = UserResponse.newBuilder();
         response.setUsername(user.getUsername())
+        .setId(user.getUserId())
         .setFirstName(user.getFirstName())
         .setLastName(user.getLastName())
         .setNickname(user.getNickname())
@@ -45,9 +46,9 @@ public class ResponseUtils {
      * @param users List of User objects to be packaged
      * @return PaginatedUsersResponse as a protobuf object
      */
-    public static PaginatedUsersResponse preparePaginatedUsersResponse(List<UserResponse> users) {
+    public static PaginatedUsersResponse preparePaginatedUsersResponse(List<UserResponse> users, long resultSetSize) {
         PaginatedUsersResponse.Builder response = PaginatedUsersResponse.newBuilder();
-        response.addAllUsers(users).setResultSetSize(users.size());
+        response.addAllUsers(users).setResultSetSize((int)resultSetSize);
        return response.build();
     }
 }
