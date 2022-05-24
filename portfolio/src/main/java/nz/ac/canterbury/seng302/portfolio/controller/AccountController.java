@@ -98,7 +98,6 @@ public class AccountController {
     /**
      * A mapping to a get request to edit the user, which returns the current details of the user to be edited
      * @param principal Authentication information containing user info
-     * @param favouriteColour The favourite colour of the user to be edited
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
@@ -165,9 +164,9 @@ public class AccountController {
 
         if (idpResponse.getIsSuccess()) {
             return new ResponseEntity<>(HttpStatus.OK);
-        } 
-        if (idpResponse.getMessage().equals("Could not find user")
-            || idpResponse.getMessage().equals("Could not find a profile photo to delete")) {
+        }
+        if (("Could not find user").equals(idpResponse.getMessage())
+            || ("Could not find a profile photo to delete").equals(idpResponse.getMessage())) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
