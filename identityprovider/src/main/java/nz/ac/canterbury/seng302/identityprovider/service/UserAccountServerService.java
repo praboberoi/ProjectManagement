@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 import com.google.protobuf.ByteString;
 
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -303,11 +305,18 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         List<User> users;
 
         long resultSetSize = userRepository.count();
+        Sort sort;
+
+        if (request.getOrderBy().isEmpty()) {
+            sort = Sort.by(Direction.ASC, "userId");
+        } else {
+            sort = Sort.by(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC, request.getOrderBy());
+        }
         
         if (request.getLimit() == 0) {
-            users = userRepository.findAll();
+            users = userRepository.findAll(sort);
         } else {
-            PageRequest pageable = PageRequest.of(request.getOffset(), request.getLimit());
+            PageRequest pageable = PageRequest.of(request.getOffset(), request.getLimit(), sort);
             users = userRepository.findAll(pageable).getContent();
         }
 

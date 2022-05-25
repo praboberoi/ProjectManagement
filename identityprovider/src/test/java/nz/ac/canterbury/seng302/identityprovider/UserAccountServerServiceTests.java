@@ -182,8 +182,6 @@ class UserAccountServerServiceTests {
      */
     @Test
     void givenPaginatedUsersRequest_when3UserLimit_andPage2_then2UsersReturned() {
-        
-
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
@@ -198,15 +196,45 @@ class UserAccountServerServiceTests {
      */
     @Test
     void givenPaginatedUsersRequest_when3UserLimit_andPage2_thenCorrectUsersReturned() {
-        User testUser = createTestUser(4);
-        userRepository.saveAll(Arrays.asList(
-            createTestUser(1),
-            createTestUser(2),
-            createTestUser(3),
-            testUser
-        ));
+        User testUser = userRepository.getUserByUserId(4);
 
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
+
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(testUserResponse, response.getUsersList().get(0));
+    }
+
+    /**
+     * Tests that the users are returned in the correct order when there is a sort constraint
+     * specified in the paginated users request
+     */
+    @Test
+    void givenPaginatedUsersRequest_whenFirstNameSortDesc_thenCorrectUsersReturned() {
+        User testUser = userRepository.getUserByUserId(4);
+
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOrderBy("firstName").setIsAscendingOrder(false).build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
+
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(testUserResponse, response.getUsersList().get(1));
+    }
+
+    /**
+     * Tests that the users are returned in the correct order when there is a sort constraint
+     * specified in the paginated users request
+     */
+    @Test
+    void givenPaginatedUsersRequest_whenFirstNameSortDesc_and3UserLimit_andPage2__thenCorrectUsersReturned() {
+        User testUser = userRepository.getUserByUserId(2);
+
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).setOrderBy("firstName").setIsAscendingOrder(false).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
         UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
