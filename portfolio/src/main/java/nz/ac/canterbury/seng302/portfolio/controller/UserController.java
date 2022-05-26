@@ -38,7 +38,8 @@ public class UserController {
             @AuthenticationPrincipal AuthState principal,
             ModelAndView mv
     ) {
-        PaginatedUsersResponse response = userAccountClientService.getUsers(0, 5);
+        int limit = 10;
+        PaginatedUsersResponse response = userAccountClientService.getUsers(0, limit);
         List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
 
         mv = new ModelAndView("userList");
@@ -47,7 +48,7 @@ public class UserController {
         mv.addObject("apiPrefix", apiPrefix);
         mv.addObject("page", (Integer) 0);
         mv.addObject("limit", (Integer) 5);
-        mv.addObject("pages", (response.getResultSetSize() + 5 - 1)/5);
+        mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
         mv.addObject("userCount", response.getResultSetSize());
         return mv;
     }

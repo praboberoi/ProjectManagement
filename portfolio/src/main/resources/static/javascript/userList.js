@@ -29,7 +29,7 @@ function getUserDataTable(newPage) {
         }
     }
 
-    httpRequest.open('GET', apiPrefix + '/usersList?page=' + newPage + '&limit=' + 5);
+    httpRequest.open('GET', apiPrefix + '/usersList?page=' + newPage + '&limit=' + 10);
     retrieving = true;
     httpRequest.send();
 };
