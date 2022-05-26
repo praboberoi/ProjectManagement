@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Controller for the account page
+ * Controller for user related pages excluding the current
  */
 @Controller
 public class UserController {
