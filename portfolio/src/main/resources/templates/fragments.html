@@ -46,11 +46,14 @@
   </nav>
 </div>
 
-<nav th:fragment = "dashboard">
+<nav th:fragment = "sidebar">
   <div class = "container-fluid">
     <div class="row">
       <div class="sidebar">
         <ul class="nav flex-column">
+          <li class="nav-item"  th:classappend="${#httpServletRequest.getRequestURI() == '/dashboard' ? 'active':''}">
+            <a class="nav-link" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">Dashboard</a>
+          </li>
           <li class="nav-item">
             <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
           </li>
@@ -60,19 +63,7 @@
   </div>
 </nav>
 
-<nav th:fragment = "account">
-  <div class = "container-fluid">
-    <div class="row">
-      <div class="sidebar">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">Dashboard</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</nav>
+
 
 <nav th:fragment = "error">
   <div class = "container-fluid">
@@ -92,37 +83,7 @@
   </div>
 </nav>
 
-<nav th:fragment = "error-logged-in">
-  <div class = "container-fluid">
-    <div class="row">
-      <div class="sidebar">
-        <!--<div class="collapse navbar-collapse" id="collapsibleNavbar">-->
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</nav>
 
-<nav th:fragment = "project-and-sprint">
-  <div class = "container-fluid">
-    <div class="row">
-      <div class="sidebar">
-        <!--<div class="collapse navbar-collapse" id="collapsibleNavbar">-->
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</nav>
+
 </body>
 </html>
