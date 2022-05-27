@@ -21,7 +21,8 @@ import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
 /**
- * Grpc service used to perform function relating to users.
+ * Grpc service used to perform function relating to users. This includes registration, editing and retriving User objects
+ * stored in the server.
  */
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
