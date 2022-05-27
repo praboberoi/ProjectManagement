@@ -18,9 +18,17 @@
 <div th:fragment="header">
   <nav class="navbar navbar-expand bg-dark navbar-dark fixed-top" style="background-color: #07173B !important;">
     <div class="container-fluid">
+      <ul class="nav navbar-nav navbar-left">
+        <li>
+      <a>
+        <img th:src="@{{apiPrefix}/icons/list.svg(apiPrefix=${apiPrefix})}" alt="list" height=28 width=28 class="d-inline-block align-text-top">
+      </a>
+        </li>
+        <li>
       <a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
-
         LENSfolio</a>
+        </li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
           <img th:src="@{{apiPrefix}/icons/home-icon.svg(apiPrefix=${apiPrefix})}" alt="Home" height=28 width=28 class="d-inline-block align-text-top">
