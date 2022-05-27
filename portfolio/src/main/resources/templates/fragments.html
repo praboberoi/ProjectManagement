@@ -18,7 +18,9 @@
 <div th:fragment="header">
   <nav class="navbar navbar-expand bg-dark navbar-dark fixed-top" style="background-color: #07173B !important;">
     <div class="container-fluid">
-      <a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">LENSfolio</a>
+      <a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
+
+        LENSfolio</a>
       <ul class="nav navbar-nav navbar-right">
         <li><a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
           <img th:src="@{{apiPrefix}/icons/home-icon.svg(apiPrefix=${apiPrefix})}" alt="Home" height=28 width=28 class="d-inline-block align-text-top">
@@ -50,12 +52,16 @@
   <div class = "container-fluid">
     <div class="row">
       <div class="sidebar">
-        <ul class="nav flex-column">
-          <li class="nav-item"  th:classappend="${#httpServletRequest.getRequestURI() == '/dashboard' ? 'active':''}">
-            <a class="nav-link" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">Dashboard</a>
+        <ul class="nav nav-pills flex-column">
+          <li class="nav-item"  >
+            <a class="nav-link" style="justify-content: center" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/dashboard' ? 'active':''}" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
+              Dashboard
+            </a>
           </li>
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
+          <li class="nav-item"  >
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/account' ? 'active':''}" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
+              Account Page
+            </a>
           </li>
         </ul>
       </div>
