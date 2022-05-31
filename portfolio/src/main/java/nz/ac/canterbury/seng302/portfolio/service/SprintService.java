@@ -22,6 +22,11 @@ public class SprintService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintRepository sprintRepository;
 
+    /**
+     * Initilizes a sprint service object
+     * @param projectRepo The repository that controls projects
+     * @param sprintRepository The repository that controls sprints
+     */
     public SprintService(ProjectRepository projectRepo, SprintRepository sprintRepository) {
         this.projectRepo = projectRepo;
         this.sprintRepository = sprintRepository;

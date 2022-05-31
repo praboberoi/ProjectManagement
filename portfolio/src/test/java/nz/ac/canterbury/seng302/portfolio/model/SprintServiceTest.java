@@ -16,6 +16,9 @@ import java.sql.Date;
 import java.util.Arrays;
 import java.util.Calendar;
 
+/**
+ * Unit tests for methods in the sprintService class
+ */
 @SpringBootTest
 class SprintServiceTest {
     Project project;
@@ -31,6 +34,9 @@ class SprintServiceTest {
 
     private Sprint.Builder sprintBuilder;
 
+    /**
+     * Prepares tests by initilizing the sprint service and creating a valid project and sprint builder
+     */
     @BeforeEach
     public void setup() {
         sprintService = new SprintService(projectRepository, sprintRepository);
@@ -55,14 +61,20 @@ class SprintServiceTest {
         when(sprintRepository.findByProject(any())).thenReturn(Arrays.asList());
     }
     
+    /**
+     * Tests that a sprint with normal inputs will be valid
+     */
     @Test
     public void givenValidSprint_whenSprintValidated_thenSucceedsValidation() {
         Sprint sprint = sprintBuilder.build();
         assertDoesNotThrow(() -> {
-            sprintService.verifySprint(sprint);
+            assertTrue(sprintService.verifySprint(sprint));
         });
     }
 
+    /**
+     * Tests that a sprint with too long a description will not be valid
+     */
     @Test
     public void givenInvalidSprintDescription_whenSprintValidated_thenFailsValidation() {
         Sprint sprint = sprintBuilder
@@ -71,16 +83,17 @@ class SprintServiceTest {
             assertThrows(Exception.class, () -> {sprintService.verifySprint(sprint);});
     }
 
+    /**
+     * Tests that a sprint with the maximum character count will be valid
+     */
     @Test
     public void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
         Sprint sprint = sprintBuilder
             .description("0123456789".repeat(25)) //250 characters
             .build();
-            try {
+            assertDoesNotThrow(() -> {
                 assertTrue(sprintService.verifySprint(sprint));
-            } catch (Exception e) {
-                fail(e);
-            }
+            });
     }
 
 }
