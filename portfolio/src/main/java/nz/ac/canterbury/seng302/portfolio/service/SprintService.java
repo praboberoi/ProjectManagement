@@ -22,6 +22,11 @@ public class SprintService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintRepository sprintRepository;
 
+    public SprintService(ProjectRepository projectRepo, SprintRepository sprintRepository) {
+        this.projectRepo = projectRepo;
+        this.sprintRepository = sprintRepository;
+    }
+
     /**
      * To get a new sprint with the appropriate default values.
      * @param project of type Project
