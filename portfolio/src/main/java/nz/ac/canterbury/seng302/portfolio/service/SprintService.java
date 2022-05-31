@@ -222,6 +222,10 @@ public class SprintService {
             throw new Exception("Sprint must end before the project.");
         }
 
+        if(currentSprint.getDescription().length() > 250) {
+            throw new Exception("Sprint discription must be less than 250 characters.");
+        }
+
         List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
                 .filter(sp -> !(sp.getSprintLabel().equals(currentSprint.getSprintLabel())))
                 .filter(sp -> (betweenDateRange(sp, currentSprint))).toList();
