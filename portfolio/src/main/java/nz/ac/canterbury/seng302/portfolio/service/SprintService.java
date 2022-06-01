@@ -233,7 +233,7 @@ public class SprintService {
         }
 
         if(currentSprint.getDescription().length() > 250) {
-            throw new Exception("Sprint discription must be less than 250 characters.");
+            throw new Exception("Sprint description must be less than 250 characters.");
         }
 
         List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
