@@ -25,3 +25,31 @@ header, sidebar
 }
 
 
+
+#hamburger-toggle{
+    display: none;
+}
+@media screen and (max-width: 768px) {
+    /*.current_projects{*/
+    /*    margin-left: 0%;*/
+    /*}*/
+    .main {
+        /*margin-left: 0%;*/
+        padding-left: 0%;
+    }
+    #hamburger-toggle {
+        display: inline;
+    }
+    /*.page-title {*/
+    /*    margin-left: 0%;*/
+    /*}*/
+
+
+    .sidebar {
+        display: none;
+    }
+}
+
+/*.sidebarshow {*/
+/*    */
+/*}*/
