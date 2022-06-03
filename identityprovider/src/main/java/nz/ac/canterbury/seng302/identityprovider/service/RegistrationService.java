@@ -93,7 +93,7 @@ public class RegistrationService {
         }
 
         //Bio validation
-        if (bio.length() > Integer.MAX_VALUE - 3) {
+        if (bio.length() > 250) {
             errorBuilder.setFieldName("bioError");
             errorBuilder.setErrorText("Your bio is too long");
             result.add(errorBuilder.build());
