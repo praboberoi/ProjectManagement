@@ -57,7 +57,11 @@
         <nav class="text-center">
           <ul class="pagination justify-content-center">
             <li class="page-item" th:classappend="${page == 0}? 'disabled' : ''">
-              <a role='button' class="page-link" onclick="prevPage()">Previous</a>
+              <a role='button' class="page-link" th:onclick="'getUserDataTable(0)'"><span aria-hidden="true">&laquo;</span></a>
+            </li>
+
+            <li class="page-item" th:classappend="${page == 0}? 'disabled' : ''">
+              <a role='button' class="page-link" onclick="prevPage()"><span aria-hidden="true">&lsaquo;</span></a>
             </li>
 
             <li class="page-item" th:classappend="${(0 == page)? 'active' : ''}">
@@ -89,7 +93,10 @@
             </th:block>
 
             <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
-              <a role='button' class="page-link" onclick="nextPage()">Next</a>
+              <a role='button' class="page-link" onclick="nextPage()"><span aria-hidden="true">&rsaquo;</span></a>
+            </li>
+            <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
+              <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${pages - 1} + ')'"><span aria-hidden="true">&raquo;</span></a>
             </li>
           </ul>
         </nav>
