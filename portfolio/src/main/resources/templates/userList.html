@@ -43,16 +43,16 @@
               <th scope="col" style="width:25%">Roles</th>
             </tr>
           </thead>
-          <!-- <tbody>
-            <th:block th:each="">
-              <tr th:id="">
-                <td th:id=""></td>
-                <td th:id=""></td>
-                <td th:id=""></td>
-                <td th:id=""></td>
+          <tbody>
+            <th:block th:each="user : ${usersList}">
+              <tr th:id="'user' + ${user.userId} + 'Row'">
+                <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]]  [[${user.lastName}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Username'">[[${user.username}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Nickname'">[[${user.nickname}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Roles'">[[${user.roles}]]</td>
               </tr>
             </th:block>
-          </tbody> -->
+          </tbody>
         </table>
     </div>
   </div>

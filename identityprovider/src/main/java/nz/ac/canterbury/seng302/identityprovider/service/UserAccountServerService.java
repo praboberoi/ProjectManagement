@@ -1,11 +1,11 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
+import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
@@ -16,8 +16,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
+/**
+ * Grpc service used to perform function relating to users. This includes registration, editing and retriving User objects
+ * stored in the server.
+ */
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
 
@@ -128,34 +134,10 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      */
     @Override
     public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) throws NoSuchElementException {
-        UserResponse.Builder reply = UserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getId());
-        Path imagePath;
-        if (user == null) {
-            throw new NoSuchElementException("User doesn't exist");
-        }
-        reply.setUsername(user.getUsername());
-        reply.setFirstName(user.getFirstName());
-        reply.setLastName(user.getLastName());
-        reply.setNickname(user.getNickname());
-        reply.setPersonalPronouns(user.getPersonalPronouns());
-        reply.setBio(user.getBio());
-        reply.setEmail(user.getEmail());
-        reply.addAllRoles(user.getRoles());
-        reply.setCreated(Timestamp.newBuilder()
-                .setSeconds(user.getDateCreated().getTime())
-                .build());
+        UserResponse reply = ResponseUtils.prepareUserResponse(user);
 
-        if (user.getProfileImagePath() == null) {
-             imagePath = Paths.get("cachedprofilephoto/default-image.svg");
-
-        } else {
-             imagePath = Paths.get("cachedprofilephoto/" + user.getProfileImagePath());
-
-        }
-        reply.setProfileImagePath(imagePath.toString());
-
-        responseObserver.onNext(reply.build());
+        responseObserver.onNext(reply);
         responseObserver.onCompleted();
     }
 
@@ -309,6 +291,23 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         } catch (Exception e) {
             responseObserver.onError(e.fillInStackTrace());
         }
+    }
+
+    /**
+     * Gets all users from the db and returns them packaged into a protobuf
+     *
+     * @param request          Request containing the offset, limit and order of users to get
+     * @param responseObserver Returns to previous method with data
+     */
+    @Override
+    public void getPaginatedUsers(GetPaginatedUsersRequest request, StreamObserver<PaginatedUsersResponse> responseObserver) {
+        List<User> users = userRepository.findAll();
+        List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user)).collect(Collectors.toList());
+
+        PaginatedUsersResponse reply = ResponseUtils.preparePaginatedUsersResponse(preparedUsers);
+
+        responseObserver.onNext(reply);
+        responseObserver.onCompleted();
     }
 
 }

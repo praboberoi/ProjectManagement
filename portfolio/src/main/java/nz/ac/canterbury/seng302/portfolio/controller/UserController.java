@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -9,6 +10,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * Controller for user related pages excluding the current
@@ -34,6 +37,8 @@ public class UserController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
+        List<User> usersList = userAccountClientService.getUsers();
+        model.addAttribute("usersList", usersList);
         model.addAttribute("user", userAccountClientService.getUser(principal));
         model.addAttribute("apiPrefix", apiPrefix);
         return "userList";
