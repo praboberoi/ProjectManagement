@@ -4,16 +4,15 @@ import io.grpc.internal.testing.StreamRecorder;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
-import nz.ac.canterbury.seng302.shared.identityprovider.EditUserRequest;
-import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -43,7 +42,7 @@ class UserAccountServerServiceTests {
      * @throws Exception thrown during awaitCompletion method
      */
     @Test
-    void testUserCreation() throws Exception {
+    void givenCorrectUserInfo_whenUserIsSaved_thenSuccessIsReturned() throws Exception {
         UserRegisterRequest request = UserRegisterRequest.newBuilder()
                 .setUsername("tu123")
                 .setFirstName("Test")
@@ -128,5 +127,21 @@ class UserAccountServerServiceTests {
         assertEquals("Test", user.getBio());
         assertEquals("Test", user.getPersonalPronouns());
         assertEquals("Test@gmail.com", user.getEmail());
+    }
+
+    /**
+     * Testing that when the UserAccountServerService is given a user role, the role is added to the list of roles for the user
+     */
+    @Test
+    void givenAUserRole_whenAddRoleToUserIsCalled_ThenRoleIsAddedToListOfUserRoles() {
+        ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
+        User user = new User();
+        user.setRoles(Collections.singletonList(UserRole.STUDENT));
+        when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
+        userAccountServerService.addRoleToUser(request);
+        List<UserRole> expectedRoles = new ArrayList<>();
+        expectedRoles.add(UserRole.STUDENT);
+        expectedRoles.add(UserRole.TEACHER);
+        assertEquals(user.getRoles(), expectedRoles);
     }
 }
