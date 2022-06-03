@@ -46,8 +46,8 @@
           <tbody>
             <th:block th:each="user : ${usersList}">
               <tr th:id="'user' + ${user.userId} + 'Row'">
-                <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]]  [[${user.lastName}]]</td>
                 <td th:id="'user' + ${user.userId} + 'Username'">[[${user.username}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]]  [[${user.lastName}]]</td>
                 <td th:id="'user' + ${user.userId} + 'Nickname'">[[${user.nickname}]]</td>
                 <td th:id="'user' + ${user.userId} + 'Roles'">[[${user.roles}]]</td>
               </tr>
@@ -59,11 +59,35 @@
             <li class="page-item" th:classappend="${page == 0}? 'disabled' : ''">
               <a role='button' class="page-link" onclick="prevPage()">Previous</a>
             </li>
-            <th:block th:each="i: ${#numbers.sequence(1, pages)}">
+
+            <li class="page-item" th:classappend="${(0 == page)? 'active' : ''}">
+              <a role='button' class="page-link" th:onclick="'getUserDataTable(0)'" th:text="${1}"></a>
+            </li>
+
+            <th:block th:if="${page} > 2 + 1" >
+              <li class="page-item">
+                <a role='label' class="page-link">...</a>
+              </li>
+            </th:block>
+            
+            <th:block th:if="${pages} > 2" th:each="i: ${#numbers.sequence(T(Math).max(2, page - 1), T(Math).min(pages - 1, page + 3))}">
               <li class="page-item" th:classappend="${(i == page + 1)? 'active' : ''}">
                 <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${i - 1} + ')'" th:text="${i}"></a>
               </li>
             </th:block>
+
+            <th:block th:if="${pages - 4} > ${page}" >
+              <li class="page-item">
+                <a role='label' class="page-link">...</a>
+              </li>
+            </th:block>
+
+            <th:block th:if="${pages} != 1">
+              <li class="page-item" th:classappend="${(pages == page + 1)? 'active' : ''}">
+                <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${pages - 1} + ')'" th:text="${pages}"></a>
+              </li>
+            </th:block>
+
             <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
               <a role='button' class="page-link" onclick="nextPage()">Next</a>
             </li>
