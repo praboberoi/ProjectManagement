@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
@@ -21,6 +20,11 @@ public class DashboardService {
     private Date projectMinDate;
     private Date projectMaxDate;
     private Boolean isNew = false;
+
+    public DashboardService(ProjectRepository projectRepo, SprintService sprintService) {
+        this.projectRepo = projectRepo;
+        this.sprintService = sprintService;
+    }
 
     /**
      * Returns list of all Project objects in the database
@@ -122,11 +126,14 @@ public class DashboardService {
         if (sprints.stream().anyMatch(sprint -> sprint.getEndDate().after(project.getEndDate()))) {
             throw new Exception("You are trying to end the project before the last sprint has ended.");
         }
-        if(project.getStartDate().before(projectMinDate)) {
+        if(project.getStartDate().before(Date.valueOf(LocalDate.now().minusYears(1)))) {
             throw new Exception("A project cannot start more than a year ago.");
         }
-        if ( project.getEndDate().after(projectMaxDate) ) {
+        if ( project.getEndDate().after(Date.valueOf(LocalDate.now().plusYears(10))) ) {
             throw new Exception("A project cannot end more than ten years from now.");
+        }
+        if (project.getDescription().length() > 250) {
+            throw new Exception("Project description must be less than 250 characters.");
         }
     }
 
