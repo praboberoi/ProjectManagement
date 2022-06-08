@@ -16,6 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.NoSuchElementException;
 
 @GrpcService
@@ -311,4 +312,53 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         }
     }
 
+    /**
+     * Uses the request to remove a role from the user.
+     * If the user is not found the response sets a message and success as false, and if the removal is successful, it sets the response success as true.
+     * @param request :contains the id of the user to remove the role from, and the role to remove from the user.
+     * @param responseObserver: set success true if removed role from user, else false.
+     */
+    public void addRoleToUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
+        User user = userRepository.getUserByUserId(request.getUserId());
+        UserRoleChangeResponse.Builder userRoleChangeResponse = UserRoleChangeResponse.newBuilder();
+
+        if (user == null) {
+            userRoleChangeResponse.setIsSuccess(false);
+            userRoleChangeResponse.setMessage("User cannot be found in database");
+            responseObserver.onNext(userRoleChangeResponse.build());
+            responseObserver.onCompleted();
+            return;
+        }
+        user.addRole(request.getRole());
+        userRepository.save(user);
+        userRoleChangeResponse.setIsSuccess(true);
+        userRoleChangeResponse.setMessage(String.format("User with id %s has had role %s added successfully", user.getUserId(), request.getRole()));
+        responseObserver.onNext(userRoleChangeResponse.build());
+        responseObserver.onCompleted();
+    }
+
+    /**
+     * Uses the request to add the new role to the user.
+     * If the user is not found the response sets a message and success as false, and if the addition is successful, it sets the response success as true.
+     * @param request :contains the id of the user to add the role to, and the role to add to the user.
+     * @param responseObserver: set success true if added role to user, else false.
+     */
+    public void removeRoleFromUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
+        User user = userRepository.getUserByUserId(request.getUserId());
+        UserRoleChangeResponse.Builder userRoleChangeResponse = UserRoleChangeResponse.newBuilder();
+
+        if (user == null) {
+            userRoleChangeResponse.setIsSuccess(false);
+            userRoleChangeResponse.setMessage("User cannot be found in database");
+            responseObserver.onNext(userRoleChangeResponse.build());
+            responseObserver.onCompleted();
+            return;
+        }
+        user.removeRole(request.getRole());
+        userRepository.save(user);
+        userRoleChangeResponse.setIsSuccess(true);
+        userRoleChangeResponse.setMessage(String.format("User with id %s has had role %s removed successfully", user.getUserId(), request.getRole()));
+        responseObserver.onNext(userRoleChangeResponse.build());
+        responseObserver.onCompleted();
+    }
 }

@@ -130,18 +130,79 @@ class UserAccountServerServiceTests {
     }
 
     /**
-     * Testing that when the UserAccountServerService is given a user role, the role is added to the list of roles for the user
+     * Testing that when the UserAccountServerService is given a user role, when addRoleToUser is called
+     * the role is added to the list of roles for the user
      */
     @Test
-    void givenAUserRole_whenAddRoleToUserIsCalled_ThenRoleIsAddedToListOfUserRoles() {
+    void givenAUserRole_whenAddRoleToUserIsCalled_ThenRoleIsAddedToListOfUserRolesAndSuccessResponseReceived() {
         ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
         User user = new User();
         user.setRoles(Collections.singletonList(UserRole.STUDENT));
         when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
-        userAccountServerService.addRoleToUser(request);
+        StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.addRoleToUser(request, responseObserver);
         List<UserRole> expectedRoles = new ArrayList<>();
         expectedRoles.add(UserRole.STUDENT);
         expectedRoles.add(UserRole.TEACHER);
-        assertEquals(user.getRoles(), expectedRoles);
+
+        UserRoleChangeResponse response = responseObserver.getValues().get(0);
+        assertEquals(expectedRoles, user.getRoles());
+        assertTrue(response.getIsSuccess());
+    }
+
+    /**
+     * Testing that when the UserAccountServerService is given a user role,
+     * but the user doesn't exist, an error response is returned.
+     */
+    @Test
+    void givenAUserRole_whenAddRoleToAUserThatDoesNotExistIsCalled_ThenAnErrorResponseIsReceived() {
+        ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
+        when(userRepository.getUserByUserId(any(int.class))).thenReturn(null);
+        StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.addRoleToUser(request, responseObserver);
+
+        UserRoleChangeResponse response = responseObserver.getValues().get(0);
+        assertFalse(response.getIsSuccess());
+    }
+
+    /**
+     * Testing that when the UserAccountServerService is given a user role, when removeRoleFromUser is called
+     * the role is removed from the list of roles for the user
+     */
+    @Test
+    void givenAUserRole_whenRemoveRoleFromUserIsCalled_ThenRoleIsRemovedFromListOfUserRolesAndSuccessResponseReceived() {
+        ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
+        User user = new User();
+        List<UserRole> currentRoles = new ArrayList<>();
+        currentRoles.add(UserRole.STUDENT);
+        currentRoles.add(UserRole.TEACHER);
+        user.setRoles(currentRoles);
+        when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
+        StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.removeRoleFromUser(request, responseObserver);
+        List<UserRole> expectedRoles = Collections.singletonList(UserRole.STUDENT);
+
+        UserRoleChangeResponse response = responseObserver.getValues().get(0);
+        assertEquals(expectedRoles, user.getRoles());
+        assertTrue(response.getIsSuccess());
+    }
+
+    /**
+     * Testing that when the UserAccountServerService is given a user role,
+     * but the user doesn't exist, an error response is returned.
+     */
+    @Test
+    void givenAUserRole_whenRemoveRoleFromAUserThatDoesNotExistIsCalled_ThenAnErrorResponseIsReceived() {
+        ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
+        when(userRepository.getUserByUserId(any(int.class))).thenReturn(null);
+        StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.removeRoleFromUser(request, responseObserver);
+
+        UserRoleChangeResponse response = responseObserver.getValues().get(0);
+        assertFalse(response.getIsSuccess());
     }
 }
