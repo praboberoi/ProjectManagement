@@ -4,6 +4,9 @@ import java.sql.Date;
 
 import javax.persistence.*;
 
+/**
+ * The data class for Events. Contains the id, name, and dates of the event for storage in the db. 
+ */
 @Entity
 public class Event {
 
@@ -26,12 +29,25 @@ public class Event {
      */
     public Event() {}
 
+    /**
+     * Creates an Event with an auto-generated ID
+     * @param eventName The name of the event
+     * @param startDate When the event starts
+     * @param endDate When the event ends
+     */
     public Event(String eventName, Date startDate, Date endDate) {
         this.eventName = eventName;
         this.startDate = startDate;
         this.endDate = endDate;
     }
 
+    /**
+     * Creates an Event with a manually specified ID
+     * @param eventId The event's ID
+     * @param eventName The name of the event
+     * @param startDate When the event starts
+     * @param endDate When the event ends
+     */
     public Event(int eventId, String eventName, Date startDate, Date endDate) {
         this.eventId = eventId;
         this.eventName = eventName;
