@@ -14,6 +14,9 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
 
+/**
+ * Test class for the event class and event repository. This handles CRUD operations.
+ */
 @DataJpaTest 
 @RunWith(SpringRunner.class) 
 @DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
@@ -24,6 +27,9 @@ public class EventRepositoryTest {
 
     private static Event.Builder basicEventBuilder;
 
+    /**
+     * Creates a event builder
+     */
     @BeforeClass
     public static void init() {
         basicEventBuilder = new Event.Builder()
@@ -33,6 +39,9 @@ public class EventRepositoryTest {
         .endDate(new Date(Calendar.getInstance().getTimeInMillis()));
     }
 
+    /**
+     * Adds an event and checks if it exists by id
+     */
     @Test
     public void givenEventExists_FindByEventId() {
         Event testEvent = basicEventBuilder.build();
@@ -40,6 +49,9 @@ public class EventRepositoryTest {
         assertEquals(testEvent, eventRepo.findById(1).get());
     }
 
+    /**
+     * Adds an event and checks if it exists by name
+     */
     @Test
     public void givenEventExists_FindByEventName() {
         Event testEvent = basicEventBuilder.build();

@@ -8,6 +8,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface EventRepository extends CrudRepository<Event, Integer>{
 
+    /**
+     * Get a list of events that are stored with the given name
+     * @param eventName Event name to search
+     * @return A list of events found
+     */
     public List<Event> findByEventName(String eventName);
     
 }
