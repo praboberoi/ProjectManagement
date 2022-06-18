@@ -2,10 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
-import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -23,7 +21,6 @@ import java.util.List;
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
-    @Autowired private SprintService sprintService;
     @Value("${apiPrefix}") private String apiPrefix;
 
 
@@ -147,7 +144,6 @@ public class DashboardController {
             model.addAttribute("apiPrefix", apiPrefix);
             Project project  = dashboardService.getProject(projectId);
             String message = "Successfully Deleted " + project.getProjectName();
-            sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";

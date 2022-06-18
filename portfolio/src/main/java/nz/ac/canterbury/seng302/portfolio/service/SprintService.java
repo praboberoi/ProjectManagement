@@ -58,21 +58,6 @@ public class SprintService {
     }
 
     /**
-     * Deletes all the sprints of the given project ID
-     * @param projectId of type int
-     */
-    public void deleteAllSprints(int projectId) throws Exception {
-        List<Sprint> sprintList = getSprintByProject(projectId);
-        sprintList.forEach(sprint -> {
-            try {
-                deleteSprint(sprint.getSprintId());
-            } catch (Exception e) {
-                throw new RuntimeException("Failure Deleting All Sprints");
-            }
-        });
-    }
-
-    /**
      * Saves a sprint object to the database
      * @param sprint of type Sprint
      * @return appropriate message depending on if the sprint is created or updated
