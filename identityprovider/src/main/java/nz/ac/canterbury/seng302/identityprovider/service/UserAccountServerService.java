@@ -279,7 +279,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * @param responseObserver Used to send image data to the portfolio
      * @param request Contains user id and file type
      */
-
     public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, UploadUserProfilePhotoRequest request) {
 
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
@@ -313,10 +312,10 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     }
 
     /**
-     * Uses the request to remove a role from the user.
-     * If the user is not found the response sets a message and success as false, and if the removal is successful, it sets the response success as true.
-     * @param request :contains the id of the user to remove the role from, and the role to remove from the user.
-     * @param responseObserver: set success true if removed role from user, else false.
+     * Uses the request to add the new role to the user.
+     * If the user is not found the response sets a message and success as false, and if the addition is successful, it sets the response success as true.
+     * @param request :contains the id of the user to add the role to, and the role to add to the user.
+     * @param responseObserver: set success true if added role to user, else false.
      */
     public void addRoleToUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
         User user = userRepository.getUserByUserId(request.getUserId());
@@ -346,11 +345,12 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onCompleted();
     }
 
+
     /**
-     * Uses the request to add the new role to the user.
-     * If the user is not found the response sets a message and success as false, and if the addition is successful, it sets the response success as true.
-     * @param request :contains the id of the user to add the role to, and the role to add to the user.
-     * @param responseObserver: set success true if added role to user, else false.
+     * Uses the request to remove a role from the user.
+     * If the user is not found the response sets a message and success as false, and if the removal is successful, it sets the response success as true.
+     * @param request :contains the id of the user to remove the role from, and the role to remove from the user.
+     * @param responseObserver: set success true if removed role from user, else false.
      */
     public void removeRoleFromUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
         User user = userRepository.getUserByUserId(request.getUserId());
