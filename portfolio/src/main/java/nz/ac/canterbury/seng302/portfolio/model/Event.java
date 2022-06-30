@@ -92,7 +92,10 @@ public class Event {
         if (this == o) return true;
         if (!(o instanceof Event)) return false;
         Event event = (Event) o;
-        return eventId == event.eventId && eventName.equals(event.eventName) && startDate.equals(event.startDate) && endDate.equals(event.endDate);
+        return eventId == event.eventId 
+        && eventName.equals(event.eventName) 
+        && startDate.equals(event.startDate) 
+        && endDate.equals(event.endDate);
     }
 
     /**
