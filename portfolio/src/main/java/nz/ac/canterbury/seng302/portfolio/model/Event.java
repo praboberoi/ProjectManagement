@@ -116,7 +116,7 @@ public class Event {
 
         /**
          * Updates the event's name
-         * @param projectName Name of the project
+         * @param eventName Name of the project
          * @return Event builder
          */
         public Builder eventName(String eventName) {
