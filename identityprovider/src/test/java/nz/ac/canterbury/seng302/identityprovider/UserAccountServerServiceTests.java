@@ -168,6 +168,26 @@ class UserAccountServerServiceTests {
     }
 
     /**
+     * Testing that when the UserAccountServerService is given a user role,
+     * but the user already has that role, an error response is returned.
+     */
+    @Test
+    void givenAUserRole_whenAddRoleToAUserThatAlreadyHasThatRole_ThenAnErrorResponseIsReceivedAndRoleIsNotAdded() {
+        ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.STUDENT).build();
+
+        User user = new User();
+        user.setRoles(Collections.singletonList(UserRole.STUDENT));
+        when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
+
+        StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
+        userAccountServerService.addRoleToUser(request, responseObserver);
+
+        UserRoleChangeResponse response = responseObserver.getValues().get(0);
+        assertFalse(response.getIsSuccess());
+        assertEquals(Collections.singletonList(UserRole.STUDENT), user.getRoles());
+    }
+
+    /**
      * Testing that when the UserAccountServerService is given a user role, when removeRoleFromUser is called
      * the role is removed from the list of roles for the user
      */
@@ -203,6 +223,28 @@ class UserAccountServerServiceTests {
         userAccountServerService.removeRoleFromUser(request, responseObserver);
 
         UserRoleChangeResponse response = responseObserver.getValues().get(0);
+        assertFalse(response.getIsSuccess());
+    }
+
+    /**
+     * Testing that when the UserAccountServerService is given a user role, when removeRoleFromUser is called
+     * and the user doesn't have the specified role, the role is not removed from the list of roles for the user and the list remains the same.
+     */
+    @Test
+    void givenAUserRole_whenRemoveRoleFromUserIsCalled_AndTheUserDoesntHaveTheRole_ThenAnErrorMessageIsReceivedAndListOfRolesRemainsTheSame() {
+        ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
+        User user = new User();
+        List<UserRole> currentRoles = new ArrayList<>();
+        currentRoles.add(UserRole.STUDENT);
+        user.setRoles(currentRoles);
+        when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
+        StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.removeRoleFromUser(request, responseObserver);
+        List<UserRole> expectedRoles = Collections.singletonList(UserRole.STUDENT);
+
+        UserRoleChangeResponse response = responseObserver.getValues().get(0);
+        assertEquals(expectedRoles, user.getRoles());
         assertFalse(response.getIsSuccess());
     }
 }
