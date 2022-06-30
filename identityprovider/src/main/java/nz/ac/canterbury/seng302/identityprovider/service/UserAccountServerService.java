@@ -371,6 +371,15 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             responseObserver.onCompleted();
             return;
         }
+
+        if (user.getRoles().size() == 1) {
+            userRoleChangeResponse.setIsSuccess(false);
+            userRoleChangeResponse.setMessage("User must have one role.");
+            responseObserver.onNext(userRoleChangeResponse.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
         user.removeRole(request.getRole());
         userRepository.save(user);
         userRoleChangeResponse.setIsSuccess(true);

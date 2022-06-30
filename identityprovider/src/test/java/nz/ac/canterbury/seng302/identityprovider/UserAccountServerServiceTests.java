@@ -247,4 +247,26 @@ class UserAccountServerServiceTests {
         assertEquals(expectedRoles, user.getRoles());
         assertFalse(response.getIsSuccess());
     }
+
+    /**
+     * Testing that when the UserAccountServerService is given a user role, when removeRoleFromUser is called
+     * and the user only has one role left, the role is not removed from the list of roles for the user and the list remains the same.
+     */
+    @Test
+    void givenAUserRole_whenRemoveRoleFromUserIsCalled_AndTheUserHasOneRole_ThenAnErrorMessageIsReceivedAndListOfRolesRemainsTheSame() {
+        ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.STUDENT).build();
+        User user = new User();
+        List<UserRole> currentRoles = new ArrayList<>();
+        currentRoles.add(UserRole.STUDENT);
+        user.setRoles(currentRoles);
+        when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
+        StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.removeRoleFromUser(request, responseObserver);
+        List<UserRole> expectedRoles = Collections.singletonList(UserRole.STUDENT);
+
+        UserRoleChangeResponse response = responseObserver.getValues().get(0);
+        assertEquals(expectedRoles, user.getRoles());
+        assertFalse(response.getIsSuccess());
+    }
 }
