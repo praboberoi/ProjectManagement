@@ -329,6 +329,15 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             responseObserver.onCompleted();
             return;
         }
+
+        if (user.getRoles().contains(request.getRole())) {
+            userRoleChangeResponse.setIsSuccess(false);
+            userRoleChangeResponse.setMessage("User already has this role.");
+            responseObserver.onNext(userRoleChangeResponse.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
         user.addRole(request.getRole());
         userRepository.save(user);
         userRoleChangeResponse.setIsSuccess(true);
@@ -350,6 +359,14 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         if (user == null) {
             userRoleChangeResponse.setIsSuccess(false);
             userRoleChangeResponse.setMessage("User cannot be found in database");
+            responseObserver.onNext(userRoleChangeResponse.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        if (!user.getRoles().contains(request.getRole())) {
+            userRoleChangeResponse.setIsSuccess(false);
+            userRoleChangeResponse.setMessage("User does not have this role.");
             responseObserver.onNext(userRoleChangeResponse.build());
             responseObserver.onCompleted();
             return;
