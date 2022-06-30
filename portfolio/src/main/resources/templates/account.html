@@ -14,6 +14,7 @@
 
     <script th:src="@{{apiPrefix}/javascript/editAccount.js(apiPrefix=${apiPrefix})}"></script>
     <script th:src="@{{apiPrefix}/javascript/profilePhoto.js(apiPrefix=${apiPrefix})}"></script>
+
 </head>
     <body>
     <header>
@@ -41,7 +42,15 @@
                     <div class="container-fluid">
                         <div class="card-body">
                             <!-- badges -->
-                            <h6><span class="badge bg-success" th:text="${roles}"></span> member</h6>
+<!--                            <h6 id="Roles">Roles: <span class="badge bg-success" th:text="${roles}"></span></h6>-->
+                            <script>
+                                var tag = document.createElement("h6");
+                                for (role of roles) {
+                                    tag.appendChild(<span className="badge bg-success" th:text="${role}"> </span>);
+                                }
+                                var element = document.getElementById("card-body");
+                                element.appendChild(tag);
+                            </script>
                             <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
                                 <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
