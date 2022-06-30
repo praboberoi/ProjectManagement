@@ -156,7 +156,7 @@ class UserAccountServerServiceTests {
      * but the user doesn't exist, an error response is returned.
      */
     @Test
-    void givenAUserRole_whenAddRoleToAUserThatDoesNotExistIsCalled_ThenAnErrorResponseIsReceived() {
+    void givenAUserRoleAndAUserThatDoesNotExist_whenAddRoleIsCalled_ThenAnErrorResponseIsReceived() {
         ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
         when(userRepository.getUserByUserId(any(int.class))).thenReturn(null);
         StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
@@ -172,7 +172,7 @@ class UserAccountServerServiceTests {
      * but the user already has that role, an error response is returned.
      */
     @Test
-    void givenAUserRole_whenAddRoleToAUserThatAlreadyHasThatRole_ThenAnErrorResponseIsReceivedAndRoleIsNotAdded() {
+    void givenAUserRoleAndAUserAlreadyWithThatRole_whenAddRoleIsCalled_ThenAnErrorResponseIsReceivedAndRoleIsNotAdded() {
         ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.STUDENT).build();
 
         User user = new User();
@@ -215,7 +215,7 @@ class UserAccountServerServiceTests {
      * but the user doesn't exist, an error response is returned.
      */
     @Test
-    void givenAUserRole_whenRemoveRoleFromAUserThatDoesNotExistIsCalled_ThenAnErrorResponseIsReceived() {
+    void givenAUserRoleAndAUserThatDoesNotExist_whenRemoveRoleIsCalled_ThenAnErrorResponseIsReceived() {
         ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
         when(userRepository.getUserByUserId(any(int.class))).thenReturn(null);
         StreamRecorder<UserRoleChangeResponse> responseObserver = StreamRecorder.create();
@@ -231,7 +231,7 @@ class UserAccountServerServiceTests {
      * and the user doesn't have the specified role, the role is not removed from the list of roles for the user and the list remains the same.
      */
     @Test
-    void givenAUserRole_whenRemoveRoleFromUserIsCalled_AndTheUserDoesntHaveTheRole_ThenAnErrorMessageIsReceivedAndListOfRolesRemainsTheSame() {
+    void givenAUserRoleAndAUserWithoutThatRole_whenRemoveRoleFromUserIsCalled_ThenAnErrorMessageIsReceivedAndListOfRolesRemainsTheSame() {
         ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.TEACHER).build();
         User user = new User();
         List<UserRole> currentRoles = new ArrayList<>();
@@ -253,7 +253,7 @@ class UserAccountServerServiceTests {
      * and the user only has one role left, the role is not removed from the list of roles for the user and the list remains the same.
      */
     @Test
-    void givenAUserRole_whenRemoveRoleFromUserIsCalled_AndTheUserHasOneRole_ThenAnErrorMessageIsReceivedAndListOfRolesRemainsTheSame() {
+    void givenAUserRoleAndAUserWithOneRole_whenRemoveRoleIsCalled_ThenAnErrorMessageIsReceivedAndListOfRolesRemainsTheSame() {
         ModifyRoleOfUserRequest request = ModifyRoleOfUserRequest.newBuilder().setUserId(1).setRole(UserRole.STUDENT).build();
         User user = new User();
         List<UserRole> currentRoles = new ArrayList<>();
