@@ -5,8 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.sql.Date;
 import java.util.Calendar;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -25,13 +25,13 @@ public class EventRepositoryTest {
     @Autowired 
     private EventRepository eventRepo;
 
-    private static Event.Builder basicEventBuilder;
+    private Event.Builder basicEventBuilder;
 
     /**
      * Creates a event builder
      */
-    @BeforeClass
-    public static void init() {
+    @BeforeEach
+    public void init() {
         basicEventBuilder = new Event.Builder()
         .eventId(1)
         .eventName("testEvent")
