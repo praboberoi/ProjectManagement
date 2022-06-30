@@ -79,12 +79,13 @@ function checkEmail() {
 function checkPronouns() {
     let pronounsElement = document.getElementById("pronouns");
     let pronounsErrorElement = document.getElementById("personalPronounsError");
-    if (pronounsElement.value.length > 32
-        || digit.test(pronounsElement.value)
-        || special.test(pronounsElement.value))
-        {
+    if (pronounsElement.value.length > 32) {
         pronounsElement.classList.add("formError")
-        pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters with no special characters or digits."
+        pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
+    } else if (digit.test(pronounsElement.value)
+        || special.test(pronounsElement.value)) {
+        pronounsElement.classList.add("formError")
+        pronounsErrorElement.innerText = "Personal pronouns can only contain special characters + & - , and no digits."
     } else {
         pronounsElement.classList.remove("formError");
         pronounsErrorElement.innerText = null;
