@@ -13,6 +13,6 @@ public interface EventRepository extends CrudRepository<Event, Integer>{
      * @param eventName Event name to search
      * @return A list of events found
      */
-    public List<Event> findByEventName(String eventName);
+    List<Event> findByEventName(String eventName);
     
 }
