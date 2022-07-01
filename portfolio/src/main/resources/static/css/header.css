@@ -3,7 +3,7 @@ css for the fixed elements on each page
 header, sidebar
  */
 
-.sidebar {
+#sidebar {
     position: fixed;
     top: 51px;
     bottom: 0;
@@ -29,7 +29,7 @@ header, sidebar
 #hamburger-toggle{
     display: none;
 }
-@media screen and (max-width: 768px) {
+@media screen and (max-width: 820px) {
     /*.current_projects{*/
     /*    margin-left: 0%;*/
     /*}*/
@@ -45,7 +45,7 @@ header, sidebar
     /*}*/
 
 
-    #shownav {
+    #sidebar {
         display: none;
     }
 }

@@ -22,9 +22,15 @@
 //
 // show.addEventListener("click", toggle)
 
-function navToggle(){
-    document.getElementById('shownav').style.display='block';
-    console.log("open nav")
+function navToggle() {
+    var checkSidebar = document.getElementById('sidebar');
+    if (checkSidebar.style.display === 'block') {
+        checkSidebar.style.display = 'none';
+    } else {
+        document.getElementById('sidebar').style.display = 'block';
+        document.getElementById('sidebar').style.width = "25%";
+        console.log("open nav")
+    }
     // const m = document.getElementsByClassName("sidenav").style.display="inline"
     // menu.classList.toggle("sidebar")
     // show.classList.toggle("sidebar")
