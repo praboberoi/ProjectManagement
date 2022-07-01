@@ -26,7 +26,8 @@
       <a> <button type='button' class='btn btn-primary' id="hamburger-toggle" onclick="navToggle()">&#9776;</button>
 <!--        <img th:src="@{{apiPrefix}/icons/list.svg(apiPrefix=${apiPrefix})}" alt="list" height=28 width=28 class="d-inline-block align-text-top">-->
 <!--        <span class="navbar-toggler-icon"></span></button>-->
-      </a>
+<!--        <p class="flip" onclick="navToggle()">Click</p>-->
+<!--      </a>-->
         </li>
         <li>
       <a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
@@ -61,7 +62,7 @@
 </div>
 
 <nav th:fragment = "sidebar" id="sidebar" class="sidenav" data-mdb-hidden="false">
-  <div class = "container-fluid">
+  <div class = "container-fluid" id = "shownav">
     <div class="row">
       <div class="sidebar">
         <ul class="nav nav-pills flex-column " id="sidebar-2" >

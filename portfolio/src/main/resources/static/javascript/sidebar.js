@@ -23,13 +23,16 @@
 // show.addEventListener("click", toggle)
 
 function navToggle(){
-    document.getElementById('sidebar').style.display='block';
+    document.getElementById('shownav').style.display='block';
     console.log("open nav")
     // const m = document.getElementsByClassName("sidenav").style.display="inline"
     // menu.classList.toggle("sidebar")
     // show.classList.toggle("sidebar")
     // mee.classList.toggle("sidebar")
 
-
-
 }
+
+// document.getElementById("hamburger-toggle").onclick = function() {
+//     document.getElementById("sidebar").style.display = "block";
+//     console.log("navbar showup")
+// }
