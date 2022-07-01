@@ -28,7 +28,7 @@ function navToggle() {
         checkSidebar.style.display = 'none';
     } else {
         document.getElementById('sidebar').style.display = 'block';
-        document.getElementById('sidebar').style.width = "25%";
+        document.getElementById('sidebar').style.width = "175px";
         console.log("open nav")
     }
     // const m = document.getElementsByClassName("sidenav").style.display="inline"
