@@ -8,15 +8,16 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.sql.Date;
 import java.util.List;
 
 @Controller
@@ -24,6 +25,7 @@ public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
+    @Value("${apiPrefix}") private String apiPrefix;
 
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
@@ -33,7 +35,7 @@ public class SprintController {
      * @param model
      * @return - name of the html page to display
      */
-    @GetMapping("/project/{projectId}")
+    @RequestMapping(path="/project/{projectId}", method = RequestMethod.GET)
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -42,6 +44,7 @@ public class SprintController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             Project project = projectService.getProjectById(projectId);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
@@ -53,16 +56,12 @@ public class SprintController {
         }
     }
 
-
-
-
-
     /**
      * Displays page for adding a new sprint
      * @param model
      * @return
      */
-    @GetMapping("/project/{projectId}/newSprint")
+    @RequestMapping(path="/project/{projectId}/newSprint", method = RequestMethod.GET)
     public String newSprint(
             Model model,
             @PathVariable ("projectId") int projectId,
@@ -72,17 +71,17 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
-            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, newSprint);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
-            model.addAttribute("sprintStartDateMax", newSprint.getEndDate());
-            model.addAttribute("sprintEndDateMin", newSprint.getStartDate());
-            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
+
+            model.addAttribute("sprintDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintDateMax", currentProject.getEndDate());
+
             model.addAttribute("submissionName", "Create");
-            model.addAttribute("image", "/icons/create-icon.svg");
+            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
             return "sprintForm";
 
         } catch (Exception e) {
@@ -91,12 +90,41 @@ public class SprintController {
         }
     }
 
+
+    /**
+     * Checks if a sprints dates are valid and returns a Response containing a message
+     * @param projectId ID of the project to check
+     * @param startDate New start date of the project
+     * @param endDate New end date of the project
+     * @param principal
+     * @return ResponseEntity containing a string message
+     */
+    @PostMapping("/project/{projectId}/verifySprint")
+    public ResponseEntity<String> verifySprint(
+            @PathVariable int projectId,
+            String startDate,
+            String endDate,
+            @AuthenticationPrincipal AuthState principal) {
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+        Sprint currentSprint = new Sprint();
+        try {
+            Project project = projectService.getProjectById(projectId);
+            currentSprint.setProject(project);
+            currentSprint.setStartDate(Date.valueOf(startDate));
+            currentSprint.setEndDate(Date.valueOf(endDate));
+            sprintService.verifySprint(currentSprint);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+    }
+
     /**
      * Saves a sprint and redirects to project page
      * @param sprint
      * @return
      */
-    @PostMapping("/project/{projectId}/saveSprint")
+    @PostMapping(path="/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
@@ -121,7 +149,7 @@ public class SprintController {
          * @return
          */
     /*make sure to update project.html for path*/
-    @GetMapping("/project/{projectId}/editSprint/{sprintId}")
+    @RequestMapping(path="/project/{projectId}/editSprint/{sprintId}", method = RequestMethod.GET)
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
             @PathVariable("projectId") int projectId,
@@ -132,17 +160,15 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
-            List<String> sprintRange = sprintService.getSprintDateRange(currentProject, sprint);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("sprintStartDateMin", sprintRange.get(0));
-            model.addAttribute("sprintStartDateMax", sprint.getEndDate());
-            model.addAttribute("sprintEndDateMin", sprint.getStartDate());
-            model.addAttribute("sprintEndDateMax", sprintRange.get(1));
+            model.addAttribute("sprintDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintDateMax", currentProject.getEndDate());
             model.addAttribute("submissionName", "Save");
-            model.addAttribute("image", "/icons/save-icon.svg");
+            model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
             return "sprintForm";
             } catch (Exception e) {
                 ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -157,7 +183,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @PostMapping("/project/{projectId}/deleteSprint/{sprintId}")
+    @RequestMapping(path="/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,
@@ -166,7 +192,7 @@ public class SprintController {
         RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            Project currentProject = projectService.getProjectById(projectId);
+            model.addAttribute("apiPrefix", apiPrefix);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (Exception e) {
@@ -175,7 +201,42 @@ public class SprintController {
         sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         model.addAttribute("listSprints", listSprints);
+        model.addAttribute("apiPrefix", apiPrefix);
         return "redirect:/project/{projectId}";
     }
+
+    /**
+     * Tries to set the selected sprint's start and end date to those provided
+     * @param sprintId Sprint to change
+     * @param startDate New start date of the sprint
+     * @param endDate New end date of the sprint
+     * @return An error message if sprint can't save
+     */
+    @PostMapping("/sprint/{sprintId}/editSprint")
+    public ResponseEntity<String> editSprint(
+        @PathVariable("sprintId") int sprintId,
+        String startDate,
+        String endDate,
+        @AuthenticationPrincipal AuthState principal
+    ) {
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal))
+            return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
+
+        try {
+            Date newStartDate = new Date(Long.parseLong(startDate));
+            Date newEndDate = new Date(Long.parseLong(endDate));
+
+            Sprint sprint = sprintService.getSprint(sprintId);
+
+            sprint.setStartDate(newStartDate);
+            sprint.setEndDate(newEndDate);
+            sprintService.verifySprint(sprint);
+            sprintService.saveSprint(sprint);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
 
 }

@@ -10,6 +10,9 @@ import java.util.Optional;
 
 // more info here https://codebun.com/spring-boot-crud-application-using-thymeleaf-and-spring-data-jpa/
 
+/**
+ * Client service used to communicate to the database and perform business logic for projects
+ */
 @Service
 public class ProjectService {
     @Autowired private ProjectRepository repository;
@@ -25,7 +28,7 @@ public class ProjectService {
     /**
      * Get project by id
      */
-    public Project getProjectById(int id) throws Exception {
+    public Project getProjectById(Integer id) throws Exception {
 
         Optional<Project> project = repository.findById(id);
         if(project!=null) {

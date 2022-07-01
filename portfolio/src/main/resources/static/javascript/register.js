@@ -3,21 +3,21 @@ var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
 
-function check_username() {
+function checkUsername() {
     let usernameElement = document.getElementById("username");
     let usernameErrorElement = document.getElementById("usernameError");
     if (usernameElement.value.length < 3 
         || usernameElement.value.length > 16
     ) {
-        usernameElement.classList.add("form_error")
+        usernameElement.classList.add("formError")
         usernameErrorElement.innerText = "Username must be between 3 and 16 characters."
     } else {
-        usernameElement.classList.remove("form_error");
+        usernameElement.classList.remove("formError");
         usernameErrorElement.innerText = null;
     }
 }
 
-function check_firstName() {
+function checkFirstName() {
     let firstNameElement = document.getElementById("firstName");
     let firstNameErrorElement = document.getElementById("firstNameError");
     if (firstNameElement.value.length < 3 
@@ -25,15 +25,15 @@ function check_firstName() {
         || names.test(firstNameElement.value)
         || digit.test(firstNameElement.value))
         {
-        firstNameElement.classList.add("form_error")
+        firstNameElement.classList.add("formError")
         firstNameErrorElement.innerText = "First name must be between 3 and 32 characters with no special characters or digits."
     } else {
-        firstNameElement.classList.remove("form_error");
+        firstNameElement.classList.remove("formError");
         firstNameErrorElement.innerText = null;
     }
 }
 
-function check_lastName() {
+function checkLastName() {
     let lastNameElement = document.getElementById("lastName");
     let lastNameErrorElement = document.getElementById("lastNameError");
     if (lastNameElement.value.length < 3 
@@ -41,54 +41,54 @@ function check_lastName() {
         || names.test(lastNameElement.value)
         || digit.test(lastNameElement.value))
         {
-        lastNameElement.classList.add("form_error")
+        lastNameElement.classList.add("formError")
         lastNameErrorElement.innerText = "Last name must be between 3 and 32 characters with no special characters or digits."
     } else {
-        lastNameElement.classList.remove("form_error");
+        lastNameElement.classList.remove("formError");
         lastNameErrorElement.innerText = null;
     }
 }
 
-function check_nickname() {
+function checkNickname() {
     let nicknameElement = document.getElementById("nickname");
     let nicknameErrorElement = document.getElementById("nicknameError");
     if (nicknameElement.value.length > 32)
         {
-        nicknameElement.classList.add("form_error")
+        nicknameElement.classList.add("formError")
         nicknameErrorElement.innerText = "Nickname must be less than 32 characters."
     } else {
-        nicknameElement.classList.remove("form_error");
+        nicknameElement.classList.remove("formError");
         nicknameErrorElement.innerText = null;
     }
 }
 
-function check_email() {
+function checkEmail() {
     let emailElement = document.getElementById("email");
     let emailErrorElement = document.getElementById("emailError");
     if (!email.test(emailElement.value))
     {
-        emailElement.classList.add("form_error")
+        emailElement.classList.add("formError")
         emailErrorElement.innerText = "Email must be in the form username@domainName.domain."
     } else {
-        emailElement.classList.remove("form_error");
+        emailElement.classList.remove("formError");
         emailErrorElement.innerText = null;
     }
 }
 
-function check_pronouns() {
+function checkPronouns() {
     let pronounsElement = document.getElementById("pronouns");
     let pronounsErrorElement = document.getElementById("personalPronounsError");
     if (pronounsElement.value.length > 32)
         {
-        pronounsElement.classList.add("form_error")
+        pronounsElement.classList.add("formError")
         pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
     } else {
-        pronounsElement.classList.remove("form_error");
+        pronounsElement.classList.remove("formError");
         pronounsErrorElement.innerText = null;
     }
 }
 
-function check_pass() {
+function checkPass() {
     let passwordElement = document.getElementById("password");
     let passwordErrorElement = document.getElementById("passwordError");
 
@@ -96,10 +96,10 @@ function check_pass() {
         || passwordElement.value.length > 63
         || !upper.test(passwordElement.value)
         || !digit.test(passwordElement.value)){
-        passwordElement.classList.add("form_error")
+        passwordElement.classList.add("formError")
         passwordErrorElement.innerText = "Password must contain 8-16 characters, a digit and uppercase character."
     } else {
-        passwordElement.classList.remove("form_error")
+        passwordElement.classList.remove("formError")
         passwordErrorElement.innerText = null
     }
 }
@@ -110,26 +110,26 @@ function match_pass() {
     let confirmPasswordErrorElement = document.getElementById("confirmPasswordError");
     if (passwordElement.value ==
         confirmPasswordElement.value) {
-        if (confirmPasswordElement.classList.contains("form_error")) {
-            confirmPasswordElement.classList.remove("form_error");
+        if (confirmPasswordElement.classList.contains("formError")) {
+            confirmPasswordElement.classList.remove("formError");
         }
-        confirmPasswordElement.classList.remove("form_error")
+        confirmPasswordElement.classList.remove("formError")
         confirmPasswordErrorElement.innerText = null
     } else {
-        confirmPasswordElement.classList.add("form_error")
+        confirmPasswordElement.classList.add("formError")
         confirmPasswordErrorElement.innerText = "Passwords do not match."
     }
 }
 
-function check_bio() {
+function checkBio() {
     let bioElement = document.getElementById("bio");
     let bioErrorElement = document.getElementById("bioError");
     if (bioElement.value.length > 250)
     {
-        bioErrorElement.classList.add("form_error");
+        bioErrorElement.classList.add("formError");
         bioErrorElement.innerText = "Bio must be less than 250 characters."
     } else {
-        bioErrorElement.classList.remove("form_error");
+        bioErrorElement.classList.remove("formError");
         bioErrorElement.innerText = null;
     }
 };

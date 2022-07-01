@@ -8,7 +8,6 @@ import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
-import org.hibernate.result.Outputs;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -254,7 +253,8 @@ public class UserAccountClientService {
      * @return Writer containing information to save file
      */
     private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
-        var fileName = "UesrProfle" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+        Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
+        var fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
         return SERVER_BASE_PATH.resolve(fileName);
     }
 
@@ -306,12 +306,10 @@ public class UserAccountClientService {
         // close stream
         inputStream.close();
         streamObserver.onCompleted();
-//        // write image to portfolio when image has been successfully uploaded
-//        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
-//        Files.write(path, file.getBytes());
-
+        // write image to portfolio when image has been successfully uploaded
         Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
         Files.write(path, file.getBytes());
+
     }
     /**
      * Returns a status update when the file upload is complete using protos

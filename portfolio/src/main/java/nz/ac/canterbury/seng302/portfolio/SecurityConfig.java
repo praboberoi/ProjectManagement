@@ -19,7 +19,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         security
             .addFilterBefore(new JwtAuthenticationFilter(), BasicAuthenticationFilter.class)
                 .authorizeRequests()
-                    .antMatchers( "/login*").permitAll()
+                    .antMatchers("/login*").permitAll()
                     .anyRequest()
                     .authenticated()
                     .and()

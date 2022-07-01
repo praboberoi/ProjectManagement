@@ -18,7 +18,6 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -217,7 +216,7 @@ public class AccountControllerTests {
         MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "file", "some image".getBytes());
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-        assertEquals( "redirect:account", accountController.editUser(principal, testFile,testString,
+        assertEquals( "redirect:/account", accountController.editUser(principal, testFile,testString,
                 testString, testString, testString, testString, testString, mockModel, ra ));
 
     }
