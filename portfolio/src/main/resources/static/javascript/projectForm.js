@@ -116,6 +116,29 @@ function checkProjectName() {
 }
 
 /**
+ * Updates the characters remaining in the description.
+ */
+function checkProjectDescription () {
+    let descriptionElement = document.getElementById("projectDescription");
+    let descErrorElement = document.getElementById("descriptionError");
+
+    let charMessage = document.getElementById("charCount");
+    let charCount = descriptionElement.value.length;
+    charMessage.innerText = charCount + ' '
+
+    if (descriptionElement.value.length > 250)
+    {
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Description must be less than 250 characters."
+    } else {
+        descErrorElement.classList.remove("formError");
+        descErrorElement.innerText = null;
+    }
+
+}
+
+
+/**
  * Calls the server to test for sprints falling outside of the project
  */
  function verifyOverlap(startDate, endDate) {
@@ -137,6 +160,10 @@ function checkProjectName() {
             }
         }
     }
+
+
+
+
 
     httpRequest.open('POST', '/verifyProject/' + projectId, true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

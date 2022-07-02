@@ -125,19 +125,16 @@ function match_pass() {
     }
 }
 
-var maxLength = 250;
-$('textarea').keyup(function() {
-    var length = $(this).val().length;
-    var length = maxLength-length;
-    $('#charCount').text(length);
-});
-
+/**
+ * Check that the bio length is below 250 characters and
+ * update the character count message below the bio text area.
+ */
 function checkBio() {
     let bioElement = document.getElementById("bio");
     let bioErrorElement = document.getElementById("bioError");
     let charMessage = document.getElementById("charCount");
-    let charRemaining = 250 - bioElement.value.length;
-    charMessage.innerText = charRemaining + ' '
+    let charCount = bioElement.value.length;
+    charMessage.innerText = charCount + ' '
 
     if (charCount > 250)
     {

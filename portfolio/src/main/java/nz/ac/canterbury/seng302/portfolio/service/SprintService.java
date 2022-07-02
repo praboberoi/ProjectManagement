@@ -23,6 +23,16 @@ public class SprintService {
     @Autowired private SprintRepository sprintRepository;
 
     /**
+     * Initilizes a sprint service object
+     * @param projectRepo The repository that controls projects
+     * @param sprintRepository The repository that controls sprints
+     */
+    public SprintService(ProjectRepository projectRepo, SprintRepository sprintRepository) {
+        this.projectRepo = projectRepo;
+        this.sprintRepository = sprintRepository;
+    }
+
+    /**
      * To get a new sprint with the appropriate default values.
      * @param project of type Project
      * @return of type Sprint
@@ -220,6 +230,10 @@ public class SprintService {
 
         if(currentSprint.getEndDate().after(currentSprint.getProject().getEndDate())) {
             throw new Exception("Sprint must end before the project.");
+        }
+
+        if(currentSprint.getDescription().length() > 250) {
+            throw new Exception("Sprint description must be less than 250 characters.");
         }
 
         List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
