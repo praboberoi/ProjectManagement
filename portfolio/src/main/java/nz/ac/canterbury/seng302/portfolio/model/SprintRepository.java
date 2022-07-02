@@ -12,12 +12,7 @@ import java.util.List;
 @Repository
 public interface SprintRepository extends CrudRepository<Sprint, Integer> {
 
-    /**
-     * Obtains a list of sprints with the given sprint label.
-     * @param sprintLabel of type String.
-     * @return a list of type Sprint.
-     */
-    public List<Sprint> findBySprintLabel(String sprintLabel);
+
 
     /**
      * Obtains a list of sprints with the given sprint name.

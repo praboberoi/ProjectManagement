@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.Optional;
 @Service
 public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
+    @Autowired private SprintService sprintService;
     private Project currentProject;
     private Date projectMinDate;
     private Date projectMaxDate;
@@ -112,8 +114,19 @@ public class DashboardService {
      * @throws Exception indicating page values of the HTML page are manually changed.
      */
     public void verifyProject(Project project) throws Exception {
-        if(project.getStartDate().before(projectMinDate) || project.getEndDate().after(projectMaxDate))
-            throw new Exception("HTML page values manually changed. Cannot save the given project");
+        List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
+        if (sprints.stream().anyMatch(sprint -> sprint.getStartDate().before(project.getStartDate()))) {
+            throw new Exception("You are trying to start the project after you have started a sprint.");
+        }
+        if (sprints.stream().anyMatch(sprint -> sprint.getEndDate().after(project.getEndDate()))) {
+            throw new Exception("You are trying to end the project before the last sprint has ended.");
+        }
+        if(project.getStartDate().before(projectMinDate)) {
+            throw new Exception("A project cannot start more than a year ago.");
+        }
+        if ( project.getEndDate().after(projectMaxDate) ) {
+            throw new Exception("A project cannot end more than ten years from now.");
+        }
     }
 
     /**
