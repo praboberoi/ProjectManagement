@@ -282,4 +282,38 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onNext(photoService.deleteUserProfilePhoto(request.getUserId()));
         responseObserver.onCompleted();
     }
+
+    public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, UploadUserProfilePhotoRequest request) throws IOException {
+
+        UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
+                .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
+                        .setUserId(request.getMetaData().getUserId())
+                        .setFileType(request.getMetaData().getFileType()).build())
+                .build());
+
+        responseObserver.onNext(metadata);
+        InputStream inputStream = null;
+        try {
+            String fileName = getFileName(metadata);
+            // upload file in chunks and upload as a stream
+            inputStream = new FileInputStream(String.valueOf(Paths.get("identityprovider/src/main/resources/profilePhotos").resolve(fileName)));
+
+            byte[] bytes = new byte[4096];
+            int size;
+            while ((size = inputStream.read(bytes)) > 0) {
+                UploadUserProfilePhotoRequest uploadImage = UploadUserProfilePhotoRequest.newBuilder()
+                        .setFileContent(ByteString.copyFrom(bytes, 0, size))
+                        .build();
+                responseObserver.onNext(uploadImage);
+            }
+            // close stream
+            inputStream.close();
+
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            inputStream.close();
+            responseObserver.onError(e.fillInStackTrace());
+        }
+    }
 }

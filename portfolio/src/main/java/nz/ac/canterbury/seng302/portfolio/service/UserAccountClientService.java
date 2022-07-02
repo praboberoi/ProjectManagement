@@ -306,9 +306,20 @@ public class UserAccountClientService {
         // close stream
         inputStream.close();
         streamObserver.onCompleted();
-        // write image to portfolio when image has been successfully uploaded
-        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
+//        // write image to portfolio when image has been successfully uploaded
+        String extension = null;
+        if (ext.equals("jpg")){
+            extension = "jpg";
+
+        } else if (ext.equals("jpeg")){
+            extension = "jpeg";
+
+        } else if (ext.equals("png")){
+            extension = "png";
+        }
+        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + extension);
         Files.write(path, file.getBytes());
+        // write image to portfolio when image has been successfully uploaded
 
     }
     /**
