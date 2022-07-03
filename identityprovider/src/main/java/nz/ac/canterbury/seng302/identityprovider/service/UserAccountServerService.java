@@ -30,8 +30,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     /**
      * This method registers a user in the database based off a UserRegisterRequest, and uses the StreamObserver to
      * contain it's UserRegisterResponse as the result of the operation
-     *
-     * @param request          The request containing details of the user to be registered
+     * @param request The request containing details of the user to be registered
      * @param responseObserver The response observer records the result of the operation
      */
     @Override
@@ -82,8 +81,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * This method builds a user based off an EditUserRequest, first it checks that the user exists in the database,
      * if the user from the edit request exists, it saves the new details to the user from the request and saves the
      * user back into the repository.
-     *
-     * @param request          A proto containing all the details of the user to be edited, such as the userId, first name etc
+     * @param request A proto containing all the details of the user to be edited, such as the userId, first name etc
      * @param responseObserver The streamObserver contains the edit user response which will be passed back down the line with details of the operation
      */
     @Override
@@ -122,8 +120,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     /**
      * Gets a user object from the db and sets the template elements with the user's details
-     *
-     * @param request          Request containing the users id
+     * @param request Request containing the users id
      * @param responseObserver Returns to previous method with data
      */
     @Override
@@ -312,5 +309,15 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             responseObserver.onError(e.fillInStackTrace());
         }
     }
-
+    /**
+     * Deletes a user's profile photo
+     * @param request Request containing the users id
+     * @param responseObserver Returns to previous method with data
+     */
+    @Override
+    public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
+        UserProfilePhotoService photoService = new UserProfilePhotoService(userRepository);
+        responseObserver.onNext(photoService.deleteUserProfilePhoto(request.getUserId()));
+        responseObserver.onCompleted();
+    }
 }

@@ -27,7 +27,7 @@ import java.util.List;
  */
 @Service
 public class UserAccountClientService {
-
+    Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/");
     @GrpcClient("identity-provider-grpc-server")
     private UserAccountServiceGrpc.UserAccountServiceBlockingStub userAccountStub;
     @GrpcClient("identity-provider-grpc-server")
@@ -127,6 +127,22 @@ public class UserAccountClientService {
     }
 
     /**
+     * Deletes the selected users profile picture
+     * @param userId The id of the user
+     * @return
+     */
+    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) throws IOException {
+        UserResponse user = getUser(userId);
+        System.out.println(user.getProfileImagePath());
+        Path imagePath = SERVER_BASE_PATH.resolve(user.getProfileImagePath());
+        Files.deleteIfExists(imagePath);
+        DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
+            DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
+            );
+        return response;
+    }
+
+    /**
      * Get the current user (principal) roles and returns them as a list.
      * @param principal - current user detail.
      * @return List of current user roles.
@@ -138,9 +154,9 @@ public class UserAccountClientService {
     }
 
     /**
-     * Check whether the current user has a teacher or course administrator role.
+     * Checks whether the current user has a teacher or course administrator role.
      * @param principal - current user
-     * @return true if the user has role teacher or course administrator
+     * @return true if the user has the teacher or course administrator role
      */
     public boolean checkUserIsTeacherOrAdmin(@AuthenticationPrincipal AuthState principal) {
         List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));

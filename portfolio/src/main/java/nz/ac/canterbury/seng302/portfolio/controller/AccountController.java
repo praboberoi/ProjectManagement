@@ -7,13 +7,20 @@ import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.util.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -184,6 +191,26 @@ public class AccountController {
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
         
         return "editAccount";
+    }
+
+    @DeleteMapping("/deleteProfilePhoto")
+    public ResponseEntity<Long> deleteUserProfilePhoto(@AuthenticationPrincipal AuthState principal, Model model) {
+        int userId = PrincipalUtils.getUserId(principal);
+        try {
+            DeleteUserProfilePhotoResponse idpResponse = userAccountClientService.deleteUserProfilePhoto(userId);
+
+            if (idpResponse.getIsSuccess()) {
+                return new ResponseEntity<>(HttpStatus.OK);
+            }
+            if (("Could not find user").equals(idpResponse.getMessage())
+                    || ("Could not find a profile photo to delete").equals(idpResponse.getMessage())) {
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        } catch (IOException e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+
+        }
     }
 
     private void addAttributesToModel(AuthState principal, Model model) {
