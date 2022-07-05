@@ -21,7 +21,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Client service used to communicate to the IDP application relating to user account features
@@ -112,15 +111,17 @@ public class UserAccountClientService {
         return response;
     }
 
+
     /**
      * Request a list of users from the IDP server and prepares them for use
+     * @param page The page to retrive, indexing starts at 0
+     * @param limit The number of users to retrieve, 0 for no limit
      * @return List of unpackaged users
      * @throws StatusRuntimeException
      */
-    public List<User> getUsers() throws StatusRuntimeException{
-        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().build());
-        List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
-        return usersList;
+    public PaginatedUsersResponse getUsers(int page, int limit) throws StatusRuntimeException{
+        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setLimit(limit).setOffset(page).build());
+        return response;
     }
 
     /**
