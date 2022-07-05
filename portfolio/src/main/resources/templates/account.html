@@ -14,8 +14,28 @@
 
     <script th:src="@{{apiPrefix}/javascript/editAccount.js(apiPrefix=${apiPrefix})}"></script>
     <script th:src="@{{apiPrefix}/javascript/profilePhoto.js(apiPrefix=${apiPrefix})}"></script>
+    <script>
+        function test() {
+            alert("Test")
+        }
+    </script>
+    <script>
+        function addRoles(roles) {
+            let list = document.getElementById("RolesList");
+            alert("benis");
+            alert(roles);
+            let data = roles;
+            alert(roles);
+            // for (role of roles) {
+            //     tag.appendChild(<span className="badge bg-success" th:text="${role}"> </span>);
+            // }
+            // var element = document.getElementById("card-body");
+            // element.appendChild(tag);
+        }
 
+    </script>
 </head>
+<!--    <body onload="test(); alert(roles); addRoles(roles);">-->
     <body>
     <header>
         <div th:replace="fragments :: header"></div>
@@ -42,15 +62,10 @@
                     <div class="container-fluid">
                         <div class="card-body">
                             <!-- badges -->
-<!--                            <h6 id="Roles">Roles: <span class="badge bg-success" th:text="${roles}"></span></h6>-->
-                            <script>
-                                var tag = document.createElement("h6");
-                                for (role of roles) {
-                                    tag.appendChild(<span className="badge bg-success" th:text="${role}"> </span>);
-                                }
-                                var element = document.getElementById("card-body");
-                                element.appendChild(tag);
-                            </script>
+                            <h6 id="Roles"><b>Roles: </b></h6><br>
+                            <ul id="RolesList"></ul>
+<!--                                <span class="badge bg-success" th:text="${roles}"></span>-->
+
                             <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
                                 <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
