@@ -207,13 +207,11 @@ public class SprintService {
     }
 
     /**
-     * Verifies the current sprint against other sprints in the project to make sure there is no manual changes have
-     * been made to the HTML page at the client.
-     * @throws Exception indicating what validation problem exists.
+     * Verifies the current sprint to make sure there are no manual changes
+     * made to the HTML page at the client.
      * @throws IncorrectDetailsException Is raised if the sprint values are incorrect.
-     * @return If the object was successfully validated
      */
-    public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
+    public void verifySprint(Sprint sprint) throws IncorrectDetailsException {
         if (sprint.getStartDate().after(sprint.getEndDate()))
             throw new IncorrectDetailsException("Sprint start date can not be after sprint end date");
 
@@ -226,22 +224,19 @@ public class SprintService {
         if (sprint.getEndDate().after(sprint.getProject().getEndDate()))
             throw new IncorrectDetailsException("Sprint end date can not be after project end date");
 
-        List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
+        try {
+            Sprint savedSprint = getSprint(sprint.getSprintId());
+            if (!Objects.equals(savedSprint, sprint))
+                throw new IncorrectDetailsException("Sprint labels can not be modified");
+        } catch (IncorrectDetailsException ignored) {}
 
-//        if (sprint.getSprintId() == 0 && !Objects.equals(sprint.getSprintLabel(), "Sprint " + (sprints.size() + 1))){
-//            System.out.println("SPRINTSssssssssssssssssssssssssss1: " + sprint.getSprintLabel() + "/ Sprint " + (sprints.size() + 1));
-//            throw new IncorrectDetailsException("Sprint labels can not be modified");
-//        }
-        if(sprint.getSprintId() > 0 && !Objects.equals(getSprint(sprint.getSprintId()).getSprintLabel(), sprint.getSprintLabel())){
-            throw new IncorrectDetailsException("Sprint labels can not be modified");}
+        List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
 
         if(sprints.stream().filter(sp -> !Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel()))
                             .anyMatch(sp -> (betweenDateRange(sp, sprint)))){
             throw new IncorrectDetailsException("Sprint dates can not overlap with another sprint");
 
         }
-
-        return true;
     }
 
     /**
