@@ -230,7 +230,7 @@ public class SprintService {
             if (!Objects.equals(savedSprint, sprint))
                 throw new IncorrectDetailsException("Sprint labels can not be modified");
         } catch (IncorrectDetailsException ignored) {
-            if(!Objects.equals(sprint.getSprintLabel(), "Sprint " + sprints.size()))
+            if(!Objects.equals(sprint.getSprintLabel(), "Sprint " + (sprints.size() + 1)))
                 throw new IncorrectDetailsException("Sprint labels can not be modified");
         }
 
