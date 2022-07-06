@@ -30,6 +30,20 @@ public class EventService {
         return null;
     }
 
+    public String verifyEvent(Event event){
+        if(event == null) return ("No Event");
+
+        if(event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null)
+            return ("Event values are null");
+
+        if(event.getEndDate() != null && event.getStartDate() != null) {
+            if(event.getEndDate().before(event.getStartDate())){
+                return ("The event end date cannot be before the event start date");
+            }
+        }
+        return("Event has been verified");
+    }
+
 }
 
 

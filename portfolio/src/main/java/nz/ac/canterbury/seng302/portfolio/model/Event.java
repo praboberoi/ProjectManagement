@@ -16,6 +16,9 @@ public class Event {
     private int eventId;
 
     @Column(nullable = false)
+    private int projectId;
+
+    @Column(nullable = false)
     private String eventName;
 
     @Column(nullable = false)
@@ -56,12 +59,18 @@ public class Event {
     }
 
     public int getProjectId() {
-        return this.eventId;
+        return this.projectId;
     }
 
     public void setProjectId(int projectId) {
-        this.eventId = projectId;
+        this.projectId = projectId;
     }
+
+
+    public int getEventId() {
+        return this.eventId;
+    }
+
 
     public String getEventName() {
         return this.eventName;

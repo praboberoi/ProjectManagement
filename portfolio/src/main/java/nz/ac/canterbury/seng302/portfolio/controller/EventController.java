@@ -68,13 +68,23 @@ public class EventController {
         return "eventForm";
     }
 
-    @PostMapping(path = "/project/{projectId}")
+    @PostMapping(path = "/project/{projectId}/saveEvent")
     public String saveEvent(
             @PathVariable int projectId,
+            @ModelAttribute Event event,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra) {
+        try {
+            eventService.verifyEvent(event);
+            String message = eventService.saveEvent(event);
+            ra.addFlashAttribute("messageSuccess",message);
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger",message);
 
-    )
 
-
+        }
+        return "redirect:/project/{projectId}";
+    }
 }
 
 
