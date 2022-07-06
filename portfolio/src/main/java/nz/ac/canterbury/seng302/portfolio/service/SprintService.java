@@ -227,11 +227,12 @@ public class SprintService {
         List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
         try {
             Sprint savedSprint = getSprint(sprint.getSprintId());
-            if (!Objects.equals(savedSprint, sprint))
-                throw new IncorrectDetailsException("Sprint labels can not be modified");
+            if (!Objects.equals(savedSprint.getSprintLabel(), sprint.getSprintLabel()))
+                throw new IncorrectDetailsException("Sprint label can not be modified");
         } catch (IncorrectDetailsException ignored) {
-            if(!Objects.equals(sprint.getSprintLabel(), "Sprint " + (sprints.size() + 1)))
-                throw new IncorrectDetailsException("Sprint labels can not be modified");
+            if(!Objects.equals(sprint.getSprintLabel(), "Sprint " + (sprints.size() + 1))){
+                throw new IncorrectDetailsException("Sprint label can not be modified");
+            }
         }
 
 

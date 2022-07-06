@@ -110,6 +110,7 @@ public class SprintController {
             String startDate,
             String endDate,
             String label,
+            int id,
             @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         Sprint currentSprint = new Sprint();
@@ -119,6 +120,7 @@ public class SprintController {
             currentSprint.setStartDate(Date.valueOf(startDate));
             currentSprint.setEndDate(Date.valueOf(endDate));
             currentSprint.setSprintLabel(label);
+            currentSprint.setSprintId(id);
             sprintService.verifySprint(currentSprint);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (Exception e) {
