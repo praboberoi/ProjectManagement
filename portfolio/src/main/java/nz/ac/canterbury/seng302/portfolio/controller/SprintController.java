@@ -101,7 +101,7 @@ public class SprintController {
      * @param projectId ID of the project to check
      * @param startDate New start date of the project
      * @param endDate New end date of the project
-     * @param principal
+     * @param principal Of type {@link AuthState}
      * @return ResponseEntity containing a string message
      */
     @PostMapping("/project/{projectId}/verifySprint")
@@ -223,6 +223,9 @@ public class SprintController {
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            return "error";
+        } catch (Exception e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
             return "error";
         }
     }

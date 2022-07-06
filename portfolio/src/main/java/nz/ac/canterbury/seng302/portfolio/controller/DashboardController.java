@@ -39,7 +39,6 @@ public class DashboardController {
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
-            dashboardService.clearCache();
             model.addAttribute("apiPrefix", apiPrefix);
             List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
@@ -102,7 +101,7 @@ public class DashboardController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             model.addAttribute("apiPrefix", apiPrefix);
             return "redirect:/dashboard";
-        } catch (PersistenceException e) {
+        } catch (Exception e) {
             model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
