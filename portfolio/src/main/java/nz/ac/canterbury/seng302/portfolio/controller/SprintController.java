@@ -124,7 +124,7 @@ public class SprintController {
      * @param sprint
      * @return
      */
-    @RequestMapping(path="/project/{projectId}/saveSprint",method = RequestMethod.POST)
+    @PostMapping(path="/project/{projectId}/saveSprint")
     public String saveSprint(
         @PathVariable int projectId,
         @ModelAttribute Sprint sprint,
@@ -183,7 +183,7 @@ public class SprintController {
      * @param model
      * @return
      */
-    @RequestMapping(path="/project/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
+    @RequestMapping(path="/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,
@@ -212,7 +212,7 @@ public class SprintController {
      * @param endDate New end date of the sprint
      * @return An error message if sprint can't save
      */
-    @PostMapping("${apiPrefix}/sprint/{sprintId}/editSprint")
+    @PostMapping("/sprint/{sprintId}/editSprint")
     public ResponseEntity<String> editSprint(
         @PathVariable("sprintId") int sprintId,
         String startDate,

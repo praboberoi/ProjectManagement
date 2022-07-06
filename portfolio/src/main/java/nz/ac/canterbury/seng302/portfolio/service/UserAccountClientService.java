@@ -252,7 +252,7 @@ public class UserAccountClientService {
      */
     private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
         Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
-        var fileName = "UesrProfle" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+        var fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
         return SERVER_BASE_PATH.resolve(fileName);
     }
 
