@@ -4,11 +4,10 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,6 +21,7 @@ import java.util.List;
 public class RegisterController {
 
     private final UserAccountClientService userAccountClientService;
+    @Value("${apiPrefix}") private String apiPrefix;
 
     public RegisterController(UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
@@ -34,12 +34,13 @@ public class RegisterController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Registration html page
      */
-    @GetMapping("/register")
+    @RequestMapping(path="/register", method = RequestMethod.GET)
     public String register(
             HttpServletRequest request,
             HttpServletResponse response,
             Model model
     ) {
+        model.addAttribute("apiPrefix", apiPrefix);
         return "register";
     }
 
@@ -57,7 +58,7 @@ public class RegisterController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return HTML page corresponding to correct handling
      */
-    @PostMapping("/register")
+    @RequestMapping(path="/register", method = RequestMethod.POST)
     public String createUser(
             HttpServletResponse response,
             @RequestParam String username,
@@ -76,7 +77,8 @@ public class RegisterController {
         if (password.equals(confirmPassword)) {
             idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
             if (idpResponse.getIsSuccess()) {
-                return "redirect:login";
+                model.addAttribute("apiPrefix", apiPrefix);
+                return "redirect:/login";
             } else {
                 validationErrors = idpResponse.getValidationErrorsList();
             }
@@ -103,7 +105,7 @@ public class RegisterController {
         model.addAttribute("personalPronouns", pronouns);
 
         model.addAttribute("email", email);
-
+        model.addAttribute("apiPrefix", apiPrefix);
         return "register";
     }
 

@@ -14,16 +14,16 @@ tag-checker:
     - tags
 
 junit-porfolio:
-   stage: test
-   script:
-     - cd portfolio
-     - ./gradlew test
+  stage: test
+  script:
+    - cd portfolio
+    - ./gradlew test
 
 junit-identityprovider:
-   stage: test
-   script:
-     - cd identityprovider
-     - ./gradlew test
+  stage: test
+  script:
+    - cd identityprovider
+    - ./gradlew test
 
 publish-protos-to-maven-local:
   stage: publishProtosToLocalMavenRepo
@@ -47,7 +47,7 @@ branch-build:
   except:
     - tags
     - master
-    - dev
+    - develop
 
 deploy-staging-identityprovider:
   stage: deploy
@@ -59,12 +59,13 @@ deploy-staging-identityprovider:
     - cp -r ./build/libs /home/gitlab-runner/staging-identityprovider
     - cp ../runner/staging-identityprovider.sh /home/gitlab-runner/staging-identityprovider.sh
     - chmod u+x /home/gitlab-runner/staging-identityprovider.sh
+    - (echo "export MARIADB_USERNAME=${MARIADB_USERNAME}" & echo "export MARIADB_PASSWORD=${MARIADB_PASSWORD}") > /home/gitlab-runner/staging-identityprovider/env.sh
     - sudo systemctl restart staging-identityprovider
   artifacts:
     paths:
       - identityprovider/build/libs
   only:
-    - dev
+    - develop
 
 deploy-staging-portfolio:
   stage: deploy
@@ -76,12 +77,13 @@ deploy-staging-portfolio:
     - cp -r ./build/libs /home/gitlab-runner/staging-portfolio
     - cp ../runner/staging-portfolio.sh /home/gitlab-runner/staging-portfolio.sh
     - chmod u+x /home/gitlab-runner/staging-portfolio.sh
+    - (echo "export MARIADB_USERNAME=${MARIADB_USERNAME}" & echo "export MARIADB_PASSWORD=${MARIADB_PASSWORD}") > /home/gitlab-runner/staging-portfolio/env.sh
     - sudo systemctl restart staging-portfolio
   artifacts:
     paths:
       - portfolio/build/libs
   only:
-    - dev
+    - develop
 
 deploy-production-identityprovider:
   stage: deploy
@@ -92,7 +94,10 @@ deploy-production-identityprovider:
     - mkdir /home/gitlab-runner/production-identityprovider/
     - cp -r ./build/libs /home/gitlab-runner/production-identityprovider
     - cp ../runner/production-identityprovider.sh /home/gitlab-runner/production-identityprovider.sh
+
     - chmod u+x /home/gitlab-runner/production-identityprovider.sh
+    - (echo "export MARIADB_USERNAME=${MARIADB_USERNAME}" & echo "export MARIADB_PASSWORD=${MARIADB_PASSWORD}") > /home/gitlab-runner/production-identityprovider/env.sh
+
     - sudo systemctl restart production-identityprovider
   artifacts:
     paths:
@@ -111,6 +116,7 @@ deploy-production-portfolio:
     - cp -r ./build/libs /home/gitlab-runner/production-portfolio
     - cp ../runner/production-portfolio.sh /home/gitlab-runner/production-portfolio.sh
     - chmod u+x /home/gitlab-runner/production-portfolio.sh
+    - (echo "export MARIADB_USERNAME=${MARIADB_USERNAME}" & echo "export MARIADB_PASSWORD=${MARIADB_PASSWORD}") > /home/gitlab-runner/production-portfolio/env.sh
     - sudo systemctl restart production-portfolio
   artifacts:
     paths:
@@ -118,3 +124,12 @@ deploy-production-portfolio:
   only:
     - tags
     - master
+
+# Runs the SonarQube evaluation. Commented out due to incorrect routing of csse sonarqube server.
+# sonarqube-report:
+#   stage: sonarqube
+#   script:
+#     - cd identityprovider
+#     - ./gradlew sonarqube
+#     - cd ../portfolio
+#     - ./gradlew sonarqube

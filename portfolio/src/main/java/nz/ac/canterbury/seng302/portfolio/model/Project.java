@@ -27,7 +27,6 @@ public class Project {
     /**
      * Description of the project.
      */
-    @Lob
     @Column
     private String description;
 
@@ -89,7 +88,7 @@ public class Project {
 
     /**
      * Obtains the start date of the project
-     * @return startDate of type String
+     * @return startDate of type Date
      */
     public Date getStartDate() {
         return startDate;
@@ -97,7 +96,7 @@ public class Project {
 
     /**
      * Obtains the end date of the project
-     * @return endDate of type string
+     * @return endDate of type Date
      */
     public Date getEndDate() {
         return endDate;
@@ -108,6 +107,14 @@ public class Project {
      * @param projectId of type int
      */
     public void setProjectId(int projectId){
+        this.projectId = projectId;
+    }
+
+    /**
+     * Sets the name of the Project
+     * @param projectName of type String
+     */
+    public void setProjectId(Integer projectId) {
         this.projectId = projectId;
     }
 
@@ -171,7 +178,7 @@ public class Project {
          * @param projectId Id of the project of type int
          * @return Builder
          */
-        public Builder prijectId(int projectId) {
+        public Builder projectId(int projectId) {
             this.projectId = projectId;
             return this;
         }

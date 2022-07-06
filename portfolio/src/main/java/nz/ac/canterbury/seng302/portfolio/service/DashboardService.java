@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,6 +16,8 @@ import java.util.Optional;
 @Service
 public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
+    @Autowired private SprintService sprintService;
+
 
     /**
      * Returns list of all Project objects in the database
@@ -87,28 +90,38 @@ public class DashboardService {
      * @param project of type Project
      * @throws IncorrectDetailsException indicating page values of the HTML page are manually changed.
      */
-    public void verifyProject(Project project) throws IncorrectDetailsException {
+    public void verifyProject(Project project) throws Exception {
         Date projectMinDate;
         Date projectMaxDate;
+        List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
+
         if(project.getProjectId() == 0) {
             LocalDate now = LocalDate.now();
             projectMinDate = Date.valueOf(now.minusYears(1));
             projectMaxDate = Date.valueOf(now.plusYears(10));
-            if(project.getStartDate().before(projectMinDate) || project.getEndDate().after(projectMaxDate))
-                throw new IncorrectDetailsException("Project date range violation");
-
         } else {
             List<Date> dateRange = getProjectDateRange(getProject(project.getProjectId()));
             projectMinDate = dateRange.get(0);
             projectMaxDate = dateRange.get(1);
-            if(project.getStartDate().before(projectMinDate) || project.getEndDate().after(projectMaxDate))
-                throw new IncorrectDetailsException("Project date range violation");
-
-            if(project.getStartDate().after(project.getEndDate()))
-                throw new IncorrectDetailsException("Start date of the project cannot be after the end date of the project");
-
         }
+
+        if (sprints.stream().anyMatch(sprint -> sprint.getStartDate().before(project.getStartDate()))) {
+            throw new IncorrectDetailsException("You are trying to start the project after you have started a sprint.");
+        }
+        if (sprints.stream().anyMatch(sprint -> sprint.getEndDate().after(project.getEndDate()))) {
+            throw new IncorrectDetailsException("You are trying to end the project before the last sprint has ended.");
+        }
+        if(project.getStartDate().before(projectMinDate)) {
+            throw new IncorrectDetailsException("A project cannot start more than a year ago.");
+        }
+        if ( project.getEndDate().after(projectMaxDate) ) {
+            throw new IncorrectDetailsException("A project cannot end more than ten years from now.");
+        }
+        if(project.getStartDate().after(project.getEndDate()))
+            throw new IncorrectDetailsException("Start date of the project cannot be after the end date of the project");
     }
+
+
 
     /**
      * Obtains the date ranges of the project

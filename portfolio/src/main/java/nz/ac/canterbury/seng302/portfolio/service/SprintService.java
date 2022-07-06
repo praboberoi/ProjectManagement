@@ -16,6 +16,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Client service used to communicate to the database and perform business logic for sprints
+ */
 @Service
 public class SprintService {
     @Autowired private ProjectRepository projectRepo;
@@ -60,11 +63,17 @@ public class SprintService {
      * Deletes all the sprints of the given project ID
      * @param projectId Of type int
      * @throws IncorrectDetailsException That has been passed by {@link #deleteSprint(int) deleteSprint}
-     * @throws PersistenceException That has been passed by {@link #getSprintByProject(int) getSprintByProject}
+     * @throws RuntimeException If there is an error deleting a sprint
      */
-    public void deleteAllSprints(int projectId) throws IncorrectDetailsException,PersistenceException {
-        for(Sprint sprint: getSprintByProject(projectId))
-            deleteSprint(sprint.getSprintId());
+    public void deleteAllSprints(int projectId) throws IncorrectDetailsException, RuntimeException {
+        List<Sprint> sprintList = getSprintByProject(projectId);
+        sprintList.forEach(sprint -> {
+            try {
+                deleteSprint(sprint.getSprintId());
+            } catch (Exception e) {
+                throw new RuntimeException("Failure Deleting All Sprints");
+            }
+        });
     }
 
     /**
@@ -105,15 +114,18 @@ public class SprintService {
      * @throws IncorrectDetailsException If null value is returned from the sprintRepository's findById function
      * @throws PersistenceException Passed by {@link SprintRepository#deleteById(Object) deleteById}
      */
-    public String deleteSprint(int sprintId) throws IncorrectDetailsException, PersistenceException {
-        Optional<Sprint> sprint = sprintRepository.findById(sprintId);
-        if(sprint.isPresent()) {
-            sprintRepository.deleteById(sprintId);
-            return "Successfully deleted " + sprint.get().getSprintLabel();
+    public String deleteSprint(int sprintId) throws Exception,IncorrectDetailsException, PersistenceException {
+        try {
+            Optional<Sprint> sprint = sprintRepository.findById(sprintId);
+            if(sprint.isPresent()) {
+                sprintRepository.deleteById(sprintId);
+                return "Successfully deleted " + sprint.get().getSprintLabel();
+            }
+            else
+                throw new IncorrectDetailsException("Could not find the given sprint");
+        } catch (Exception e) {
+            throw new Exception("Failure Deleting Sprint");
         }
-        else
-            throw new IncorrectDetailsException("Could not find the given sprint");
-
     }
 
     /**
@@ -173,7 +185,7 @@ public class SprintService {
             LocalDate sprintMaxDate;
 
             int currentSprintIndex = sprints.indexOf(sprint);
-            if(currentSprintIndex > 0 ) {
+            if (currentSprintIndex > 0 ) {
                 previousSprintEndDate = sprints.get(currentSprintIndex - 1).getEndDate();
                 sprintMinDate = previousSprintEndDate.toLocalDate().plusDays(1);
             } else {
@@ -181,7 +193,7 @@ public class SprintService {
                 sprintMinDate = previousSprintEndDate.toLocalDate();
             }
 
-            if(currentSprintIndex < sprints.size() - 1) {
+            if (currentSprintIndex < sprints.size() - 1) {
                 nextSprintStartDate = sprints.get(currentSprintIndex + 1).getStartDate();
                 sprintMaxDate = nextSprintStartDate.toLocalDate().minusDays(1);
             } else {
@@ -197,9 +209,11 @@ public class SprintService {
     /**
      * Verifies the current sprint against other sprints in the project to make sure there is no manual changes have
      * been made to the HTML page at the client.
+     * @throws Exception indicating what validation problem exists.
      * @throws IncorrectDetailsException Is raised if the sprint values are incorrect.
+     * @return If the object was successfully validated
      */
-    public void verifySprint(Sprint sprint) throws IncorrectDetailsException {
+    public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
         if(sprint.getStartDate().after(sprint.getEndDate()))
             throw new IncorrectDetailsException("Sprint start date can not be after sprint end date");
 
@@ -223,13 +237,16 @@ public class SprintService {
         if(sprints.stream().filter(sp -> !Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel()))
                             .anyMatch(sp -> (betweenDateRange(sp, sprint))))
             throw new IncorrectDetailsException("Sprint dates can not overlap with another sprint");
+
+        return true;
     }
 
     /**
      * Compares the current sprint start and end dates with the given sprint start and end dates. Returns true if
      * the current sprint lies between or overlaps with the given sprint's date range otherwise returns false.
+     * @param currentSprint The sprint to be compared against
      * @param compSprint Given sprint
-     * @return boolean value
+     * @return If the currentSprint overlaps with the compSprint
      */
     private boolean betweenDateRange(Sprint compSprint, Sprint currentSprint) {
         Date currentSprintStartDate = currentSprint.getStartDate();
@@ -238,23 +255,11 @@ public class SprintService {
         Date compSprintStartDate = compSprint.getStartDate();
         Date compSprintEndDate = compSprint.getEndDate();
 
-        if(currentSprintStartDate.compareTo(compSprintStartDate) == 0)
-            return true;
-
-        else if(currentSprintEndDate.compareTo(compSprintEndDate) == 0)
-            return true;
-
-        else if(currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate))
-            return true;
-
-        else if(currentSprintStartDate.after(compSprintStartDate) && currentSprintStartDate.before(compSprintEndDate))
-            return true;
-
-        else if(currentSprintEndDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate))
-            return true;
-
-        else
-            return false;
+        // Check for overlaping dates retrived from https://www.codespeedy.com/check-if-two-date-ranges-overlap-or-not-in-java/
+        return currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintStartDate) ||
+        currentSprintStartDate.before(compSprintEndDate) && currentSprintEndDate.after(compSprintEndDate) ||
+        currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintEndDate) ||
+        currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate) ;
     }
 }
 
