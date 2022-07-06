@@ -109,6 +109,7 @@ public class SprintController {
             @PathVariable int projectId,
             String startDate,
             String endDate,
+            String label,
             @AuthenticationPrincipal AuthState principal) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         Sprint currentSprint = new Sprint();
@@ -117,6 +118,8 @@ public class SprintController {
             currentSprint.setProject(project);
             currentSprint.setStartDate(Date.valueOf(startDate));
             currentSprint.setEndDate(Date.valueOf(endDate));
+            currentSprint.setSprintLabel(label);
+            System.out.println("Controller verfiy sprint label: " + label);
             sprintService.verifySprint(currentSprint);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (Exception e) {
@@ -252,9 +255,9 @@ public class SprintController {
             Date newEndDate = new Date(Long.parseLong(endDate));
 
             Sprint sprint = sprintService.getSprint(sprintId);
-
             sprint.setStartDate(newStartDate);
             sprint.setEndDate(newEndDate);
+            System.out.println("In Edit sprint!: " + sprint.getSprintLabel());
             sprintService.verifySprint(sprint);
             sprintService.saveSprint(sprint);
         } catch (Exception e) {

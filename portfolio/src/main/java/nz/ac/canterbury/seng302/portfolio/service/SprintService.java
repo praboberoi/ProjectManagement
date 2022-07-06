@@ -214,29 +214,35 @@ public class SprintService {
      * @return If the object was successfully validated
      */
     public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
-        if(sprint.getStartDate().after(sprint.getEndDate()))
+        System.out.println("This is the sprint: " + sprint.getSprintLabel());
+        if (sprint.getStartDate().after(sprint.getEndDate()))
             throw new IncorrectDetailsException("Sprint start date can not be after sprint end date");
 
-        if(sprint.getStartDate().before(sprint.getProject().getStartDate()))
+        if (sprint.getStartDate().before(sprint.getProject().getStartDate()))
             throw new IncorrectDetailsException("Sprint start date can not be before project start date");
 
-        if(sprint.getStartDate().after(sprint.getProject().getEndDate()))
+        if (sprint.getStartDate().after(sprint.getProject().getEndDate()))
             throw new IncorrectDetailsException("Sprint start date can not be after project end date");
 
-        if(sprint.getEndDate().after(sprint.getProject().getEndDate()))
+        if (sprint.getEndDate().after(sprint.getProject().getEndDate()))
             throw new IncorrectDetailsException("Sprint end date can not be after project end date");
 
         List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
 
-        if(sprint.getSprintId() == 0 && !Objects.equals(sprint.getSprintLabel(),"Sprint "+ (sprints.size() + 1)))
-            throw new IncorrectDetailsException("Sprint labels can not be modified");
-
-        else if(sprint.getSprintId() > 0 && !Objects.equals(getSprint(sprint.getSprintId()).getSprintLabel(), sprint.getSprintLabel()))
-            throw new IncorrectDetailsException("Sprint labels can not be modified");
+//        if (sprint.getSprintId() == 0 && !Objects.equals(sprint.getSprintLabel(), "Sprint " + (sprints.size() + 1))){
+//            System.out.println("SPRINTSssssssssssssssssssssssssss1: " + sprint.getSprintLabel() + "/ Sprint " + (sprints.size() + 1));
+//            throw new IncorrectDetailsException("Sprint labels can not be modified");
+//        }
+        if(sprint.getSprintId() > 0 && !Objects.equals(getSprint(sprint.getSprintId()).getSprintLabel(), sprint.getSprintLabel())){
+            System.out.println("SPRINTSssssssssssssssssssssssssss2");
+            throw new IncorrectDetailsException("Sprint labels can not be modified");}
 
         if(sprints.stream().filter(sp -> !Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel()))
-                            .anyMatch(sp -> (betweenDateRange(sp, sprint))))
+                            .anyMatch(sp -> (betweenDateRange(sp, sprint)))){
+            System.out.println("SPRINTS CANT OVERLAP");
             throw new IncorrectDetailsException("Sprint dates can not overlap with another sprint");
+
+        }
 
         return true;
     }
@@ -259,7 +265,9 @@ public class SprintService {
         return currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintStartDate) ||
         currentSprintStartDate.before(compSprintEndDate) && currentSprintEndDate.after(compSprintEndDate) ||
         currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintEndDate) ||
-        currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate) ;
+        currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate) ||
+                currentSprintEndDate.equals(compSprintStartDate) ||
+                currentSprintStartDate.equals(compSprintEndDate);
     }
 }
 
