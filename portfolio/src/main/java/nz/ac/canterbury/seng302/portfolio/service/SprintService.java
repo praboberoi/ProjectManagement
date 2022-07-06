@@ -214,7 +214,6 @@ public class SprintService {
      * @return If the object was successfully validated
      */
     public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
-        System.out.println("This is the sprint: " + sprint.getSprintLabel());
         if (sprint.getStartDate().after(sprint.getEndDate()))
             throw new IncorrectDetailsException("Sprint start date can not be after sprint end date");
 
@@ -234,12 +233,10 @@ public class SprintService {
 //            throw new IncorrectDetailsException("Sprint labels can not be modified");
 //        }
         if(sprint.getSprintId() > 0 && !Objects.equals(getSprint(sprint.getSprintId()).getSprintLabel(), sprint.getSprintLabel())){
-            System.out.println("SPRINTSssssssssssssssssssssssssss2");
             throw new IncorrectDetailsException("Sprint labels can not be modified");}
 
         if(sprints.stream().filter(sp -> !Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel()))
                             .anyMatch(sp -> (betweenDateRange(sp, sprint)))){
-            System.out.println("SPRINTS CANT OVERLAP");
             throw new IncorrectDetailsException("Sprint dates can not overlap with another sprint");
 
         }

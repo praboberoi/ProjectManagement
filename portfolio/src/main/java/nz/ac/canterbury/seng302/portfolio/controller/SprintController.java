@@ -119,7 +119,6 @@ public class SprintController {
             currentSprint.setStartDate(Date.valueOf(startDate));
             currentSprint.setEndDate(Date.valueOf(endDate));
             currentSprint.setSprintLabel(label);
-            System.out.println("Controller verfiy sprint label: " + label);
             sprintService.verifySprint(currentSprint);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (Exception e) {
@@ -257,7 +256,6 @@ public class SprintController {
             Sprint sprint = sprintService.getSprint(sprintId);
             sprint.setStartDate(newStartDate);
             sprint.setEndDate(newEndDate);
-            System.out.println("In Edit sprint!: " + sprint.getSprintLabel());
             sprintService.verifySprint(sprint);
             sprintService.saveSprint(sprint);
         } catch (Exception e) {
