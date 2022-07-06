@@ -101,5 +101,25 @@
   </div>
 </nav>
 
+<nav th:fragment = "error-logged-in">
+  <div class = "container-fluid">
+    <div class="row">
+      <div class="sidebar">
+        <!--<div class="collapse navbar-collapse" id="collapsibleNavbar">-->
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">Dashboard</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
+          </li>
+        </ul>
+        <ul class="nav flex-column">
+        </ul>
+      </div>
+    </div>
+  </div>
+</nav>
+
 </body>
 </html>
