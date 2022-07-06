@@ -224,13 +224,16 @@ public class SprintService {
         if (sprint.getEndDate().after(sprint.getProject().getEndDate()))
             throw new IncorrectDetailsException("Sprint end date can not be after project end date");
 
+        List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
         try {
             Sprint savedSprint = getSprint(sprint.getSprintId());
             if (!Objects.equals(savedSprint, sprint))
                 throw new IncorrectDetailsException("Sprint labels can not be modified");
-        } catch (IncorrectDetailsException ignored) {}
+        } catch (IncorrectDetailsException ignored) {
+            if(!Objects.equals(sprint.getSprintLabel(), "Sprint " + sprints.size()))
+                throw new IncorrectDetailsException("Sprint labels can not be modified");
+        }
 
-        List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
 
         if(sprints.stream().filter(sp -> !Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel()))
                             .anyMatch(sp -> (betweenDateRange(sp, sprint)))){
