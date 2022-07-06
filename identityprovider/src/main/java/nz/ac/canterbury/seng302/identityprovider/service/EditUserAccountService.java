@@ -84,7 +84,11 @@ public class EditUserAccountService {
         //Personal Pronoun validation
         if (personalPronouns.length() > 32) {
             errorBuilder.setFieldName("personalPronounsError");
-            errorBuilder.setErrorText("Personal pronouns cannot be more than 32 characters.");
+            errorBuilder.setErrorText("Personal pronouns must be less than 32 characters.");
+            result.add(errorBuilder.build());
+        }else if (ValidationUtilities.hasPronounSpecial(personalPronouns) || ValidationUtilities.hasDigit(personalPronouns)) {
+            errorBuilder.setFieldName("personalPronounsError");
+            errorBuilder.setErrorText("Personal pronouns can only contain special characters + & - , and no digits.");
             result.add(errorBuilder.build());
         }
         return result;

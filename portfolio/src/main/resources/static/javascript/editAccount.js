@@ -1,6 +1,6 @@
 var editBtn = document.getElementById('editBtn');
 var editables = document.querySelectorAll('#username, #firstname, #lastname');
-var special = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
 var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
 var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
@@ -89,10 +89,13 @@ function checkEmail() {
 function checkPronouns() {
     let pronounsElement = document.getElementById("pronouns");
     let pronounsErrorElement = document.getElementById("personalPronounsError");
-    if (pronounsElement.value.length > 32)
-    {
+    if (pronounsElement.value.length > 32) {
         pronounsElement.classList.add("formError")
         pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
+    } else if (digit.test(pronounsElement.value)
+        || special.test(pronounsElement.value)) {
+        pronounsElement.classList.add("formError")
+        pronounsErrorElement.innerText = "Personal pronouns can only contain special characters + & - , and no digits."
     } else {
         pronounsElement.classList.remove("formError");
         pronounsErrorElement.innerText = null;
@@ -104,8 +107,8 @@ function checkBio() {
     let bioErrorElement = document.getElementById("bioError");
 
     let charMessage = document.getElementById("charCount");
-    let charRemaining = 250 - bioElement.value.length;
-    charMessage.innerText = charRemaining + ' '
+    let charCount = bioElement.value.length;
+    charMessage.innerText = charCount + ' '
 
     if (bioElement.value.length > 250)
     {

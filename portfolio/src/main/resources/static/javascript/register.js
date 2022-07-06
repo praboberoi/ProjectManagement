@@ -2,6 +2,7 @@ var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.
 var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
+var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
 
 function checkUsername() {
     let usernameElement = document.getElementById("username");
@@ -78,10 +79,13 @@ function checkEmail() {
 function checkPronouns() {
     let pronounsElement = document.getElementById("pronouns");
     let pronounsErrorElement = document.getElementById("personalPronounsError");
-    if (pronounsElement.value.length > 32)
-        {
+    if (pronounsElement.value.length > 32) {
         pronounsElement.classList.add("formError")
         pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
+    } else if (digit.test(pronounsElement.value)
+        || special.test(pronounsElement.value)) {
+        pronounsElement.classList.add("formError")
+        pronounsErrorElement.innerText = "Personal pronouns can only contain special characters + & - , and no digits."
     } else {
         pronounsElement.classList.remove("formError");
         pronounsErrorElement.innerText = null;
@@ -121,19 +125,16 @@ function match_pass() {
     }
 }
 
-var maxLength = 250;
-$('textarea').keyup(function() {
-    var length = $(this).val().length;
-    var length = maxLength-length;
-    $('#charCount').text(length);
-});
-
+/**
+ * Check that the bio length is below 250 characters and
+ * update the character count message below the bio text area.
+ */
 function checkBio() {
     let bioElement = document.getElementById("bio");
     let bioErrorElement = document.getElementById("bioError");
     let charMessage = document.getElementById("charCount");
-    let charRemaining = 250 - bioElement.value.length;
-    charMessage.innerText = charRemaining + ' '
+    let charCount = bioElement.value.length;
+    charMessage.innerText = charCount + ' '
 
     if (charCount > 250)
     {

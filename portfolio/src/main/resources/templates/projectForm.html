@@ -58,8 +58,10 @@
                 </div>
             </div>
             <div class="mb-3">
-                <label style="font-size:20px;" for="inputProjectDescription" class="form-label">Project Description</label>
-                <textarea class="form-control mt-50" id="inputProjectDescription" rows="5" th:field="*{description}"></textarea>
+                <label style="font-size:20px;" for="projectDescription" class="form-label">Project Description</label>
+                <textarea class="form-control mt-50" th:value="${projectDescription}" id="projectDescription" maxlength="250" rows="5" th:field="*{description}" oninput="checkProjectDescription()"></textarea>
+                <span id="charCount" th:value="${charCount}">[[*{description.length}]] </span> / 250 characters used.
+                <p id="descriptionError" th:text="${descriptionError}" class="error-msg"></p>
             </div>
             <div class="d-flex flex-row justify-content-end p-0">
                 <button type= "submit" class="btn btn-outline-primary me-3">
