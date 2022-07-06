@@ -67,6 +67,14 @@ public class EventController {
         model.addAttribute("projectDateMax", currentProject.getEndDate());
         return "eventForm";
     }
+
+    @PostMapping(path = "/project/{projectId}")
+    public String saveEvent(
+            @PathVariable int projectId,
+
+    )
+
+
 }
 
 
