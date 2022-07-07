@@ -6,17 +6,23 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
+import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
@@ -401,9 +407,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         Sort sort;
 
         if (request.getOrderBy().isEmpty()) {
-            sort = Sort.by(Direction.ASC, "userId");
+            sort = Sort.by(Sort.Direction.ASC, "userId");
         } else {
-            sort = Sort.by(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC, request.getOrderBy());
+            sort = Sort.by(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC, request.getOrderBy());
         }
 
         if (request.getLimit() == 0) {
