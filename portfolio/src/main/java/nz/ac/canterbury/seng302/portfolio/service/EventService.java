@@ -15,6 +15,8 @@ import java.time.LocalDate;
 @Service
 public class EventService {
     @Autowired EventRepository eventRepository;
+    private boolean isNew = false;
+    private Event currentEvent;
 
     /**
      * Creates a new event with a name
@@ -44,6 +46,32 @@ public class EventService {
         return("Event has been verified");
     }
 
+    /**
+     * Saves event into the database
+     * @param event
+     * @return
+     */
+    public String saveEvent(Event event) throws Exception {
+        String message;
+        if (isNew) {
+            currentEvent = event;
+            message = "Successfully Created " + currentEvent.getEventName();
+            isNew = false;
+
+        } else {
+            currentEvent.setEventName(event.getEventName());
+            currentEvent.setEndDate(event.getEndDate());
+            currentEvent.setStartDate(event.getStartDate());
+            message = "Successfully Saved " + currentEvent.getEventName();
+
+        }
+        try {
+            eventRepository.save(currentEvent);
+            return message;
+        } catch (Exception e) {
+            throw new Exception("Failure Saving Project");
+        }
+    }
 }
 
 
