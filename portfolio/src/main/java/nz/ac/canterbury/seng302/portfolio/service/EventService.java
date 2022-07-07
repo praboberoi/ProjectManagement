@@ -25,6 +25,7 @@ public class EventService {
     public Event getNewEvent() {
         try {
             Event newEvent = new Event();
+            isNew = true;
             return newEvent;
         } catch (Exception e) {
             e.getMessage();
@@ -54,16 +55,19 @@ public class EventService {
     public String saveEvent(Event event) throws Exception {
         String message;
         if (isNew) {
+            System.out.println("new event");
+            System.out.println(event.getStartDate());
             currentEvent = event;
-            message = "Successfully Created " + currentEvent.getEventName();
+            message = "Successfully Created " + event.getEventName();
             isNew = false;
-
         } else {
+            System.out.println("edit existing event");
             currentEvent.setEventName(event.getEventName());
             currentEvent.setEndDate(event.getEndDate());
             currentEvent.setStartDate(event.getStartDate());
-            message = "Successfully Saved " + currentEvent.getEventName();
-
+            currentEvent.setStartTime(event.getStartTime());
+            currentEvent.setEndTime(event.getEndTime());
+            message = "Successfully Saved " + event.getEventName();
         }
         try {
             eventRepository.save(currentEvent);

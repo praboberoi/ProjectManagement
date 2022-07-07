@@ -27,6 +27,12 @@ public class Event {
     @Column(nullable = false)
     private Date endDate;
 
+    @Column(nullable = false)
+    private String startTime;
+
+    @Column(nullable = false)
+    private String endTime;
+
     /**
      * No args Constructor of the Event.
      */
@@ -38,10 +44,12 @@ public class Event {
      * @param startDate When the event starts
      * @param endDate When the event ends
      */
-    public Event(String eventName, Date startDate, Date endDate) {
+    public Event(String eventName, Date startDate, Date endDate, String startTime, String endTime) {
         this.eventName = eventName;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     /**
@@ -51,11 +59,13 @@ public class Event {
      * @param startDate When the event starts
      * @param endDate When the event ends
      */
-    public Event(int eventId, String eventName, Date startDate, Date endDate) {
+    public Event(int eventId, String eventName, Date startDate, Date endDate, String startTime, String endTime) {
         this.eventId = eventId;
         this.eventName = eventName;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.startTime = startTime;
+        this.endTime = endTime;
     }
 
     public int getProjectId() {
@@ -96,6 +106,23 @@ public class Event {
         this.endDate = endDate;
     }
 
+    public String getStartTime() {
+        return this.startTime;
+    }
+
+    public void setStartTime(String startTime) {
+        this.startTime = startTime;
+    }
+
+    public String getEndTime() {
+        return this.endTime;
+    }
+
+    public void setEndTime(String endTime) {
+        this.endTime = endTime;
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,7 +131,9 @@ public class Event {
         return eventId == event.eventId 
         && eventName.equals(event.eventName) 
         && startDate.equals(event.startDate) 
-        && endDate.equals(event.endDate);
+        && endDate.equals(event.endDate)
+        && startTime.equals(event.startTime)
+                && endTime.equals(event.endTime);
     }
 
     /**
@@ -115,6 +144,8 @@ public class Event {
         private String eventName;
         private Date startDate;
         private Date endDate;
+        private String startTime;
+        private String endTime;
 
         /**
          * Updates the event ID
@@ -156,12 +187,22 @@ public class Event {
             return this;
         }
 
+        public Builder startTime(String startTime){
+            this.startTime = startTime;
+            return this;
+        }
+
+        public Builder endTime(String endTime){
+            this.endTime = endTime;
+            return this;
+        }
+
         /**
          * Builds the Event.
          * @return The built event
          */
         public Event build() {
-            return new Event(eventId, eventName, startDate, endDate);
+            return new Event(eventId, eventName, startDate, endDate, startTime, endTime);
         }
     }
 }
