@@ -35,10 +35,22 @@
   </div>
   <br>
   <div class="card">
+    <span>
     <div class="card-header">
       <input type="hidden" id="startDate" th:value="*{project.startDate}" />
       <input type="hidden" id="endDate" th:value="*{project.endDate}" />
-      Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]    </div>
+      Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]
+      <div th:each="role: ${roles}">
+        <div class="container-fluid p-0" th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+          <a type="button" class="btn btn-outline-primary me-2" style="float: right;"  th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
+            <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+          <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModal" th:data-id = "${project.projectId}"
+                  th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
+            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+        </div>
+      </div>
+    </div>
+    </span>
     <div class="card-body">
       <h5 class="card-title">Project Description:</h5>
       <p class="card-text">[[${project.Description}]]</p>
