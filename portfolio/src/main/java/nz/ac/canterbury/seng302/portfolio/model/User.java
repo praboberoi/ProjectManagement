@@ -141,6 +141,7 @@ public class User implements Serializable {
         this.profileImagePath = response.getProfileImagePath();
         this.roles = response.getRolesList();
         this.dateCreated = new Date(response.getCreated().getSeconds());
+        this.userId = response.getId();
     }
 
     /**
