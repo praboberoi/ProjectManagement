@@ -5,6 +5,7 @@ import org.apache.tomcat.jni.Local;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -15,8 +16,9 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class EventServiceTest {
 
+    @Autowired
     private EventRepository eventRepository;
-    private EventService eventService;
+    private EventService eventService = new EventService();
     private  Event.Builder eventBuilder;
 
     @BeforeEach
