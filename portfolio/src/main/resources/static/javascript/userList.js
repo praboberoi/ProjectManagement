@@ -33,3 +33,24 @@ function getUserDataTable(newPage) {
     retrieving = true;
     httpRequest.send();
 };
+
+function removeRole(role) {
+    console.log(role)
+    httpRequest = new XMLHttpRequest();
+
+    // httpRequest.onreadystatechange = function() {
+    //     if (httpRequest.readyState === XMLHttpRequest.DONE) {
+    //         if (httpRequest.status === 200) {
+    //             if (httpRequest.response != "") {
+    //                 startDateError.innerText = httpRequest.response;
+    //                 startDateElement.classList.add("formError");
+    //                 endDateElement.classList.add("formError");
+    //             }
+    //         }
+    //     }
+    // }
+
+    httpRequest.open('POST', '/project/' + projectId + '/verifySprint', true);
+    httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+}
