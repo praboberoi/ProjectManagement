@@ -33,9 +33,9 @@
       <input type="hidden" th:field="*{projectId}">
 
       <div class="mb-3">
-        <label for="project-name" class="col-form-label required">Event Name</label>
-        <input style="font-size:20px;" type="text" class="form-control required" id="project-name" placeholder="Event Name" th:field="*{eventName}" onkeyup="checkProjectName()" required>
-<!--        <p id="projectNameError" th:text="${eventNameError}" class="error-msg"></p>-->
+        <label for="event-name" class="col-form-label required">Event Name</label>
+        <input style="font-size:20px;" type="text" class="form-control required" id="event-name" placeholder="Event Name" th:field="*{eventName}" onkeyup="checkProjectName()" required>
+<!--TODO: change onkeyup and error msg when doing form validation-->
       </div>
 
       <div style="height:30px;" class="row">
@@ -47,17 +47,16 @@
           <label for="endDate" class="form-label required">Start Time</label>
         </div>
       </div>
-<!-- Start Date & Time-->
+      <!-- Start Date & Time-->
       <div class="row">
         <div class="col-md-6 ms-auto">
           <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDates()" required>
           <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
         </div>
         <div class="col-md-6 ms-auto">
-<!--          <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>-->
           <!--Timepicker-->
           <div>
-          <input type="time" class="form-control" id="startTime" name="startTime"  required>
+          <input type="time" class="form-control" id="startTime" name="startTime" onchange="checkTime()" required>
           </div>
         </div>
       </div>
@@ -72,11 +71,10 @@
         </div>
       </div>
 
-<!--End Date & Time-->
+      <!--End Date & Time-->
       <div class="row">
         <div class="col-md-6 ms-auto">
           <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDates()" required>
-<!--          <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>-->
         </div>
         <div class="col-md-6 ms-auto">
           <!--Timepicker-->
