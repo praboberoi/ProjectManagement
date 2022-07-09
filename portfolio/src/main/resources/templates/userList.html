@@ -55,7 +55,7 @@
                     <th:block th:each = "role : ${user.getRoles()}">
                         <li style="display:inline">
                           <span class="badge badge-pill badge-secondary">[[${role}]]
-                            <button th:data-role = '${role}' th:if="!${adminOrTeacher == true}" class="w-25 btn shadow-none btn-sm" onclick="removeRole(this.getAttribute('data-role'))">
+                            <button th:data-role = '${role}' th:data-userId = '${user.userId}' th:if="!${adminOrTeacher == true}" class="w-25 btn shadow-none btn-sm" onclick="removeRole(this.getAttribute('data-role'), this.getAttribute('data-userId'))">
                               <img class="icon" width="20" height="20" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/>
                             </button>
                           </span>

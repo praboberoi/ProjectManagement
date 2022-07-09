@@ -34,23 +34,11 @@ function getUserDataTable(newPage) {
     httpRequest.send();
 };
 
-function removeRole(role) {
-    console.log(role)
+function removeRole(role, userId) {
+
     httpRequest = new XMLHttpRequest();
 
-    // httpRequest.onreadystatechange = function() {
-    //     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-    //         if (httpRequest.status === 200) {
-    //             if (httpRequest.response != "") {
-    //                 startDateError.innerText = httpRequest.response;
-    //                 startDateElement.classList.add("formError");
-    //                 endDateElement.classList.add("formError");
-    //             }
-    //         }
-    //     }
-    // }
-
-    httpRequest.open('POST', '/project/' + projectId + '/verifySprint', true);
+    httpRequest.open('DELETE', '/usersList/removeRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+    httpRequest.send("role=" + role + "&userId=" + parseInt(userId));
 }
