@@ -27,13 +27,6 @@ header, sidebar
     color: #07173B ;
 }
 
-/*
-  UNCOMMENT if want the active tab to be same colour as header
-*/
-
-/*.nav-pills .nav-link.active {*/
-/*    background-color: #07173B;*/
-/*}*/
 
 #hamburger-toggle{
     display: none;
