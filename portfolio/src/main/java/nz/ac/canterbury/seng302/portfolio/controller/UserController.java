@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,7 +32,7 @@ public class UserController {
     /**
      * Get method for the first page of the list of users
      * @param principal Authentication information containing user info
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param mv Parameters sent to thymeleaf template to be rendered into HTML
      * @return The user list page
      */
     @GetMapping("/users")
@@ -58,7 +59,7 @@ public class UserController {
     /**
      * Get method for the current page of users from the list
      * @param principal Authentication information containing user info
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param mv Parameters sent to thymeleaf template to be rendered into HTML
      * @return The list of user fragment
      */
     @GetMapping("/usersList")
@@ -79,4 +80,11 @@ public class UserController {
         mv.addObject("userCount", response.getResultSetSize());
         return mv;
     }
+
+    @DeleteMapping(path="/usersList/removeRole")
+    public void removeRole(int userId, String role) {
+        System.out.println("User with Id: " + userId + " deleting role: " + role);
+    }
+
+
 }
