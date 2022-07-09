@@ -83,14 +83,22 @@ public class UserController {
         return mv;
     }
 
+    /**
+     * Delete method for removing a users role
+     * @param userId ID for the user
+     * @param role Type of role being deleted
+     * @return Ok (200) response if successful, 417 response if failure.
+     */
     @DeleteMapping("/usersList/removeRole")
     public ResponseEntity<Object> removeRole(int userId, String role) {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(userId, userRole);
-        System.out.println(response.getIsSuccess());
-        return new ResponseEntity<>(HttpStatus.OK);
-
-
+        if (response.getIsSuccess()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            return new ResponseEntity<>(response.getMessage(), HttpStatus.EXPECTATION_FAILED);
+        }
     }
 
 
