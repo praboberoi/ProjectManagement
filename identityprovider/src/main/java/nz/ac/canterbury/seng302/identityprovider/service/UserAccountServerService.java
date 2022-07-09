@@ -23,8 +23,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     private final UserRepository userRepository;
 
-    final Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
-
     public UserAccountServerService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -132,10 +130,10 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) throws NoSuchElementException {
         UserResponse.Builder reply = UserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getId());
+        Path imagePath;
         if (user == null) {
             throw new NoSuchElementException("User doesn't exist");
         }
-        String imagePath = user.getProfileImagePath();
         reply.setUsername(user.getUsername());
         reply.setFirstName(user.getFirstName());
         reply.setLastName(user.getLastName());
@@ -145,9 +143,17 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         reply.setEmail(user.getEmail());
         reply.addAllRoles(user.getRoles());
         reply.setCreated(Timestamp.newBuilder()
-            .setSeconds(user.getDateCreated().getTime())
-            .build());
-        reply.setProfileImagePath(FILE_PATH_ROOT + (imagePath == null?"default-image.svg":user.getProfileImagePath()));
+                .setSeconds(user.getDateCreated().getTime())
+                .build());
+
+        if (user.getProfileImagePath() == null) {
+             imagePath = Paths.get("cachedprofilephoto/default-image.svg");
+
+        } else {
+             imagePath = Paths.get("cachedprofilephoto/" + user.getProfileImagePath());
+
+        }
+        reply.setProfileImagePath(imagePath.toString());
 
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
@@ -168,6 +174,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             User user;
             String fileName;
             Path path;
+            final Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
+
 
             /**
              * Sets the OutputStream on the first request and then sends
@@ -179,8 +187,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             public void onNext(UploadUserProfilePhotoRequest request) {
                 try {
                     if (request.hasMetaData()) {
-                        fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
-                        path = FILE_PATH_ROOT.resolve(fileName);
+
+                        fileName = getFileName(request);
+                        path = SERVER_BASE_PATH.resolve(fileName);
                         File f = new File(String.valueOf(path));
                         if (f.exists()) {
                             try {
@@ -244,6 +253,15 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     }
 
     /**
+     * Creates file name and writer
+     * @param request Contains image information
+     * @return Writer containing information to save file
+     */
+    private String getFileName(UploadUserProfilePhotoRequest request) throws IOException {
+        return "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+    }
+
+    /**
      * Closes OutputStream
      * @param writer The OutputStream
      */
@@ -252,6 +270,44 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             writer.close();
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * Uses request to find image path, and sends the image data back to the portfolio to be stored in the cache.
+     * @param responseObserver Used to send image data to the portfolio
+     * @param request Contains user id and file type
+     */
+
+    public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, UploadUserProfilePhotoRequest request) {
+
+        UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
+                .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
+                        .setUserId(request.getMetaData().getUserId())
+                        .setFileType(request.getMetaData().getFileType()).build())
+                .build());
+
+        responseObserver.onNext(metadata);
+        try {
+            String fileName = getFileName(metadata);
+            // upload file in chunks and upload as a stream
+            InputStream inputStream = new FileInputStream(String.valueOf(Paths.get("identityprovider/src/main/resources/profilePhotos").resolve(fileName)));
+
+            byte[] bytes = new byte[4096];
+            int size;
+            while((size = inputStream.read(bytes)) > 0){
+                UploadUserProfilePhotoRequest uploadImage = UploadUserProfilePhotoRequest.newBuilder()
+                        .setFileContent(ByteString.copyFrom(bytes,0,size))
+                        .build();
+                responseObserver.onNext(uploadImage);
+            }
+            // close stream
+            inputStream.close();
+
+            responseObserver.onCompleted();
+
+        } catch (Exception e) {
+            responseObserver.onError(e.fillInStackTrace());
         }
     }
 

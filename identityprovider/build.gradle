@@ -23,30 +23,28 @@ repositories {
 }
 
 dependencies {
-    implementation 'org.springframework:spring-web'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter'
+    implementation 'org.springframework:spring-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'com.h2database:h2:1.4.200'
 
-    implementation 'nz.ac.canterbury.seng302:shared:1.0' // Local package containing .proto files
 
-    implementation 'net.devh:grpc-spring-boot-starter:2.13.1.RELEASE' // GRPC server / client dependencies
-    
     // JWT dependencies
     implementation 'io.jsonwebtoken:jjwt-api:0.11.0'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.0'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.0'
 
+    implementation 'net.devh:grpc-spring-boot-starter:2.13.1.RELEASE' // GRPC server / client dependencies
     implementation 'nz.ac.canterbury.seng302:shared:1.0' // Local package containing .proto files
-    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
-
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'io.grpc:grpc-testing:1.45.0'
+
     testImplementation "io.cucumber:cucumber-java:6.10.4"
     testImplementation "io.cucumber:cucumber-junit:6.10.4"
+
+    implementation 'org.mariadb.jdbc:mariadb-java-client:2.1.2'
 
 }
 
@@ -75,7 +73,7 @@ sonarqube {
         property "sonar.projectKey", "team-300-identityprovider"
         property "sonar.projectName", "team 300 - identityprovider"
         property "sonar.sourceEncoding", "UTF-8"
-        property "sonar.host.url", "http://sonarqube.csse.canterbury.ac.nz"
+        property "sonar.host.url", "http://sonarqube.csse.canterbury.ac.nz:9000"
         property "sonar.login", "${SONARQUBE}"
     }
 }
