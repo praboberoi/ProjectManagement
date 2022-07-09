@@ -12,8 +12,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -90,15 +92,15 @@ public class UserController {
      * @return Ok (200) response if successful, 417 response if failure.
      */
     @DeleteMapping("/usersList/removeRole")
-    public ResponseEntity<Object> removeRole(int userId, String role) {
+    public String removeRole(int userId, String role, RedirectAttributes ra) {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(userId, userRole);
-        if (response.getIsSuccess()) {
-            return new ResponseEntity<>(HttpStatus.OK);
+        if (!response.getIsSuccess()) {
+            System.out.println("Error running");
+            ra.addFlashAttribute("messageDanger", response.getMessage());
         }
-        else {
-            return new ResponseEntity<>(response.getMessage(), HttpStatus.EXPECTATION_FAILED);
-        }
+        return "redirect:/users";
+
     }
 
 
