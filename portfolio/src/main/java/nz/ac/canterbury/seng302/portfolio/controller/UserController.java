@@ -6,8 +6,10 @@ import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRoleChangeResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -81,9 +83,14 @@ public class UserController {
         return mv;
     }
 
-    @DeleteMapping(path="/usersList/removeRole")
-    public void removeRole(int userId, String role) {
-        System.out.println("User with Id: " + userId + " deleting role: " + role);
+    @DeleteMapping("/usersList/removeRole")
+    public ResponseEntity<Object> removeRole(int userId, String role) {
+        UserRole userRole = Enum.valueOf(UserRole.class, role);
+        UserRoleChangeResponse response = userAccountClientService.removeUserRole(userId, userRole);
+        System.out.println(response.getIsSuccess());
+        return new ResponseEntity<>(HttpStatus.OK);
+
+
     }
 
 

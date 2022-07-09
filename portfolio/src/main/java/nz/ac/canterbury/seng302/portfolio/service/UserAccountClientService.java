@@ -329,4 +329,10 @@ public class UserAccountClientService {
         }
     }
 
+    public UserRoleChangeResponse removeUserRole(int userId, UserRole role) {
+        UserRoleChangeResponse response = userAccountStub.removeRoleFromUser(
+                ModifyRoleOfUserRequest.newBuilder().setRole(role).setUserId(userId).build());
+        return response;
+    }
+
 }
