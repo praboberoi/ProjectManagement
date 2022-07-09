@@ -19,7 +19,7 @@
     </div>
 </header>
 <div th:if="${user}">
-    <div th:replace="fragments :: sidebar"></div>
+    <div th:replace="fragments :: error-logged-in"></div>
 </div>
 <div th:unless="${user}">
     <div th:replace="fragments :: error"> </div>
