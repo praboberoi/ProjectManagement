@@ -20,12 +20,9 @@ import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
  */
 @Controller
 public class UserController {
-    private String FILE_PATH_ROOT = "./profilePhotos/";
+    private final String FILE_PATH_ROOT = "./profilePhotos/";
     @Autowired private UserRepository userRepository;
     Logger logger = LoggerFactory.getLogger(UserController.class);
-
-    public UserController () {
-    }
     
     /**
      * Converts the user's profile image into a byte array and returns it to the client
@@ -42,7 +39,7 @@ public class UserController {
                 image = Files.readAllBytes(imagePath);
                 imageType = MediaType.parseMediaType(Files.probeContentType(imagePath));
             } else {
-                logger.info("Could not load user " + userId + "'s profile image. Falling back to default.");
+                logger.info(String.format("Could not load user %s's profile image. Falling back to default.", userId));
                 image = Files.readAllBytes(Paths.get(FILE_PATH_ROOT + "default-image.svg"));
             }
         } catch (IOException e) {
