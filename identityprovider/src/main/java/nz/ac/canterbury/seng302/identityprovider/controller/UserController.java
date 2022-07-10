@@ -16,17 +16,22 @@ import org.springframework.web.bind.annotation.*;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 
 /**
- * Controller for the account page
+ * Controller for retrieving user information from the Identity Provider through html requests
  */
 @Controller
-public class AccountController {
+public class UserController {
     private String FILE_PATH_ROOT = "./profilePhotos/";
     @Autowired private UserRepository userRepository;
-    Logger logger = LoggerFactory.getLogger(AccountController.class);
+    Logger logger = LoggerFactory.getLogger(UserController.class);
 
-    public AccountController () {
+    public UserController () {
     }
-        
+    
+    /**
+     * Converts the user's profile image into a byte array and returns it to the client
+     * @param userId The user whos profile image is requested
+     * @return The image as a ResponseEntity
+     */
     @GetMapping(path="/profile/{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") int userId) {
         byte[] image = new byte[0];
