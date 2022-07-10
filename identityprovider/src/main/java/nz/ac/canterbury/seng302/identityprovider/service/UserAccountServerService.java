@@ -18,12 +18,17 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 
+import org.springframework.beans.factory.annotation.Value;
+
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
 
     private final UserRepository userRepository;
 
     final Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
+
+    @Value("${hostAddress}") 
+    private String hostAddress;
 
     public UserAccountServerService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -135,7 +140,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         if (user == null) {
             throw new NoSuchElementException("User doesn't exist");
         }
-        String imagePath = user.getProfileImagePath();
         reply.setUsername(user.getUsername());
         reply.setFirstName(user.getFirstName());
         reply.setLastName(user.getLastName());
@@ -147,8 +151,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         reply.setCreated(Timestamp.newBuilder()
             .setSeconds(user.getDateCreated().getTime())
             .build());
-        reply.setProfileImagePath(FILE_PATH_ROOT + (imagePath == null?"default-image.svg":user.getProfileImagePath()));
-
+        reply.setProfileImagePath(hostAddress + "/profile/" + user.getUserId());
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }

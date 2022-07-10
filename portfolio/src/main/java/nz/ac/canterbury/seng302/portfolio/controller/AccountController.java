@@ -39,6 +39,11 @@ public class AccountController {
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
 
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
+
     public AccountController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
     }
@@ -55,7 +60,6 @@ public class AccountController {
             Model model
     ) {
         this.addAttributesToModel(principal, model);
-        model.addAttribute("apiPrefix", apiPrefix);
         return "account";
     }
 
@@ -107,7 +111,6 @@ public class AccountController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
-        model.addAttribute("apiPrefix", apiPrefix);
         this.addAttributesToModel(principal, model);
 
         return "editAccount";
