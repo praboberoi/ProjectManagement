@@ -74,11 +74,15 @@ public class EventController {
             @ModelAttribute Event event,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra) {
-        String message;
+        String message = "";
         try {
-            eventService.verifyEvent(event);
-            message = eventService.saveEvent(event);
-            ra.addFlashAttribute("messageSuccess", message);
+            message = eventService.verifyEvent(event);
+            if (message != "Event has been verified") {
+                ra.addFlashAttribute("messageDanger", message);
+            } else {
+                message = eventService.saveEvent(event);
+                ra.addFlashAttribute("messageSuccess", message);
+            }
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
