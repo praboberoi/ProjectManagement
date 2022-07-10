@@ -25,7 +25,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     private final UserRepository userRepository;
 
-    final Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
+    private final static Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
 
     @Value("${hostAddress}") 
     private String hostAddress;

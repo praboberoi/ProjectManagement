@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 
 @WebMvcTest(controllers = UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class UserControllerTests {
+class UserControllerTests {
     @Autowired
     private MockMvc mockMvc;
 
@@ -37,7 +37,7 @@ public class UserControllerTests {
      * @throws Exception Expection thrown during mockMvc run
      */
     @Test
-    public void givenUserHasImage_whenGetImageCalled_thenJPGImageReturned() throws Exception{
+    void givenUserHasImage_whenGetImageCalled_thenJPGImageReturned() throws Exception{
         when(userRepository.getUserByUserId(anyInt())).thenReturn(user);
         when(user.getProfileImagePath()).thenReturn("testUserImage.jpg");
 
@@ -50,7 +50,7 @@ public class UserControllerTests {
 	}
 
 	@Test
-	public void givenUserHasNoImage_whenGetImageCalled_thenDefaultSVGImageReturned() throws Exception{
+	void givenUserHasNoImage_whenGetImageCalled_thenDefaultSVGImageReturned() throws Exception{
 
         when(userRepository.getUserByUserId(anyInt())).thenReturn(user);
         when(user.getProfileImagePath()).thenReturn(null);
