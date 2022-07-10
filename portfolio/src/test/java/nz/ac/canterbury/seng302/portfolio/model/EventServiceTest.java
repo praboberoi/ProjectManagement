@@ -15,6 +15,9 @@ import java.util.Calendar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+/**
+ * Test class for the event service class.
+ */
 public class EventServiceTest {
 
     @Autowired
@@ -22,19 +25,28 @@ public class EventServiceTest {
     private EventService eventService = new EventService();
     private  Event.Builder eventBuilder;
 
+    /**
+     * Creates an event builder
+     */
     @BeforeEach
     public void init(){
          eventBuilder = new Event.Builder();
     }
 
+    /**
+     * Checks if event is null
+     */
     @Test
-    public  void givenNoEventIsNull_ThenShowErrorMessage() throws Exception {
+    public void givenEventIsNull_ThenShowErrorMessage() throws Exception {
         Event emptyEvent = null;
         assertNull(emptyEvent);
         String resultString = eventService.verifyEvent(emptyEvent);
         assertEquals(resultString, "No Event");
     }
 
+    /**
+     * Checks if event form has null values
+     */
     @Test
     public void givenEventWithNullValues_ThenShowNullMsg() throws Exception {
         Event emptyEvent = new Event();
@@ -43,6 +55,9 @@ public class EventServiceTest {
         assertEquals(resultString, "Event values are null");
     }
 
+    /**
+     * Adds an event and checks if event dates are valid
+     */
     @Test
     public void givenEventWithIncorrectDates_ThenShowErrorMsg() throws Exception {
         //Event with end date before start date
@@ -57,6 +72,9 @@ public class EventServiceTest {
         assertEquals(resultString, "The event end date cannot be before the event start date");
     }
 
+    /**
+     * Adds an event and checks for same event date and same event time
+     */
     @Test
     public void givenEventWithSameDateAndSameTime_ThenShowErrorMessage() throws Exception {
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
@@ -71,6 +89,10 @@ public class EventServiceTest {
         assertEquals(resultString, "The end time cannot be the same as the start time when event is on the same day");
     }
 
+    /**
+     * Adds an event and checks if end time is before start time
+     * for events that start and end on the same date
+     */
     @Test
     public void givenEventWithSameDateAndEndTimeBeforeStartTime_ThenShowErrorMessage() throws Exception {
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
@@ -85,6 +107,9 @@ public class EventServiceTest {
         assertEquals(resultString, "The end time cannot be before the start time when event is on the same day");
     }
 
+    /**
+     * Adds an event and checks if all event from values are valid
+     */
     @Test
     public void givenEventWithCorrectValues_ThenShowSuccessMsg() throws Exception {
         Event newEvent = eventBuilder.eventId(1)

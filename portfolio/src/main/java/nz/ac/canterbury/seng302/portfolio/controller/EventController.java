@@ -5,7 +5,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -14,9 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.sql.Date;
-import java.time.LocalDate;
-import java.util.List;
 
 /**
  * Controller for the events page
@@ -40,8 +36,10 @@ public class EventController {
     /**
      * Opens eventForm.html and populates it with a new Event object
      * Checks for teacher or admin privileges
+     * @param projectId ID of the project
+     * @param principal Current user
      * @param model
-     * @return
+     * @return link of the html page to display
      */
     @RequestMapping(path = "/project/{projectId}/newEvent", method = RequestMethod.GET)
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal, @PathVariable ("projectId") int projectId) {
@@ -68,11 +66,15 @@ public class EventController {
         return "eventForm";
     }
 
+
+    /**
+     * Checks if event dates are valid and if it is saves the event
+     * @param event Event object
+     * @return link of html page to display
+     */
     @PostMapping(path = "/project/{projectId}/saveEvent")
     public String saveEvent(
-            @PathVariable int projectId,
             @ModelAttribute Event event,
-            @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra) {
         String message = "";
         try {

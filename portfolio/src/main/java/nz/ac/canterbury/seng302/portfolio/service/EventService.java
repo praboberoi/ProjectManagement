@@ -35,6 +35,11 @@ public class EventService {
         return null;
     }
 
+    /**
+     * Verifies the event date and time
+     * @param event The event object to verify
+     * @return Message explaining the error
+     * */
     public String verifyEvent(Event event) throws ParseException {
         if (event == null) return ("No Event");
 
@@ -73,8 +78,8 @@ public class EventService {
 
     /**
      * Saves event into the database
-     * @param event
-     * @return
+     * @param event The event object to be saved
+     * @return Message based on saving edit or creating event
      */
     public String saveEvent(Event event) throws Exception {
         String message;

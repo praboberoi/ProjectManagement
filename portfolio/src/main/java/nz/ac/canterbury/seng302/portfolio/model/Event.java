@@ -76,11 +76,9 @@ public class Event {
         this.projectId = projectId;
     }
 
-
     public int getEventId() {
         return this.eventId;
     }
-
 
     public String getEventName() {
         return this.eventName;

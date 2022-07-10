@@ -28,7 +28,7 @@ public class EventRepositoryTest {
     private Event.Builder basicEventBuilder;
 
     /**
-     * Creates a event builder
+     * Creates an event builder
      */
     @BeforeEach
     public void init() {
@@ -36,7 +36,9 @@ public class EventRepositoryTest {
         .eventId(1)
         .eventName("testEvent")
         .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
-        .endDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        .endDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .startTime("20:00")
+                .endTime("21:00");
     }
 
     /**
