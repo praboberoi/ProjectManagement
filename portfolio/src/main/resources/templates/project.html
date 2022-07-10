@@ -49,13 +49,11 @@
   <br>
   <div class="container-fluid d-flex p-0">
     <h3 class="pe-3">Sprints</h3>
-    <div th:each="role: ${roles}">
       <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-      <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+    <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
         <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newSprint'}">
           <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
       </div>
-    </div>
   </div>
   <br>
 
@@ -82,16 +80,14 @@
           <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
           <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
           <td>
-            <div th:each="role: ${roles}">
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-              <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+            <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
                 <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                   <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
                 <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
                        th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'))" >
                   <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
               </div>
-            </div>
           </td>
         </tr>
       </th:block>
