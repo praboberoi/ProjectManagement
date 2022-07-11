@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.identityprovider.controller.UserController;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +18,12 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 
@@ -31,6 +38,17 @@ class UserControllerTests {
 
     @Mock
     private User user;
+
+	@BeforeAll
+	static void init() {
+		Path source = Paths.get("./src/test/resources/testUserImage.jpg");
+		Path dest = Paths.get("./profilePhotos/testUserImage.jpg");
+		try {
+			Files.copy(source, dest);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
     /**
      * Tests that the user gets the correct image type when requesting it from the idp
