@@ -56,6 +56,7 @@ public class EventController {
             return "redirect:/project/{projectId}";
         }
 
+        model.addAttribute("project", currentProject);
         model.addAttribute("event", newEvent);
         model.addAttribute("pageTitle", "Add New Event");
         model.addAttribute("submissionName", "Create");
