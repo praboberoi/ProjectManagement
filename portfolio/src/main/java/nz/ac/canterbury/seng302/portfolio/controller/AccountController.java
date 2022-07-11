@@ -131,7 +131,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
-    @RequestMapping(path="/editAccount", method = RequestMethod.POST)
+    @PostMapping(path="/editAccount")
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam("image")MultipartFile multipartFile,
@@ -152,42 +152,35 @@ public class AccountController {
                 pronouns,
                 email);
 
-
 //        Start of image upload functionality
-        MultipartFile file1 = multipartFile;
-        if (!file1.isEmpty()) {
+        if (!multipartFile.isEmpty()) {
             // original filename of image user has uploaded
-            String extension = file1.getContentType();
+            String extension = multipartFile.getContentType();
             // check if file is an accepted image type
             ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
-                if (file1.getContentType() == MediaType.IMAGE_GIF_VALUE) {
+                if (multipartFile.getContentType() == MediaType.IMAGE_GIF_VALUE) {
                     extension = "gif";
-                } else if (file1.getContentType() == MediaType.IMAGE_PNG_VALUE) {
+                } else if (multipartFile.getContentType() == MediaType.IMAGE_PNG_VALUE) {
                     extension = "png";
                 } else {
                     extension = "jpeg";
                 }
-                userAccountClientService.uploadImage(userId, extension, file1);
+                userAccountClientService.uploadImage(userId, extension, multipartFile);
             } else {
                 String msgString;
                 msgString = String.format("File must be an image of type jpg, jpeg or png");
                 ra.addFlashAttribute("messageDanger", msgString);
-                return "redirect:/editAccount";
+                return "editAccount";
             }
         }
-
-
-
 //       End of image
-
-
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
             msgString = String.format("Successfully updated details");
             ra.addFlashAttribute("messageSuccess", msgString);
-            return "redirect:/account";
+            return "account";
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
