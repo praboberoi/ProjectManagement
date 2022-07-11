@@ -55,10 +55,12 @@
         </div>
         <div class="row">
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" th:min="${sprintStartDateMin}" th:max="${sprintStartDateMax}">
+                <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkDates()">
+                <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
             </div>
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintEndDateMin}" th:max="${sprintEndDateMax}">
+                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkDates()">
+                <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
             </div>
         </div>
 
@@ -75,8 +77,7 @@
             <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${projectId}}">
                 <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
         </div>
-    </form>c
-<script th:src="@{/javascript/sprintForm.js}"> </script>
+    </form>
 </div>
     <script th:src="@{{apiPrefix}/javascript/sprintForm.js(apiPrefix=${apiPrefix})}"> </script>
 <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"> </script>
