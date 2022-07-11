@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -80,7 +81,7 @@ class SprintServiceTest {
         Sprint sprint = sprintBuilder
             .description("0123456789".repeat(26)) //260 characters
             .build();
-            assertThrows(Exception.class, () -> {sprintService.verifySprint(sprint);});
+            assertThrows(IncorrectDetailsException.class, () -> {sprintService.verifySprint(sprint);});
     }
 
     /**
