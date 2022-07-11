@@ -3,15 +3,16 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -52,6 +53,7 @@ public class UserController {
         mv.addObject("limit", (Integer) 5);
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
         mv.addObject("userCount", response.getResultSetSize());
+        mv.addObject("roleList", Arrays.asList(UserRole.STUDENT, UserRole.TEACHER));
         return mv;
     }
 
@@ -77,6 +79,7 @@ public class UserController {
         mv.addObject("limit", limit);
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
         mv.addObject("userCount", response.getResultSetSize());
+        mv.addObject("roleList", Arrays.asList(UserRole.STUDENT, UserRole.TEACHER));
         return mv;
     }
 }

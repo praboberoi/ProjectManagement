@@ -59,6 +59,18 @@
                           </button>
                         </li>
                     </th:block>
+                    <div class="dropdown" th:hidden="!${not adminOrTeacher == true}">
+                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        +
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <th:block th:each="role : ${roleList}">
+                          <div th:if="${!user.getRoles().contains(role)}" class="alert alert-success text-center">
+                            <a class="dropdown-item" href="#">[[${role}]]</a>
+                          </div>
+                        </th:block>
+                      </div>
+                    </div>
                   </ul>
               </tr>
             </th:block>
