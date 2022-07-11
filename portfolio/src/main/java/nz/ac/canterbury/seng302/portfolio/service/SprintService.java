@@ -65,7 +65,7 @@ public class SprintService {
      * @throws IncorrectDetailsException That has been passed by {@link #deleteSprint(int) deleteSprint}
      * @throws RuntimeException If there is an error deleting a sprint
      */
-    public void deleteAllSprints(int projectId) throws Exception {
+    public void deleteAllSprints(int projectId) throws IncorrectDetailsException, RuntimeException {
         List<Sprint> sprintList = getSprintByProject(projectId);
         sprintList.forEach(sprint -> {
             try {
@@ -82,7 +82,7 @@ public class SprintService {
      * @return appropriate message depending on if the sprint is created or updated
      * @throws PersistenceException That has been passed by {@link SprintRepository#save(Object) save}
      */
-    public String saveSprint(Sprint sprint) throws Exception {
+    public String saveSprint(Sprint sprint) throws PersistenceException {
         String message;
         if (sprint.getSprintId() == 0)
             message = "Successfully Created " + sprint.getSprintLabel();
