@@ -53,9 +53,9 @@
                   <ul style="list-style-type: none">
                     <th:block th:each = "role : ${user.getRoles()}">
                         <li style="display:inline">
-                          <button th:disabled="!${not adminOrTeacher == true and user.getRoles.size() > 1}" class="btn btn-outline-secondary btn-sm">
+                          <button th:disabled="${adminOrTeacher == false or user.getRoles.size() == 1}" class="btn btn-outline-secondary btn-sm">
                               [[${role.getNumber() == 2} ? 'COURSE ADMINISTRATOR' : ${role}]]
-                              <img th:hidden="!${not adminOrTeacher == true and user.getRoles.size() > 1}" class="icon" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/>
+                              <img width="13" height="13" th:hidden="${adminOrTeacher == false or user.getRoles.size() == 1}" class="icon" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/>
                           </button>
                         </li>
                     </th:block>
