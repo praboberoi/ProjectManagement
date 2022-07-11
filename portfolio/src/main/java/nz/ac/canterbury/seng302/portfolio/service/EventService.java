@@ -46,6 +46,11 @@ public class EventService {
         if (event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null)
             return ("Event values are null");
 
+        // checks if event name starts or ends with space
+        if (!event.getEventName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
+            return ("Event name must not start or end with space characters");
+        }
+
         if (event.getEndDate() != null && event.getStartDate() != null) {
             if (event.getEndDate().before(event.getStartDate())){
                 return ("The event end date cannot be before the event start date");
@@ -84,8 +89,6 @@ public class EventService {
     public String saveEvent(Event event) throws Exception {
         String message;
         if (isNew) {
-            System.out.println("new event");
-            System.out.println(event.getStartDate());
             currentEvent = event;
             message = "Successfully Created " + event.getEventName();
             isNew = false;
