@@ -5,6 +5,7 @@ import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
@@ -116,11 +117,13 @@ public class UserAccountClientService {
      * Request a list of users from the IDP server and prepares them for use
      * @param page The page to retrive, indexing starts at 0
      * @param limit The number of users to retrieve, 0 for no limit
+     * @param order The field that the results are ordered by
+     * @param isAsc If the results are in accending or decending order
      * @return List of unpackaged users
      * @throws StatusRuntimeException
      */
-    public PaginatedUsersResponse getUsers(int page, int limit) throws StatusRuntimeException{
-        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setLimit(limit).setOffset(page).build());
+    public PaginatedUsersResponse getUsers(int page, int limit, UserField order, boolean isAsc) throws StatusRuntimeException{
+        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setOrderBy(order.value).setIsAscendingOrder(isAsc).setLimit(limit).setOffset(page).build());
         return response;
     }
 

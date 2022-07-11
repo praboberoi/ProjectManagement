@@ -37,10 +37,10 @@
         <table class="table table-bordered table-hover">
           <thead class = "table-light">
             <tr>
-              <th scope="col" style="width:25%">Username</th>
-              <th scope="col" style="width:25%">Name</th>
-              <th scope="col" style="width:25%">Nickname</th>
-              <th scope="col" style="width:25%">Roles</th>
+              <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'username')? asc : ''}" onclick="sortByField('username')">Username</a></th>
+              <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'firstName')? asc : ''}" onclick="sortByField('firstName')">Name</a></th>
+              <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'nickname')? asc : ''}" onclick="sortByField('nickname')">Nickname</a></th>
+              <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'roles')? asc : ''}" onclick="sortByField('roles')">Roles</a></th>
             </tr>
           </thead>
           <tbody>
