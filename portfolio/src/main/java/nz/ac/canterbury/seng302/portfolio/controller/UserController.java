@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -44,6 +45,7 @@ public class UserController {
 
         mv = new ModelAndView("userList");
         mv.addObject("usersList", usersList);
+        mv.addObject("adminOrTeacher", userAccountClientService.checkUserIsTeacherOrAdmin(principal));
         mv.addObject("user", userAccountClientService.getUser(principal));
         mv.addObject("apiPrefix", apiPrefix);
         mv.addObject("page", (Integer) 0);

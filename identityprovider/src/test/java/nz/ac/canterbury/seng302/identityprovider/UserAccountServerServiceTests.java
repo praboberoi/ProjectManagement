@@ -69,14 +69,14 @@ class UserAccountServerServiceTests {
     @BeforeAll
     void initUserRepository() {
         userRepository.saveAll(Arrays.asList(
-            createTestUser(1),
-            createTestUser(2),
-            createTestUser(3),
-            createTestUser(4),
-            createTestUser(5)
+                createTestUser(1),
+                createTestUser(2),
+                createTestUser(3),
+                createTestUser(4),
+                createTestUser(5)
         ));
     }
-    
+
     @BeforeEach
     void initUAServerService() {
         userAccountServerService = new UserAccountServerService(userRepository);
@@ -87,7 +87,7 @@ class UserAccountServerServiceTests {
      * @throws Exception thrown during awaitCompletion method
      */
     @Test
-    void givenCorrectUserInfo_whenUserIsSaved_thenSuccessIsReturned() throws Exception {
+    void testUserCreation() throws Exception {
         UserRegisterRequest request = UserRegisterRequest.newBuilder()
                 .setUsername("tu123")
                 .setFirstName("Test")
@@ -127,8 +127,8 @@ class UserAccountServerServiceTests {
     @Test
     void givenValidUserRequest_WhenEditUserCalled_ThenResponseRecordedAsSuccess()
     {
-      EditUserRequest request =
-              EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
+        EditUserRequest request =
+                EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
@@ -295,6 +295,7 @@ class UserAccountServerServiceTests {
     }
     /**
      * Tests that the correct number of users are returned when no constrainst are 
+     * Tests that the correct number of users are returned when no constrainst are
      * specified in the paginated users request
      */
     @Test
@@ -322,7 +323,7 @@ class UserAccountServerServiceTests {
     }
 
     /**
-     * Tests that the correct number of users are returned when there is a limit and page imposed 
+     * Tests that the correct number of users are returned when there is a limit and page imposed
      * specified in the paginated users request
      */
     @Test
@@ -336,7 +337,7 @@ class UserAccountServerServiceTests {
     }
 
     /**
-     * Tests that the correct users are returned when there is a limit and page imposed 
+     * Tests that the correct users are returned when there is a limit and page imposed
      * specified in the paginated users request
      */
     @Test

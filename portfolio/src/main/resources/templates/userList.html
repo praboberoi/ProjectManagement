@@ -37,10 +37,10 @@
         <table class="table table-bordered table-hover">
           <thead class = "table-light">
             <tr>
-              <th scope="col" style="width:25%">Username</th>
-              <th scope="col" style="width:25%">Name</th>
-              <th scope="col" style="width:25%">Nickname</th>
-              <th scope="col" style="width:25%">Roles</th>
+              <th scope="col" style="width:auto">Username</th>
+              <th scope="col" style="width:auto">Name</th>
+              <th scope="col" style="width:auto">Nickname</th>
+              <th scope="col" style="width:auto">Roles</th>
             </tr>
           </thead>
           <tbody>
@@ -49,7 +49,17 @@
                 <td th:id="'user' + ${user.userId} + 'Username'">[[${user.username}]]</td>
                 <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]]  [[${user.lastName}]]</td>
                 <td th:id="'user' + ${user.userId} + 'Nickname'">[[${user.nickname}]]</td>
-                <td th:id="'user' + ${user.userId} + 'Roles'">[[${user.roles}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Roles'">
+                  <ul style="list-style-type: none">
+                    <th:block th:each = "role : ${user.getRoles()}">
+                        <li style="display:inline">
+                          <button th:disabled="!${not adminOrTeacher == true and user.getRoles.size() > 1}" class="btn btn-outline-secondary btn-sm">
+                              [[${role.getNumber() == 2} ? 'COURSE ADMINISTRATOR' : ${role}]]
+                              <img th:hidden="!${not adminOrTeacher == true and user.getRoles.size() > 1}" class="icon" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/>
+                          </button>
+                        </li>
+                    </th:block>
+                  </ul>
               </tr>
             </th:block>
           </tbody>

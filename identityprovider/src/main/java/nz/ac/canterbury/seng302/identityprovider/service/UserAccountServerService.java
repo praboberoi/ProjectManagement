@@ -1,11 +1,7 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import com.google.protobuf.ByteString;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-
+import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
@@ -15,6 +11,9 @@ import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.io.*;
 import java.nio.file.Files;
@@ -26,10 +25,6 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
-/**
- * Grpc service used to perform function relating to users. This includes registration, editing and retriving User objects
- * stored in the server.
- */
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
 
@@ -140,10 +135,34 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      */
     @Override
     public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) throws NoSuchElementException {
+        UserResponse.Builder reply = UserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getId());
-        UserResponse reply = ResponseUtils.prepareUserResponse(user);
+        Path imagePath;
+        if (user == null) {
+            throw new NoSuchElementException("User doesn't exist");
+        }
+        reply.setUsername(user.getUsername());
+        reply.setFirstName(user.getFirstName());
+        reply.setLastName(user.getLastName());
+        reply.setNickname(user.getNickname());
+        reply.setPersonalPronouns(user.getPersonalPronouns());
+        reply.setBio(user.getBio());
+        reply.setEmail(user.getEmail());
+        reply.addAllRoles(user.getRoles());
+        reply.setCreated(Timestamp.newBuilder()
+                .setSeconds(user.getDateCreated().getTime())
+                .build());
 
-        responseObserver.onNext(reply);
+        if (user.getProfileImagePath() == null) {
+             imagePath = Paths.get("cachedprofilephoto/default-image.svg");
+
+        } else {
+             imagePath = Paths.get("cachedprofilephoto/" + user.getProfileImagePath());
+
+        }
+        reply.setProfileImagePath(imagePath.toString());
+
+        responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
 
@@ -266,6 +285,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * @param responseObserver Used to send image data to the portfolio
      * @param request Contains user id and file type
      */
+
     public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, UploadUserProfilePhotoRequest request) {
 
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
@@ -388,11 +408,11 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         Sort sort;
 
         if (request.getOrderBy().isEmpty()) {
-            sort = Sort.by(Direction.ASC, "userId");
+            sort = Sort.by(Sort.Direction.ASC, "userId");
         } else {
-            sort = Sort.by(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC, request.getOrderBy());
+            sort = Sort.by(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC, request.getOrderBy());
         }
-        
+
         if (request.getLimit() == 0) {
             users = userRepository.findAll(sort);
         } else {
@@ -401,7 +421,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         }
 
         List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user)).collect(Collectors.toList());
-        
+
         PaginatedUsersResponse reply = ResponseUtils.preparePaginatedUsersResponse(preparedUsers, resultSetSize);
 
         responseObserver.onNext(reply);
