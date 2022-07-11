@@ -72,7 +72,7 @@ public class SprintController {
             @PathVariable ("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
@@ -112,7 +112,7 @@ public class SprintController {
             String label,
             int id,
             @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         Sprint currentSprint = new Sprint();
         try {
             Project project = projectService.getProjectById(projectId);
@@ -144,7 +144,7 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         Model model,
         RedirectAttributes ra) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
@@ -177,7 +177,7 @@ public class SprintController {
             Model model,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
@@ -212,7 +212,7 @@ public class SprintController {
         @PathVariable int projectId,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra){
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             model.addAttribute("apiPrefix", apiPrefix);
             String message = sprintService.deleteSprint(sprintId);
@@ -248,7 +248,7 @@ public class SprintController {
         String endDate,
         @AuthenticationPrincipal AuthState principal
     ) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal))
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal))
             return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
 
         try {

@@ -60,7 +60,7 @@ public class DashboardController {
      */
     @RequestMapping(path="/dashboard/newProject", method = RequestMethod.GET)
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         model.addAttribute("apiPrefix", apiPrefix);
         Project newProject = dashboardService.getNewProject();
         List<Date> dateRange = dashboardService.getProjectDateRange(newProject);
@@ -90,7 +90,7 @@ public class DashboardController {
             Model model,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             model.addAttribute("apiPrefix", apiPrefix);
             dashboardService.verifyProject(project);
@@ -123,7 +123,7 @@ public class DashboardController {
         Model model,
         RedirectAttributes ra,
         @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project project  = dashboardService.getProject(projectId);
             List<Date> dateRange = dashboardService.getProjectDateRange(project);
@@ -159,7 +159,7 @@ public class DashboardController {
         RedirectAttributes ra,
         Model model,
         @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             model.addAttribute("apiPrefix", apiPrefix);
             Project project  = dashboardService.getProject(projectId);
