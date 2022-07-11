@@ -157,17 +157,16 @@ public class AccountController {
         MultipartFile file1 = multipartFile;
         if (!file1.isEmpty()) {
             // original filename of image user has uploaded
-            String filename = file1.getOriginalFilename();
             String extension = file1.getContentType();
             // check if file is an accepted image type
             ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
                 if (file1.getContentType() == MediaType.IMAGE_GIF_VALUE) {
-                    extension = ".gif";
+                    extension = "gif";
                 } else if (file1.getContentType() == MediaType.IMAGE_PNG_VALUE) {
-                    extension = ".png";
+                    extension = "png";
                 } else {
-                    extension = ".jpeg";
+                    extension = "jpeg";
                 }
                 userAccountClientService.uploadImage(userId, extension, file1);
             } else {
