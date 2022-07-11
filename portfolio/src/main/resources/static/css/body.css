@@ -167,3 +167,38 @@ header, sidebar
 #navbarDropdown {
     color: white;
 }
+
+/* Sort button styles from https://codepen.io/xaprio/pen/NWPXwOj */
+th a.sort { 
+	padding-right: 18px;
+	position: relative;
+}
+a.sort:before,
+a.sort:after {
+	border: 4px solid transparent;
+	content: "";
+	display: block;
+	right: 5px;
+	top: 50%;
+	position: absolute;
+}
+a.sort:before {
+	border-bottom-color: #666;
+	margin-top: -9px;
+}
+a.sort:after {
+	border-top-color: #666;
+	margin-top: 1px;
+}
+a.asc.sort:after {
+    border-top-color: #333;
+}
+a.desc.sort:before {
+    border-bottom-color: #333;
+}
+a.asc.sort:before {
+    border: unset;
+}
+a.desc.sort:after {
+    border: unset;
+}
