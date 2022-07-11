@@ -154,7 +154,6 @@ public class UserAccountClientService {
     public void uploadImage(final int id, final String ext, final MultipartFile file) throws IOException {
         // request observer from UserAccountServiceGrpc
         StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountServiceStub.uploadUserProfilePhoto(new UserAccountClientService.FileUploadObserver());
-
         // build metadata from proto in user_accounts.proto
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
                 .setMetaData(ProfilePhotoUploadMetadata.newBuilder()

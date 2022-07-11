@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -154,14 +155,20 @@ public class AccountController {
 
 //        Start of image upload functionality
         MultipartFile file1 = multipartFile;
-        boolean b = !(file1.isEmpty());
-        if (b) {
+        if (!file1.isEmpty()) {
             // original filename of image user has uploaded
             String filename = file1.getOriginalFilename();
-            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            String extension = file1.getContentType();
             // check if file is an accepted image type
-            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList("jpg", "jpeg", "png"));
+            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
+                if (file1.getContentType() == MediaType.IMAGE_GIF_VALUE) {
+                    extension = ".gif";
+                } else if (file1.getContentType() == MediaType.IMAGE_PNG_VALUE) {
+                    extension = ".png";
+                } else {
+                    extension = ".jpeg";
+                }
                 userAccountClientService.uploadImage(userId, extension, file1);
             } else {
                 String msgString;
