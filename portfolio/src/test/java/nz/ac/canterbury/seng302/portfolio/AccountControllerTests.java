@@ -213,11 +213,10 @@ public class AccountControllerTests {
         AccountController accountController = new AccountController(mockUserAccountClientService);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
-        MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "file", "some image".getBytes());
+        MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "image/png", "some image".getBytes());
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-        assertEquals( "redirect:/account", accountController.editUser(principal, testFile,testString,
+        assertEquals( "account", accountController.editUser(principal, testFile,testString,
                 testString, testString, testString, testString, testString, mockModel, ra ));
-
     }
 }

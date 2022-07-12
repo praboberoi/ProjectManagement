@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -130,7 +131,7 @@ public class AccountController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Html account editing page
      */
-    @RequestMapping(path="/editAccount", method = RequestMethod.POST)
+    @PostMapping(path="/editAccount")
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam("image")MultipartFile multipartFile,
@@ -151,37 +152,35 @@ public class AccountController {
                 pronouns,
                 email);
 
-
 //        Start of image upload functionality
-        MultipartFile file1 = multipartFile;
-        boolean b = !(file1.isEmpty());
-        if (b) {
+        if (!multipartFile.isEmpty()) {
             // original filename of image user has uploaded
-            String filename = file1.getOriginalFilename();
-            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            String extension = multipartFile.getContentType();
             // check if file is an accepted image type
-            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList("jpg", "jpeg", "png"));
+            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
-                userAccountClientService.uploadImage(userId, extension, file1);
+                if (multipartFile.getContentType() == MediaType.IMAGE_GIF_VALUE) {
+                    extension = "gif";
+                } else if (multipartFile.getContentType() == MediaType.IMAGE_PNG_VALUE) {
+                    extension = "png";
+                } else {
+                    extension = "jpeg";
+                }
+                userAccountClientService.uploadImage(userId, extension, multipartFile);
             } else {
                 String msgString;
                 msgString = String.format("File must be an image of type jpg, jpeg or png");
                 ra.addFlashAttribute("messageDanger", msgString);
-                return "redirect:/editAccount";
+                return "editAccount";
             }
         }
-
-
-
 //       End of image
-
-
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
             msgString = String.format("Successfully updated details");
             ra.addFlashAttribute("messageSuccess", msgString);
-            return "redirect:/account";
+            return "account";
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));

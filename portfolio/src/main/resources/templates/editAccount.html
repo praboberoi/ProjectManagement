@@ -50,7 +50,7 @@
                             <br>
                             <!-- Start of edit account form -->
                             <form th:action="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}" enctype="multipart/form-data" method="post">
-                            <div class="row mb-3" hidden>
+                            <div class="row mb-3">
                                 <label for="formFile" class = "col-sm-2 col-form-label" ><h6>Profile Photo: </h6></label>
                                 <div class = "col-sm-6">
                                     <input type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)" >
