@@ -5,7 +5,6 @@ const eventNameSpacesRegex = /^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$/
 const projectId = document.getElementById("projectId").value;
 const startDateElement = document.getElementById('startDate');
 const endDateElement = document.getElementById('endDate');
-const dateError = document.getElementById('dateError');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
 const projectStartDate = new Date(document.getElementById("projectStartDate").value);
