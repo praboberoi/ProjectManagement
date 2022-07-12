@@ -28,7 +28,7 @@ public class ProjectService {
     /**
      * Get project by id
      */
-    public Project getProjectById(Integer id) throws Exception {
+    public Project getProjectById(int id) throws IncorrectDetailsException {
 
         Optional<Project> project = repository.findById(id);
         if(project!=null) {
@@ -36,7 +36,7 @@ public class ProjectService {
         }
         else
         {
-            throw new Exception("Project not found");
+            throw new IncorrectDetailsException("Project not found");
         }
     }
 }

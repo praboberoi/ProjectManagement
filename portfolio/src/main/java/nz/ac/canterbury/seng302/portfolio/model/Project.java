@@ -107,6 +107,14 @@ public class Project {
     }
 
     /**
+     * Sets the project ID of the project
+     * @param projectId of type int
+     */
+    public void setProjectId(int projectId){
+        this.projectId = projectId;
+    }
+
+    /**
      * Sets the name of the Project
      * @param projectName of type String
      */
