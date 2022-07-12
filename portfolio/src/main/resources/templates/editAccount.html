@@ -28,9 +28,6 @@
             <div class="page-title">
                 <h2>Your LENSfolio Account</h2>
             </div>
-            <div th:if="${messageDanger}" class="alert alert-danger text-center">
-                [[${messageDanger}]]
-            </div>
         </div>
 
         <div class="contentContainer">
@@ -53,16 +50,11 @@
                             <br>
                             <!-- Start of edit account form -->
                             <form th:action="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}" enctype="multipart/form-data" method="post">
-                            <div class="row mb-3" >
+                            <div class="row mb-3">
                                 <label for="formFile" class = "col-sm-2 col-form-label" ><h6>Profile Photo: </h6></label>
                                 <div class = "col-sm-6">
                                     <input type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)" >
                                 </div>
-<!--                                <input hidden type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)">-->
-                            </div>
-                            <div>
-                                <button class='btn btn-primary' onclick="selectImage()">Import Image</button>
-                                <button class='btn btn-secondary' onclick="deleteProfilePhoto()">Delete Image</button>
                             </div>
                                 <div class="row mb-3">
                                     <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>
@@ -125,6 +117,7 @@
                 <br>
             </div>
         </div>
+
     </div>
 </div>
 </body>

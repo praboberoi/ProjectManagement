@@ -96,7 +96,7 @@ message DeleteUserProfilePhotoRequest {
 
 message DeleteUserProfilePhotoResponse {
    bool IsSuccess = 1;
-   string Message = 2;
+   bool Message = 2;
 }
 
 message GetPaginatedUsersRequest {

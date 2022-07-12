@@ -18,10 +18,19 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 
+import org.springframework.beans.factory.annotation.Value;
+/**
+ * Grpc service used to retrieve information about users.
+ */
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
 
     private final UserRepository userRepository;
+
+    private final static Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
+
+    @Value("${hostAddress}")
+    private String hostAddress;
 
     public UserAccountServerService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -127,7 +136,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) throws NoSuchElementException {
         UserResponse.Builder reply = UserResponse.newBuilder();
         User user = userRepository.getUserByUserId(request.getId());
-        Path imagePath;
         if (user == null) {
             throw new NoSuchElementException("User doesn't exist");
         }
@@ -171,8 +179,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             User user;
             String fileName;
             Path path;
-            final Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
-
 
             /**
              * Sets the OutputStream on the first request and then sends
@@ -184,9 +190,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             public void onNext(UploadUserProfilePhotoRequest request) {
                 try {
                     if (request.hasMetaData()) {
-
-                        fileName = getFileName(request);
-                        path = SERVER_BASE_PATH.resolve(fileName);
+                        fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+                        path = FILE_PATH_ROOT.resolve(fileName);
                         File f = new File(String.valueOf(path));
                         if (f.exists()) {
                             try {
@@ -247,15 +252,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     private void writeFile(OutputStream writer, ByteString content) throws IOException {
         writer.write(content.toByteArray());
         writer.flush();
-    }
-
-    /**
-     * Creates file name and writer
-     * @param request Contains image information
-     * @return Writer containing information to save file
-     */
-    private String getFileName(UploadUserProfilePhotoRequest request) throws IOException {
-        return "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
     }
 
     /**
