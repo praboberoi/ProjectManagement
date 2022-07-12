@@ -19,7 +19,9 @@ import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Value;
-
+/**
+ * Grpc service used to retrieve information about users.
+ */
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
 
