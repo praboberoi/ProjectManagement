@@ -89,8 +89,6 @@ deploy-production-identityprovider:
   stage: deploy
   script:
     - cd identityprovider
-    - echo "$MARIADB_USERNAME"
-    - echo "$MARIADB_PASSWORD"
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/production-identityprovider/ || true
     - mkdir /home/gitlab-runner/production-identityprovider/
@@ -112,8 +110,6 @@ deploy-production-portfolio:
   stage: deploy
   script:
     - cd portfolio
-    - echo "$MARIADB_USERNAME"
-    - echo "$MARIADB_PASSWORD"
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/production-portfolio/ || true
     - mkdir /home/gitlab-runner/production-portfolio/

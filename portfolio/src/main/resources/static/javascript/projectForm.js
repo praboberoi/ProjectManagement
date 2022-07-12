@@ -46,9 +46,17 @@ function checkStartDate() {
     const startDate = new Date(startDateElement.value);
     
     let tenYearsFromNow = new Date();
+    tenYearsFromNow.setMilliseconds(0);
+    tenYearsFromNow.setSeconds(0);
+    tenYearsFromNow.setMinutes(0);
+    tenYearsFromNow.setHours(12);
     tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
 
     let oneYearAgo = new Date();
+    oneYearAgo.setMilliseconds(0);
+    oneYearAgo.setSeconds(0);
+    oneYearAgo.setMinutes(0);
+    oneYearAgo.setHours(12);
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     if (startDate > tenYearsFromNow) {
@@ -75,9 +83,17 @@ function checkEndDate() {
     const endDate = new Date(endDateElement.value);
     
     var tenYearsFromNow = new Date();
+    tenYearsFromNow.setMilliseconds(0);
+    tenYearsFromNow.setSeconds(0);
+    tenYearsFromNow.setMinutes(0);
+    tenYearsFromNow.setHours(12);
     tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
 
     var oneYearAgo = new Date();
+    oneYearAgo.setMilliseconds(0);
+    oneYearAgo.setSeconds(0);
+    oneYearAgo.setMinutes(0);
+    oneYearAgo.setHours(12);
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     if (endDate < oneYearAgo) {
@@ -147,7 +163,6 @@ function checkProjectDescription () {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                console.log(httpRequest.response);
                 if (httpRequest.response != "") {
                     if (httpRequest.response.includes("ends")) {
                         endDateError.innerText = httpRequest.response;
