@@ -7,7 +7,6 @@ import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -164,7 +163,6 @@ public class DashboardController {
             model.addAttribute("apiPrefix", apiPrefix);
             Project project  = dashboardService.getProject(projectId);
             String message = "Successfully Deleted " + project.getProjectName();
-            sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
