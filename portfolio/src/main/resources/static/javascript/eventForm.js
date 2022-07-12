@@ -12,6 +12,12 @@ const projectStartDate = new Date(document.getElementById("projectStartDate").va
 const projectEndDate = new Date(document.getElementById("projectEndDate").value);
 const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
 
+const startTimeElement = document.querySelector('#startTime');
+const endTimeElement = document.querySelector('#endTime');
+
+const startTimeError = document.getElementById('startTimeError');
+const endTimeError = document.getElementById('endTimeError');
+
 /**
  * Function for error validation of Event Name field.
  * Display error message if input is invalid.
@@ -45,21 +51,17 @@ function checkEventDates() {
 
     checkStartDate();
     checkEndDate();
-
+    checkEventTimes()
     if (startDate > endDate ) {
-        console.log("error with dates")
-        startDateError.innerText = "Start date must be before the end date.";
-        endDateError.innerText = "End date must be after the start date";
+        startDateError.innerText = "Start Date must be on or before the End Date.";
+        endDateError.innerText = "End Date must be on or after the Start Date";
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
+        startDateElement.setCustomValidity("Invalid field.");
+        endDateElement.setCustomValidity("Invalid field.");
         return;
     }
 
-    // if (
-    //     startDateError.innerText == "" &&
-    //     endDateError.innerText == "" ) {
-    //     verifyOverlap(startDate, endDate);
-    // }
 }
 
 /**
@@ -74,7 +76,7 @@ function checkStartDate() {
         return;
     } else if (startDate > projectEndDate) {
         startDateError.innerText = "Event must start before the project ends";
-        startDateElement.classList.add("formError");
+        startDateElement.classList.add("formError")
         return;
     }
 
@@ -100,4 +102,31 @@ function checkEndDate() {
 
     endDateError.innerText = "";
     endDateElement.classList.remove("formError")
+}
+
+
+/**
+ * Checks that the start and end times of the event are valid
+ */
+function checkEventTimes() {
+    const startTime = startTimeElement.valueAsNumber;
+    const endTime = endTimeElement.valueAsNumber;
+    startTimeElement.setCustomValidity("");
+    endTimeElement.setCustomValidity("");
+
+    const startDate = new Date(startDateElement.value);
+    const endDate = new Date(endDateElement.value);
+    if ( (startDate.getTime() == endDate.getTime()) && (endTime <= startTime)) {
+        startTimeError.innerText = "Start Time must be before the End Time." ;
+        endTimeError.innerText = "End Time must be after the Start Time";
+        startTimeElement.classList.add("formError");
+        endTimeElement.classList.add("formError");
+        startTimeElement.setCustomValidity("Invalid field.");
+        endTimeElement.setCustomValidity("Invalid field.");
+        return;
+    }
+        startTimeElement.classList.remove("formError");
+        startTimeError.innerText = null;
+        endTimeElement.classList.remove("formError");
+        endTimeError.innerText = null;
 }
