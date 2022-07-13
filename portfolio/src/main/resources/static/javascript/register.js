@@ -3,15 +3,17 @@ var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
 var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
+var dash = /^[^-]+(?!.*--).+[^-]+$/;
 
 function checkUsername() {
     let usernameElement = document.getElementById("username");
     let usernameErrorElement = document.getElementById("usernameError");
     if (usernameElement.value.length < 3 
         || usernameElement.value.length > 16
+        || names.test(usernameElement.value)
     ) {
         usernameElement.classList.add("formError")
-        usernameErrorElement.innerText = "Username must be between 3 and 16 characters."
+        usernameErrorElement.innerText = "Username must be between 3 and 16 characters with no special characters."
     } else {
         usernameElement.classList.remove("formError");
         usernameErrorElement.innerText = null;
@@ -24,7 +26,8 @@ function checkFirstName() {
     if (firstNameElement.value.length < 3 
         || firstNameElement.value.length > 32 
         || names.test(firstNameElement.value)
-        || digit.test(firstNameElement.value))
+        || digit.test(firstNameElement.value)
+        || !dash.test(firstNameElement.value))
         {
         firstNameElement.classList.add("formError")
         firstNameErrorElement.innerText = "First name must be between 3 and 32 characters with no special characters or digits."

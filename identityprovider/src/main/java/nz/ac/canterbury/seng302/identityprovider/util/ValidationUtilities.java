@@ -21,6 +21,17 @@ public class ValidationUtilities {
     }
 
     /**
+     * Checks if a string has a special character e.g -
+     * @param str String to be checked.
+     * @return true if str contains special characters.
+     */
+    public static boolean hasDashSpecial(String str) {
+        Pattern pattern = Pattern.compile("[-[-*]]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    /**
      * Checks if a string has a special character that aren't allowed in names e.g !?@, allowing - and " ".
      * @param str String to be checked.
      * @return true if str contains disallowed characters.

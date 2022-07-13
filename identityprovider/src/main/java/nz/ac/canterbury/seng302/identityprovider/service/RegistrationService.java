@@ -38,7 +38,7 @@ public class RegistrationService {
         List<ValidationError> result = new ArrayList<>();
 
         // Username validation
-        if (username.length() < 3 || username.length() > 16) {
+        if (username.length() < 3 || username.length() > 16)  {
             errorBuilder.setFieldName("usernameError");
             errorBuilder.setErrorText("Username must be between 3 and 16 characters.");
             result.add(errorBuilder.build());
@@ -53,7 +53,7 @@ public class RegistrationService {
             errorBuilder.setFieldName("firstNameError");
             errorBuilder.setErrorText("First name cannot be more than 32 characters.");
             result.add(errorBuilder.build());
-        } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)) {
+        } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)|| ValidationUtilities.hasDashSpecial(firstName)){
             errorBuilder.setFieldName("firstNameError");
             errorBuilder.setErrorText("First name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
