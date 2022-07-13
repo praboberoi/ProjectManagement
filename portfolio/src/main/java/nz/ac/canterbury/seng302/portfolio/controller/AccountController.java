@@ -144,6 +144,7 @@ public class AccountController {
             @RequestParam String bio,
             @RequestParam String pronouns,
             @RequestParam String email,
+            @RequestParam Boolean deleteImage,
             Model model,
             RedirectAttributes ra
     ) throws IOException {
@@ -187,6 +188,8 @@ public class AccountController {
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
+        if (deleteImage)
+            deleteUserProfilePhoto(principal);
         
         return "editAccount";
     }
@@ -212,8 +215,7 @@ public class AccountController {
         model.addAttribute("timePassed", getTimePassed(creationDate));
     }
 
-    @DeleteMapping("/deleteProfilePhoto")
-    public ResponseEntity<Long> deleteUserProfilePhoto(@AuthenticationPrincipal AuthState principal, Model model) {
+    public ResponseEntity<Long> deleteUserProfilePhoto(@AuthenticationPrincipal AuthState principal) {
         ClaimDTO id = principal.getClaims(2);
         int userId = Integer.parseInt(id.getValue());
 //        UserResponse user = userAccountClientService.getUser(principal);
