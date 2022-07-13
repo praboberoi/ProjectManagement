@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -10,7 +11,9 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -208,4 +211,23 @@ public class AccountController {
                 creationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
         model.addAttribute("timePassed", getTimePassed(creationDate));
     }
+
+    @DeleteMapping("/deleteProfilePhoto")
+    public ResponseEntity<Long> deleteUserProfilePhoto(@AuthenticationPrincipal AuthState principal, Model model) {
+        ClaimDTO id = principal.getClaims(2);
+        int userId = Integer.parseInt(id.getValue());
+//        UserResponse user = userAccountClientService.getUser(principal);
+//        int userId = user.getId();
+        DeleteUserProfilePhotoResponse idpResponse = userAccountClientService.deleteUserProfilePhoto(userId);
+
+        if (idpResponse.getIsSuccess()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        if (("Could not find user").equals(idpResponse.getMessage())
+                || ("Could not find a profile photo to delete").equals(idpResponse.getMessage())) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
 }

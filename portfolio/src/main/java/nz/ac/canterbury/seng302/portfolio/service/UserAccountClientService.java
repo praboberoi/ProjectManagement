@@ -125,11 +125,7 @@ public class UserAccountClientService {
      * @param userId The id of the user
      * @return
      */
-    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) throws IOException {
-        UserResponse user = getUser(userId);
-        System.out.println(user.getProfileImagePath());
-        Path imagePath = SERVER_BASE_PATH.resolve(user.getProfileImagePath());
-        Files.deleteIfExists(imagePath);
+    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) {
         DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
             DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
             );

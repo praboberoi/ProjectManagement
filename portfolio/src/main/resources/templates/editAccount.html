@@ -48,6 +48,9 @@
                             <!-- Display Image -->
                             <img th:src="${user.profileImagePath}" class="profile-photo" id="output" width="200" height="200" />
                             <br>
+                            <div>
+                                <button class='btn btn-secondary' onclick="deleteProfilePhoto()">Delete Image</button>
+                            </div>
                             <!-- Start of edit account form -->
                             <form th:action="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}" enctype="multipart/form-data" method="post">
                             <div class="row mb-3">
@@ -55,12 +58,14 @@
                                 <div class = "col-sm-6">
                                     <input type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)" >
                                 </div>
+
                             </div>
                                 <div class="row mb-3">
                                     <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-6">
                                         <input type="text" id="username" class="form-control" th:placeholder="${user.username}"  aria-label="Disabled input example" disabled>
                                     </div>
+
                                 </div>
                                 <div class="row mb-3">
                                     <label for="firstName" class = "required col-sm-2 col-form-label"><h6>First Name: <span class="asterisk">*</span></h6></label>

@@ -16,7 +16,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Value;
 /**
@@ -148,18 +151,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         reply.setEmail(user.getEmail());
         reply.addAllRoles(user.getRoles());
         reply.setCreated(Timestamp.newBuilder()
-                .setSeconds(user.getDateCreated().getTime())
-                .build());
-
-        if (user.getProfileImagePath() == null) {
-             imagePath = Paths.get("cachedprofilephoto/default-image.svg");
-
-        } else {
-             imagePath = Paths.get("cachedprofilephoto/" + user.getProfileImagePath());
-
-        }
-        reply.setProfileImagePath(imagePath.toString());
-
+            .setSeconds(user.getDateCreated().getTime())
+            .build());
+        reply.setProfileImagePath(hostAddress + "/profile/" + user.getUserId());
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
@@ -274,42 +268,24 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      */
     @Override
     public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
-        UserProfilePhotoService photoService = new UserProfilePhotoService(userRepository);
-        responseObserver.onNext(photoService.deleteUserProfilePhoto(request.getUserId()));
-        responseObserver.onCompleted();
-    }
-
-    public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, UploadUserProfilePhotoRequest request) throws IOException {
-
-        UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
-                .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
-                        .setUserId(request.getMetaData().getUserId())
-                        .setFileType(request.getMetaData().getFileType()).build())
-                .build());
-
-        responseObserver.onNext(metadata);
-        InputStream inputStream = null;
         try {
-            String fileName = getFileName(metadata);
-            // upload file in chunks and upload as a stream
-            inputStream = new FileInputStream(String.valueOf(Paths.get("identityprovider/src/main/resources/profilePhotos").resolve(fileName)));
+            User user = userRepository.getUserByUserId(request.getUserId());
 
-            byte[] bytes = new byte[4096];
-            int size;
-            while ((size = inputStream.read(bytes)) > 0) {
-                UploadUserProfilePhotoRequest uploadImage = UploadUserProfilePhotoRequest.newBuilder()
-                        .setFileContent(ByteString.copyFrom(bytes, 0, size))
-                        .build();
-                responseObserver.onNext(uploadImage);
-            }
-            // close stream
-            inputStream.close();
+            String fileName = user.getProfileImagePath();
+            Path path = FILE_PATH_ROOT.resolve(fileName);
+            Files.deleteIfExists(path);
 
+            user.setProfileImagePath(null);
+            userRepository.save(user);
+
+            responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).build());
             responseObserver.onCompleted();
-
-        } catch (Exception e) {
-            inputStream.close();
-            responseObserver.onError(e.fillInStackTrace());
+        } catch (IOException e) {
+            responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder()
+                    .setIsSuccess(false).setMessage(e.getMessage()).build());
+            responseObserver.onError(e);
         }
+
     }
+
 }
