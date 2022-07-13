@@ -7,6 +7,8 @@ const sprintNameRegex = /^\S/;
 const projectId = document.getElementById("projectId").value;
 const startDateElement = document.getElementById('startDate');
 const endDateElement = document.getElementById('endDate');
+const labelElement = document.getElementById('sprint-label');
+const sprintId = document.getElementById('sprintId').value;
 const dateError = document.getElementById('dateError');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
@@ -120,5 +122,5 @@ function verifyOverlap(startDate, endDate) {
 
     httpRequest.open('POST', '/project/' + projectId + '/verifySprint', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate + "&label=" + labelElement.value + "&id=" + sprintId);
 }

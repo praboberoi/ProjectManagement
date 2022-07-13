@@ -7,10 +7,12 @@ import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -24,11 +26,11 @@ public class SprintService {
 
     /**
      * To get a new sprint with the appropriate default values.
-     * @param project of type Project
-     * @return of type Sprint
-     * @throws Exception if no more sprints can be created with the current project date range.
+     * @param project Of type Project
+     * @return Of type Sprint
+     * @throws IncorrectDetailsException If no more sprints can be created with the current project date range.
      */
-    public Sprint getNewSprint(Project project) throws Exception {
+    public Sprint getNewSprint(Project project) throws IncorrectDetailsException {
         int sprintNo = countByProjectId(project.getProjectId()) + 1;
         Sprint sprint = new Sprint.Builder()
                                   .sprintLabel("Sprint " + sprintNo)
@@ -43,7 +45,7 @@ public class SprintService {
             Sprint lastSprint = listSprints.get(listSprints.size() - 1);
             LocalDate lastSprintEndDate = lastSprint.getEndDate().toLocalDate();
             if (Date.valueOf(lastSprintEndDate).equals(project.getEndDate()))
-                throw new Exception("Project date limit reached, cannot create a new sprint");
+                throw new IncorrectDetailsException("Project date limit reached, cannot create a new sprint");
             else {
                 sprint.setStartDate(Date.valueOf(lastSprintEndDate.plusDays(1)));
 
@@ -59,9 +61,11 @@ public class SprintService {
 
     /**
      * Deletes all the sprints of the given project ID
-     * @param projectId of type int
+     * @param projectId Of type int
+     * @throws IncorrectDetailsException That has been passed by {@link #deleteSprint(int) deleteSprint}
+     * @throws RuntimeException If there is an error deleting a sprint
      */
-    public void deleteAllSprints(int projectId) throws Exception {
+    public void deleteAllSprints(int projectId) throws IncorrectDetailsException, RuntimeException {
         List<Sprint> sprintList = getSprintByProject(projectId);
         sprintList.forEach(sprint -> {
             try {
@@ -76,9 +80,9 @@ public class SprintService {
      * Saves a sprint object to the database
      * @param sprint of type Sprint
      * @return appropriate message depending on if the sprint is created or updated
-     * @throws Exception
+     * @throws PersistenceException That has been passed by {@link SprintRepository#save(Object) save}
      */
-    public String saveSprint(Sprint sprint) throws Exception {
+    public String saveSprint(Sprint sprint) throws PersistenceException {
         String message;
         if (sprint.getSprintId() == 0)
             message = "Successfully Created " + sprint.getSprintLabel();
@@ -93,21 +97,24 @@ public class SprintService {
      * Returns a sprint object from the database. If the sprint is not present then it throws an exception
      * @param sprintId Key used to find the sprint object
      * @return Sprint object
+     * @throws IncorrectDetailsException If null value is returned by {@link SprintRepository#findById(Object) findById}
      */
-    public Sprint getSprint(int sprintId) throws Exception {
+    public Sprint getSprint(int sprintId) throws IncorrectDetailsException {
         Optional<Sprint> result = sprintRepository.findById(sprintId);
         if(result.isPresent())
             return result.get();
         else
-            throw new Exception("Failed to locate the sprint in the database");
+            throw new IncorrectDetailsException("Failed to locate the sprint in the database");
 
     }
 
     /**
-     * Deletes a sprint from the database
+     * Deletes the given sprint from the database
      * @param sprintId Key used to find the sprint object
+     * @throws IncorrectDetailsException If null value is returned from the sprintRepository's findById function
+     * @throws PersistenceException Passed by {@link SprintRepository#deleteById(Object) deleteById}
      */
-    public String deleteSprint(int sprintId) throws Exception {
+    public String deleteSprint(int sprintId) throws Exception,IncorrectDetailsException, PersistenceException {
         try {
             Optional<Sprint> sprint = sprintRepository.findById(sprintId);
             if(sprint.isPresent()) {
@@ -115,7 +122,7 @@ public class SprintService {
                 return "Successfully deleted " + sprint.get().getSprintLabel();
             }
             else
-                throw new Exception("Could not find the given sprint");
+                throw new IncorrectDetailsException("Could not find the given sprint");
         } catch (Exception e) {
             throw new Exception("Failure Deleting Sprint");
         }
@@ -200,35 +207,40 @@ public class SprintService {
     }
 
     /**
-     * Verifies the current sprint against other sprints in the project to make sure there is no manual changes have
-     * been made to the HTML page at the client.
-     * @throws Exception indicating what validation problem exists.
-     * @return If the object was successfully validated
+     * Verifies the current sprint to make sure there are no manual changes
+     * made to the HTML page at the client.
+     * @throws IncorrectDetailsException Is raised if the sprint values are incorrect.
      */
-    public boolean verifySprint(Sprint currentSprint) throws Exception {
-        if(currentSprint.getStartDate().after(currentSprint.getEndDate())) {
-            throw new Exception("Start date must be before the end date.");
+    public void verifySprint(Sprint sprint) throws IncorrectDetailsException {
+        if (sprint.getStartDate().after(sprint.getEndDate()))
+            throw new IncorrectDetailsException("Sprint start date can not be after sprint end date");
+
+        if (sprint.getStartDate().before(sprint.getProject().getStartDate()))
+            throw new IncorrectDetailsException("Sprint start date can not be before project start date");
+
+        if (sprint.getStartDate().after(sprint.getProject().getEndDate()))
+            throw new IncorrectDetailsException("Sprint start date can not be after project end date");
+
+        if (sprint.getEndDate().after(sprint.getProject().getEndDate()))
+            throw new IncorrectDetailsException("Sprint end date can not be after project end date");
+
+        List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
+        try {
+            Sprint savedSprint = getSprint(sprint.getSprintId());
+            if (!Objects.equals(savedSprint.getSprintLabel(), sprint.getSprintLabel()))
+                throw new IncorrectDetailsException("Sprint label can not be modified");
+        } catch (IncorrectDetailsException ignored) {
+            if(!Objects.equals(sprint.getSprintLabel(), "Sprint " + (sprints.size() + 1))){
+                throw new IncorrectDetailsException("Sprint label can not be modified");
+            }
         }
 
-        if(currentSprint.getStartDate().before(currentSprint.getProject().getStartDate())) {
-            throw new Exception("Sprint must start after the project.");
-        }
 
-        if(currentSprint.getStartDate().after(currentSprint.getProject().getEndDate())) {
-            throw new Exception("Sprint must start before the project ends.");
-        }
+        if(sprints.stream().filter(sp -> !Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel()))
+                            .anyMatch(sp -> (betweenDateRange(sp, sprint)))){
+            throw new IncorrectDetailsException("Sprint dates can not overlap with another sprint");
 
-        if(currentSprint.getEndDate().after(currentSprint.getProject().getEndDate())) {
-            throw new Exception("Sprint must end before the project.");
         }
-
-        List<Sprint> sprints = sprintRepository.findByProject(currentSprint.getProject()).stream()
-                .filter(sp -> !(sp.getSprintLabel().equals(currentSprint.getSprintLabel())))
-                .filter(sp -> (betweenDateRange(sp, currentSprint))).toList();
-        if(sprints.size() > 0) {
-            throw new Exception("Sprint overlaps another sprint.");
-        }
-        return true;
     }
 
     /**
@@ -249,7 +261,9 @@ public class SprintService {
         return currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintStartDate) ||
         currentSprintStartDate.before(compSprintEndDate) && currentSprintEndDate.after(compSprintEndDate) ||
         currentSprintStartDate.before(compSprintStartDate) && currentSprintEndDate.after(compSprintEndDate) ||
-        currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate) ;
+        currentSprintStartDate.after(compSprintStartDate) && currentSprintEndDate.before(compSprintEndDate) ||
+                currentSprintEndDate.equals(compSprintStartDate) ||
+                currentSprintStartDate.equals(compSprintEndDate);
     }
 }
 

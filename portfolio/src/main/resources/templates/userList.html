@@ -8,7 +8,6 @@
     <!-- Custom css for body-->
     <link rel="stylesheet" type="text/css" th:href="@{{apiPrefix}/css/body.css(apiPrefix=${apiPrefix})}" />
     <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
   </head>
 
   <!--fragments-->
@@ -49,12 +48,11 @@
                 <td th:id="'user' + ${user.userId} + 'Roles'">
                   <ul style="list-style-type: none">
                     <th:block th:each = "role : ${user.getRoles()}">
-                        <li style="display:inline">
-                          <span class="badge badge-pill badge-secondary">[[${role}]]
-                            <button th:data-role = '${role}' th:data-userId = '${user.userId}' th:if="!${adminOrTeacher == true}" class="w-25 btn shadow-none btn-sm" onclick="removeRole(this.getAttribute('data-role'), this.getAttribute('data-userId'))">
-                              <img class="icon" width="20" height="20" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/>
-                            </button>
-                          </span>
+                        <li style="display:inline" th:id="'user' + ${user.userId} + 'Role' + ${role}">
+                          <button th:id="'user' + ${user.userId} + 'Role' + ${role} + Btn" th:data-role = '${role}' th:data-userId = '${user.userId}' th:disabled="${adminOrTeacher == false or user.getRoles.size() == 1}" onclick="removeRole(this.getAttribute('data-role'), this.getAttribute('data-userId'))" class="btn btn-outline-secondary btn-sm">
+                              [[${role.getNumber() == 2} ? 'COURSE ADMINISTRATOR' : ${role}]]
+                              <img th:id="'user' + ${user.userId} + 'Role' + ${role} + img" width="13" height="13" th:hidden="${adminOrTeacher == false or user.getRoles.size() == 1}" class="icon" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/>
+                          </button>
                         </li>
                     </th:block>
                   </ul>

@@ -38,18 +38,29 @@ function removeRole(role, userId) {
 
     httpRequest = new XMLHttpRequest();
 
-    // httpRequest.onreadystatechange = function() {
-    //     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-    //         if (httpRequest.status === 200) {
-    //             location.reload()
-    //             console.log("Role deleted successfully!")
-    //         } else {
-    //             console.log(httpRequest.responseText)
-    //         }
-    //     }
-    // }
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                if (httpRequest.response != "") {
+                    startDateError.innerText = httpRequest.response;
+                    startDateElement.classList.add("formError");
+                    endDateElement.classList.add("formError");
+                }
+                const roleElement = document.getElementById(`user${userId}Role${role}`)
+                roleElement.remove()
+                // if (user.getRoles().size() == 1) {
+                //     const userRoleBtn = document.getElementById(`user${userId}Role${role}Btn`)
+                //     userRoleBtn.disabled = true
+                //
+                //     const userRoleImg = document.getElementById(`user${userId}Role${role}Btn`)
+                //     userRoleBtn.hidden = true
+                // }
+            }
+        }
+    }
 
     httpRequest.open('DELETE', '/usersList/removeRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     httpRequest.send("role=" + role + "&userId=" + parseInt(userId));
+
 }
