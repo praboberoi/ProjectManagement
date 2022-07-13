@@ -286,7 +286,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             } else {
                 responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder()
                         .setIsSuccess(false)
-                        .setMessage("User does not have an image to delete")
                         .build());
                 responseObserver.onCompleted();
             }
