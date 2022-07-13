@@ -143,3 +143,12 @@ input:invalid{
     border-left-color: rgb(185, 182, 163);
     border-right-color: rgb(185, 182, 163);
   }
+
+
+#edit-del-buttons {
+    margin-left: auto;
+}
+
+.card-header {
+    display: flex;
+}
