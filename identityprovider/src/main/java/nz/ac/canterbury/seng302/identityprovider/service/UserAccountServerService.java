@@ -281,8 +281,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).build());
             responseObserver.onCompleted();
         } catch (IOException e) {
-            responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder()
-                    .setIsSuccess(false).setMessage(e.getMessage()).build());
             responseObserver.onError(e);
         }
 
