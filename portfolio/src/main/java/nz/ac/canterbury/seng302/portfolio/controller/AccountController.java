@@ -144,7 +144,7 @@ public class AccountController {
             @RequestParam String bio,
             @RequestParam String pronouns,
             @RequestParam String email,
-            @RequestParam Boolean deleteImage,
+            Boolean deleteImage,
             Model model,
             RedirectAttributes ra
     ) throws IOException {
