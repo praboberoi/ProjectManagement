@@ -157,8 +157,6 @@ public class AccountController {
                 pronouns,
                 email);
 
-        if (deleteImage) deleteUserProfilePhoto(principal);
-
 //        Start of image upload functionality
         if (!multipartFile.isEmpty()) {
             // original filename of image user has uploaded
@@ -181,6 +179,8 @@ public class AccountController {
                 return "editAccount";
             }
         }
+        if (deleteImage) deleteUserProfilePhoto(principal);
+
 //       End of image
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
