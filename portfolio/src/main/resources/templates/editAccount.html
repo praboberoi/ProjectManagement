@@ -49,11 +49,13 @@
                             <img th:src="${user.profileImagePath}" class="profile-photo" id="output" width="200" height="200" />
                             <br>
                             <div>
-                                <button class='btn btn-secondary' onclick="deleteProfilePhoto(this.getAttribute())">Delete Image</button>
+                                <button class='btn btn-secondary' onclick="deleteProfilePhoto()">Delete Image</button>
                             </div>
                             <!-- Start of edit account form -->
                             <form th:action="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}" enctype="multipart/form-data" method="post">
-                                <input type="hidden" id="deleteImage" value="false"/>
+                                <div>
+                                <input type="hidden" id="deleteImage" name="deleteImage" value="false"/>
+                                </div>
                             <div class="row mb-3">
                                 <label for="formFile" class = "col-sm-2 col-form-label" ><h6>Profile Photo: </h6></label>
                                 <div class = "col-sm-6">

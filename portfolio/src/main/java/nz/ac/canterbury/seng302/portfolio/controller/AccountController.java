@@ -156,6 +156,8 @@ public class AccountController {
                 pronouns,
                 email);
 
+        if (deleteImage) deleteUserProfilePhoto(principal);
+
 //        Start of image upload functionality
         if (!multipartFile.isEmpty()) {
             // original filename of image user has uploaded
@@ -188,8 +190,8 @@ public class AccountController {
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
-        if (deleteImage)
-            deleteUserProfilePhoto(principal);
+
+
         
         return "editAccount";
     }

@@ -196,7 +196,7 @@ public class AccountControllerTests {
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
         assertEquals( "editAccount", accountController.editUser(principal, file0, testString,
-                testString, testString, testString, testString, testString, mockModel, ra));
+                testString, testString, testString, testString, testString, false, mockModel, ra));
 
     }
 
@@ -217,6 +217,6 @@ public class AccountControllerTests {
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
         assertEquals( "account", accountController.editUser(principal, testFile,testString,
-                testString, testString, testString, testString, testString, mockModel, ra ));
+                testString, testString, testString, testString, testString, false, mockModel, ra ));
     }
 }
