@@ -5,7 +5,6 @@ var loadFile = function (event) {
     const reader = new FileReader();
     reader.onload = function (e) {
         document.getElementById("output").setAttribute("src", e.target.result);
-
     }
 
     reader.readAsDataURL(event.target.files[0]);
@@ -22,6 +21,9 @@ function deleteProfilePhoto() {
     let deleteImage = document.getElementById("deleteImage");
     profilePhoto.src = "/icons/default-image.svg";
     deleteImage.value = true;
+    let imageInput = document.getElementById("formFile")
+    imageInput.value = "";
+
 }
 
 
