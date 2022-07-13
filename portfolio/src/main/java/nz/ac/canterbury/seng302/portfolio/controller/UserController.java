@@ -100,6 +100,4 @@ public class UserController {
             return new ResponseEntity<>(response.getMessage(), HttpStatus.EXPECTATION_FAILED);
         }
     }
-
-
 }

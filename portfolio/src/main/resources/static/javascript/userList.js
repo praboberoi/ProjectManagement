@@ -46,6 +46,15 @@ function removeRole(role, userId) {
                     startDateElement.classList.add("formError");
                     endDateElement.classList.add("formError");
                 }
+                const roleElement = document.getElementById(`user${userId}Role${role}`)
+                roleElement.remove()
+                // if (user.getRoles().size() == 1) {
+                //     const userRoleBtn = document.getElementById(`user${userId}Role${role}Btn`)
+                //     userRoleBtn.disabled = true
+                //
+                //     const userRoleImg = document.getElementById(`user${userId}Role${role}Btn`)
+                //     userRoleBtn.hidden = true
+                // }
             }
         }
     }
@@ -53,4 +62,5 @@ function removeRole(role, userId) {
     httpRequest.open('DELETE', '/usersList/removeRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     httpRequest.send("role=" + role + "&userId=" + parseInt(userId));
+
 }
