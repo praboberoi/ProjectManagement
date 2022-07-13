@@ -132,6 +132,7 @@ public class AccountController {
      * @param pronouns The pronouns of the user
      * @param email The email of the user
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param deleteImage Boolean to run the delete image functionality or not
      * @return Html account editing page
      */
     @PostMapping(path="/editAccount")
@@ -217,6 +218,11 @@ public class AccountController {
         model.addAttribute("timePassed", getTimePassed(creationDate));
     }
 
+    /**
+     * Calls the delete profile image functionality in the UserAccountClientService
+     * @param principal
+     * @return Response status
+     */
     public ResponseEntity<Long> deleteUserProfilePhoto(@AuthenticationPrincipal AuthState principal) {
         ClaimDTO id = principal.getClaims(2);
         int userId = Integer.parseInt(id.getValue());
