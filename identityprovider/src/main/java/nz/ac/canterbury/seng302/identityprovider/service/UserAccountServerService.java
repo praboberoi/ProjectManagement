@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
+import io.grpc.netty.shaded.io.netty.util.internal.StringUtil;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
@@ -16,11 +17,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.sql.SQLOutput;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 /**
  * Grpc service used to retrieve information about users.
@@ -270,17 +273,27 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
         try {
             User user = userRepository.getUserByUserId(request.getUserId());
+            if (!StringUtils.isNullOrEmpty(user.getProfileImagePath())) {
+                String fileName = user.getProfileImagePath();
+                Path path = FILE_PATH_ROOT.resolve(fileName);
+                Files.deleteIfExists(path);
 
-            String fileName = user.getProfileImagePath();
-            Path path = FILE_PATH_ROOT.resolve(fileName);
-            Files.deleteIfExists(path);
+                user.setProfileImagePath(null);
+                userRepository.save(user);
 
-            user.setProfileImagePath(null);
-            userRepository.save(user);
+                responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).build());
+                responseObserver.onCompleted();
+            } else {
+                responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder()
+                        .setIsSuccess(false)
+                        .setMessage("User does not have an image to delete")
+                        .build());
+                responseObserver.onCompleted();
+            }
 
-            responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).build());
-            responseObserver.onCompleted();
         } catch (IOException e) {
+            responseObserver.onError(e);
+        } catch (Exception e) {
             responseObserver.onError(e);
         }
 
