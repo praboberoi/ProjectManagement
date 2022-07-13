@@ -4,7 +4,20 @@
 var loadFile = async function (event) {
     var image = document.getElementById("output");
     image.src = URL.createObjectURL(event.target.files[0]); // the link:
-
+    var vanilla = new Croppie(image, {
+        viewport: { width: 100, height: 100 },
+        boundary: { width: 300, height: 300 },
+        showZoomer: false,
+        enableOrientation: true
+    });
+    vanilla.bind({
+        url: image.src,
+        orientation: 4
+    });
+//on button click
+    vanilla.result('blob').then(function(blob) {
+        // do something with cropped blob
+    });
     // imgToCompress = image;
     //
     // const imageSize = event.target.files[0].size;
@@ -25,6 +38,7 @@ var loadFile = async function (event) {
     reader.readAsDataURL(event.target.files[0]);
 
 };
+
 
 // const compressImage = async (image, resizingFactor, quality) => {
 //     // resizing the image
@@ -75,3 +89,4 @@ var loadFile = async function (event) {
 //
 //     return Math.round(bytes / Math.pow(1024, i), 2) + " " + sizes[i];
 // }
+
