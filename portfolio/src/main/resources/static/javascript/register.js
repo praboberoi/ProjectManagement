@@ -4,19 +4,26 @@ var digit = /[0-9]/;
 var upper = /[A-Z]/;
 var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
 var dash = /^[^-]+(?!.*--).+[^-]+$/;
+var space = /^[^ ]+(?!.*  ).+[^ ]+$/;
 
 function checkUsername() {
     let usernameElement = document.getElementById("username");
     let usernameErrorElement = document.getElementById("usernameError");
     if (usernameElement.value.length < 3 
         || usernameElement.value.length > 16
-        || names.test(usernameElement.value)
     ) {
         usernameElement.classList.add("formError")
-        usernameErrorElement.innerText = "Username must be between 3 and 16 characters with no special characters."
+        usernameErrorElement.innerText = "Username must be between 3 and 16 characters."
+        usernameElement.setCustomValidity("Invalid field.");
+    } else if (!dash.test(usernameElement.value)
+        || !space.test(usernameElement.value)) {
+        usernameElement.classList.add("formError")
+        usernameErrorElement.innerText = "Username must not start, end or have consecutive spaces or -."
+        usernameElement.setCustomValidity("Invalid field.");
     } else {
         usernameElement.classList.remove("formError");
         usernameErrorElement.innerText = null;
+        usernameElement.setCustomValidity("");
     }
 }
 
@@ -27,13 +34,15 @@ function checkFirstName() {
         || firstNameElement.value.length > 32 
         || names.test(firstNameElement.value)
         || digit.test(firstNameElement.value)
-        || !dash.test(firstNameElement.value))
-        {
+        || !dash.test(firstNameElement.value)
+        || !space.test(firstNameElement.value)) {
         firstNameElement.classList.add("formError")
         firstNameErrorElement.innerText = "First name must be between 3 and 32 characters with no special characters or digits."
+        firstNameElement.setCustomValidity("Invalid field.");
     } else {
         firstNameElement.classList.remove("formError");
         firstNameErrorElement.innerText = null;
+        firstNameElement.setCustomValidity("");
     }
 }
 
@@ -43,13 +52,16 @@ function checkLastName() {
     if (lastNameElement.value.length < 3 
         || lastNameElement.value.length > 32 
         || names.test(lastNameElement.value)
-        || digit.test(lastNameElement.value))
-        {
+        || digit.test(lastNameElement.value)
+        || !dash.test(lastNameElement.value)
+        || !space.test(lastNameElement.value)) {
         lastNameElement.classList.add("formError")
         lastNameErrorElement.innerText = "Last name must be between 3 and 32 characters with no special characters or digits."
+        lastNameElement.setCustomValidity("Invalid field.");
     } else {
         lastNameElement.classList.remove("formError");
         lastNameErrorElement.innerText = null;
+        lastNameElement.setCustomValidity("");
     }
 }
 
@@ -60,9 +72,11 @@ function checkNickname() {
         {
         nicknameElement.classList.add("formError")
         nicknameErrorElement.innerText = "Nickname must be less than 32 characters."
-    } else {
+            nicknameElement.setCustomValidity("Invalid field.");
+        } else {
         nicknameElement.classList.remove("formError");
         nicknameErrorElement.innerText = null;
+        nicknameElement.setCustomValidity("");
     }
 }
 
@@ -73,9 +87,11 @@ function checkEmail() {
     {
         emailElement.classList.add("formError")
         emailErrorElement.innerText = "Email must be in the form username@domainName.domain."
+        emailElement.setCustomValidity("Invalid field.");
     } else {
         emailElement.classList.remove("formError");
         emailErrorElement.innerText = null;
+        emailElement.setCustomValidity("");
     }
 }
 
@@ -85,13 +101,16 @@ function checkPronouns() {
     if (pronounsElement.value.length > 32) {
         pronounsElement.classList.add("formError")
         pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
+        pronounsElement.setCustomValidity("Invalid field.");
     } else if (digit.test(pronounsElement.value)
         || special.test(pronounsElement.value)) {
         pronounsElement.classList.add("formError")
         pronounsErrorElement.innerText = "Personal pronouns can only contain special characters + & - , and no digits."
+        pronounsElement.setCustomValidity("Invalid field.");
     } else {
         pronounsElement.classList.remove("formError");
         pronounsErrorElement.innerText = null;
+        pronounsElement.setCustomValidity("");
     }
 }
 
@@ -143,8 +162,10 @@ function checkBio() {
     {
         bioErrorElement.classList.add("formError");
         bioErrorElement.innerText = "Bio must be less than 250 characters."
+        bioElement.setCustomValidity("Invalid field.");
     } else {
         bioErrorElement.classList.remove("formError");
         bioErrorElement.innerText = null;
+        bioElement.setCustomValidity("");
     }
 };
