@@ -19,7 +19,7 @@
 <header>
     <div th:replace="fragments :: header"></div>
 </header>
-<div th:replace="fragments :: project-and-sprint"></div>
+<div th:replace="fragments :: sidebar"></div>
 
 <body>
 <div class="main">
@@ -81,5 +81,6 @@
 </div>
     <script th:src="@{{apiPrefix}/javascript/sprintForm.js(apiPrefix=${apiPrefix})}"> </script>
 <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"> </script>
+</div>
 </body>
 </html>
