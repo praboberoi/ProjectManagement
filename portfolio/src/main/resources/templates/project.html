@@ -59,6 +59,8 @@
   </div>
   <br>
 
+
+
   <!-- Table for sprints -->
   <div class="table-border bdr">
     <table class="table table-bordered table-hover">
@@ -98,6 +100,20 @@
       </tbody>
     </table>
   </div>
+
+<!--  Button to create new events-->
+  <div class="container-fluid d-flex p-0">
+    <h3 class="pe-3">Events</h3>
+    <div th:each="role: ${roles}">
+      <!-- If a user is a STUDENT do not show the 'create' event button !-->
+      <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+        <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+          <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
+      </div>
+    </div>
+  </div>
+  <br>
+
   <br>
   <div id="cal">
     <div id="calendarMessage" class="alert text-center" hidden>
