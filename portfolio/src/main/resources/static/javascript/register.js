@@ -27,7 +27,7 @@ function checkUsername() {
 function checkFirstName() {
     let firstNameElement = document.getElementById("firstName");
     let firstNameErrorElement = document.getElementById("firstNameError");
-    if (firstNameElement.value.length < 3
+    if (firstNameElement.value.length < 2
         || firstNameElement.value.length > 32
         || names.test(firstNameElement.value)
         || digit.test(firstNameElement.value)
@@ -35,7 +35,7 @@ function checkFirstName() {
         || !space.test(firstNameElement.value))
     {
         firstNameElement.classList.add("formError")
-        firstNameErrorElement.innerText = "First name must be between 3 and 32 characters with no special characters or digits."
+        firstNameErrorElement.innerText = "First name must be between 2 and 32 characters with no special characters or digits."
         firstNameElement.setCustomValidity("Invalid field.");
     } else {
         firstNameElement.classList.remove("formError");
@@ -47,7 +47,7 @@ function checkFirstName() {
 function checkLastName() {
     let lastNameElement = document.getElementById("lastName");
     let lastNameErrorElement = document.getElementById("lastNameError");
-    if (lastNameElement.value.length < 3 
+    if (lastNameElement.value.length < 2
         || lastNameElement.value.length > 32 
         || names.test(lastNameElement.value)
         || digit.test(lastNameElement.value)
@@ -55,7 +55,7 @@ function checkLastName() {
         || !space.test(lastNameElement.value))
     {
         lastNameElement.classList.add("formError")
-        lastNameErrorElement.innerText = "Last name must be between 3 and 32 characters with no special characters or digits."
+        lastNameErrorElement.innerText = "Last name must be between 2 and 32 characters with no special characters or digits."
         lastNameElement.setCustomValidity("Invalid field.");
     } else {
         lastNameElement.classList.remove("formError");
