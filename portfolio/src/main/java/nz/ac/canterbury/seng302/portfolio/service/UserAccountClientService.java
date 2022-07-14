@@ -111,6 +111,19 @@ public class UserAccountClientService {
         return response;
     }
 
+
+    /**
+     * Request a list of users from the IDP server and prepares them for use
+     * @param page The page to retrive, indexing starts at 0
+     * @param limit The number of users to retrieve, 0 for no limit
+     * @return List of unpackaged users
+     * @throws StatusRuntimeException
+     */
+    public PaginatedUsersResponse getUsers(int page, int limit) throws StatusRuntimeException{
+        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setLimit(limit).setOffset(page).build());
+        return response;
+    }
+
     /**
      * Gets currently logged-in user's account
      * @param principal The security principal of the currently logged-in user
@@ -145,7 +158,7 @@ public class UserAccountClientService {
      */
     public boolean checkUserIsTeacherOrAdmin(@AuthenticationPrincipal AuthState principal) {
         List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+        if ((userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
             return true;
         }
         return false;
@@ -239,7 +252,7 @@ public class UserAccountClientService {
      */
     private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
         Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
-        var fileName = "UesrProfle" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+        var fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
         return SERVER_BASE_PATH.resolve(fileName);
     }
 

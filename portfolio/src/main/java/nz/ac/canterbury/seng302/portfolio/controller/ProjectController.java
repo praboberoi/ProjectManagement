@@ -57,7 +57,7 @@ public class ProjectController {
         String startDate,
         String endDate,
         @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = new Project();
             project.setProjectId(projectId);
