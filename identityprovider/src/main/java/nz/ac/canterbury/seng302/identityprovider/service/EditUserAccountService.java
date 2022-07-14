@@ -36,7 +36,7 @@ public class EditUserAccountService {
             errorBuilder.setErrorText("First name cannot be more than 32 characters.");
             result.add(errorBuilder.build());
         } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)
-                || ValidationUtilities.hasDashSpecial(firstName) || ValidationUtilities.hasSpaceSpecial(firstName)) {
+                || !ValidationUtilities.hasDashSpecial(firstName) || !ValidationUtilities.hasSpaceSpecial(firstName)) {
             errorBuilder.setFieldName("firstNameError");
             errorBuilder.setErrorText("First name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
@@ -52,7 +52,7 @@ public class EditUserAccountService {
             errorBuilder.setErrorText("Last name cannot be more than 32 characters.");
             result.add(errorBuilder.build());
         } else if (ValidationUtilities.hasNameSpecial(lastName) || ValidationUtilities.hasDigit(lastName) ||
-                ValidationUtilities.hasDashSpecial(lastName) || ValidationUtilities.hasSpaceSpecial(lastName) ) {
+                !ValidationUtilities.hasDashSpecial(lastName) || !ValidationUtilities.hasSpaceSpecial(lastName) ) {
             errorBuilder.setFieldName("lastNameError");
             errorBuilder.setErrorText("Last name cannot contain special characters or digits.");
             result.add(errorBuilder.build());

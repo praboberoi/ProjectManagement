@@ -5,8 +5,8 @@ var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.
 var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
-var dash = /^[^-]+(?!.*--).+[^-]+$/;
-var space = /^[^ ]+(?!.*  ).+[^ ]+$/;
+var dash = /^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$/;
+var space = /^[A-Za-z0-9\-]+( [A-Za-z0-9\-]+)*$/;
 
 
 editBtn.addEventListener('click', function(e) {

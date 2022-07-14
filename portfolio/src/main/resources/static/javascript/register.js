@@ -1,24 +1,21 @@
 var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
 var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
+var username = /[ `!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~'-]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
 var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
-var dash = /^[^-]+(?!.*--).+[^-]+$/;
-var space = /^[^ ]+(?!.*  ).+[^ ]+$/;
+var dash = /^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$/;
+var space = /^[A-Za-z0-9\-]+( [A-Za-z0-9\-]+)*$/;
 
 function checkUsername() {
     let usernameElement = document.getElementById("username");
     let usernameErrorElement = document.getElementById("usernameError");
     if (usernameElement.value.length < 3 
         || usernameElement.value.length > 16
+        || username.test(usernameElement.value)
     ) {
         usernameElement.classList.add("formError")
-        usernameErrorElement.innerText = "Username must be between 3 and 16 characters."
-        usernameElement.setCustomValidity("Invalid field.");
-    } else if (!dash.test(usernameElement.value)
-        || !space.test(usernameElement.value)) {
-        usernameElement.classList.add("formError")
-        usernameErrorElement.innerText = "Username must not start, end or have consecutive spaces or -."
+        usernameErrorElement.innerText = "Username must be between 3 and 16 characters with no special characters."
         usernameElement.setCustomValidity("Invalid field.");
     } else {
         usernameElement.classList.remove("formError");

@@ -26,10 +26,11 @@ public class ValidationUtilities {
      * @return true if str contains special characters.
      */
     public static boolean hasDashSpecial(String str) {
-        Pattern pattern = Pattern.compile("^[^-]+(?!.*--).+[^-]+$");
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
+
 
     /**
      * Checks if a string has consecutive " " e.g "   "
@@ -37,7 +38,7 @@ public class ValidationUtilities {
      * @return true if str contains special characters.
      */
     public static boolean hasSpaceSpecial(String str) {
-        Pattern pattern = Pattern.compile("^[^ ]+(?!.*  ).+[^ ]+$");
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\-]+( [A-Za-z0-9\\-]+)*$");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
