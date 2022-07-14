@@ -12,8 +12,8 @@ function checkUsername() {
     let usernameErrorElement = document.getElementById("usernameError");
     if (usernameElement.value.length < 3 
         || usernameElement.value.length > 16
-        || username.test(usernameElement.value)
-    ) {
+        || username.test(usernameElement.value))
+    {
         usernameElement.classList.add("formError")
         usernameErrorElement.innerText = "Username must be between 3 and 16 characters with no special characters."
         usernameElement.setCustomValidity("Invalid field.");
@@ -22,17 +22,18 @@ function checkUsername() {
         usernameErrorElement.innerText = null;
         usernameElement.setCustomValidity("");
     }
-}
+};
 
 function checkFirstName() {
     let firstNameElement = document.getElementById("firstName");
     let firstNameErrorElement = document.getElementById("firstNameError");
-    if (firstNameElement.value.length < 3 
-        || firstNameElement.value.length > 32 
+    if (firstNameElement.value.length < 3
+        || firstNameElement.value.length > 32
         || names.test(firstNameElement.value)
         || digit.test(firstNameElement.value)
         || !dash.test(firstNameElement.value)
-        || !space.test(firstNameElement.value)) {
+        || !space.test(firstNameElement.value))
+    {
         firstNameElement.classList.add("formError")
         firstNameErrorElement.innerText = "First name must be between 3 and 32 characters with no special characters or digits."
         firstNameElement.setCustomValidity("Invalid field.");
@@ -41,7 +42,7 @@ function checkFirstName() {
         firstNameErrorElement.innerText = null;
         firstNameElement.setCustomValidity("");
     }
-}
+};
 
 function checkLastName() {
     let lastNameElement = document.getElementById("lastName");
@@ -51,7 +52,8 @@ function checkLastName() {
         || names.test(lastNameElement.value)
         || digit.test(lastNameElement.value)
         || !dash.test(lastNameElement.value)
-        || !space.test(lastNameElement.value)) {
+        || !space.test(lastNameElement.value))
+    {
         lastNameElement.classList.add("formError")
         lastNameErrorElement.innerText = "Last name must be between 3 and 32 characters with no special characters or digits."
         lastNameElement.setCustomValidity("Invalid field.");
