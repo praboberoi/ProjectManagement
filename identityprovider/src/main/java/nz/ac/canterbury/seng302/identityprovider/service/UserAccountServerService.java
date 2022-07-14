@@ -6,18 +6,23 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
+import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Collections;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @GrpcService
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
@@ -279,6 +284,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * @param responseObserver Used to send image data to the portfolio
      * @param request Contains user id and file type
      */
+
     public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, UploadUserProfilePhotoRequest request) {
 
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
@@ -387,4 +393,38 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onNext(userRoleChangeResponse.build());
         responseObserver.onCompleted();
     }
+    /**
+     * Gets all users from the db and returns them packaged into a protobuf
+     *
+     * @param request          Request containing the offset, limit and order of users to get
+     * @param responseObserver Returns to previous method with data
+     */
+    @Override
+    public void getPaginatedUsers(GetPaginatedUsersRequest request, StreamObserver<PaginatedUsersResponse> responseObserver) {
+        List<User> users;
+
+        long resultSetSize = userRepository.count();
+        Sort sort;
+
+        if (request.getOrderBy().isEmpty()) {
+            sort = Sort.by(Sort.Direction.ASC, "userId");
+        } else {
+            sort = Sort.by(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC, request.getOrderBy());
+        }
+
+        if (request.getLimit() == 0) {
+            users = userRepository.findAll(sort);
+        } else {
+            PageRequest pageable = PageRequest.of(request.getOffset(), request.getLimit(), sort);
+            users = userRepository.findAll(pageable).getContent();
+        }
+
+        List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user)).collect(Collectors.toList());
+
+        PaginatedUsersResponse reply = ResponseUtils.preparePaginatedUsersResponse(preparedUsers, resultSetSize);
+
+        responseObserver.onNext(reply);
+        responseObserver.onCompleted();
+    }
+
 }
