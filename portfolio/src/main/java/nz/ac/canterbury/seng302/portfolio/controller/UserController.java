@@ -12,13 +12,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * Controller for user related pages excluding the current
@@ -87,19 +88,23 @@ public class UserController {
 
     /**
      * Delete method for removing a users role
+     *
      * @param userId ID for the user
-     * @param role Type of role being deleted
+     * @param role   Type of role being deleted
      * @return Ok (200) response if successful, 417 response if failure.
      */
-    @DeleteMapping("/usersList/removeRole")
-    public String removeRole(int userId, String role, RedirectAttributes ra) {
+    @DeleteMapping(value = "/usersList/removeRole")
+    public ResponseEntity removeRole(String userId, String role, RedirectAttributes ra) {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
-        UserRoleChangeResponse response = userAccountClientService.removeUserRole(userId, userRole);
+        UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
         if (!response.getIsSuccess()) {
-            System.out.println("Error running");
             ra.addFlashAttribute("messageDanger", response.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
         }
-        return "redirect:/users";
-
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }
