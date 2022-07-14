@@ -6,15 +6,6 @@ const DATE_OPTIONS = {year: 'numeric', month: 'short', day: 'numeric'};
 let calendar;
 let clicked = true;
 
-
-function getEndDate(projectEndDate) {
-    let newDate = new Date();
-    console.log(projectEndDate)
-    newDate.setDate(projectEndDate.getDate());
-    console.log(newDate)
-    return newDate;
-}
-
 /**
  * Renders the calendar onto the page with sprints
  * @param sprintList A list of all the sprints in the project
