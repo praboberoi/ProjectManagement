@@ -158,7 +158,7 @@ public class UserAccountClientService {
      */
     public boolean checkUserIsTeacherOrAdmin(@AuthenticationPrincipal AuthState principal) {
         List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+        if ((userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
             return true;
         }
         return false;
@@ -327,6 +327,18 @@ public class UserAccountClientService {
         public void onCompleted(){
 
         }
+    }
+
+    /**
+     * Sends a ModifyRoleOfUserRequest to delete a users role, returns the success or failure of the request
+     * @param userId ID of the user whose role is being deleted
+     * @param role The role being deleted
+     * @return A UserRoleChangeResponse object containing success or failure of the request
+     */
+    public UserRoleChangeResponse removeUserRole(int userId, UserRole role) {
+        UserRoleChangeResponse response = userAccountStub.removeRoleFromUser(
+                ModifyRoleOfUserRequest.newBuilder().setRole(role).setUserId(userId).build());
+        return response;
     }
 
 }
