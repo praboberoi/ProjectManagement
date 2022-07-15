@@ -119,9 +119,9 @@ function checkEndDate() {
 function checkProjectName() {
     let projectName = document.getElementById('project-name');
     let projectNameError = document.getElementById('projectNameError');
-    if (projectName.value.length < 1) {
+    if (projectName.value.length < 1 || projectName.value.length > 32) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project Name must not be empty";
+        projectNameError.innerText = "Project Name must not be empty or greater than 32 characters";
     } else if (! projectNameRegex.test(projectName.value)) {
         projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not start with space characters";
