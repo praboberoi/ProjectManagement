@@ -7,6 +7,8 @@ const sprintNameRegex = /^\S/;
 const projectId = document.getElementById("projectId").value;
 const startDateElement = document.getElementById('startDate');
 const endDateElement = document.getElementById('endDate');
+const labelElement = document.getElementById('sprint-label');
+const sprintId = document.getElementById('sprintId').value;
 const dateError = document.getElementById('dateError');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
@@ -101,6 +103,28 @@ function checkEndDate() {
 }
 
 /**
+ * Updates the characters remaining in the description.
+ */
+function checkSprintDescription () {
+    let descriptionElement = document.getElementById("sprintDescription");
+    let descErrorElement = document.getElementById("descriptionError");
+
+    let charMessage = document.getElementById("charCount");
+    let charCount = descriptionElement.value.length;
+    charMessage.innerText = charCount + ' '
+
+    if (descriptionElement.value.length > 250)
+    {
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Description must be less than 250 characters."
+    } else {
+        descErrorElement.classList.remove("formError");
+        descErrorElement.innerText = null;
+    }
+
+}
+
+/**
  * Calls the server to test sprint for overlap
  */
 function verifyOverlap(startDate, endDate) {
@@ -120,5 +144,5 @@ function verifyOverlap(startDate, endDate) {
 
     httpRequest.open('POST', '/project/' + projectId + '/verifySprint', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate + "&label=" + labelElement.value + "&id=" + sprintId);
 }

@@ -46,9 +46,17 @@ function checkStartDate() {
     const startDate = new Date(startDateElement.value);
     
     let tenYearsFromNow = new Date();
+    tenYearsFromNow.setMilliseconds(0);
+    tenYearsFromNow.setSeconds(0);
+    tenYearsFromNow.setMinutes(0);
+    tenYearsFromNow.setHours(12);
     tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
 
     let oneYearAgo = new Date();
+    oneYearAgo.setMilliseconds(0);
+    oneYearAgo.setSeconds(0);
+    oneYearAgo.setMinutes(0);
+    oneYearAgo.setHours(12);
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     if (startDate > tenYearsFromNow) {
@@ -75,9 +83,17 @@ function checkEndDate() {
     const endDate = new Date(endDateElement.value);
     
     var tenYearsFromNow = new Date();
+    tenYearsFromNow.setMilliseconds(0);
+    tenYearsFromNow.setSeconds(0);
+    tenYearsFromNow.setMinutes(0);
+    tenYearsFromNow.setHours(12);
     tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
 
     var oneYearAgo = new Date();
+    oneYearAgo.setMilliseconds(0);
+    oneYearAgo.setSeconds(0);
+    oneYearAgo.setMinutes(0);
+    oneYearAgo.setHours(12);
     oneYearAgo.setFullYear(oneYearAgo.getFullYear() - 1);
 
     if (endDate < oneYearAgo) {
@@ -103,9 +119,9 @@ function checkEndDate() {
 function checkProjectName() {
     let projectName = document.getElementById('project-name');
     let projectNameError = document.getElementById('projectNameError');
-    if (projectName.value.length < 1) {
+    if (projectName.value.length < 1 || projectName.value.length > 32) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project Name must not be empty";
+        projectNameError.innerText = "Project Name must not be empty or greater than 32 characters";
     } else if (! projectNameRegex.test(projectName.value)) {
         projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not start with space characters";
@@ -116,6 +132,29 @@ function checkProjectName() {
 }
 
 /**
+ * Updates the characters remaining in the description.
+ */
+function checkProjectDescription () {
+    let descriptionElement = document.getElementById("projectDescription");
+    let descErrorElement = document.getElementById("descriptionError");
+
+    let charMessage = document.getElementById("charCount");
+    let charCount = descriptionElement.value.length;
+    charMessage.innerText = charCount + ' '
+
+    if (descriptionElement.value.length > 250)
+    {
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Description must be less than 250 characters."
+    } else {
+        descErrorElement.classList.remove("formError");
+        descErrorElement.innerText = null;
+    }
+
+}
+
+
+/**
  * Calls the server to test for sprints falling outside of the project
  */
  function verifyOverlap(startDate, endDate) {
@@ -124,7 +163,6 @@ function checkProjectName() {
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                console.log(httpRequest.response);
                 if (httpRequest.response != "") {
                     if (httpRequest.response.includes("ends")) {
                         endDateError.innerText = httpRequest.response;
@@ -137,6 +175,10 @@ function checkProjectName() {
             }
         }
     }
+
+
+
+
 
     httpRequest.open('POST', '/verifyProject/' + projectId, true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

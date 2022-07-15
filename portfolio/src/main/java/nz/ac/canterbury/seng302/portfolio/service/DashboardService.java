@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -16,10 +17,7 @@ import java.util.Optional;
 public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintService sprintService;
-    private Project currentProject;
-    private Date projectMinDate;
-    private Date projectMaxDate;
-    private Boolean isNew = false;
+
 
     public DashboardService(ProjectRepository projectRepo, SprintService sprintService) {
         this.projectRepo = projectRepo;
@@ -29,9 +27,8 @@ public class DashboardService {
     /**
      * Returns list of all Project objects in the database
      * @return list of project objects
-     * @throws Exception caught from underlining method calls
      */
-    public List<Project> getAllProjects() throws Exception {
+    public List<Project> getAllProjects() {
         List<Project> listProjects = (List<Project>) projectRepo.findAll();
         if (listProjects.isEmpty()) {
             saveProject(getNewProject());
@@ -44,48 +41,31 @@ public class DashboardService {
      * Saves a project object to the database and returns an appropriate message depending upon if the project is created
      * or updated
      * @param project of type Project
-     * @throws Exception is thrown if unable to save the object in the database
+     * @throws PersistenceException That has been passed by {@link ProjectRepository#save(Object) save}
      */
-    public String saveProject(Project project) throws Exception {
+    public String saveProject(Project project) throws PersistenceException {
             String message;
-            if (isNew) {
-                currentProject = project;
+            if (project.getProjectId() == 0)
                 message = "Successfully Created " + project.getProjectName();
-                isNew = false;
+            else
+                message = "Successfully Updated " + project.getProjectName();
 
-            } else {
-                currentProject.setProjectName(project.getProjectName());
-                currentProject.setDescription(project.getDescription());
-                currentProject.setStartDate(project.getStartDate());
-                currentProject.setEndDate(project.getEndDate());
-                message = "Successfully Saved " + project.getProjectName();
-
-            }
-            try {
-                projectRepo.save(currentProject);
-                return message;
-            } catch (Exception e) {
-                throw new Exception("Failure Saving Project");
-            }
+            projectRepo.save(project);
+            return message;
     }
 
     /**
      * Gets project object from the database
      * @param id of type int
      * @return of type Project
-     * @throws Exception If the given project ID does not exist
+     * @throws IncorrectDetailsException If the given project ID does not exist
      */
-    public Project getProject(int id) throws Exception {
+    public Project getProject(int id) throws IncorrectDetailsException {
         Optional<Project> result = projectRepo.findById(id);
-        if(result.isPresent()) {
-            isNew = false;
-            currentProject = result.get();
-            projectMinDate = Date.valueOf(currentProject.getStartDate().toLocalDate().minusYears(1));
-            projectMaxDate = Date.valueOf(currentProject.getEndDate().toLocalDate().plusYears(10));
-            return currentProject;
-        }
+        if(result.isPresent())
+            return result.get();
         else
-            throw new Exception("Failed to locate the project in the database");
+            throw new IncorrectDetailsException("Failed to locate the project in the database");
     }
 
     /**
@@ -103,63 +83,63 @@ public class DashboardService {
      */
     public Project getNewProject() {
         LocalDate now = LocalDate.now();
-        Project newProject = new Project();
-        newProject.setProjectName("Project " + now.getYear());
-        newProject.setStartDate(Date.valueOf(now));
-        newProject.setEndDate(Date.valueOf(now.plusMonths(8)));
-        projectMinDate = Date.valueOf(LocalDate.now().minusYears(1));
-        projectMaxDate = Date.valueOf(LocalDate.now().plusYears(10));
-        isNew = true;
-        return newProject;
+        return new Project.Builder()
+                .projectName("Project " + now.getYear())
+                .startDate(Date.valueOf(now))
+                .endDate(Date.valueOf(now.plusMonths(8)))
+                .build();
     }
 
     /**
      * Verifies the project dates to make sure the date ranges have not been changed at the client.
      * @param project of type Project
-     * @throws Exception indicating page values of the HTML page are manually changed.
+     * @throws IncorrectDetailsException indicating page values of the HTML page are manually changed.
      */
     public void verifyProject(Project project) throws Exception {
+        Date projectMinDate;
+        Date projectMaxDate;
         List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
+
+        if(project.getProjectId() == 0) {
+            LocalDate now = LocalDate.now();
+            projectMinDate = Date.valueOf(now.minusYears(1));
+            projectMaxDate = Date.valueOf(now.plusYears(10));
+        } else {
+            List<Date> dateRange = getProjectDateRange(getProject(project.getProjectId()));
+            projectMinDate = dateRange.get(0);
+            projectMaxDate = dateRange.get(1);
+        }
+
         if (sprints.stream().anyMatch(sprint -> sprint.getStartDate().before(project.getStartDate()))) {
-            throw new Exception("You are trying to start the project after you have started a sprint.");
+            throw new IncorrectDetailsException("You are trying to start the project after you have started a sprint.");
         }
         if (sprints.stream().anyMatch(sprint -> sprint.getEndDate().after(project.getEndDate()))) {
-            throw new Exception("You are trying to end the project before the last sprint has ended.");
+            throw new IncorrectDetailsException("You are trying to end the project before the last sprint has ended.");
         }
         if(project.getStartDate().before(Date.valueOf(LocalDate.now().minusYears(1)))) {
-            throw new Exception("A project cannot start more than a year ago.");
+            throw new IncorrectDetailsException("A project cannot start more than a year ago.");
         }
         if ( project.getEndDate().after(Date.valueOf(LocalDate.now().plusYears(10))) ) {
-            throw new Exception("A project cannot end more than ten years from now.");
+            throw new IncorrectDetailsException("A project cannot end more than ten years from now.");
         }
         if (project.getDescription().length() > 250) {
-            throw new Exception("Project description must be less than 250 characters.");
+            throw new IncorrectDetailsException("Start date of the project cannot be after the end date of the project");
         }
     }
 
-    /**
-     * To get the minimum date value the current project can have.
-     * @return of type Date
-     */
-    public Date getProjectMinDate() {
-        return projectMinDate;
-    }
+
 
     /**
-     * To get the maximum date value the current project can have.
-     * @return of type Date
+     * Obtains the date ranges of the project
+     * @param project Of type project
+     * @return List of project min and max dates
      */
-    public Date getProjectMaxDate() {
-        return projectMaxDate;
+    public List<Date> getProjectDateRange(Project project) {
+        Date projectMinDate = Date.valueOf(project.getStartDate().toLocalDate().minusYears(1));
+        Date projectMaxDate = Date.valueOf(project.getEndDate().toLocalDate().plusYears(10));
+        return List.of(projectMinDate,projectMaxDate);
     }
 
-    /**
-     * Clear the cached data by setting the currentProject and isNew to default
-     */
-    public void clearCache() {
-        currentProject = null;
-        isNew = false;
-    }
 
 }
 

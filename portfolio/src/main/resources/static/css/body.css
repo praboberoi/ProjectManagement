@@ -3,10 +3,10 @@ css for the body of each page
  */
 
 .main{
-    padding-right: 40px;
-    padding-left: 300px;
+    padding-left: min(15%, 250px);
     padding-top: 60px;
-
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .project-card{
@@ -74,7 +74,7 @@ a.project-name {
 }
 /* Style for primary buttons which guide the user through common tasks*/
 .btn-primary {
-    colour: white !important;
+    color: white !important;
     background-color: #07173B !important;
     vertical-align: middle !important;
 }
@@ -143,3 +143,12 @@ input:invalid{
     border-left-color: rgb(185, 182, 163);
     border-right-color: rgb(185, 182, 163);
   }
+
+
+#edit-del-buttons {
+    margin-left: auto;
+}
+
+.card-header {
+    display: flex;
+}
