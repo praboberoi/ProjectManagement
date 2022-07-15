@@ -193,7 +193,7 @@ public class AccountController {
         User user = new User(idpResponse);
 
         model.addAttribute("user", user);
-        model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+        model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(", ")).toLowerCase());
 //        model.addAttribute("image", user.getProfileImagePath());
 
         // Convert Date into LocalDate
