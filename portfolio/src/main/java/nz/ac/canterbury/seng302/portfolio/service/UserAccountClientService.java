@@ -329,4 +329,16 @@ public class UserAccountClientService {
         }
     }
 
+    /**
+     * Sends a ModifyRoleOfUserRequest to delete a users role, returns the success or failure of the request
+     * @param userId ID of the user whose role is being deleted
+     * @param role The role being deleted
+     * @return A UserRoleChangeResponse object containing success or failure of the request
+     */
+    public UserRoleChangeResponse removeUserRole(int userId, UserRole role) {
+        UserRoleChangeResponse response = userAccountStub.removeRoleFromUser(
+                ModifyRoleOfUserRequest.newBuilder().setRole(role).setUserId(userId).build());
+        return response;
+    }
+
 }

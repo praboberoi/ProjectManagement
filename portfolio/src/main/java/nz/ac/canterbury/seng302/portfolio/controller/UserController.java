@@ -5,15 +5,21 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRoleChangeResponse;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static java.lang.Integer.parseInt;
 
 /**
  * Controller for user related pages excluding the current
@@ -31,7 +37,7 @@ public class UserController {
     /**
      * Get method for the first page of the list of users
      * @param principal Authentication information containing user info
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param mv Parameters sent to thymeleaf template to be rendered into HTML
      * @return The user list page
      */
     @GetMapping("/users")
@@ -58,7 +64,7 @@ public class UserController {
     /**
      * Get method for the current page of users from the list
      * @param principal Authentication information containing user info
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param mv Parameters sent to thymeleaf template to be rendered into HTML
      * @return The list of user fragment
      */
     @GetMapping("/usersList")
@@ -78,5 +84,27 @@ public class UserController {
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
         mv.addObject("userCount", response.getResultSetSize());
         return mv;
+    }
+
+    /**
+     * Delete method for removing a users role
+     *
+     * @param userId ID for the user
+     * @param role   Type of role being deleted
+     * @return Ok (200) response if successful, 417 response if failure.
+     */
+    @DeleteMapping(value = "/usersList/removeRole")
+    public ResponseEntity removeRole(String userId, String role, RedirectAttributes ra) {
+        UserRole userRole = Enum.valueOf(UserRole.class, role);
+        UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
+        if (!response.getIsSuccess()) {
+            ra.addFlashAttribute("messageDanger", response.getMessage());
+            return ResponseEntity
+                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .build();
+        }
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .build();
     }
 }
