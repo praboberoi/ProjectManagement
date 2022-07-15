@@ -31,11 +31,12 @@ public class EditUserAccountService {
             errorBuilder.setFieldName("firstNameError");
             errorBuilder.setErrorText("First name cannot be blank.");
             result.add(errorBuilder.build());
-        } else if (firstName.length() > 32) {
+        } else if (firstName.length() < 2 || firstName.length() > 32) {
             errorBuilder.setFieldName("firstNameError");
-            errorBuilder.setErrorText("First name cannot be more than 32 characters.");
+            errorBuilder.setErrorText("First name must be between 2 and 32 characters.");
             result.add(errorBuilder.build());
-        } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)) {
+        } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)
+                || !ValidationUtilities.hasDashSpecial(firstName) || !ValidationUtilities.hasSpaceSpecial(firstName)) {
             errorBuilder.setFieldName("firstNameError");
             errorBuilder.setErrorText("First name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
@@ -46,11 +47,12 @@ public class EditUserAccountService {
             errorBuilder.setFieldName("lastNameError");
             errorBuilder.setErrorText("Last name cannot be blank.");
             result.add(errorBuilder.build());
-        } else if (lastName.length() > 32) {
+        } else if (lastName.length() < 2 || lastName.length() > 32) {
             errorBuilder.setFieldName("lastNameError");
-            errorBuilder.setErrorText("Last name cannot be more than 32 characters.");
+            errorBuilder.setErrorText("Last name must be between 2 and 32 characters.");
             result.add(errorBuilder.build());
-        } else if (ValidationUtilities.hasNameSpecial(lastName) || ValidationUtilities.hasDigit(lastName)) {
+        } else if (ValidationUtilities.hasNameSpecial(lastName) || ValidationUtilities.hasDigit(lastName) ||
+                !ValidationUtilities.hasDashSpecial(lastName) || !ValidationUtilities.hasSpaceSpecial(lastName) ) {
             errorBuilder.setFieldName("lastNameError");
             errorBuilder.setErrorText("Last name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
