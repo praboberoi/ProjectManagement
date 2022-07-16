@@ -22,10 +22,8 @@
       <div class="page-title">
         <h2 id="name">Users</h2>
       </div>
-      <div>
-        <div th:if="${messageDanger}" class="alert alert-danger text-center">
-          [[${messageDanger}]]
-        </div>
+      <div id="pageMessage">
+        <div>&nbsp;</div>
       </div>
 
       <!-- Table for users -->
@@ -43,7 +41,7 @@
             <th:block th:each="user : ${usersList}">
               <tr th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment">
                 <td th:id="'user' + ${user.userId} + 'Username'">[[${user.username}]]</td>
-                <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]]  [[${user.lastName}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]] [[${user.lastName}]]</td>
                 <td th:id="'user' + ${user.userId} + 'Nickname'">[[${user.nickname}]]</td>
                 <td th:id="'user' + ${user.userId} + 'Roles'">
                 <ul class="list-inline">
@@ -63,7 +61,7 @@
                       <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
                         <th:block th:each="role : ${roleList}">
                           <div th:if="${!user.getRoles().contains(role)}" class="text-center">
-                            <li><a class="dropdown-item" th:onclick="addRole([[${user.userId}]])">[[${role}]]</a></li>
+                            <li><a class="dropdown-item" th:onclick="addRole([[${user.userId}]], [[${role}]])">[[${role}]]</a></li>
                           </div>
                         </th:block>
                       </ul>

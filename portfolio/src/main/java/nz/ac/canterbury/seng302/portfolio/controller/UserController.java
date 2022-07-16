@@ -128,15 +128,45 @@ public class UserController {
             .build();
     }
 
+    /**
+     * Post request to add a new role to a user
+     * @param principal Authentication information containing user info
+     * @param userId The id of the user to add the new role to
+     * @param newRole The new role to be added to the user
+     * @return The updated user row or an error message
+     */
     @PostMapping(value = "user/{userId}/addRole")
-    public ModelAndView addRole(@AuthenticationPrincipal AuthState principal, @PathVariable int userId, UserRole newRole) {
-        ModelAndView mv = new ModelAndView("userList::userFragment");
+    public ModelAndView addRole(@AuthenticationPrincipal AuthState principal, @PathVariable int userId, @RequestParam("role") UserRole newRole) {
+        ModelAndView mv =  new ModelAndView();
         User user = new User(userAccountClientService.getUser(principal));
         List<UserRole> roleList = Arrays.asList(UserRole.values())
             .stream().filter(role -> 
                 role.ordinal() <= Collections.max(user.getRoles()).ordinal())
             .toList();
 
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole)) {
+            mv.setStatus(HttpStatus.FORBIDDEN);
+            return mv;
+        }
+        UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
+        if (!response.getIsSuccess()) {
+            mv.setViewName("fragments::errorMessage");
+            switch(response.getMessage()) {
+            case "User already has this role.":
+                mv.setStatus(HttpStatus.CONFLICT);
+                break;
+            case "User could not be found.":
+                mv.setStatus(HttpStatus.NOT_FOUND);
+            default:
+                mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+
+            mv.addObject("messageDanger", response.getMessage());
+            return mv;
+        }
+
+        mv.setViewName("userList::userFragment");
+        
         User updatedUser = new User(userAccountClientService.getUser(userId));
         mv.addObject("user", updatedUser);        
         mv.addObject("roleList", roleList);
