@@ -23,12 +23,11 @@ function cropImage() {
     const imageType = fileName.split(".")[1]
     croppie.result({type:'blob', format: imageType, circle:'true'})
         .then(function (imgBlob) {
-            console.log(imgBlob.size)
             image.src = URL.createObjectURL(imgBlob)
             const file = new File([imgBlob], fileName,{type:imgBlob.type, lastModified:new Date().getTime()}, 'utf-8');
             const container = new DataTransfer();
             container.items.add(file);
-            document.getElementById('formFile').files = container.files;
+            document.getElementById('image').files = container.files;
         })
 }
 
