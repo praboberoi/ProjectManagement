@@ -30,7 +30,6 @@ function cropImage() {
             container.items.add(file);
             document.getElementById('image').files = container.files;
         })
-}
 
 };
 

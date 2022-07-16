@@ -54,22 +54,19 @@
                             <img th:src="${user.profileImagePath}" class="profile-photo" id="output" width="200" height="200" />
                             <br>
                             <!-- Start of edit account form -->
-                            <div class="row col-sm-1 px-1 py-2">
-                                <button type="button" class="btn btn-outline-primary btn-sm" id="updateImageBtn" name="updateImageBtn" data-toggle="modal" data-target="#cropImagePop">Update Image</button>
+                            <div class="row px-2">
+                                <div class="col-sm-4 px-1 py-2">
+                                    <button type="button" class="btn btn-outline-primary btn-sm" id="updateImageBtn" name="updateImageBtn" data-toggle="modal" data-target="#cropImagePop">
+                                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit Image</button>
+                                    <button type="button" class='btn btn-outline-secondary btn-sm' onclick="deleteProfilePhoto()">
+                                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete Image</button>
+                                </div>
+                            </div>
                             <form th:action="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}" enctype="multipart/form-data" method="post">
                                 <div>
                                 <input type="hidden" id="deleteImage" name="deleteImage" value="false"/>
                                 </div>
-<!--                            <div class="row mb-3">-->
-<!--                                <label for="formFile" class = "col-sm-2 col-form-label" ><h6>Profile Photo: </h6></label>-->
-<!--                                <div class = "col-sm-6">-->
-<!--                                    <input type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)" >-->
-<!--                                </div>-->
 
-                            </div>
-                            <div class="row col-sm-1 px-1 py-2">
-                                <button class='btn btn-outline-secondary btn-sm' onclick="deleteProfilePhoto()">Delete Image</button>
-                            </div>
                                 <div class="row mb-3">
                                     <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-6">
@@ -120,15 +117,17 @@
                                     </div>
                                 </div>
                                 <br>
-                                <button type="submit" class="btn btn-outline-primary mr-2" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
-                                    <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
-                                <a type="button" class="btn btn-outline-secondary" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
-                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Cancel</a>
+                                <div class="d-flex flex-row justify-content-end p-0">
+                                    <button type="submit" class="btn btn-outline-primary mr-2" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
+                                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
+                                    <a type="button" class="btn btn-outline-secondary" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
+                                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Cancel</a>
+                                </div>
                                 <div class="modal fade" id="cropImagePop" tabindex="-1" role="dialog" aria-labelledby="cropImagePopModal" aria-hidden="true">
                                     <div class="modal-dialog modal-xl">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <h4 class="modal-title" id="myModalLabel">Update Image</h4>
+                                                <h5 class="modal-title" id="myModalLabel">Edit Image</h5>
                                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                     <span aria-hidden="true">&times;</span>
                                                 </button>
