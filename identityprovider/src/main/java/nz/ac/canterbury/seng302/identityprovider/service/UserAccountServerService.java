@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
+import io.grpc.netty.shaded.io.netty.util.internal.StringUtil;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
@@ -16,8 +17,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.sql.SQLOutput;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 /**
  * Grpc service used to retrieve information about users.
@@ -29,7 +35,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     private final static Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
 
-    @Value("${hostAddress}") 
+    @Value("${hostAddress}")
     private String hostAddress;
 
     public UserAccountServerService(UserRepository userRepository) {
@@ -39,8 +45,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     /**
      * This method registers a user in the database based off a UserRegisterRequest, and uses the StreamObserver to
      * contain it's UserRegisterResponse as the result of the operation
-     *
-     * @param request          The request containing details of the user to be registered
+     * @param request The request containing details of the user to be registered
      * @param responseObserver The response observer records the result of the operation
      */
     @Override
@@ -91,8 +96,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * This method builds a user based off an EditUserRequest, first it checks that the user exists in the database,
      * if the user from the edit request exists, it saves the new details to the user from the request and saves the
      * user back into the repository.
-     *
-     * @param request          A proto containing all the details of the user to be edited, such as the userId, first name etc
+     * @param request A proto containing all the details of the user to be edited, such as the userId, first name etc
      * @param responseObserver The streamObserver contains the edit user response which will be passed back down the line with details of the operation
      */
     @Override
@@ -131,8 +135,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     /**
      * Gets a user object from the db and sets the template elements with the user's details
-     *
-     * @param request          Request containing the users id
+     * @param request Request containing the users id
      * @param responseObserver Returns to previous method with data
      */
     @Override
@@ -258,6 +261,41 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    /**
+     * Deletes a user's profile photo
+     * @param request Request containing the users id
+     * @param responseObserver Returns to previous method with data
+     */
+    @Override
+    public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
+        try {
+            User user = userRepository.getUserByUserId(request.getUserId());
+            if (!StringUtils.isNullOrEmpty(user.getProfileImagePath())) {
+                String fileName = user.getProfileImagePath();
+                Path path = FILE_PATH_ROOT.resolve(fileName);
+                Files.deleteIfExists(path);
+
+                user.setProfileImagePath(null);
+                userRepository.save(user);
+
+                responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).build());
+                responseObserver.onCompleted();
+            } else {
+                responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder()
+                        .setIsSuccess(false)
+                        .build());
+                responseObserver.onCompleted();
+            }
+
+        } catch (IOException e) {
+            responseObserver.onError(e);
+        } catch (Exception e) {
+            responseObserver.onError(e);
+        }
+
     }
 
 }

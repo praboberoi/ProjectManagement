@@ -121,6 +121,18 @@ public class UserAccountClientService {
     }
 
     /**
+     * Deletes the selected users profile picture
+     * @param userId The id of the user
+     * @return
+     */
+    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) {
+        DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
+            DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
+            );
+        return response;
+    }
+
+    /**
      * Get the current user (principal) roles and returns them as a list.
      * @param principal - current user detail.
      * @return List of current user roles.

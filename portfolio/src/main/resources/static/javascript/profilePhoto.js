@@ -17,6 +17,7 @@ async function loadFile (event) {
         showZoomer: false
     });
     croppie.bind({url: image.src})
+    document.getElementById("deleteImage").value = false;
 }
 
 function cropImage() {
@@ -30,4 +31,20 @@ function cropImage() {
             document.getElementById('image').files = container.files;
         })
 }
+
+};
+
+/**
+ *  Function to delete the user profile image, set it to default image and also set the deleteImage input tag to true
+ */
+function deleteProfilePhoto() {
+    let profilePhoto = document.getElementById("output")
+    let deleteImage = document.getElementById("deleteImage");
+    profilePhoto.src = "/icons/default-image.svg";
+    deleteImage.value = true;
+    let imageInput = document.getElementById("formFile")
+    imageInput.value = "";
+
+}
+
 

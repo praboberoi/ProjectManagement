@@ -56,19 +56,26 @@
                             <!-- Start of edit account form -->
                             <div class="row col-sm-1 px-1 py-2">
                                 <button type="button" class="btn btn-outline-primary btn-sm" id="updateImageBtn" name="updateImageBtn" data-toggle="modal" data-target="#cropImagePop">Update Image</button>
-                            </div>
                             <form th:action="@{{apiPrefix}/editAccount(apiPrefix=${apiPrefix})}" enctype="multipart/form-data" method="post">
+                                <div>
+                                <input type="hidden" id="deleteImage" name="deleteImage" value="false"/>
+                                </div>
 <!--                            <div class="row mb-3">-->
 <!--                                <label for="formFile" class = "col-sm-2 col-form-label" ><h6>Profile Photo: </h6></label>-->
 <!--                                <div class = "col-sm-6">-->
 <!--                                    <input type="file" accept="image/*" name="image" id="formFile" class="form-control" onchange="loadFile(event)" >-->
 <!--                                </div>-->
-<!--                            </div>-->
+
+                            </div>
+                            <div class="row col-sm-1 px-1 py-2">
+                                <button class='btn btn-outline-secondary btn-sm' onclick="deleteProfilePhoto()">Delete Image</button>
+                            </div>
                                 <div class="row mb-3">
                                     <label for="username" class = "required col-sm-2 col-form-label"><h6>Username: </h6></label>
                                     <div class = "col-sm-6">
                                         <input type="text" id="username" class="form-control" th:placeholder="${user.username}"  aria-label="Disabled input example" disabled>
                                     </div>
+
                                 </div>
                                 <div class="row mb-3">
                                     <label for="firstName" class = "required col-sm-2 col-form-label"><h6>First Name: <span class="asterisk">*</span></h6></label>
@@ -147,6 +154,7 @@
                 <br>
             </div>
         </div>
+
     </div>
 </div>
 </body>
