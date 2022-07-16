@@ -56,5 +56,27 @@ function removeRole(role, userId) {
     httpRequest.open('DELETE', '/usersList/removeRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     httpRequest.send("role=" + role + "&userId=" + userId);
+}
 
+/**
+ * Posts the new role for the user to have added to the server. Once 
+ * completed, replaces user row with updated row.
+ * @param {int} userId 
+ * @param {UserRole} role 
+ */
+function addRole(userId, role) {
+    httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                const userRole = document.getElementById(`user${userId}Row`)
+                userRole.innerHTML = httpRequest.responseText
+            }
+        }
+    }
+
+    httpRequest.open('POST', 'user/' + userId + '/addRole', true);
+    httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
+    httpRequest.send("role=" + role);
 }

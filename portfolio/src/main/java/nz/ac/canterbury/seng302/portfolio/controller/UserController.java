@@ -14,9 +14,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,12 @@ public class UserController {
         this.userAccountClientService = userAccountClientService;
     }
 
+    @ModelAttribute
+    public void addAttributes(@AuthenticationPrincipal AuthState principal, Model model) {
+        model.addAttribute("adminOrTeacher", userAccountClientService.checkUserIsTeacherOrAdmin(principal));
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
+
     /**
      * Get method for the first page of the list of users
      * @param principal Authentication information containing user info
@@ -49,17 +57,21 @@ public class UserController {
         int limit = 10;
         PaginatedUsersResponse response = userAccountClientService.getUsers(0, limit);
         List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
+        User user = new User(userAccountClientService.getUser(principal));
+        List<UserRole> roleList = Arrays.asList(UserRole.values())
+            .stream().filter(role -> 
+                role.ordinal() <= Collections.max(user.getRoles()).ordinal())
+            .toList();
 
         mv = new ModelAndView("userList");
+        mv.addObject("user", user);
         mv.addObject("usersList", usersList);
-        mv.addObject("adminOrTeacher", userAccountClientService.checkUserIsTeacherOrAdmin(principal));
-        mv.addObject("user", userAccountClientService.getUser(principal));
         mv.addObject("apiPrefix", apiPrefix);
         mv.addObject("page", (Integer) 0);
         mv.addObject("limit", (Integer) 5);
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
         mv.addObject("userCount", response.getResultSetSize());
-        mv.addObject("roleList", Arrays.asList(UserRole.STUDENT, UserRole.TEACHER));
+        mv.addObject("roleList", roleList);
         return mv;
     }
 
@@ -78,6 +90,11 @@ public class UserController {
     ) {
         PaginatedUsersResponse response = userAccountClientService.getUsers(page, limit);
         List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
+        User user = new User(userAccountClientService.getUser(principal));
+        List<UserRole> roleList = Arrays.asList(UserRole.values())
+            .stream().filter(role -> 
+                role.ordinal() <= Collections.max(user.getRoles()).ordinal())
+            .toList();
 
         mv = new ModelAndView("userList::userListDataTable");
         mv.addObject("usersList", usersList);
@@ -85,7 +102,7 @@ public class UserController {
         mv.addObject("limit", limit);
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
         mv.addObject("userCount", response.getResultSetSize());
-        mv.addObject("roleList", Arrays.asList(UserRole.STUDENT, UserRole.TEACHER));
+        mv.addObject("roleList", roleList);
         return mv;
     }
 
@@ -94,20 +111,37 @@ public class UserController {
      *
      * @param userId ID for the user
      * @param role   Type of role being deleted
-     * @return Ok (200) response if successful, 417 response if failure.
+     * @return Ok (200) response if successful, 500 response if failure.
      */
     @DeleteMapping(value = "/usersList/removeRole")
-    public ResponseEntity removeRole(String userId, String role, RedirectAttributes ra) {
+    public ResponseEntity<String> removeRole(String userId, String role, RedirectAttributes ra) {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
         if (!response.getIsSuccess()) {
             ra.addFlashAttribute("messageDanger", response.getMessage());
             return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .build();
         }
         return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+            .status(HttpStatus.OK)
+            .build();
+    }
+
+    @PostMapping(value = "user/{userId}/addRole")
+    public ModelAndView addRole(@AuthenticationPrincipal AuthState principal, @PathVariable int userId, UserRole newRole) {
+        ModelAndView mv = new ModelAndView("userList::userFragment");
+        User user = new User(userAccountClientService.getUser(principal));
+        List<UserRole> roleList = Arrays.asList(UserRole.values())
+            .stream().filter(role -> 
+                role.ordinal() <= Collections.max(user.getRoles()).ordinal())
+            .toList();
+
+        User updatedUser = new User(userAccountClientService.getUser(userId));
+        mv.addObject("user", updatedUser);        
+        mv.addObject("roleList", roleList);
+
+        mv.setStatus(HttpStatus.OK);
+        return mv;
     }
 }
