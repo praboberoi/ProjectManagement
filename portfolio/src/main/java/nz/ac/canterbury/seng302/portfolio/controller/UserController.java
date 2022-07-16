@@ -144,10 +144,13 @@ public class UserController {
                 role.ordinal() <= Collections.max(user.getRoles()).ordinal())
             .toList();
 
-        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole)) {
+        if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
+            mv.setViewName("fragments::errorMessage");
             mv.setStatus(HttpStatus.FORBIDDEN);
+            mv.addObject("messageDanger", "Insufficient permissions.");
             return mv;
         }
+
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
         if (!response.getIsSuccess()) {
             mv.setViewName("fragments::errorMessage");
