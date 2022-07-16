@@ -1,6 +1,14 @@
+/**
+ * Script for creating, updating and deleting user profile image
+ */
 let croppie;
 let image;
 let fileName;
+
+/**
+ * Updates the image displayed to the user, creates a Croppie object for cropping and updates the deleteImage element
+ * @param event
+ */
 async function loadFile (event) {
 
     image = document.getElementById("output")
@@ -20,6 +28,9 @@ async function loadFile (event) {
     document.getElementById("deleteImage").value = false;
 }
 
+/**
+ * Obtains the result of the cropped image and updates the current image file to the cropped image
+ */
 function cropImage() {
     const imageType = fileName.split(".")[1]
     croppie.result({type:'blob', format: imageType, circle:'true'})
