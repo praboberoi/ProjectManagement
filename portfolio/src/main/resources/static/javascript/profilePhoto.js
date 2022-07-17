@@ -4,28 +4,32 @@
 let croppie;
 let image;
 let fileName;
-
+const validTypes = ["image/jpeg", "image/gif", "image/gif"]
 /**
  * Updates the image displayed to the user, creates a Croppie object for cropping and updates the deleteImage element
  * @param event
  */
 async function loadFile (event) {
-
-    image = document.getElementById("output")
-    image.src = URL.createObjectURL(event.target.files[0])
-    fileName = event.target.files[0].name;
-    document.getElementById('uploadImage').classList.add('ready');
-
-    if (typeof croppie !== "undefined")
+    console.log(event.target.files[0].type);
+    if (validTypes.includes(event.target.files[0].type)) {
+        image = document.getElementById("output")
+        image.src = URL.createObjectURL(event.target.files[0])
+        fileName = event.target.files[0].name;
+        document.getElementById('uploadImage').classList.add('ready');
+        
+        if (typeof croppie !== "undefined")
         croppie.destroy()
-
-    croppie = new Croppie(document.getElementById('uploadImage'),{
-        viewport: { width: 200, height: 200, type: 'circle'},
-        boundary: { width: 300, height: 300 },
-        showZoomer: false
-    });
-    croppie.bind({url: image.src})
-    document.getElementById("deleteImage").value = false;
+        
+        croppie = new Croppie(document.getElementById('uploadImage'),{
+            viewport: { width: 200, height: 200, type: 'circle'},
+            boundary: { width: 300, height: 300 },
+            showZoomer: false
+        });
+        croppie.bind({url: image.src})
+        document.getElementById("deleteImage").value = false;
+    } else {
+        document.getElementById("image").value = "";
+    }
 }
 
 /**

@@ -152,13 +152,12 @@ public class AccountController {
             RedirectAttributes ra
     ) throws IOException {
         Integer userId = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst().map(ClaimDTO::getValue).orElse("-1"));
+            .filter(claim -> claim.getType().equals("nameid"))
+            .findFirst().map(ClaimDTO::getValue).orElse("-1"));
         EditUserResponse idpResponse = userAccountClientService.edit(userId, firstName, lastName, nickname,
-                bio,
-                pronouns,
-                email);
-
+            bio,
+            pronouns,
+            email);
 //        Start of image upload functionality
         if (!multipartFile.isEmpty()) {
             // original filename of image user has uploaded
