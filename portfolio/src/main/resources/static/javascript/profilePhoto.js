@@ -1,15 +1,46 @@
-var loadFile = function (event) {
-    var image = document.getElementById("output");
-    image.src = URL.createObjectURL(event.target.files[0]);
+/**
+ * Script for creating, updating and deleting user profile image
+ */
+let croppie;
+let image;
+let fileName;
 
-    const reader = new FileReader();
-    reader.onload = function (e) {
-        document.getElementById("output").setAttribute("src", e.target.result);
-    }
+/**
+ * Updates the image displayed to the user, creates a Croppie object for cropping and updates the deleteImage element
+ * @param event
+ */
+async function loadFile (event) {
 
-    reader.readAsDataURL(event.target.files[0]);
-    let deleteImage = document.getElementById("deleteImage");
-    deleteImage.value = false;
+    image = document.getElementById("output")
+    image.src = URL.createObjectURL(event.target.files[0])
+    fileName = event.target.files[0].name;
+    document.getElementById('uploadImage').classList.add('ready');
+
+    if (typeof croppie !== "undefined")
+        croppie.destroy()
+
+    croppie = new Croppie(document.getElementById('uploadImage'),{
+        viewport: { width: 200, height: 200, type: 'circle'},
+        boundary: { width: 300, height: 300 },
+        showZoomer: false
+    });
+    croppie.bind({url: image.src})
+    document.getElementById("deleteImage").value = false;
+}
+
+/**
+ * Obtains the result of the cropped image and updates the current image file to the cropped image
+ */
+function cropImage() {
+    const imageType = fileName.split(".")[1]
+    croppie.result({type:'blob', format: imageType, circle:'true'})
+        .then(function (imgBlob) {
+            image.src = URL.createObjectURL(imgBlob)
+            const file = new File([imgBlob], fileName,{type:imgBlob.type, lastModified:new Date().getTime()}, 'utf-8');
+            const container = new DataTransfer();
+            container.items.add(file);
+            document.getElementById('image').files = container.files;
+        })
 
 };
 
