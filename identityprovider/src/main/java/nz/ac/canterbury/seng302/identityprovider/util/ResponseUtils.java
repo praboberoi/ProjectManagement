@@ -44,6 +44,7 @@ public class ResponseUtils {
     /**
      * Packages a list of userResponses into a PaginatedUsersResponse protobuf object
      * @param users List of User objects to be packaged
+     * @param resultSetSize The total number of entries in the search
      * @return PaginatedUsersResponse as a protobuf object
      */
     public static PaginatedUsersResponse preparePaginatedUsersResponse(List<UserResponse> users, long resultSetSize) {

@@ -1,11 +1,15 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.PersistentSort;
+import nz.ac.canterbury.seng302.portfolio.model.PersistentSortRepository;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -23,6 +27,9 @@ public class UserController {
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
 
+    @Autowired
+    PersistentSortRepository persistentSortRepository;
+
     public UserController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
     }
@@ -30,27 +37,32 @@ public class UserController {
     /**
      * Get method for the first page of the list of users
      * @param principal Authentication information containing user info
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return The user list page
      */
     @GetMapping("/users")
-    public ModelAndView users(
-            @AuthenticationPrincipal AuthState principal,
-            ModelAndView mv) {
-                    
-                    int limit = 10;
-                    PaginatedUsersResponse response = userAccountClientService.getUsers(0, limit, UserField.valueOf("firstName".toUpperCase()), true);
-                    List<User> usersList = response.getUsersList().stream().map(User::new).toList();
-        mv = new ModelAndView("userList");
+    public ModelAndView users(@AuthenticationPrincipal AuthState principal) {
+        int userId = PrincipalUtils.getUserId(principal);
+        int limit = 10;
+        PersistentSort sort;
+        if (persistentSortRepository.findById(userId).isPresent()) {
+            sort = persistentSortRepository.findById(userId).get();
+        } else {
+            sort = persistentSortRepository.save(new PersistentSort(PrincipalUtils.getUserId(principal)));
+        }
+        PaginatedUsersResponse response = userAccountClientService.getUsers(0, limit, sort.getUserListSortBy(), sort.isUserListAscending());
+        List<User> usersList = response.getUsersList().stream().map(User::new).toList();
+
+        ModelAndView mv = new ModelAndView("userList");
         mv.addObject("usersList", usersList);
         mv.addObject("user", userAccountClientService.getUser(principal));
         mv.addObject("apiPrefix", apiPrefix);
-        mv.addObject("page", (Integer) 0);
-        mv.addObject("limit", (Integer) limit);
+        mv.addObject("page", 0);
+        mv.addObject("limit", limit);
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
         mv.addObject("userCount", response.getResultSetSize());
-        mv.addObject("order", "firstName");
-        mv.addObject("asc", "asc");
+        mv.addObject("order", sort.getUserListSortBy().value);
+        mv.addObject("asc", sort.isUserListAscending()?"asc":"desc");
+
         return mv;
     }
 
@@ -68,7 +80,20 @@ public class UserController {
             @RequestParam String order,
             @RequestParam Integer asc
     ) {
-        PaginatedUsersResponse response = userAccountClientService.getUsers(page, limit, UserField.valueOf(order.toUpperCase()), asc==0);
+        int userId = PrincipalUtils.getUserId(principal);
+        PersistentSort sort;
+        if (persistentSortRepository.findById(userId).isPresent()) {
+            sort = persistentSortRepository.findById(userId).get();
+
+        } else {
+            sort = new PersistentSort(PrincipalUtils.getUserId(principal));
+        }
+
+        sort.setUserListSortBy(UserField.valueOf(order.toUpperCase()));
+        sort.setIsAscendingOrder(asc==0);
+        
+        sort = persistentSortRepository.save(sort);
+        PaginatedUsersResponse response = userAccountClientService.getUsers(page, limit, sort.getUserListSortBy(), sort.isUserListAscending());
         List<User> usersList = response.getUsersList().stream().map(User::new).toList();
 
         ModelAndView mv = new ModelAndView("userList::userListDataTable");
@@ -78,7 +103,7 @@ public class UserController {
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
         mv.addObject("userCount", response.getResultSetSize());
         mv.addObject("order", order);
-        mv.addObject("asc", asc==0?"asc":"desc");
+        mv.addObject("asc", sort.isUserListAscending()?"asc":"desc");
         return mv;
     }
 }
