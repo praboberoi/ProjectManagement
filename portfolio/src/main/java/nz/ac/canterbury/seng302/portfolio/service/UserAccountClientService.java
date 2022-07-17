@@ -9,7 +9,6 @@ import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,8 +19,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * Client service used to communicate to the IDP application relating to user account features
@@ -142,33 +139,6 @@ public class UserAccountClientService {
         UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
         return response;
     }
-
-    /**
-     * Get the current user (principal) roles and returns them as a list.
-     * @param principal - current user detail.
-     * @return List of current user roles.
-     */
-    public List<String> getUserRole(AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream()
-        .filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        return userRoles;
-    }
-
-    /**
-     * Check whether the current user has a teacher or course administrator role.
-     * @param principal - current user
-     * @return true if the user has role teacher or course administrator
-     */
-    public boolean checkUserIsTeacherOrAdmin(@AuthenticationPrincipal AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return true;
-        }
-        return false;
-    }
-
-
-
 
     /**
      * This method gets data about a User Profile image from a StreamObserver and returns
