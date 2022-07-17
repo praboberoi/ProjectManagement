@@ -26,7 +26,9 @@ import java.nio.file.Paths;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
-
+/**
+ *  Unit tests for the user controller
+ */
 @WebMvcTest(controllers = UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class UserControllerTests {
@@ -67,6 +69,10 @@ class UserControllerTests {
 		});
 	}
 
+	/**
+     * Tests that the user gets a default image they have no image uploaded when requesting it from the idp
+     * @throws Exception Expection thrown during mockMvc run
+     */
 	@Test
 	void givenUserHasNoImage_whenGetImageCalled_thenDefaultSVGImageReturned() throws Exception{
 

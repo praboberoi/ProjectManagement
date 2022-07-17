@@ -176,7 +176,6 @@ public class UserAccountClientService {
         streamObserver.onNext(metadata);
 
         // upload file in chunks and upload as a stream
-//        InputStream inputStream = Files.newInputStream(path);
         InputStream inputStream = file.getInputStream();
         byte[] bytes = new byte[4096];
         int size;

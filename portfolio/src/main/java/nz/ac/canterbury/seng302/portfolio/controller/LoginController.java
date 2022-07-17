@@ -18,6 +18,9 @@ public class LoginController {
     private final AuthenticateClientService authenticateClientService;
     @Value("${apiPrefix}") private String apiPrefix;
     
+    /**
+    * Adds common model elements used by all controller methods.
+    */
     @ModelAttribute
     public void addAttributes(Model model) {
         model.addAttribute("apiPrefix", apiPrefix);

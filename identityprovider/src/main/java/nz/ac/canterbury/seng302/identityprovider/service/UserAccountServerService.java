@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
-import io.grpc.netty.shaded.io.netty.util.internal.StringUtil;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
@@ -17,11 +16,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.sql.SQLOutput;
-import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.h2.util.StringUtils;
 import org.springframework.beans.factory.annotation.Value;

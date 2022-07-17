@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import ch.qos.logback.core.net.SyslogOutputStream;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -43,6 +42,9 @@ public class AccountController {
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
 
+    /**
+    * Adds common model elements used by all controller methods.
+    */
     @ModelAttribute
     public void addAttributes(Model model) {
         model.addAttribute("apiPrefix", apiPrefix);
@@ -205,7 +207,6 @@ public class AccountController {
 
         model.addAttribute("user", user);
         model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
-//        model.addAttribute("image", user.getProfileImagePath());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
@@ -226,8 +227,6 @@ public class AccountController {
     public ResponseEntity<Long> deleteUserProfilePhoto(@AuthenticationPrincipal AuthState principal) {
         ClaimDTO id = principal.getClaims(2);
         int userId = Integer.parseInt(id.getValue());
-//        UserResponse user = userAccountClientService.getUser(principal);
-//        int userId = user.getId();
         DeleteUserProfilePhotoResponse idpResponse = userAccountClientService.deleteUserProfilePhoto(userId);
 
         if (idpResponse.getIsSuccess()) {
