@@ -49,6 +49,12 @@ public class JwtTokenUtil implements Serializable {
 		return getClaimFromToken(token, Claims::getSubject);
 	}
 
+	// retrieve user id from jwt token
+	public Integer getUserIdFromToken(String token) {
+		Claims claims = getAllClaimsFromToken(token);
+		return Integer.parseInt(getClaimAsDTO("nameid", claims).getValue());
+	}
+
 	// retrieve expiration date from jwt token
 	public Date getExpirationDateFromToken(String token) {
 		return getClaimFromToken(token, Claims::getExpiration);
@@ -152,7 +158,20 @@ public class JwtTokenUtil implements Serializable {
 	 * @param token JWT token string
 	 * @return True if token validates, False otherwise
 	 */
-	public Boolean validateToken(String token) {
-		return !isTokenExpired(token);
+	public Boolean validateToken(String token, List<UserRole> userRoles) {
+		return !isTokenExpired(token) && userRolesUpdated(token, userRoles);
+	}
+
+	/**
+	 * Checks the roles in the token match the users current roles
+	 * @param token JWT token string
+	 * @param userRoles List of roles the user has on record
+	 * @return
+	 */
+	private Boolean userRolesUpdated(String token, List<UserRole> userRoles) {
+		Claims claims = getAllClaimsFromToken(token);
+		ClaimDTO roles = getClaimAsDTO(ROLE_CLAIM_TYPE, claims);
+		String updatedRoles = userRoles.stream().map(UserRole::name).collect(Collectors.joining(","));
+		return updatedRoles.equals(roles.getValue());
 	}
 }
