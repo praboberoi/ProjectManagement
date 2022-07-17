@@ -1,7 +1,7 @@
 var editBtn = document.getElementById('editBtn');
 var editables = document.querySelectorAll('#username, #firstname, #lastname');
 var special = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
+var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-]([A-Za-z0-9-])*(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
 var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
