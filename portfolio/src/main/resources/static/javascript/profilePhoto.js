@@ -58,7 +58,7 @@ function deleteProfilePhoto() {
     let deleteImage = document.getElementById("deleteImage");
     profilePhoto.src = "/icons/default-image.svg";
     deleteImage.value = true;
-    let imageInput = document.getElementById("formFile")
+    let imageInput = document.getElementById("image")
     imageInput.value = "";
 
 }
