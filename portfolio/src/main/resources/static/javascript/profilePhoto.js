@@ -4,7 +4,7 @@
 let croppie;
 let image;
 let fileName;
-const validTypes = ["image/jpeg", "image/gif", "image/gif"]
+const validTypes = ["image/jpeg", "image/gif", "image/png"]
 /**
  * Updates the image displayed to the user, creates a Croppie object for cropping and updates the deleteImage element
  * @param event
