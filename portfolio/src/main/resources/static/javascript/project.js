@@ -1,8 +1,11 @@
 const projectDescriptionNav = document.getElementById('projectDescriptionNav')
 const plannerNav = document.getElementById('plannerNav')
-const calender = document.getElementById('cal')
+const cal = document.getElementById('cal')
 const projectDescription = document.getElementById('projectDescription')
 
+/**
+ * Updates the conformation message to delete the sprint with appropriate sprint name
+ */
 function updateSprintDetails(sprintId, sprintName, projectId, prefix) {
     if (prefix === null)
         prefix = ""
@@ -10,9 +13,12 @@ function updateSprintDetails(sprintId, sprintName, projectId, prefix) {
     document.getElementById('deleteSprint').setAttribute('action', `${prefix}/${projectId}/deleteSprint/${sprintId}`);
 }
 
+/**
+ * Switches the current display from project details to the calender view
+ */
 function navTOProjectDescription() {
     if (projectDescriptionNav.ariaSelected === "false") {
-        calender.hidden = true
+        cal.hidden = true
         projectDescription.hidden = false
         projectDescriptionNav.ariaSelected = "true";
         plannerNav.ariaSelected = "false"
@@ -22,9 +28,12 @@ function navTOProjectDescription() {
     }
 }
 
+/**
+ * Switches the current display from project details to the planner
+ */
 function navToPlanner() {
     if (plannerNav.ariaSelected === "false") {
-        calender.hidden = false
+        cal.hidden = false
         projectDescription.hidden = true
         projectDescriptionNav.ariaSelected = "false";
         plannerNav.ariaSelected = "true"
