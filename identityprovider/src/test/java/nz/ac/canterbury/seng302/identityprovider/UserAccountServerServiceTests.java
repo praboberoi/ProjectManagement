@@ -20,7 +20,6 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.AdditionalAnswers.returnsFirstArg;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 /**
@@ -76,7 +75,7 @@ class UserAccountServerServiceTests {
         EditUserRequest request = EditUserRequest.newBuilder()
                 .setUserId(-1).build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
-        when(userRepository.getUserByUserId(eq(-1))).thenReturn(null);
+        when(userRepository.getUserByUserId(-1)).thenReturn(null);
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
         assertFalse(response.getIsSuccess());

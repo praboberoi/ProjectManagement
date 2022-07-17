@@ -133,6 +133,7 @@ input:invalid{
 
 .profile-photo {
     border-radius: 50%;
+    object-fit: cover;
 }
 
 .fc-event-draggable {
@@ -142,4 +143,6 @@ input:invalid{
     border-right-width: 5px;
     border-left-color: rgb(185, 182, 163);
     border-right-color: rgb(185, 182, 163);
-  }
+}
+
+

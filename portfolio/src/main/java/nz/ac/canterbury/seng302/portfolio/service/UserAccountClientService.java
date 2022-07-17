@@ -4,9 +4,7 @@ import com.google.protobuf.ByteString;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
-import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
@@ -14,11 +12,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
@@ -128,6 +121,18 @@ public class UserAccountClientService {
     }
 
     /**
+     * Deletes the selected users profile picture
+     * @param userId The id of the user
+     * @return
+     */
+    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) {
+        DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
+            DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
+            );
+        return response;
+    }
+
+    /**
      * Get the current user (principal) roles and returns them as a list.
      * @param principal - current user detail.
      * @return List of current user roles.
@@ -151,112 +156,6 @@ public class UserAccountClientService {
         return false;
     }
 
-
-
-
-    /**
-     * This method gets data about a User Profile image from a StreamObserver and returns
-     * a StreamObserver about the FileUploadStatus response.
-     * @param responseObserver The request containing image information
-     * @return The response observer records the result of the operation
-     */
-    public StreamObserver<UploadUserProfilePhotoRequest> getImage(StreamObserver<FileUploadStatusResponse> responseObserver){
-        return new StreamObserver<>() {
-
-        OutputStream writer;
-            FileUploadStatus status = FileUploadStatus.IN_PROGRESS;
-            User user;
-            Path path;
-
-            /**
-             * Sets the OutputStream on the first request and then sends
-             * the data to be saved on subsequent requests
-             *
-             * @param request Request containing image information
-             */
-            @Override
-            public void onNext(UploadUserProfilePhotoRequest request) {
-                try {
-                    if (request.hasMetaData()) {
-                        path = getFilePath(request);
-                        writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-//                    user = userRepository.getUserByUserId(request.getMetaData().getUserId());
-                    } else {
-                        writeFile(writer, request.getFileContent());
-                    }
-                } catch (IOException e) {
-                    this.onError(e);
-                }
-            }
-
-            /**
-             * Updates file upload status
-             *
-             * @param t the error occurred on the stream
-             */
-            @Override
-            public void onError(Throwable t) {
-                status = FileUploadStatus.FAILED;
-                this.onCompleted();
-            }
-
-            /**
-             * Compiles file upload status response
-             */
-            @Override
-            public void onCompleted() {
-                closeFile(writer);
-                status = FileUploadStatus.IN_PROGRESS.equals(status) ? FileUploadStatus.SUCCESS : status;
-                FileUploadStatusResponse response = FileUploadStatusResponse.newBuilder()
-                        .setStatus(status)
-                        .setMessage("File upload progress: " + status)
-                        .build();
-                user.setProfileImagePath(String.valueOf(path));
-//            userRepository.save(user);
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-
-            }
-        };
-
-    }
-
-
-    /**
-     * Writes image file to profilePhotos
-     * @param writer OutputStream containing pathway
-     * @param content Image content
-     */
-    private void writeFile(OutputStream writer, ByteString content) throws IOException {
-        writer.write(content.toByteArray());
-        writer.flush();
-    }
-
-    /**
-     * Creates file name and writer
-     * @param request Contains image information
-     * @return Writer containing information to save file
-     */
-    private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
-        Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
-        var fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
-        return SERVER_BASE_PATH.resolve(fileName);
-    }
-
-    /**
-     * Closes OutputStream
-     * @param writer The OutputStream
-     */
-    private void closeFile(OutputStream writer){
-        try {
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-
     /**
      * Sends an upload image request to the server
      * @param id Id of user (required)
@@ -267,7 +166,6 @@ public class UserAccountClientService {
     public void uploadImage(final int id, final String ext, final MultipartFile file) throws IOException {
         // request observer from UserAccountServiceGrpc
         StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountServiceStub.uploadUserProfilePhoto(new UserAccountClientService.FileUploadObserver());
-
         // build metadata from proto in user_accounts.proto
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
                 .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
@@ -278,7 +176,6 @@ public class UserAccountClientService {
         streamObserver.onNext(metadata);
 
         // upload file in chunks and upload as a stream
-//        InputStream inputStream = Files.newInputStream(path);
         InputStream inputStream = file.getInputStream();
         byte[] bytes = new byte[4096];
         int size;
@@ -291,10 +188,6 @@ public class UserAccountClientService {
         // close stream
         inputStream.close();
         streamObserver.onCompleted();
-        // write image to portfolio when image has been successfully uploaded
-        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
-        Files.write(path, file.getBytes());
-
     }
     /**
      * Returns a status update when the file upload is complete using protos
