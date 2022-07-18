@@ -14,6 +14,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 
 @GrpcGlobalServerInterceptor
 public class AuthenticationServerInterceptor implements ServerInterceptor {
+    JwtTokenUtil jwtTokenUtil = JwtTokenUtil.getInstance();
 
     private final Metadata.Key<String> sessionTokenHeaderKey = Metadata.Key.of("X-Authorization", Metadata.ASCII_STRING_MARSHALLER);
 
