@@ -23,6 +23,15 @@ public class AuthenticateClientService {
         return authenticationStub.authenticate(authRequest);
     }
 
+    public AuthenticateResponse reAuthenticate()  {
+        try {
+            AuthenticateRequest authRequest = AuthenticateRequest.newBuilder().build();
+            return authenticationStub.authenticate(authRequest);
+        } catch (StatusRuntimeException e) {
+            return null;
+        }
+    }
+
     public AuthState checkAuthState() throws StatusRuntimeException {
         return authenticationStub.checkAuthState(Empty.newBuilder().build());
     }
