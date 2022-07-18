@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
+import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -29,6 +30,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Controller for the account page
@@ -193,8 +195,11 @@ public class AccountController {
         User user = new User(idpResponse);
 
         model.addAttribute("user", user);
-        model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(", ")).toLowerCase());
-//        model.addAttribute("image", user.getProfileImagePath());
+
+
+        StringBuilder roles = new StringBuilder();
+        user.getRoles().forEach(role -> roles.append(capitaliseFirstLetter(role.toString() + ", ")));
+        model.addAttribute("roles", roles.substring(0, roles.length() - 2));
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
@@ -206,4 +211,12 @@ public class AccountController {
                 creationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
         model.addAttribute("timePassed", getTimePassed(creationDate));
     }
+    static String capitaliseFirstLetter(String name){
+        if (name.contains("_"))
+            name = name.replace("_", " ");
+
+        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
+
+    }
+
 }
