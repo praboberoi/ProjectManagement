@@ -199,7 +199,8 @@ public class AccountController {
 
         StringBuilder roles = new StringBuilder();
         user.getRoles().forEach(role -> roles.append(capitaliseFirstLetter(role.toString() + ", ")));
-        model.addAttribute("roles", roles.substring(0, roles.length() - 2));
+        model.addAttribute("roles",
+                user.getRoles().size() > 0 ? roles.substring(0, roles.length() - 2): user.getRoles());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
@@ -211,12 +212,12 @@ public class AccountController {
                 creationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
         model.addAttribute("timePassed", getTimePassed(creationDate));
     }
-    static String capitaliseFirstLetter(String name){
-        if (name.contains("_"))
-            name = name.replace("_", " ");
-
-        return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
-
+    static String capitaliseFirstLetter(String name) {
+        if (name.contains("_")) {
+            String[] role = name.split("_");
+            return capitaliseFirstLetter(role[0]) + " " + capitaliseFirstLetter(role[1]);
+        } else
+            return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
 }
