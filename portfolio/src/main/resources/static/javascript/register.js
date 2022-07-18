@@ -7,6 +7,10 @@ var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
 var dash = /^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$/;
 var space = /^[A-Za-z0-9\-]+( [A-Za-z0-9\-]+)*$/;
 
+
+/**
+ * Validates the users username in input field
+ */
 function checkUsername() {
     let usernameElement = document.getElementById("username");
     let usernameErrorElement = document.getElementById("usernameError");
@@ -24,6 +28,9 @@ function checkUsername() {
     }
 };
 
+/**
+ * Validates the users first name in input field
+ */
 function checkFirstName() {
     let firstNameElement = document.getElementById("firstName");
     let firstNameErrorElement = document.getElementById("firstNameError");
@@ -44,6 +51,9 @@ function checkFirstName() {
     }
 };
 
+/**
+ * Validates the users last name in input field
+ */
 function checkLastName() {
     let lastNameElement = document.getElementById("lastName");
     let lastNameErrorElement = document.getElementById("lastNameError");
@@ -64,6 +74,9 @@ function checkLastName() {
     }
 }
 
+/**
+ * Validates the users nickname in input field
+ */
 function checkNickname() {
     let nicknameElement = document.getElementById("nickname");
     let nicknameErrorElement = document.getElementById("nicknameError");
@@ -79,6 +92,9 @@ function checkNickname() {
     }
 }
 
+/**
+ * Validates the users email in input field
+ */
 function checkEmail() {
     let emailElement = document.getElementById("email");
     let emailErrorElement = document.getElementById("emailError");
@@ -94,6 +110,9 @@ function checkEmail() {
     }
 }
 
+/**
+ * Validates the users pronouns in input field
+ */
 function checkPronouns() {
     let pronounsElement = document.getElementById("pronouns");
     let pronounsErrorElement = document.getElementById("personalPronounsError");
@@ -113,6 +132,9 @@ function checkPronouns() {
     }
 }
 
+/**
+ * Validates the users password in input field
+ */
 function checkPass() {
     let passwordElement = document.getElementById("password");
     let passwordErrorElement = document.getElementById("passwordError");
@@ -129,6 +151,9 @@ function checkPass() {
     }
 }
 
+/**
+ * Validates the users passwords match in input field
+ */
 function match_pass() {
     let passwordElement = document.getElementById("password");
     let confirmPasswordElement = document.getElementById("confirmPassword");
