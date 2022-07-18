@@ -231,7 +231,7 @@ public class Project {
          * @return an object of type Project
          */
         public Project build() {
-            return new Project(projectId,projectName, description, startDate, endDate);
+            return new Project(projectId, projectName, description, startDate, endDate);
         }
 
     }

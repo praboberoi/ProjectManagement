@@ -95,7 +95,7 @@ public class DashboardService {
      * @param project of type Project
      * @throws IncorrectDetailsException indicating page values of the HTML page are manually changed.
      */
-    public void verifyProject(Project project) throws Exception {
+    public void verifyProject(Project project) throws IncorrectDetailsException {
         Date projectMinDate;
         Date projectMaxDate;
         List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
