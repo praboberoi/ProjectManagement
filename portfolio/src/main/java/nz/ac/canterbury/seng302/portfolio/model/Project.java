@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -40,6 +41,9 @@ public class Project {
      */
     @Column(nullable = false)
     private Date endDate;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<Sprint> sprints;
 
     /**
      * No args Constructor of the Project.

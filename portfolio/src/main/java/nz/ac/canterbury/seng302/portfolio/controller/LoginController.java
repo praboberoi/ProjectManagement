@@ -17,6 +17,14 @@ public class LoginController {
 
     private final AuthenticateClientService authenticateClientService;
     @Value("${apiPrefix}") private String apiPrefix;
+    
+    /**
+    * Adds common model elements used by all controller methods.
+    */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
 
     /**
      * If the user is not logged in redirects the user to the login page
@@ -57,7 +65,6 @@ public class LoginController {
             @RequestParam(name="password", required=false, defaultValue="Password123!") String password,
             Model model
     ) {
-        model.addAttribute("apiPrefix", apiPrefix);
         return "login";
     }
 
@@ -73,8 +80,7 @@ public class LoginController {
         try {
             loginReply = authenticateClientService.authenticate(username, password);
         } catch (StatusRuntimeException e){
-            model.addAttribute("apiPrefix", apiPrefix);
-            model.addAttribute("error", "Error connecting to Server");
+                model.addAttribute("error", "Error connecting to Server");
             return "login";
         }
         if (loginReply.getSuccess()) {
@@ -89,8 +95,7 @@ public class LoginController {
             );
             return "redirect:/dashboard";
         }
-            model.addAttribute("apiPrefix", apiPrefix);
-            model.addAttribute("error", loginReply.getMessage());
+                model.addAttribute("error", loginReply.getMessage());
         return "login";
     }
 

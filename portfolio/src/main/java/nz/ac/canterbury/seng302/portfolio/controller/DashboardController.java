@@ -3,10 +3,8 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
-import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,18 +14,22 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.persistence.PersistenceException;
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
-    @Autowired private SprintService sprintService;
     @Value("${apiPrefix}") private String apiPrefix;
 
+    /**
+    * Adds common model elements used by all controller methods.
+    */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
 
     /**
      * Maps all the projects, current user and user's role to the dashboard.html page
@@ -39,7 +41,6 @@ public class DashboardController {
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
             List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
@@ -60,8 +61,7 @@ public class DashboardController {
      */
     @RequestMapping(path="/dashboard/newProject", method = RequestMethod.GET)
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        model.addAttribute("apiPrefix", apiPrefix);
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         Project newProject = dashboardService.getNewProject();
         List<Date> dateRange = dashboardService.getProjectDateRange(newProject);
         model.addAttribute("project", newProject);
@@ -90,10 +90,9 @@ public class DashboardController {
             Model model,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
-            dashboardService.verifyProject(project);
+                dashboardService.verifyProject(project);
             String message =  dashboardService.saveProject(project);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
@@ -102,7 +101,6 @@ public class DashboardController {
             model.addAttribute("apiPrefix", apiPrefix);
             return "redirect:/dashboard";
         } catch (Exception e) {
-            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
@@ -123,11 +121,10 @@ public class DashboardController {
         Model model,
         RedirectAttributes ra,
         @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project project  = dashboardService.getProject(projectId);
             List<Date> dateRange = dashboardService.getProjectDateRange(project);
-            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
@@ -140,8 +137,7 @@ public class DashboardController {
             return "projectForm";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            model.addAttribute("apiPrefix", apiPrefix);
-            return "redirect:/dashboard";
+                return "redirect:/dashboard";
         }
     }
 
@@ -159,12 +155,10 @@ public class DashboardController {
         RedirectAttributes ra,
         Model model,
         @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
-            Project project  = dashboardService.getProject(projectId);
+                Project project  = dashboardService.getProject(projectId);
             String message = "Successfully Deleted " + project.getProjectName();
-            sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";

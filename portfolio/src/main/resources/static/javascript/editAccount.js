@@ -8,7 +8,9 @@ var upper = /[A-Z]/;
 var dash = /^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$/;
 var space = /^[A-Za-z0-9\-]+( [A-Za-z0-9\-]+)*$/;
 
-
+/**
+ * Disable input fields and buttons when edit button is pressed
+ */
 editBtn.addEventListener('click', function(e) {
     if (!editables[0].isContentEditable) {
         editables[0].contentEditable = 'true';
@@ -31,6 +33,9 @@ editBtn.addEventListener('click', function(e) {
     }
 });
 
+/**
+ * Validates the users first name in input field
+ */
 function checkFirstName() {
     let firstNameElement = document.getElementById("firstName");
     let firstNameErrorElement = document.getElementById("firstNameError");
@@ -50,6 +55,9 @@ function checkFirstName() {
     }
 };
 
+/**
+ * Validates the users last name in input field
+ */
 function checkLastName() {
     let lastNameElement = document.getElementById("lastName");
     let lastNameErrorElement = document.getElementById("lastNameError");
@@ -69,6 +77,9 @@ function checkLastName() {
     }
 };
 
+/**
+ * Validates the users nickname in input field
+ */
 function checkNickname() {
     let nicknameElement = document.getElementById("nickname");
     let nicknameErrorElement = document.getElementById("nicknameError");
@@ -84,6 +95,9 @@ function checkNickname() {
     }
 };
 
+/**
+ * Validates the users email in input field
+ */
 function checkEmail() {
     let emailElement = document.getElementById("email");
     let emailErrorElement = document.getElementById("emailError");
@@ -99,6 +113,9 @@ function checkEmail() {
     }
 };
 
+/**
+ * Validates the users pronouns in input field
+ */
 function checkPronouns() {
     let pronounsElement = document.getElementById("pronouns");
     let pronounsErrorElement = document.getElementById("personalPronounsError");
@@ -118,10 +135,12 @@ function checkPronouns() {
     }
 };
 
+/**
+ * Validates the users bio in input field
+ */
 function checkBio() {
     let bioElement = document.getElementById("bio");
     let bioErrorElement = document.getElementById("bioError");
-
     let charMessage = document.getElementById("charCount");
     let charCount = bioElement.value.length;
     charMessage.innerText = charCount + ' '

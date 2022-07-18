@@ -28,6 +28,14 @@ public class SprintController {
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
+    
+    /**
+    * Adds common model elements used by all controller methods.
+    */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
 
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
@@ -46,8 +54,7 @@ public class SprintController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             Project project = projectService.getProjectById(projectId);
-            model.addAttribute("apiPrefix", apiPrefix);
-            model.addAttribute("listSprints", listSprints);
+                model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -72,12 +79,11 @@ public class SprintController {
             @PathVariable ("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
-            model.addAttribute("apiPrefix", apiPrefix);
-            model.addAttribute("pageTitle", "Add New Sprint");
+                model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -112,7 +118,7 @@ public class SprintController {
             String label,
             int id,
             @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         Sprint currentSprint = new Sprint();
         try {
             Project project = projectService.getProjectById(projectId);
@@ -144,7 +150,7 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         Model model,
         RedirectAttributes ra) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
@@ -177,12 +183,11 @@ public class SprintController {
             Model model,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
-            model.addAttribute("apiPrefix", apiPrefix);
-            model.addAttribute("sprint", sprint);
+                model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -212,15 +217,13 @@ public class SprintController {
         @PathVariable int projectId,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra){
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
             sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             model.addAttribute("listSprints", listSprints);
-            model.addAttribute("apiPrefix", apiPrefix);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -248,7 +251,7 @@ public class SprintController {
         String endDate,
         @AuthenticationPrincipal AuthState principal
     ) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal))
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal))
             return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
 
         try {

@@ -22,6 +22,14 @@ public class RegisterController {
 
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
+    
+    /**
+    * Adds common model elements used by all controller methods.
+    */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
 
     public RegisterController(UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
@@ -40,7 +48,6 @@ public class RegisterController {
             HttpServletResponse response,
             Model model
     ) {
-        model.addAttribute("apiPrefix", apiPrefix);
         return "register";
     }
 
@@ -77,8 +84,7 @@ public class RegisterController {
         if (password.equals(confirmPassword)) {
             idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
             if (idpResponse.getIsSuccess()) {
-                model.addAttribute("apiPrefix", apiPrefix);
-                return "redirect:/login";
+                        return "redirect:/login";
             } else {
                 validationErrors = idpResponse.getValidationErrorsList();
             }
@@ -105,7 +111,6 @@ public class RegisterController {
         model.addAttribute("personalPronouns", pronouns);
 
         model.addAttribute("email", email);
-        model.addAttribute("apiPrefix", apiPrefix);
         return "register";
     }
 
