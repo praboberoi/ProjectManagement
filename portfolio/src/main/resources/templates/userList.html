@@ -22,11 +22,9 @@
       <div class="page-title">
         <h2 id="name">Users</h2>
       </div>
-      <div>
-        <div th:if="${messageDanger}" class="alert alert-danger text-center">
-          [[${messageDanger}]]
-        </div>
-      </div>
+      <br>
+      <div class="alert alert-danger text-center" id="messageDanger" hidden></div>
+      <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
 
       <!-- Table for users -->
       <div class="table-border bdr" th:fragment="userListDataTable" id="userListDataTable">

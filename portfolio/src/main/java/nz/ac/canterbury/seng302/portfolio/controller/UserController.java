@@ -99,14 +99,8 @@ public class UserController {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
         if (!response.getIsSuccess()) {
-            System.out.println(response.getMessage());
-            ra.addFlashAttribute("messageDanger", response.getMessage());
-            return ResponseEntity
-                    .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .build();
+            return new ResponseEntity(response.getMessage(), HttpStatus.BAD_REQUEST);
         }
-        return ResponseEntity
-                .status(HttpStatus.OK)
-                .build();
+        return new ResponseEntity("Role deleted successfully", HttpStatus.OK);
     }
 }

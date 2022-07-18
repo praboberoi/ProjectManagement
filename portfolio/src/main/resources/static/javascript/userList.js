@@ -1,4 +1,6 @@
 let page = 0;
+let messageDanger = document.getElementById("messageDanger");
+let messageSuccess = document.getElementById("messageSuccess");
 
 /**
  * Increment page count and load the new data
@@ -20,6 +22,8 @@ function prevPage() {
  * Makes a call to the server and replaces the current user data table with the new one
  */
 function getUserDataTable(newPage) {
+    messageDanger.hidden = true;
+    messageSuccess.hidden = true;
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -38,17 +42,21 @@ function removeRole(role, userId) {
 
     httpRequest = new XMLHttpRequest();
 
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function (qualifiedName, value) {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                if (httpRequest.response != "") {
-                    startDateError.innerText = httpRequest.response;
-                    startDateElement.classList.add("formError");
-                    endDateElement.classList.add("formError");
-                }
                 const roleElement = document.getElementById(`user${userId}Role${role}`)
                 roleElement.remove()
+                messageDanger.hidden = true;
+
                 getUserDataTable(page)
+                messageSuccess.hidden = false;
+                messageSuccess.innerText = httpRequest.response
+
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.response;
             }
         }
     }
