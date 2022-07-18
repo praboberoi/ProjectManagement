@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @GrpcService
@@ -361,6 +362,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void removeRoleFromUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
         User user = userRepository.getUserByUserId(request.getUserId());
         UserRoleChangeResponse.Builder userRoleChangeResponse = UserRoleChangeResponse.newBuilder();
+        AtomicInteger highestUserRole = new AtomicInteger(0);
+        user.getRoles().forEach(role ->  {
+            if(role.getNumber() > highestUserRole.get())  highestUserRole.set(role.getNumber());});
 
         if (user == null) {
             userRoleChangeResponse.setIsSuccess(false);
@@ -380,7 +384,15 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
         if (user.getRoles().size() == 1) {
             userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User must have one role.");
+            userRoleChangeResponse.setMessage("User must have a role.");
+            responseObserver.onNext(userRoleChangeResponse.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        if (highestUserRole.get() == request.getRoleValue()) {
+            userRoleChangeResponse.setIsSuccess(false);
+            userRoleChangeResponse.setMessage("User cannot delete " + request.getRole());
             responseObserver.onNext(userRoleChangeResponse.build());
             responseObserver.onCompleted();
             return;
@@ -393,6 +405,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onNext(userRoleChangeResponse.build());
         responseObserver.onCompleted();
     }
+
     /**
      * Gets all users from the db and returns them packaged into a protobuf
      *

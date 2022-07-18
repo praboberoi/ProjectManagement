@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import ch.qos.logback.core.net.SyslogOutputStream;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
@@ -98,6 +99,7 @@ public class UserController {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
         if (!response.getIsSuccess()) {
+            System.out.println(response.getMessage());
             ra.addFlashAttribute("messageDanger", response.getMessage());
             return ResponseEntity
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
