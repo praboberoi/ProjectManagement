@@ -96,9 +96,10 @@ public class UserController {
     public ResponseEntity removeRole(String userId, String role,  @AuthenticationPrincipal AuthState principal) {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
 
-        UserResponse user = userAccountClientService.getUser(principal);
+        UserResponse loggedInUser = userAccountClientService.getUser(principal);
+        UserResponse user = userAccountClientService.getUser(Integer.parseInt(userId));
         AtomicInteger highestUserRole = new AtomicInteger(0);
-        user.getRolesList().forEach(usersRole ->  {
+        loggedInUser.getRolesList().forEach(usersRole ->  {
             if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());});
 
         if (user == null) {
