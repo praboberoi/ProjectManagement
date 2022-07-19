@@ -19,6 +19,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.NoSuchElementException;
 
 import org.h2.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 /**
  * Grpc service used to retrieve information about users.
@@ -29,6 +31,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     private final UserRepository userRepository;
 
     private final static Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
+    private final Logger logger = LoggerFactory.getLogger(UserAccountServerService.class);
 
     @Value("${hostAddress}")
     private String hostAddress;
@@ -184,6 +187,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                     if (request.hasMetaData()) {
                         fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
                         path = FILE_PATH_ROOT.resolve(fileName);
+                        user = userRepository.getUserByUserId(request.getMetaData().getUserId());
                         File f = new File(String.valueOf(path));
                         if (f.exists()) {
                             try {
@@ -194,11 +198,11 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                         }
 
                         writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                        user = userRepository.getUserByUserId(request.getMetaData().getUserId());
                     } else {
                         writeFile(writer, request.getFileContent());
                     }
                 } catch (IOException e) {
+                    logger.error("An error occured while uploading the users profile photo", e);
                     this.onError(e);
                 }
             }
