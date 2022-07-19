@@ -153,3 +153,21 @@ input:invalid{
 .card-header {
     display: flex;
 }
+
+td {
+    word-wrap: break-word;
+    max-width: 180px;
+}
+
+.mobile-only{
+    display:none
+}
+.desktop-only{
+    display:table;
+    width: 100%
+}
+
+@media (max-width:850px){
+    .desktop-only{display:none}
+    .mobile-only{display:block}
+}
