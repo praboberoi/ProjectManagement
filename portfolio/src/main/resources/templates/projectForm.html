@@ -26,7 +26,7 @@
 <div class="main">
     <br>
     <div class="page-title">
-        <h2>[[${pageTitle}]]</h2>
+        <h2 id="projectForm-font">[[${pageTitle}]]</h2>
     </div>
     <div class="projectForm">
         <form id="createProjectForm" onsubmit="return validateForm()" th:action="@{{apiPrefix}/dashboard/saveProject(apiPrefix=${apiPrefix})}" method="post" th:object="${project}" >
