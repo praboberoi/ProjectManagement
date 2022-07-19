@@ -362,41 +362,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     public void removeRoleFromUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
         User user = userRepository.getUserByUserId(request.getUserId());
         UserRoleChangeResponse.Builder userRoleChangeResponse = UserRoleChangeResponse.newBuilder();
-        AtomicInteger highestUserRole = new AtomicInteger(0);
-        user.getRoles().forEach(role ->  {
-            if(role.getNumber() > highestUserRole.get())  highestUserRole.set(role.getNumber());});
-
-        if (user == null) {
-            userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User cannot be found in database");
-            responseObserver.onNext(userRoleChangeResponse.build());
-            responseObserver.onCompleted();
-            return;
-        }
-
-        if (!user.getRoles().contains(request.getRole())) {
-            userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User does not have this role.");
-            responseObserver.onNext(userRoleChangeResponse.build());
-            responseObserver.onCompleted();
-            return;
-        }
-
-        if (user.getRoles().size() == 1) {
-            userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User must have a role.");
-            responseObserver.onNext(userRoleChangeResponse.build());
-            responseObserver.onCompleted();
-            return;
-        }
-
-        if (highestUserRole.get() == request.getRoleValue()) {
-            userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User cannot delete " + request.getRole());
-            responseObserver.onNext(userRoleChangeResponse.build());
-            responseObserver.onCompleted();
-            return;
-        }
 
         user.removeRole(request.getRole());
         userRepository.save(user);

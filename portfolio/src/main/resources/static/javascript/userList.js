@@ -36,6 +36,7 @@ function getUserDataTable(newPage) {
     httpRequest.open('GET', apiPrefix + '/usersList?page=' + newPage + '&limit=' + 10);
     retrieving = true;
     httpRequest.send();
+    console.log("this is running")
 };
 
 function removeRole(role, userId) {

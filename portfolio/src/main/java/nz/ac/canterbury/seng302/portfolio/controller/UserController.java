@@ -2,12 +2,9 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import ch.qos.logback.core.net.SyslogOutputStream;
 import nz.ac.canterbury.seng302.portfolio.model.User;
-import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRoleChangeResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +15,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
@@ -95,11 +93,36 @@ public class UserController {
      * @return Ok (200) response if successful, 417 response if failure.
      */
     @DeleteMapping(value = "/usersList/removeRole")
-    public ResponseEntity removeRole(String userId, String role, RedirectAttributes ra) {
+    public ResponseEntity removeRole(String userId, String role,  @AuthenticationPrincipal AuthState principal) {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
+
+        UserResponse user = userAccountClientService.getUser(principal);
+        AtomicInteger highestUserRole = new AtomicInteger(0);
+        user.getRolesList().forEach(usersRole ->  {
+            if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());});
+
+        if (user == null) {
+            return new ResponseEntity("User cannot be found in database", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!user.getRolesList().contains(UserRole.valueOf(role))) {
+            return new ResponseEntity("User does not have this role.", HttpStatus.BAD_REQUEST);
+
+        }
+
+        if (user.getRolesList().size() == 1) {
+            return new ResponseEntity("User must have a role.", HttpStatus.BAD_REQUEST);
+
+        }
+        System.out.println(highestUserRole.get() + "/" + UserRole.valueOf(role).getNumber());
+        if (highestUserRole.get() < UserRole.valueOf(role).getNumber()) {
+            return new ResponseEntity("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
+
+        }
+
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
         if (!response.getIsSuccess()) {
-            return new ResponseEntity(response.getMessage(), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(response.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity("Role deleted successfully", HttpStatus.OK);
     }
