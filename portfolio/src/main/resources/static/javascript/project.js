@@ -3,7 +3,6 @@ const plannerNav = document.getElementById('plannerNav')
 const cal = document.getElementById('cal')
 const projectDescription = document.getElementById('projectDescription')
 
-import './body.css';
 /**
  * Updates the conformation message to delete the sprint with appropriate sprint name
  */
