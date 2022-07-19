@@ -164,9 +164,6 @@ public class UserAccountClientService {
         return false;
     }
 
-
-
-
     /**
      * This method gets data about a User Profile image from a StreamObserver and returns
      * a StreamObserver about the FileUploadStatus response.
@@ -330,7 +327,7 @@ public class UserAccountClientService {
     }
 
     /**
-     * Sends a ModifyRoleOfUserRequest to delete a users role, returns the success or failure of the request
+     * Sends a ModifyRoleOfUserRequest to delete a user's role, returns the success or failure of the request
      * @param userId ID of the user whose role is being deleted
      * @param role The role being deleted
      * @return A UserRoleChangeResponse object containing success or failure of the request
@@ -338,6 +335,18 @@ public class UserAccountClientService {
     public UserRoleChangeResponse removeUserRole(int userId, UserRole role) {
         UserRoleChangeResponse response = userAccountStub.removeRoleFromUser(
                 ModifyRoleOfUserRequest.newBuilder().setRole(role).setUserId(userId).build());
+        return response;
+    }
+
+    /**
+     * Sends a ModifyRoleOfUserRequest to add a user's role, returns the success or failure of the request
+     * @param userId ID of the user whose role is being deleted
+     * @param role The role being added
+     * @return A UserRoleChangeResponse object containing success or failure of the request
+     */
+    public UserRoleChangeResponse addRoleToUser(int userId, UserRole role) {
+        UserRoleChangeResponse response = userAccountStub.addRoleToUser(
+            ModifyRoleOfUserRequest.newBuilder().setUserId(userId).setRole(role).build());
         return response;
     }
 
