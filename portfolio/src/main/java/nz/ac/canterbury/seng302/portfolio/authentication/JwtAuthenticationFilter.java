@@ -3,6 +3,8 @@ package nz.ac.canterbury.seng302.portfolio.authentication;
 import io.grpc.StatusRuntimeException;
 import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
+
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Component;
@@ -38,7 +40,20 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
         if(!authentication.isAuthenticated()) {
-            CookieUtil.clear(res, "lens-session-token");
+            AuthenticateResponse reply = getAuthenticateClientService(req).reAuthenticate();
+            if (reply != null && reply.getSuccess()) {
+                var domain = req.getHeader("host");
+                CookieUtil.create(
+                    res,
+                    "lens-session-token",
+                    reply.getToken(),
+                    true,
+                    5 * 60 * 60, // Expires in 5 hours
+                    domain.startsWith("localhost") ? null : domain
+                );
+            } else {
+                CookieUtil.clear(res, "lens-session-token");
+            }
         }
 
         chain.doFilter(req, res);
