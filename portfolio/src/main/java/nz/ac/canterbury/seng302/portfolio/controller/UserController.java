@@ -47,10 +47,9 @@ public class UserController {
         int limit = 10;
         PaginatedUsersResponse response = userAccountClientService.getUsers(0, limit);
         List<User> usersList = response.getUsersList().stream().map(user -> new User(user)).collect(Collectors.toList());
-
         mv = new ModelAndView("userList");
         mv.addObject("usersList", usersList);
-        mv.addObject("adminOrTeacher", userAccountClientService.checkUserIsTeacherOrAdmin(principal));
+        mv.addObject("currentUser", userAccountClientService.getUser(principal));
         mv.addObject("user", userAccountClientService.getUser(principal));
         mv.addObject("apiPrefix", apiPrefix);
         mv.addObject("page", (Integer) 0);
@@ -78,6 +77,7 @@ public class UserController {
 
         mv = new ModelAndView("userList::userListDataTable");
         mv.addObject("usersList", usersList);
+        mv.addObject("currentUser", userAccountClientService.getUser(principal));
         mv.addObject("page", page);
         mv.addObject("limit", limit);
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);

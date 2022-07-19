@@ -38,8 +38,7 @@ function getUserDataTable(newPage) {
     httpRequest.send();
 };
 
-function removeRole(role, userId) {
-
+function removeRole(role, userId, roles) {
     httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = function (qualifiedName, value) {
@@ -48,17 +47,18 @@ function removeRole(role, userId) {
                 const roleElement = document.getElementById(`user${userId}Role${role}`)
                 roleElement.remove()
                 messageDanger.hidden = true;
-
+                getUserDataTable(page)
                 messageSuccess.hidden = false;
                 messageSuccess.innerText = httpRequest.response
 
-            } else {
-                messageDanger.hidden = false;
-                messageSuccess.hidden = true;
-                messageDanger.innerText = httpRequest.response;
+                } else {
+                    messageDanger.hidden = false;
+                    messageSuccess.hidden = true;
+                    messageDanger.innerText = httpRequest.response;
+                }
             }
         }
-    }
+
 
     httpRequest.open('DELETE', '/usersList/removeRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
