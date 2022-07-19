@@ -50,7 +50,6 @@ function removeRole(role, userId) {
                 roleElement.remove()
                 messageDanger.hidden = true;
 
-                getUserDataTable(page)
                 messageSuccess.hidden = false;
                 messageSuccess.innerText = httpRequest.response
 

@@ -115,7 +115,7 @@ public class UserController {
             return new ResponseEntity("User must have a role.", HttpStatus.BAD_REQUEST);
 
         }
-        System.out.println(highestUserRole.get() + "/" + UserRole.valueOf(role).getNumber());
+
         if (highestUserRole.get() < UserRole.valueOf(role).getNumber()) {
             return new ResponseEntity("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
 
