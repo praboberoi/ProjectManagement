@@ -27,7 +27,6 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for methods in the UserAccountServerService class
@@ -65,14 +64,14 @@ class UserAccountServerServiceTests {
     @BeforeAll
     void initUserRepository() {
         userRepository.saveAll(Arrays.asList(
-            createTestUser(1),
-            createTestUser(2),
-            createTestUser(3),
-            createTestUser(4),
-            createTestUser(5)
+                createTestUser(1),
+                createTestUser(2),
+                createTestUser(3),
+                createTestUser(4),
+                createTestUser(5)
         ));
     }
-    
+
     @BeforeEach
     void initUAServerService() {
         userAccountServerService = new UserAccountServerService(userRepository);
@@ -111,7 +110,6 @@ class UserAccountServerServiceTests {
         EditUserRequest request = EditUserRequest.newBuilder()
                 .setUserId(-1).build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
-        when(userRepository.getUserByUserId(-1)).thenReturn(null);
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
         assertFalse(response.getIsSuccess());
@@ -124,8 +122,8 @@ class UserAccountServerServiceTests {
     @Test
     void givenValidUserRequest_WhenEditUserCalled_ThenResponseRecordedAsSuccess()
     {
-      EditUserRequest request =
-              EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
+        EditUserRequest request =
+                EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
@@ -151,7 +149,7 @@ class UserAccountServerServiceTests {
     }
 
     /**
-     * Tests that the correct number of users are returned when no constrainst are 
+     * Tests that the correct number of users are returned when no constrainst are
      * specified in the paginated users request
      */
     @Test
@@ -179,7 +177,7 @@ class UserAccountServerServiceTests {
     }
 
     /**
-     * Tests that the correct number of users are returned when there is a limit and page imposed 
+     * Tests that the correct number of users are returned when there is a limit and page imposed
      * specified in the paginated users request
      */
     @Test
@@ -193,7 +191,7 @@ class UserAccountServerServiceTests {
     }
 
     /**
-     * Tests that the correct users are returned when there is a limit and page imposed 
+     * Tests that the correct users are returned when there is a limit and page imposed
      * specified in the paginated users request
      */
     @Test
@@ -203,7 +201,7 @@ class UserAccountServerServiceTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, "");
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
@@ -221,7 +219,7 @@ class UserAccountServerServiceTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOrderBy("firstName").setIsAscendingOrder(false).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, "");
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
@@ -239,7 +237,7 @@ class UserAccountServerServiceTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).setOrderBy("firstName").setIsAscendingOrder(false).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, "");
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
