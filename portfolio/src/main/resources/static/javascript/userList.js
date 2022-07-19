@@ -1,7 +1,3 @@
-let page = 0;
-let sortField = 'firstName';
-let isAsc = true;
-
 /**
  * Increment page count and load the new data
  * @returns 
