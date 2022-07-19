@@ -5,6 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.grpc.*;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -28,9 +30,15 @@ public class AuthenticationServerInterceptor implements ServerInterceptor {
             Metadata headers,
             ServerCallHandler<ReqT, RespT> next
     ) {
+        JwtTokenUtil jwtTokenUtil = JwtTokenUtil.getInstance();
         String sessionToken = headers.get(sessionTokenHeaderKey);
         String bearerStrippedSessionToken = sessionToken != null ? sessionToken.replaceFirst("Bearer ", "") : "";
-        List<UserRole> userRoles = !bearerStrippedSessionToken.equals("null") ? userRepository.getUserByUserId(jwtTokenUtil.getUserIdFromToken(bearerStrippedSessionToken)).getRoles() : null;
+        List<UserRole> userRoles;
+        try {
+            userRoles = userRepository.getUserByUsername(jwtTokenUtil.getUsernameFromToken(bearerStrippedSessionToken)).getRoles();
+        } catch (SignatureException | MalformedJwtException e){
+            userRoles = null;
+        }
         AuthState authState = AuthenticationValidatorUtil.validateTokenForAuthState(bearerStrippedSessionToken, userRoles);
 
         Context context = Context.current()
