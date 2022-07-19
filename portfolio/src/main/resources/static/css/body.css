@@ -143,9 +143,7 @@ input:invalid{
     border-right-width: 5px;
     border-left-color: rgb(185, 182, 163);
     border-right-color: rgb(185, 182, 163);
-  }
-
-
+}
 #edit-del-buttons {
     margin-left: auto;
 }
@@ -170,4 +168,12 @@ td {
 @media (max-width:850px){
     .desktop-only{display:none}
     .mobile-only{display:block}
+}
+
+/* for screen sizes less than 415 */
+@media screen and (max-width: 415px) {
+
+    #accountPage-font, #editAccountPage-font, #projectForm-font{
+        font-size: 25px !important;
+    }
 }
