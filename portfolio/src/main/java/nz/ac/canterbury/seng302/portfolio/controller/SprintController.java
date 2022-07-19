@@ -119,17 +119,19 @@ public class SprintController {
             int id,
             @AuthenticationPrincipal AuthState principal) {
         if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
-        Sprint currentSprint = new Sprint();
+
         try {
             Project project = projectService.getProjectById(projectId);
-            currentSprint.setProject(project);
-            currentSprint.setStartDate(Date.valueOf(startDate));
-            currentSprint.setEndDate(Date.valueOf(endDate));
-            currentSprint.setSprintLabel(label);
-            currentSprint.setSprintId(id);
+            Sprint currentSprint = new Sprint.Builder()
+                    .project(project)
+                    .sprintId(id)
+                    .sprintLabel(label)
+                    .startDate(Date.valueOf(startDate))
+                    .endDate(Date.valueOf(endDate))
+                    .build();
             sprintService.verifySprint(currentSprint);
             return ResponseEntity.status(HttpStatus.OK).body(null);
-        } catch (Exception e) {
+        } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
     }
