@@ -194,7 +194,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                             try {
                                 Files.delete(path);
                             } catch (IOException e) {
-                                logger.error("Unable to delete the users profile photo", e);
                                 this.onError(e);
                             }
                         }
@@ -203,7 +202,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                         writeFile(writer, request.getFileContent());
                     }
                 } catch (IOException e) {
-                    logger.error("An error occured while uploading the users profile photo", e);
                     this.onError(e);
                 }
             }
@@ -215,6 +213,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
              */
             @Override
             public void onError(Throwable t) {
+                logger.error("An error occured while uploading the users profile photo", t);
                 status = FileUploadStatus.FAILED;
                 this.onCompleted();
             }
@@ -233,6 +232,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
                 user.setProfileImagePath(String.valueOf(fileName));
                 userRepository.save(user);
+                logger.info("User {}'s profile photo has been saved to {}", user.getUserId(), fileName);
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
 
@@ -259,7 +259,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         try {
             writer.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occured while closing the writer", e);
         }
     }
 

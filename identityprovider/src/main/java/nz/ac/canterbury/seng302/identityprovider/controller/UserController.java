@@ -36,6 +36,7 @@ public class UserController {
         Path imagePath = Paths.get(FILE_PATH_ROOT + userRepository.getUserByUserId(userId).getProfileImagePath());
         try {
             if (Files.exists(imagePath)) {
+                logger.info("Loading user {}s's profile image.", userId);
                 image = Files.readAllBytes(imagePath);
                 imageType = MediaType.parseMediaType(Files.probeContentType(imagePath));
             } else {
