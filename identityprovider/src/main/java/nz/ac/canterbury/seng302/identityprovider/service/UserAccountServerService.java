@@ -193,6 +193,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                             try {
                                 Files.delete(path);
                             } catch (IOException e) {
+                                logger.error("Unable to delete the users profile photo", e);
                                 this.onError(e);
                             }
                         }
