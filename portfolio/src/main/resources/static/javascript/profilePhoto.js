@@ -56,7 +56,7 @@ function cropImage() {
 function deleteProfilePhoto() {
     let profilePhoto = document.getElementById("output")
     let deleteImage = document.getElementById("deleteImage");
-    profilePhoto.src = "/icons/default-image.svg";
+    profilePhoto.src = apiPrefix + "/icons/default-image.svg";
     deleteImage.value = true;
     let imageInput = document.getElementById("image")
     imageInput.value = "";
