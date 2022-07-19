@@ -168,7 +168,7 @@ public class User implements Serializable {
     /**
      * Creates a new user from a registration request
      * @param request Proto class which contains required idp user info
-     * @param password The new users encrypted passord
+     * @param password The new users encrypted password
      * @param salt The salt used during the encryption of the password
      */
     public User(UserRegisterRequest request, String password, String salt) {

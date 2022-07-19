@@ -24,7 +24,8 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
-
+import org.h2.util.StringUtils;
+import org.springframework.beans.factory.annotation.Value;
 /**
  * Grpc service used to perform function relating to users. This includes registration, editing and retriving User objects
  * stored in the server.
@@ -34,6 +35,11 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     private final UserRepository userRepository;
 
+    private final static Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
+
+    @Value("${hostAddress}")
+    private String hostAddress;
+
     public UserAccountServerService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -41,8 +47,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     /**
      * This method registers a user in the database based off a UserRegisterRequest, and uses the StreamObserver to
      * contain it's UserRegisterResponse as the result of the operation
-     *
-     * @param request          The request containing details of the user to be registered
+     * @param request The request containing details of the user to be registered
      * @param responseObserver The response observer records the result of the operation
      */
     @Override
@@ -93,8 +98,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      * This method builds a user based off an EditUserRequest, first it checks that the user exists in the database,
      * if the user from the edit request exists, it saves the new details to the user from the request and saves the
      * user back into the repository.
-     *
-     * @param request          A proto containing all the details of the user to be edited, such as the userId, first name etc
+     * @param request A proto containing all the details of the user to be edited, such as the userId, first name etc
      * @param responseObserver The streamObserver contains the edit user response which will be passed back down the line with details of the operation
      */
     @Override
@@ -133,14 +137,17 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
     /**
      * Gets a user object from the db and sets the template elements with the user's details
-     *
-     * @param request          Request containing the users id
+     * @param request Request containing the users id
      * @param responseObserver Returns to previous method with data
      */
     @Override
     public void getUserAccountById(GetUserByIdRequest request, StreamObserver<UserResponse> responseObserver) throws NoSuchElementException {
         User user = userRepository.getUserByUserId(request.getId());
-        UserResponse reply = ResponseUtils.prepareUserResponse(user);
+        if (user == null) {
+            throw new NoSuchElementException("User doesn't exist");
+        }
+
+        UserResponse reply = ResponseUtils.prepareUserResponse(user, hostAddress);
 
         responseObserver.onNext(reply);
         responseObserver.onCompleted();
@@ -161,8 +168,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             User user;
             String fileName;
             Path path;
-            final Path SERVER_BASE_PATH = Paths.get("identityprovider/src/main/resources/profilePhotos");
-
 
             /**
              * Sets the OutputStream on the first request and then sends
@@ -174,9 +179,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             public void onNext(UploadUserProfilePhotoRequest request) {
                 try {
                     if (request.hasMetaData()) {
-
-                        fileName = getFileName(request);
-                        path = SERVER_BASE_PATH.resolve(fileName);
+                        fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+                        path = FILE_PATH_ROOT.resolve(fileName);
                         File f = new File(String.valueOf(path));
                         if (f.exists()) {
                             try {
@@ -240,15 +244,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     }
 
     /**
-     * Creates file name and writer
-     * @param request Contains image information
-     * @return Writer containing information to save file
-     */
-    private String getFileName(UploadUserProfilePhotoRequest request) throws IOException {
-        return "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
-    }
-
-    /**
      * Closes OutputStream
      * @param writer The OutputStream
      */
@@ -260,42 +255,39 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         }
     }
 
+
     /**
-     * Uses request to find image path, and sends the image data back to the portfolio to be stored in the cache.
-     * @param responseObserver Used to send image data to the portfolio
-     * @param request Contains user id and file type
+     * Deletes a user's profile photo
+     * @param request Request containing the users id
+     * @param responseObserver Returns to previous method with data
      */
-
-    public void getProfilePhoto(StreamObserver<UploadUserProfilePhotoRequest> responseObserver, UploadUserProfilePhotoRequest request) {
-
-        UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
-                .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
-                        .setUserId(request.getMetaData().getUserId())
-                        .setFileType(request.getMetaData().getFileType()).build())
-                .build());
-
-        responseObserver.onNext(metadata);
+    @Override
+    public void deleteUserProfilePhoto(DeleteUserProfilePhotoRequest request, StreamObserver<DeleteUserProfilePhotoResponse> responseObserver) {
         try {
-            String fileName = getFileName(metadata);
-            // upload file in chunks and upload as a stream
-            InputStream inputStream = new FileInputStream(String.valueOf(Paths.get("identityprovider/src/main/resources/profilePhotos").resolve(fileName)));
+            User user = userRepository.getUserByUserId(request.getUserId());
+            if (!StringUtils.isNullOrEmpty(user.getProfileImagePath())) {
+                String fileName = user.getProfileImagePath();
+                Path path = FILE_PATH_ROOT.resolve(fileName);
+                Files.deleteIfExists(path);
 
-            byte[] bytes = new byte[4096];
-            int size;
-            while((size = inputStream.read(bytes)) > 0){
-                UploadUserProfilePhotoRequest uploadImage = UploadUserProfilePhotoRequest.newBuilder()
-                        .setFileContent(ByteString.copyFrom(bytes,0,size))
-                        .build();
-                responseObserver.onNext(uploadImage);
+                user.setProfileImagePath(null);
+                userRepository.save(user);
+
+                responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder().setIsSuccess(true).build());
+                responseObserver.onCompleted();
+            } else {
+                responseObserver.onNext(DeleteUserProfilePhotoResponse.newBuilder()
+                        .setIsSuccess(false)
+                        .build());
+                responseObserver.onCompleted();
             }
-            // close stream
-            inputStream.close();
 
-            responseObserver.onCompleted();
-
+        } catch (IOException e) {
+            responseObserver.onError(e);
         } catch (Exception e) {
-            responseObserver.onError(e.fillInStackTrace());
+            responseObserver.onError(e);
         }
+
     }
 
     /**
@@ -324,7 +316,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             users = userRepository.findAll(pageable).getContent();
         }
 
-        List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user)).collect(Collectors.toList());
+        List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList());
         
         PaginatedUsersResponse reply = ResponseUtils.preparePaginatedUsersResponse(preparedUsers, resultSetSize);
 

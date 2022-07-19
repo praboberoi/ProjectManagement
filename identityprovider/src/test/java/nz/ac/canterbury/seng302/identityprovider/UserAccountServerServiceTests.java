@@ -27,6 +27,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for methods in the UserAccountServerService class
@@ -110,6 +111,7 @@ class UserAccountServerServiceTests {
         EditUserRequest request = EditUserRequest.newBuilder()
                 .setUserId(-1).build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
+        when(userRepository.getUserByUserId(-1)).thenReturn(null);
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
         assertFalse(response.getIsSuccess());
@@ -201,7 +203,7 @@ class UserAccountServerServiceTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, "");
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
@@ -219,7 +221,7 @@ class UserAccountServerServiceTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOrderBy("firstName").setIsAscendingOrder(false).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, "");
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
@@ -237,7 +239,7 @@ class UserAccountServerServiceTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).setOrderBy("firstName").setIsAscendingOrder(false).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, "");
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);

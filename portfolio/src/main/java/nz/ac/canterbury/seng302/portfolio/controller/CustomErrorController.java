@@ -8,6 +8,7 @@ import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
@@ -19,6 +20,14 @@ public class CustomErrorController implements ErrorController {
     @Autowired private UserAccountClientService userAccountClientService;
 
     /**
+    * Adds common model elements used by all controller methods.
+    */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
+
+    /**
      * Maps the api prefix and the user to the error page inorder to display the appropriate links on the sidebar
      * @param model of type {@link Model}
      * @param principal of type {@link AuthState}
@@ -26,7 +35,6 @@ public class CustomErrorController implements ErrorController {
      */
     @RequestMapping("/error")
     public String handleError(Model model, @AuthenticationPrincipal AuthState principal) {
-        model.addAttribute("apiPrefix", apiPrefix);
         model.addAttribute("user", userAccountClientService.getUser(principal));
         return "error";
     }
