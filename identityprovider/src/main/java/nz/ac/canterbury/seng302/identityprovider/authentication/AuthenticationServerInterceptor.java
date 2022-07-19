@@ -30,15 +30,9 @@ public class AuthenticationServerInterceptor implements ServerInterceptor {
             Metadata headers,
             ServerCallHandler<ReqT, RespT> next
     ) {
-        JwtTokenUtil jwtTokenUtil = JwtTokenUtil.getInstance();
         String sessionToken = headers.get(sessionTokenHeaderKey);
         String bearerStrippedSessionToken = sessionToken != null ? sessionToken.replaceFirst("Bearer ", "") : "";
-        List<UserRole> userRoles;
-        try {
-            userRoles = userRepository.getUserByUsername(jwtTokenUtil.getUsernameFromToken(bearerStrippedSessionToken)).getRoles();
-        } catch (SignatureException | MalformedJwtException e){
-            userRoles = null;
-        }
+        List<UserRole> userRoles = !bearerStrippedSessionToken.equals("null") ? userRepository.getUserByUserId(jwtTokenUtil.getUserIdFromToken(bearerStrippedSessionToken)).getRoles() : null;
         AuthState authState = AuthenticationValidatorUtil.validateTokenForAuthState(bearerStrippedSessionToken, userRoles);
 
         Context context = Context.current()
