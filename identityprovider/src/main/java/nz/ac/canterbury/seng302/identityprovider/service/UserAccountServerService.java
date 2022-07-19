@@ -188,6 +188,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                         fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
                         path = FILE_PATH_ROOT.resolve(fileName);
                         user = userRepository.getUserByUserId(request.getMetaData().getUserId());
+                        new File(String.valueOf(FILE_PATH_ROOT)).mkdirs();
                         File f = new File(String.valueOf(path));
                         if (f.exists()) {
                             try {
@@ -197,7 +198,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                                 this.onError(e);
                             }
                         }
-
                         writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                     } else {
                         writeFile(writer, request.getFileContent());
