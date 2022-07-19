@@ -48,11 +48,11 @@
             </div>
             <div class="row">
                 <div class="col-md-6 ms-auto">
-                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDates()" required>
+                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectStartDateMin}" th:max="${projectStartDateMax}" onchange="checkProjectDates()" required>
                     <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDates()" required>
+                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectEndDateMin}" th:max="${projectEndDateMax}" onchange="checkDates()" required>
                     <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
                 </div>
             </div>

@@ -15,7 +15,7 @@ const projectId = document.getElementById('projectId').value;
 /**
  * Checks the start date and end date of the project and displays an error if it is invalid
  */
-function checkDates() {
+function checkProjectDates() {
     const startDate = startDateElement.value;
     const endDate = endDateElement.value;
     startDateElement.setCustomValidity("");

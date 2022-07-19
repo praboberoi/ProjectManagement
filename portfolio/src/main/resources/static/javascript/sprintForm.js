@@ -38,7 +38,7 @@ function checkSprintName() {
 /**
  * Checks that the start and end dates of the sprint are valid
  */
-function checkDates() {
+function checkSprintDates() {
     const startDate = startDateElement.value;
     const endDate = endDateElement.value;
     startDateElement.setCustomValidity("");
