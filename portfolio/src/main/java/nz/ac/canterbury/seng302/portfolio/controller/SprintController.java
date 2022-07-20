@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +57,7 @@ public class SprintController {
             Project project = projectService.getProjectById(projectId);
                 model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
-            model.addAttribute("roles", userAccountClientService.getUserRole(principal));
+            model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "project";
         } catch (IncorrectDetailsException e) {
@@ -79,7 +80,7 @@ public class SprintController {
             @PathVariable ("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
@@ -119,8 +120,7 @@ public class SprintController {
             String label,
             int id,
             @AuthenticationPrincipal AuthState principal) {
-        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
-
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             System.out.println("This is the project Id: " + projectId);
             Project project = projectService.getProjectById(projectId);
@@ -155,7 +155,7 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         Model model,
         RedirectAttributes ra) {
-        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
@@ -188,7 +188,7 @@ public class SprintController {
             Model model,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
@@ -222,7 +222,7 @@ public class SprintController {
         @PathVariable int projectId,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra){
-        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
@@ -256,7 +256,7 @@ public class SprintController {
         String endDate,
         @AuthenticationPrincipal AuthState principal
     ) {
-        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal))
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
             return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
 
         try {

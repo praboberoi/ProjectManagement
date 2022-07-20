@@ -5,7 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +30,6 @@ public class ProjectController {
     @Autowired private SprintService sprintService;
     @Value("${apiPrefix}") private String apiPrefix;
     @Autowired private DashboardService dashboardService;
-    @Autowired private UserAccountClientService userAccountClientService;
 
     /**
      * Gets all of the sprints and returns it in a ResponseEntity
@@ -57,8 +56,8 @@ public class ProjectController {
         @PathVariable int projectId,
         String startDate,
         String endDate,
-        @AuthenticationPrincipal AuthState principal) throws IncorrectDetailsException {
-        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+        @AuthenticationPrincipal AuthState principal) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = new Project.Builder()
                     .projectId(projectId)

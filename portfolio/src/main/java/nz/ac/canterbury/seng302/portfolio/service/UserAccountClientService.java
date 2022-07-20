@@ -4,8 +4,10 @@ import com.google.protobuf.ByteString;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -101,6 +103,21 @@ public class UserAccountClientService {
      */
     public UserResponse getUser(int id) throws StatusRuntimeException {
         UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
+        return response;
+    }
+
+
+    /**
+     * Request a list of users from the IDP server and prepares them for use
+     * @param page The page to retrive, indexing starts at 0
+     * @param limit The number of users to retrieve, 0 for no limit
+     * @param order The field that the results are ordered by
+     * @param isAsc If the results are in accending or decending order
+     * @return List of unpackaged users
+     * @throws StatusRuntimeException
+     */
+    public PaginatedUsersResponse getUsers(int page, int limit, UserField order, boolean isAsc) throws StatusRuntimeException{
+        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setOrderBy(order.value).setIsAscendingOrder(isAsc).setLimit(limit).setOffset(page).build());
         return response;
     }
 

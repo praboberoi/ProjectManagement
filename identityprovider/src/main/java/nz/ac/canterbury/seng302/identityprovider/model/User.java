@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,6 +51,7 @@ public class User implements Serializable {
     private String profileImagePath;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @OrderColumn(name = "order_column")
     private List<UserRole> roles = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -148,6 +150,7 @@ public class User implements Serializable {
     public void setProfileImagePath(String profileImagePath) { this.profileImagePath = profileImagePath; }
 
     public void setRoles(List<UserRole> roles) {
+        Collections.sort(roles);
         this.roles = roles;
     }
 

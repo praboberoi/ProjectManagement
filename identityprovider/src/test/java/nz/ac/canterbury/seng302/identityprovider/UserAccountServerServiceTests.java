@@ -4,33 +4,73 @@ import io.grpc.internal.testing.StreamRecorder;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
+import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
+import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.GetPaginatedUsersRequest;
+import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.AdditionalAnswers.returnsFirstArg;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for methods in the UserAccountServerService class
  */
-@SpringBootTest
+@DataJpaTest
+@TestInstance(Lifecycle.PER_CLASS)
 class UserAccountServerServiceTests {
 
-    private final UserRepository userRepository = Mockito.mock(UserRepository.class);
+    @Autowired
+    private UserRepository userRepository;
 
     private UserAccountServerService userAccountServerService;
+
+    /**
+     * Helper function which creates a new user for testing with
+     * @param userId The user id to set the user, this effects nearly all of the user's attributes
+     * @return A new User object
+     */
+    User createTestUser(int userId) {
+        User user = new User();
+        user.setUserId(userId);
+        user.setFirstName("First" + userId);
+        user.setLastName("Last" + userId);
+        user.setNickname("Nick" + userId);
+        user.setUsername("User" + userId);
+        user.setBio("Bio " + userId);
+        user.setPersonalPronouns("Pronoun " + userId);
+        user.setEmail("test" + userId + "@gmail.com");
+        user.setDateCreated(new Date());
+        user.setPassword(EncryptionUtilities.encryptPassword("", "Password123"));
+        user.setSalt("");
+        return user;
+    }
+
+    @BeforeAll
+    void initUserRepository() {
+        userRepository.saveAll(Arrays.asList(
+                createTestUser(1),
+                createTestUser(2),
+                createTestUser(3),
+                createTestUser(4),
+                createTestUser(5)
+        ));
+    }
 
     @BeforeEach
     void initUAServerService() {
@@ -48,15 +88,10 @@ class UserAccountServerServiceTests {
                 .setFirstName("Test")
                 .setLastName("User")
                 .setEmail("TestUser@canterbury.ac.nz")
-                .setPassword("Paassword123")
+                .setPassword("Password123")
                 .build();
         StreamRecorder<UserRegisterResponse> responseObserver = StreamRecorder.create();
-        when(userRepository.save(any(User.class))).then(returnsFirstArg());
         userAccountServerService.register(request, responseObserver);
-
-        if (!responseObserver.awaitCompletion(5, TimeUnit.SECONDS)) {
-            fail("The call did not terminate in time");
-        }
 
         assertNull(responseObserver.getError());
         List<UserRegisterResponse> results = responseObserver.getValues();
@@ -75,7 +110,6 @@ class UserAccountServerServiceTests {
         EditUserRequest request = EditUserRequest.newBuilder()
                 .setUserId(-1).build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
-        when(userRepository.getUserByUserId(-1)).thenReturn(null);
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
         assertFalse(response.getIsSuccess());
@@ -88,17 +122,9 @@ class UserAccountServerServiceTests {
     @Test
     void givenValidUserRequest_WhenEditUserCalled_ThenResponseRecordedAsSuccess()
     {
-      EditUserRequest request =
-              EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
+        EditUserRequest request =
+                EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
-        User user = new User();
-        user.setFirstName("Replace");
-        user.setLastName("Replace");
-        user.setNickname("Replace");
-        user.setBio("Replace");
-        user.setPersonalPronouns("Replace");
-        user.setEmail("test@gmail.com");
-        when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
         userAccountServerService.editUser(request, responseObserver);
         EditUserResponse response = responseObserver.getValues().get(0);
         assertTrue(response.getIsSuccess());
@@ -112,14 +138,7 @@ class UserAccountServerServiceTests {
         EditUserRequest request =
                 EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
         StreamRecorder<EditUserResponse> responseObserver = StreamRecorder.create();
-        User user = new User();
-        user.setFirstName("Replace");
-        user.setLastName("Replace");
-        user.setNickname("Replace");
-        user.setBio("Replace");
-        user.setPersonalPronouns("Replace");
-        user.setEmail("Replace@gmail.com");
-        when(userRepository.getUserByUserId(any(int.class))).thenReturn(user);
+        User user = userRepository.getUserByUserId(1);
         userAccountServerService.editUser(request, responseObserver);
         assertEquals("Test", user.getFirstName());
         assertEquals("Test", user.getLastName());
@@ -127,5 +146,101 @@ class UserAccountServerServiceTests {
         assertEquals("Test", user.getBio());
         assertEquals("Test", user.getPersonalPronouns());
         assertEquals("Test@gmail.com", user.getEmail());
+    }
+
+    /**
+     * Tests that the correct number of users are returned when no constrainst are
+     * specified in the paginated users request
+     */
+    @Test
+    void givenPaginatedUsersRequest_whenNoConstraints_thenAllUsersReturned() {
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(5, response.getUsersCount());
+    }
+
+    /**
+     * Tests that the correct number of users are returned when a limit of 3 users is imposed
+     * specified in the paginated users request
+     */
+    @Test
+    void givenPaginatedUsersRequest_when3UserLimit_then3UsersReturned() {
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setLimit(3).build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(3, response.getUsersCount());
+    }
+
+    /**
+     * Tests that the correct number of users are returned when there is a limit and page imposed
+     * specified in the paginated users request
+     */
+    @Test
+    void givenPaginatedUsersRequest_when3UserLimit_andPage2_then2UsersReturned() {
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(2, response.getUsersCount());
+    }
+
+    /**
+     * Tests that the correct users are returned when there is a limit and page imposed
+     * specified in the paginated users request
+     */
+    @Test
+    void givenPaginatedUsersRequest_when3UserLimit_andPage2_thenCorrectUsersReturned() {
+        User testUser = userRepository.getUserByUserId(4);
+
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
+
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(testUserResponse, response.getUsersList().get(0));
+    }
+
+    /**
+     * Tests that the users are returned in the correct order when there is a sort constraint
+     * specified in the paginated users request
+     */
+    @Test
+    void givenPaginatedUsersRequest_whenFirstNameSortDesc_thenCorrectUsersReturned() {
+        User testUser = userRepository.getUserByUserId(4);
+
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOrderBy("firstName").setIsAscendingOrder(false).build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
+
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(testUserResponse, response.getUsersList().get(1));
+    }
+
+    /**
+     * Tests that the users are returned in the correct order when there is a sort constraint
+     * specified in the paginated users request
+     */
+    @Test
+    void givenPaginatedUsersRequest_whenFirstNameSortDesc_and3UserLimit_andPage2__thenCorrectUsersReturned() {
+        User testUser = userRepository.getUserByUserId(2);
+
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).setOrderBy("firstName").setIsAscendingOrder(false).build();
+        StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
+
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
+
+        userAccountServerService.getPaginatedUsers(request, responseObserver);
+        PaginatedUsersResponse response = responseObserver.getValues().get(0);
+        assertEquals(testUserResponse, response.getUsersList().get(0));
     }
 }
