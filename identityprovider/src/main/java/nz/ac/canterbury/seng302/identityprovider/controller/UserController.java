@@ -32,7 +32,7 @@ public class UserController {
     @GetMapping(path="/profile/{id}")
     public ResponseEntity<byte[]> getImage(@PathVariable("id") int userId) {
         byte[] image = new byte[0];
-        MediaType imageType = MediaType.parseMediaType("image/svg+xml");
+        MediaType imageType = MediaType.parseMediaType("image/png");
         Path imagePath = Paths.get(FILE_PATH_ROOT + userRepository.getUserByUserId(userId).getProfileImagePath());
         try {
             if (Files.exists(imagePath)) {
