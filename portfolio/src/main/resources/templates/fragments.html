@@ -66,17 +66,17 @@
       <div class="sidebar">
         <ul class="nav nav-pills flex-column " id="sidebar-2" >
           <li class="nav-item"  >
-            <a class="nav-link" style="justify-content: center" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/dashboard' ? 'active':''}" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
+            <a class="nav-link" style="justify-content: center" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/dashboard') ? 'active':''}" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
               Dashboard
             </a>
           </li>
           <li class="nav-item"  >
-            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/account' ? 'active':''}" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/account') ? 'active':''}" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
               Account Page
             </a>
           </li>
           <li class="nav-item"  >
-            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/users' ? 'active':''}" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/users') ? 'active':''}" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">
               Users
             </a>
           </li>
