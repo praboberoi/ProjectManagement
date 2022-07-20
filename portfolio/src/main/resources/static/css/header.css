@@ -44,3 +44,19 @@ header, sidebar
         display: none;
     }
 }
+
+/* for screen sizes less than 415px */
+@media screen and (max-width: 415px) {
+    .main {
+        padding-left: 0%;
+    }
+    #hamburger-toggle {
+        display: inline;
+    }
+    #sidebar {
+        display: none;
+    }
+    #lensfolio{
+        display: none;
+    }
+}
