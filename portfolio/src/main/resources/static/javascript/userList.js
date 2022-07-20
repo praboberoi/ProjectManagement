@@ -53,15 +53,6 @@ function removeRole(role, userId, roles) {
                 const roleElement = document.getElementById(`user${userId}Role${role}`)
                 roleElement.remove()
                 getUserDataTable(page)
-                // roles = roles.substring(1,roles.length - 1).split(',')
-                // const rolesUpdated = roles.map(y => y.trim()).filter(x => x !== role.toString())
-                // console.log(rolesUpdated.toString())
-                // const button = document.getElementById(`user${userId}Role${role}Btn`)
-                // button.dataset.roles = `[${rolesUpdated.toString()}]`
-                // if (rolesUpdated.size === 1) {
-                //     button.disabled = true
-                //     document.getElementById(`user${userId}Role${role}img`).hidden = true
-                // }
                 messageDanger.hidden = true;
 
                 messageSuccess.hidden = false;
