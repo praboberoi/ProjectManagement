@@ -37,8 +37,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
         PreAuthenticatedAuthenticationToken authentication = getAuthentication(req);
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-
+        
         if(!authentication.isAuthenticated()) {
             AuthenticateResponse reply = getAuthenticateClientService(req).reAuthenticate();
             if (reply != null && reply.getSuccess()) {
@@ -50,12 +49,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     true,
                     5 * 60 * 60, // Expires in 5 hours
                     domain.startsWith("localhost") ? null : domain
-                );
-            } else {
-                CookieUtil.clear(res, "lens-session-token");
+                    );
+                } else {
+                    CookieUtil.clear(res, "lens-session-token");
+                }
+            authentication = getAuthentication(req);
             }
-        }
-
+            
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
     }
 
