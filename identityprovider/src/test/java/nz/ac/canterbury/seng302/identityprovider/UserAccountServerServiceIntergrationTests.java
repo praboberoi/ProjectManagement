@@ -4,6 +4,7 @@ import io.grpc.internal.testing.StreamRecorder;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
+import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserRequest;
@@ -22,18 +23,22 @@ import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for methods in the UserAccountServerService class
  */
 @DataJpaTest
 @TestInstance(Lifecycle.PER_CLASS)
-class UserAccountServerServiceTests {
+class UserAccountServerServiceIntergrationTests {
 
     @Autowired
     private UserRepository userRepository;

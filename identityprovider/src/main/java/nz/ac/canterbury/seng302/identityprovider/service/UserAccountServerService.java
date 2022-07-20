@@ -141,6 +141,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         if (user == null) {
             throw new NoSuchElementException("User doesn't exist");
         }
+        reply.setId(user.getUserId());
         reply.setUsername(user.getUsername());
         reply.setFirstName(user.getFirstName());
         reply.setLastName(user.getLastName());
@@ -330,7 +331,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
         if (user == null) {
             userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User cannot be found in database");
+            userRoleChangeResponse.setMessage("User could not be found.");
             responseObserver.onNext(userRoleChangeResponse.build());
             responseObserver.onCompleted();
             return;
