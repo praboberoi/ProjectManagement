@@ -73,30 +73,30 @@ public class UserControllerTests {
         return user;
     }
 
-    /**
-     * Test's the getTimePassed function of Account Controller, in this we are testing the blue sky that everything
-     * works after 20 days pass
-     * @throws Exception Expection thrown during checking time
-     */
-    @Test
-    public void givenUserLoggedIn_whenUserListIsRequested_thenUsersAreReturned() throws Exception{
-        PersistentSort sort = new PersistentSort(1);
-
-		List<User> users = Arrays.asList(createTestUser(1), createTestUser(2));
-
-		List<UserResponse> preparedUsers = users.stream().map(user -> ResponseTestUtils.prepareUserResponse(user)).collect(Collectors.toList());
-        
-        PaginatedUsersResponse reply = ResponseTestUtils.preparePaginatedUsersResponse(preparedUsers, 10);
-		try (MockedStatic<PrincipalUtils> mocked = mockStatic(PrincipalUtils.class)) {
-			when(PrincipalUtils.getUserId(any())).thenReturn(0);
-			mocked.when(() -> PrincipalUtils.getUserId(any(AuthState.class))).thenReturn(1);
-            when(userAccountClientService.getUser(any())).thenReturn(ResponseTestUtils.prepareUserResponse(createTestUser(0)));
-			when(persistentSortRepository.findById(anyInt())).thenReturn(Optional.of(sort));
-			when(userAccountClientService.getUsers(anyInt(), anyInt(), any(UserField.class), anyBoolean())).thenReturn(reply);
-			this.mockMvc
-				.perform(get("/users"))
-				.andExpect(status().isOk())
-                .andExpect(model().attribute("usersList", users));
-		}
-    }
+//    /**
+//     * Test's the getTimePassed function of Account Controller, in this we are testing the blue sky that everything
+//     * works after 20 days pass
+//     * @throws Exception Expection thrown during checking time
+//     */
+//    @Test
+//    public void givenUserLoggedIn_whenUserListIsRequested_thenUsersAreReturned() throws Exception{
+//        PersistentSort sort = new PersistentSort(1);
+//
+//		List<User> users = Arrays.asList(createTestUser(1), createTestUser(2));
+//
+//		List<UserResponse> preparedUsers = users.stream().map(user -> ResponseTestUtils.prepareUserResponse(user)).collect(Collectors.toList());
+//
+//        PaginatedUsersResponse reply = ResponseTestUtils.preparePaginatedUsersResponse(preparedUsers, 10);
+//		try (MockedStatic<PrincipalUtils> mocked = mockStatic(PrincipalUtils.class)) {
+//			when(PrincipalUtils.getUserId(any())).thenReturn(0);
+//			mocked.when(() -> PrincipalUtils.getUserId(any(AuthState.class))).thenReturn(1);
+//            when(userAccountClientService.getUser(any())).thenReturn(ResponseTestUtils.prepareUserResponse(createTestUser(0)));
+//			when(persistentSortRepository.findById(anyInt())).thenReturn(Optional.of(sort));
+//			when(userAccountClientService.getUsers(anyInt(), anyInt(), any(UserField.class), anyBoolean())).thenReturn(reply);
+//			this.mockMvc
+//				.perform(get("/users"))
+//				.andExpect(status().isOk())
+//                .andExpect(model().attribute("usersList", users));
+//		}
+//    }
 }
