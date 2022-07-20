@@ -87,9 +87,10 @@ public class SprintController {
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            List<String> dateRange = sprintService.getSprintDateRange(currentProject, newSprint);
 
-            model.addAttribute("sprintDateMin", currentProject.getStartDate());
-            model.addAttribute("sprintDateMax", currentProject.getEndDate());
+            model.addAttribute("sprintDateMin", dateRange.get(0));
+            model.addAttribute("sprintDateMax", dateRange.get(1));
 
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
@@ -121,6 +122,7 @@ public class SprintController {
         if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
 
         try {
+            System.out.println("This is the project Id: " + projectId);
             Project project = projectService.getProjectById(projectId);
             Sprint currentSprint = new Sprint.Builder()
                     .project(project)
@@ -130,6 +132,7 @@ public class SprintController {
                     .endDate(Date.valueOf(endDate))
                     .build();
             sprintService.verifySprint(currentSprint);
+            System.out.println("No Error!");
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());

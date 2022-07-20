@@ -59,7 +59,7 @@
                 <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
             </div>
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkDates()" required>
+                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkSprintDates()" required>
                 <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
             </div>
         </div>
