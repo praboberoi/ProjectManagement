@@ -22,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @GrpcService
@@ -363,30 +364,6 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         User user = userRepository.getUserByUserId(request.getUserId());
         UserRoleChangeResponse.Builder userRoleChangeResponse = UserRoleChangeResponse.newBuilder();
 
-        if (user == null) {
-            userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User cannot be found in database");
-            responseObserver.onNext(userRoleChangeResponse.build());
-            responseObserver.onCompleted();
-            return;
-        }
-
-        if (!user.getRoles().contains(request.getRole())) {
-            userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User does not have this role.");
-            responseObserver.onNext(userRoleChangeResponse.build());
-            responseObserver.onCompleted();
-            return;
-        }
-
-        if (user.getRoles().size() == 1) {
-            userRoleChangeResponse.setIsSuccess(false);
-            userRoleChangeResponse.setMessage("User must have one role.");
-            responseObserver.onNext(userRoleChangeResponse.build());
-            responseObserver.onCompleted();
-            return;
-        }
-
         user.removeRole(request.getRole());
         userRepository.save(user);
         userRoleChangeResponse.setIsSuccess(true);
@@ -394,6 +371,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         responseObserver.onNext(userRoleChangeResponse.build());
         responseObserver.onCompleted();
     }
+
     /**
      * Gets all users from the db and returns them packaged into a protobuf
      *
