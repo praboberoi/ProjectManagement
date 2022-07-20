@@ -304,9 +304,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         Sort sort;
 
         if (request.getOrderBy().isEmpty()) {
-            sort = Sort.by(Direction.ASC, "userId");
+            sort = Sort.by(Sort.Order.by("userId").ignoreCase().with(Direction.ASC));
         } else {
-            sort = Sort.by(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC, request.getOrderBy());
+            sort = Sort.by(Sort.Order.by(request.getOrderBy()).ignoreCase().with(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC));
         }
         
         if (request.getLimit() == 0) {
