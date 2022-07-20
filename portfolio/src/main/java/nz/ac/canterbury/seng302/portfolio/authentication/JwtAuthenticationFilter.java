@@ -50,10 +50,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     5 * 60 * 60, // Expires in 5 hours
                     domain.startsWith("localhost") ? null : domain
                     );
+                    authentication = getAuthentication(req);
                 } else {
                     CookieUtil.clear(res, "lens-session-token");
                 }
-            authentication = getAuthentication(req);
             }
             
         SecurityContextHolder.getContext().setAuthentication(authentication);
