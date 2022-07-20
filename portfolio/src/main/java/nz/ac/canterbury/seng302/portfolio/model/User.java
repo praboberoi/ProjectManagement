@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * User class with required information for use in the portfolio application
@@ -138,9 +139,38 @@ public class User implements Serializable {
         this.email = response.getEmail();
         this.bio = response.getBio();
         this.pronouns = response.getPersonalPronouns();
-        this.profileImagePath = response.getProfileImagePath();
+        if (response.getProfileImagePath().isEmpty()) {
+            this.profileImagePath = null;
+        } else {
+            this.profileImagePath = response.getProfileImagePath();
+        }
         this.roles = response.getRolesList();
         this.dateCreated = new Date(response.getCreated().getSeconds());
+        this.userId = response.getId();
+    }
+
+    /**
+     * To check the given user is equal to the current user.
+     * @param o Of type object
+     * @return A boolean
+     */
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof User)) return false;
+        User user = (User) o;
+
+        return userId == user.userId 
+        && Objects.equals(bio, user.bio) 
+        && Objects.equals(email, user.email) 
+        && Objects.equals(firstName, user.firstName) 
+        && Objects.equals(lastName, user.lastName) 
+        && Objects.equals(dateCreated, user.dateCreated) 
+        && Objects.equals(nickname, user.nickname)
+        && Objects.equals(profileImagePath, user.profileImagePath)
+        && Objects.equals(pronouns, user.pronouns)
+        && Objects.equals(roles, user.roles)
+        && Objects.equals(username, user.username);
     }
 
     /**
