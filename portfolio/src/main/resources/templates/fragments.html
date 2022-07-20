@@ -1,23 +1,38 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head th:fragment = "header">
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-  <!-- Custom css -->
+  <!--  Jqeury links goes first-->
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.3.1/dist/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+  <!-- Custom css -->
+  <link rel="stylesheet" type="text/css" th:href="@{{apiPrefix}/css/header.css(apiPrefix=${apiPrefix})}"/>
+  <!--  Custom js for responsive sidebar-->
+  <script th:src="@{{apiPrefix}/javascript/sidebar.js(apiPrefix=${apiPrefix})}"></script>
 
   <meta charset="UTF-8">
   <title>Title</title>
 </head>
 
 <body>
+
 <!--fragment for header using bootstrap-->
 <div th:fragment="header">
   <nav class="navbar navbar-expand bg-dark navbar-dark fixed-top" style="background-color: #07173B !important;">
     <div class="container-fluid">
-      <a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">LENSfolio</a>
+      <ul class="nav navbar-nav navbar-left">
+        <li>
+          <a><button type='button' class='btn btn-primary' id="hamburger-toggle" onclick="navToggle()">&#9776;</button>
+          </a>
+        </li>
+        <li>
+          <a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
+            LENSfolio</a>
+        </li>
+      </ul>
       <ul class="nav navbar-nav navbar-right">
         <li><a class="navbar-brand" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
           <img th:src="@{{apiPrefix}/icons/home-icon.svg(apiPrefix=${apiPrefix})}" alt="Home" height=28 width=28 class="d-inline-block align-text-top">
@@ -25,7 +40,7 @@
         </li>
         <div class="nav-item dropdown" >
           <a class="navbar-brand nav-link dropdown-toggle"  href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">[[${user.username}]]
-            <img th:src="@{${apiPrefix} + '/' + ${user.profileImagePath}}" alt="Account" height="28 width=20" class="d-inline-block align-text-top profile-photo">
+            <img th:src="${user.profileImagePath}" alt="Account" height="28 width=20" class="d-inline-block align-text-top profile-photo">
           </a>
           <div class="bg-dark navbar-dark dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDropdown" style="background-color: #07173B !important;">
             <a class="navbar-brand dropdown-item" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account</a>
@@ -45,13 +60,25 @@
   </nav>
 </div>
 
-<nav th:fragment = "dashboard">
-  <div class = "container-fluid">
+<nav th:fragment = "sidebar" id="sidebar" class="sidenav" data-mdb-hidden="false">
+  <div class ="container-fluid" id ="shownav">
     <div class="row">
       <div class="sidebar">
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
+        <ul class="nav nav-pills flex-column " id="sidebar-2" >
+          <li class="nav-item"  >
+            <a class="nav-link" style="justify-content: center" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/dashboard' ? 'active':''}" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
+              Dashboard
+            </a>
+          </li>
+          <li class="nav-item"  >
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/account' ? 'active':''}" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
+              Account Page
+            </a>
+          </li>
+          <li class="nav-item"  >
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/users' ? 'active':''}" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">
+              Users
+            </a>
           </li>
         </ul>
       </div>
@@ -104,6 +131,9 @@
           <li class="nav-item">
             <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
           </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">Users</a>
+          </li>
         </ul>
         <ul class="nav flex-column">
         </ul>
@@ -112,23 +142,6 @@
   </div>
 </nav>
 
-<nav th:fragment = "project-and-sprint">
-  <div class = "container-fluid">
-    <div class="row">
-      <div class="sidebar">
-        <!--<div class="collapse navbar-collapse" id="collapsibleNavbar">-->
-        <ul class="nav flex-column">
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">Dashboard</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </div>
-</nav>
 </body>
 </html>
 

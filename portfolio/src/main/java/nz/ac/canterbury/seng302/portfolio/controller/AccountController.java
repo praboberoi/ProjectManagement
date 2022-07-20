@@ -11,6 +11,9 @@ import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
 import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -40,6 +43,14 @@ public class AccountController {
 
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
+
+    /**
+    * Adds common model elements used by all controller methods.
+    */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
 
     public AccountController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
@@ -127,9 +138,10 @@ public class AccountController {
      * @param pronouns The pronouns of the user
      * @param email The email of the user
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param deleteImage Boolean to run the delete image functionality or not
      * @return Html account editing page
      */
-    @RequestMapping(path="/editAccount", method = RequestMethod.POST)
+    @PostMapping(path="/editAccount")
     public String editUser(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam("image")MultipartFile multipartFile,
@@ -139,52 +151,54 @@ public class AccountController {
             @RequestParam String bio,
             @RequestParam String pronouns,
             @RequestParam String email,
+            Boolean deleteImage,
             Model model,
             RedirectAttributes ra
     ) throws IOException {
         Integer userId = Integer.parseInt(principal.getClaimsList().stream()
-                .filter(claim -> claim.getType().equals("nameid"))
-                .findFirst().map(ClaimDTO::getValue).orElse("-1"));
+            .filter(claim -> claim.getType().equals("nameid"))
+            .findFirst().map(ClaimDTO::getValue).orElse("-1"));
         EditUserResponse idpResponse = userAccountClientService.edit(userId, firstName, lastName, nickname,
-                bio,
-                pronouns,
-                email);
-
-
+            bio,
+            pronouns,
+            email);
 //        Start of image upload functionality
-        MultipartFile file1 = multipartFile;
-        boolean b = !(file1.isEmpty());
-        if (b) {
+        if (!multipartFile.isEmpty()) {
             // original filename of image user has uploaded
-            String filename = file1.getOriginalFilename();
-            String extension = filename.substring(filename.lastIndexOf(".") + 1);
+            String extension = multipartFile.getContentType();
             // check if file is an accepted image type
-            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList("jpg", "jpeg", "png"));
+            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
-                userAccountClientService.uploadImage(userId, extension, file1);
+                if (multipartFile.getContentType() == MediaType.IMAGE_GIF_VALUE) {
+                    extension = "gif";
+                } else if (multipartFile.getContentType() == MediaType.IMAGE_PNG_VALUE) {
+                    extension = "png";
+                } else {
+                    extension = "jpeg";
+                }
+                userAccountClientService.uploadImage(userId, extension, multipartFile);
             } else {
                 String msgString;
                 msgString = String.format("File must be an image of type jpg, jpeg or png");
                 ra.addFlashAttribute("messageDanger", msgString);
-                return "redirect:/editAccount";
+                return "editAccount";
             }
         }
-
-
+        if (deleteImage) deleteUserProfilePhoto(principal);
 
 //       End of image
-
-
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
             msgString = String.format("Successfully updated details");
             ra.addFlashAttribute("messageSuccess", msgString);
-            return "redirect:/account";
+            return "account";
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
-        
+
+
+
         return "editAccount";
     }
 
@@ -195,7 +209,6 @@ public class AccountController {
         User user = new User(idpResponse);
 
         model.addAttribute("user", user);
-
 
         StringBuilder roles = new StringBuilder();
         user.getRoles().forEach(role -> roles.append(capitaliseFirstLetter(role.toString() + ", ")));
@@ -212,6 +225,27 @@ public class AccountController {
                 creationDate.format(DateTimeFormatter.ofLocalizedDate(FormatStyle.LONG)));
         model.addAttribute("timePassed", getTimePassed(creationDate));
     }
+
+    /**
+     * Calls the delete profile image functionality in the UserAccountClientService
+     * @param principal
+     * @return Response status
+     */
+    public ResponseEntity<Long> deleteUserProfilePhoto(@AuthenticationPrincipal AuthState principal) {
+        ClaimDTO id = principal.getClaims(2);
+        int userId = Integer.parseInt(id.getValue());
+        DeleteUserProfilePhotoResponse idpResponse = userAccountClientService.deleteUserProfilePhoto(userId);
+
+        if (idpResponse.getIsSuccess()) {
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        if (("Could not find user").equals(idpResponse.getMessage())
+                || ("Could not find a profile photo to delete").equals(idpResponse.getMessage())) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
     static String capitaliseFirstLetter(String name) {
         if (name.contains("_")) {
             String[] role = name.split("_");

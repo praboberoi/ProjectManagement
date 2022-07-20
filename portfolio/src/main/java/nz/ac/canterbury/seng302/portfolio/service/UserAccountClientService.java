@@ -4,21 +4,16 @@ import com.google.protobuf.ByteString;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
-import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
@@ -116,11 +111,13 @@ public class UserAccountClientService {
      * Request a list of users from the IDP server and prepares them for use
      * @param page The page to retrive, indexing starts at 0
      * @param limit The number of users to retrieve, 0 for no limit
+     * @param order The field that the results are ordered by
+     * @param isAsc If the results are in accending or decending order
      * @return List of unpackaged users
      * @throws StatusRuntimeException
      */
-    public PaginatedUsersResponse getUsers(int page, int limit) throws StatusRuntimeException{
-        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setLimit(limit).setOffset(page).build());
+    public PaginatedUsersResponse getUsers(int page, int limit, UserField order, boolean isAsc) throws StatusRuntimeException{
+        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setOrderBy(order.value).setIsAscendingOrder(isAsc).setLimit(limit).setOffset(page).build());
         return response;
     }
 
@@ -137,6 +134,18 @@ public class UserAccountClientService {
                 .orElse("-100"));
 
         UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
+        return response;
+    }
+
+    /**
+     * Deletes the selected users profile picture
+     * @param userId The id of the user
+     * @return
+     */
+    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) {
+        DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
+            DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
+            );
         return response;
     }
 
@@ -288,7 +297,6 @@ public class UserAccountClientService {
         streamObserver.onNext(metadata);
 
         // upload file in chunks and upload as a stream
-//        InputStream inputStream = Files.newInputStream(path);
         InputStream inputStream = file.getInputStream();
         byte[] bytes = new byte[4096];
         int size;
@@ -301,10 +309,6 @@ public class UserAccountClientService {
         // close stream
         inputStream.close();
         streamObserver.onCompleted();
-        // write image to portfolio when image has been successfully uploaded
-        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
-        Files.write(path, file.getBytes());
-
     }
     /**
      * Returns a status update when the file upload is complete using protos

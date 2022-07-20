@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
 import java.sql.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -40,6 +41,9 @@ public class Project {
      */
     @Column(nullable = false)
     private Date endDate;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<Sprint> sprints;
 
     /**
      * No args Constructor of the Project.
@@ -112,7 +116,7 @@ public class Project {
 
     /**
      * Sets the name of the Project
-     * @param projectName of type String
+     * @param projectId of type String
      */
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
@@ -227,7 +231,7 @@ public class Project {
          * @return an object of type Project
          */
         public Project build() {
-            return new Project(projectId,projectName, description, startDate, endDate);
+            return new Project(projectId, projectName, description, startDate, endDate);
         }
 
     }

@@ -1,8 +1,9 @@
 <!DOCTYPE HTML>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
   <head>
-    <title>User</title>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>LENSfolio - Users</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Custom css for body-->
@@ -14,7 +15,7 @@
   <header>
     <div th:replace="fragments :: header"></div>
   </header>
-  <div th:replace="fragments :: account"></div> 
+  <div th:replace="fragments :: sidebar"></div>
 
   <body>
     <div class="main">
@@ -22,8 +23,14 @@
       <div class="page-title">
         <h2 id="name">Users</h2>
       </div>
-      <div id="pageMessage">
-        <div>&nbsp;</div>
+      <div>
+        <br>
+        <div th:if="${messageSuccess}" class="alert alert-success text-center">
+          [[${messageSuccess}]]
+        </div>
+        <div th:if="${messageDanger}" class="alert alert-danger text-center">
+          [[${messageDanger}]]
+        </div>
       </div>
 
       <!-- Table for users -->
@@ -124,6 +131,9 @@
     <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js}" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
     <script th:inline="javascript">
       var apiPrefix = [[${apiPrefix}]];
+      var page = [[${page}]];
+      var sortField = [[${order}]];
+      var isAsc = [[${asc}]];
     </script>
     <script th:src='@{{apiPrefix}/javascript/userList.js(apiPrefix=${apiPrefix})}'></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>

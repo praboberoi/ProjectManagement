@@ -38,9 +38,9 @@ public class RegistrationService {
         List<ValidationError> result = new ArrayList<>();
 
         // Username validation
-        if (username.length() < 3 || username.length() > 16) {
+        if (username.length() < 3 || username.length() > 16 || ValidationUtilities.hasSpecial(username))  {
             errorBuilder.setFieldName("usernameError");
-            errorBuilder.setErrorText("Username must be between 3 and 16 characters.");
+            errorBuilder.setErrorText("Username must be between 3 and 16 characters with no special characters.");
             result.add(errorBuilder.build());
         }
 
@@ -49,11 +49,12 @@ public class RegistrationService {
             errorBuilder.setFieldName("firstNameError");
             errorBuilder.setErrorText("First name cannot be blank.");
             result.add(errorBuilder.build());
-        } else if (firstName.length() > 32) {
+        } else if (firstName.length() < 2 || firstName.length() > 32) {
             errorBuilder.setFieldName("firstNameError");
-            errorBuilder.setErrorText("First name cannot be more than 32 characters.");
+            errorBuilder.setErrorText("First name must be between 2 and 32 characters.");
             result.add(errorBuilder.build());
-        } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)) {
+        } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)||
+                !ValidationUtilities.hasDashSpecial(firstName) || !ValidationUtilities.hasSpaceSpecial(lastName)){
             errorBuilder.setFieldName("firstNameError");
             errorBuilder.setErrorText("First name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
@@ -64,11 +65,12 @@ public class RegistrationService {
             errorBuilder.setFieldName("lastNameError");
             errorBuilder.setErrorText("Last name cannot be blank.");
             result.add(errorBuilder.build());
-        } else if (lastName.length() > 32) {
+        } else if (lastName.length() < 2 || lastName.length() > 32) {
             errorBuilder.setFieldName("lastNameError");
-            errorBuilder.setErrorText("Last name cannot be more than 32 characters.");
+            errorBuilder.setErrorText("Last name must be between 2 and 32 characters.");
             result.add(errorBuilder.build());
-        } else if (ValidationUtilities.hasNameSpecial(lastName) || ValidationUtilities.hasDigit(lastName)) {
+        } else if (ValidationUtilities.hasNameSpecial(lastName) || ValidationUtilities.hasDigit(lastName) ||
+                !ValidationUtilities.hasDashSpecial(lastName) || !ValidationUtilities.hasSpaceSpecial(lastName)) {
             errorBuilder.setFieldName("lastNameError");
             errorBuilder.setErrorText("Last name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
@@ -93,7 +95,7 @@ public class RegistrationService {
         }
 
         //Bio validation
-        if (bio.length() > Integer.MAX_VALUE - 3) {
+        if (bio.length() > 250) {
             errorBuilder.setFieldName("bioError");
             errorBuilder.setErrorText("Your bio is too long");
             result.add(errorBuilder.build());
@@ -102,7 +104,11 @@ public class RegistrationService {
         //Personal Pronoun validation
         if (personalPronouns.length() > 32) {
             errorBuilder.setFieldName("personalPronounsError");
-            errorBuilder.setErrorText("Personal pronouns cannot be more than 32 characters.");
+            errorBuilder.setErrorText("Personal pronouns must be less than 32 characters.");
+            result.add(errorBuilder.build());
+        }else if (ValidationUtilities.hasPronounSpecial(personalPronouns) || ValidationUtilities.hasDigit(personalPronouns)) {
+            errorBuilder.setFieldName("personalPronounsError");
+            errorBuilder.setErrorText("Personal pronouns can only contain special characters + & - , and no digits.");
             result.add(errorBuilder.build());
         }
 

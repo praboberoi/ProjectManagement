@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.identityprovider.util;
 
-import java.nio.file.Paths;
 import java.util.List;
 
 import com.google.protobuf.Timestamp;
@@ -20,7 +19,7 @@ public class ResponseUtils {
      * @param user User to be packaged
      * @return userResponse as a protobuf object
      */
-    public static UserResponse prepareUserResponse(User user) {
+    public static UserResponse prepareUserResponse(User user, String hostAddress) {
         UserResponse.Builder response = UserResponse.newBuilder();
         response.setUsername(user.getUsername())
         .setId(user.getUserId())
@@ -31,19 +30,16 @@ public class ResponseUtils {
         .setBio(user.getBio())
         .setEmail(user.getEmail())
         .addAllRoles(user.getRoles())
+        .setProfileImagePath(hostAddress + "/profile/" + user.getUserId())
         .setCreated(Timestamp.newBuilder().setSeconds(user.getDateCreated().getTime()).build());
 
-        if (user.getProfileImagePath() == null) {
-            response.setProfileImagePath(Paths.get("cachedprofilephoto/default-image.svg").toString());
-       } else {
-            response.setProfileImagePath(Paths.get("cachedprofilephoto/" + user.getProfileImagePath()).toString());
-       }
        return response.build();
     }
 
     /**
      * Packages a list of userResponses into a PaginatedUsersResponse protobuf object
      * @param users List of User objects to be packaged
+     * @param resultSetSize The total number of entries in the search
      * @return PaginatedUsersResponse as a protobuf object
      */
     public static PaginatedUsersResponse preparePaginatedUsersResponse(List<UserResponse> users, long resultSetSize) {

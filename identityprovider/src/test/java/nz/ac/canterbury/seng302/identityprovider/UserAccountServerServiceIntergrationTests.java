@@ -206,7 +206,7 @@ class UserAccountServerServiceIntergrationTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
@@ -224,7 +224,7 @@ class UserAccountServerServiceIntergrationTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOrderBy("firstName").setIsAscendingOrder(false).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
@@ -242,7 +242,7 @@ class UserAccountServerServiceIntergrationTests {
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).setOrderBy("firstName").setIsAscendingOrder(false).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
-        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser);
+        UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
