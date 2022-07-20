@@ -116,7 +116,7 @@ public class Project {
 
     /**
      * Sets the name of the Project
-     * @param projectName of type String
+     * @param projectId of type String
      */
     public void setProjectId(Integer projectId) {
         this.projectId = projectId;
@@ -231,7 +231,7 @@ public class Project {
          * @return an object of type Project
          */
         public Project build() {
-            return new Project(projectId,projectName, description, startDate, endDate);
+            return new Project(projectId, projectName, description, startDate, endDate);
         }
 
     }

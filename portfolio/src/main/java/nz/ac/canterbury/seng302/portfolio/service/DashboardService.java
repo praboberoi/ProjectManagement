@@ -19,6 +19,11 @@ public class DashboardService {
     @Autowired private SprintService sprintService;
 
 
+    public DashboardService(ProjectRepository projectRepo, SprintService sprintService) {
+        this.projectRepo = projectRepo;
+        this.sprintService = sprintService;
+    }
+
     /**
      * Returns list of all Project objects in the database
      * @return list of project objects
@@ -90,7 +95,7 @@ public class DashboardService {
      * @param project of type Project
      * @throws IncorrectDetailsException indicating page values of the HTML page are manually changed.
      */
-    public void verifyProject(Project project) throws Exception {
+    public void verifyProject(Project project) throws IncorrectDetailsException {
         Date projectMinDate;
         Date projectMaxDate;
         List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
@@ -111,14 +116,15 @@ public class DashboardService {
         if (sprints.stream().anyMatch(sprint -> sprint.getEndDate().after(project.getEndDate()))) {
             throw new IncorrectDetailsException("You are trying to end the project before the last sprint has ended.");
         }
-        if(project.getStartDate().before(projectMinDate)) {
+        if(project.getStartDate().before(Date.valueOf(LocalDate.now().minusYears(1)))) {
             throw new IncorrectDetailsException("A project cannot start more than a year ago.");
         }
-        if ( project.getEndDate().after(projectMaxDate) ) {
+        if ( project.getEndDate().after(Date.valueOf(LocalDate.now().plusYears(10))) ) {
             throw new IncorrectDetailsException("A project cannot end more than ten years from now.");
         }
-        if(project.getStartDate().after(project.getEndDate()))
+        if (project.getDescription().length() > 250) {
             throw new IncorrectDetailsException("Start date of the project cannot be after the end date of the project");
+        }
     }
 
 
