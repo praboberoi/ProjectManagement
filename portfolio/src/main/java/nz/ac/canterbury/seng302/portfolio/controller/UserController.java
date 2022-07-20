@@ -2,7 +2,11 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.PersistentSort;
 import nz.ac.canterbury.seng302.portfolio.model.PersistentSortRepository;
+import ch.qos.logback.core.net.SyslogOutputStream;
 import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
@@ -25,6 +29,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 
@@ -78,6 +84,7 @@ public class UserController {
         ModelAndView mv = new ModelAndView("userList");
         mv.addObject("user", user);
         mv.addObject("usersList", usersList);
+        mv.addObject("currentUser", userAccountClientService.getUser(principal));
         mv.addObject("apiPrefix", apiPrefix);
         mv.addObject("page", 0);
         mv.addObject("limit", limit);
@@ -116,9 +123,9 @@ public class UserController {
 
         User user = new User(userAccountClientService.getUser(principal));
         List<UserRole> roleList = Arrays.asList(UserRole.values())
-                .stream().filter(role ->
-                        role.ordinal() <= Collections.max(user.getRoles()).ordinal())
-                .toList();
+            .stream().filter(role ->
+                role.ordinal() <= Collections.max(user.getRoles()).ordinal())
+            .toList();
 
         sort.setUserListSortBy(UserField.valueOf(order.toUpperCase()));
         sort.setIsAscendingOrder(asc==0);
@@ -127,8 +134,9 @@ public class UserController {
         PaginatedUsersResponse response = userAccountClientService.getUsers(page, limit, sort.getUserListSortBy(), sort.isUserListAscending());
         List<User> usersList = response.getUsersList().stream().map(User::new).toList();
 
-        ModelAndView mv = new ModelAndView("userList::userListDataTable");
+        mv = new ModelAndView("userList::userListDataTable");
         mv.addObject("usersList", usersList);
+        mv.addObject("currentUser", userAccountClientService.getUser(principal));
         mv.addObject("page", page);
         mv.addObject("limit", limit);
         mv.addObject("pages", (response.getResultSetSize() + limit - 1)/limit);
@@ -147,18 +155,46 @@ public class UserController {
      * @return Ok (200) response if successful, 500 response if failure.
      */
     @DeleteMapping(value = "/usersList/removeRole")
-    public ResponseEntity<String> removeRole(String userId, String role, RedirectAttributes ra) {
+    public ResponseEntity<String> removeRole(String userId, String role, @AuthenticationPrincipal AuthState principal) {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
+
+        UserResponse loggedInUser = userAccountClientService.getUser(principal);
+        UserResponse user = userAccountClientService.getUser(parseInt(userId));
+        AtomicInteger highestUserRole = new AtomicInteger(0);
+        loggedInUser.getRolesList().forEach(usersRole ->  {
+            if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());});
+
+        if (user == null) {
+            return new ResponseEntity("User cannot be found in database", HttpStatus.BAD_REQUEST);
+        }
+        if (highestUserRole.get() == 0) {
+            return new ResponseEntity("You do not have these permissions", HttpStatus.FORBIDDEN);
+
+        }
+        if (Integer.parseInt(userId) == loggedInUser.getId()){
+            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
+        }
+
+        if (!user.getRolesList().contains(UserRole.valueOf(role))) {
+            return new ResponseEntity("User does not have this role.", HttpStatus.BAD_REQUEST);
+
+        }
+
+        if (user.getRolesList().size() == 1) {
+            return new ResponseEntity("User must have a role.", HttpStatus.BAD_REQUEST);
+
+        }
+
+        if (highestUserRole.get() < UserRole.valueOf(role).getNumber()) {
+            return new ResponseEntity("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
+
+        }
+
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
         if (!response.getIsSuccess()) {
-            ra.addFlashAttribute("messageDanger", response.getMessage());
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .build();
+            return new ResponseEntity("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return ResponseEntity
-            .status(HttpStatus.OK)
-            .build();
+        return new ResponseEntity("Role deleted successfully", HttpStatus.OK);
     }
 
     /**
@@ -169,8 +205,7 @@ public class UserController {
      * @return The updated user row or an error message
      */
     @PostMapping(value = "user/{userId}/addRole")
-    public ModelAndView addRole(@AuthenticationPrincipal AuthState principal, @PathVariable int userId, @RequestParam("role") UserRole newRole) {
-        ModelAndView mv =  new ModelAndView();
+    public ResponseEntity<String> addRole(@AuthenticationPrincipal AuthState principal, @PathVariable int userId, @RequestParam("role") UserRole newRole) {
         User user = new User(userAccountClientService.getUser(principal));
         List<UserRole> roleList = Arrays.asList(UserRole.values())
             .stream().filter(role ->
@@ -178,37 +213,26 @@ public class UserController {
             .toList();
 
         if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
-            mv.setViewName("fragments::errorMessage");
-            mv.setStatus(HttpStatus.FORBIDDEN);
-            mv.addObject("messageDanger", "Insufficient permissions.");
-            return mv;
+            return new ResponseEntity("Insufficient Permissions", HttpStatus.FORBIDDEN);
+
+        }
+
+        if (userId == user.getUserId()){
+            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
 
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
         if (!response.getIsSuccess()) {
-            mv.setViewName("fragments::errorMessage");
             switch(response.getMessage()) {
             case "User already has this role.":
-                mv.setStatus(HttpStatus.CONFLICT);
-                break;
+                return new ResponseEntity(response.getMessage(), HttpStatus.CONFLICT);
             case "User could not be found.":
-                mv.setStatus(HttpStatus.NOT_FOUND);
+                return new ResponseEntity(response.getMessage(), HttpStatus.NOT_FOUND);
             default:
-                mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            mv.addObject("messageDanger", response.getMessage());
-            return mv;
         }
 
-        mv.setViewName("userList::userFragment");
-
-        User updatedUser = new User(userAccountClientService.getUser(userId));
-        mv.addObject("user", updatedUser);
-        mv.addObject("roleList", roleList);
-
-        mv.setStatus(HttpStatus.OK);
-
-        return mv;
+        return new ResponseEntity("Successfully added " + newRole, HttpStatus.OK);
     }
 }
