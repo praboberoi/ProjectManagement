@@ -3,7 +3,7 @@ css for the fixed elements on each page
 header, sidebar
  */
 
-#sidebar {
+.sidebar {
     position: fixed;
     top: 51px;
     bottom: 0;

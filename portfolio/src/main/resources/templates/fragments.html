@@ -78,6 +78,11 @@
               Account Page
             </a>
           </li>
+          <li class="nav-item"  >
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI() == apiPrefix + '/user' ? 'active':''}" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">
+              Users
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -128,6 +133,9 @@
           </li>
           <li class="nav-item">
             <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">Users</a>
           </li>
         </ul>
         <ul class="nav flex-column">
