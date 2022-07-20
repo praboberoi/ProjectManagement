@@ -195,7 +195,7 @@ public class UserController {
             case "User could not be found.":
                 return new ResponseEntity(response.getMessage(), HttpStatus.NOT_FOUND);
             default:
-                return new ResponseEntity(response.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
