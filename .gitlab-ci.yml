@@ -52,9 +52,7 @@ branch-build:
 deploy-staging-identityprovider:
   stage: deploy
   script:
-    - cd profilePhotos
-    - curl https://freesvg.org/img/abstract-user-flat-1.png > default-image.png
-    - cd ..
+    - curl https://freesvg.org/img/abstract-user-flat-1.png > /home/gitlab-runner/profilePhotos/default-image.png
     - cd identityprovider
     - ./gradlew bootJar
     - rm -rf /home/gitlab-runner/staging-identityprovider/ || true
