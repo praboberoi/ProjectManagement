@@ -125,13 +125,17 @@ public class UserController {
         UserRole userRole = Enum.valueOf(UserRole.class, role);
 
         UserResponse loggedInUser = userAccountClientService.getUser(principal);
-        UserResponse user = userAccountClientService.getUser(Integer.parseInt(userId));
+        UserResponse user = userAccountClientService.getUser(parseInt(userId));
         AtomicInteger highestUserRole = new AtomicInteger(0);
         loggedInUser.getRolesList().forEach(usersRole ->  {
             if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());});
 
         if (user == null) {
             return new ResponseEntity("User cannot be found in database", HttpStatus.BAD_REQUEST);
+        }
+        System.out.println("DELETING: userId: " + userId + "/LoggedInId: " + loggedInUser.getId());
+        if (Integer.parseInt(userId) == loggedInUser.getId()){
+            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
 
         if (!user.getRolesList().contains(UserRole.valueOf(role))) {
@@ -174,6 +178,11 @@ public class UserController {
         if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
             return new ResponseEntity("Insufficient Permissions", HttpStatus.FORBIDDEN);
 
+        }
+        System.out.println("ADDING: userId: " + userId + "/LoggedInId: " + user.getUserId());
+
+        if (userId == user.getUserId()){
+            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
 
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
