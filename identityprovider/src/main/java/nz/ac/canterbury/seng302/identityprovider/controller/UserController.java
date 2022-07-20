@@ -41,7 +41,7 @@ public class UserController {
                 imageType = MediaType.parseMediaType(Files.probeContentType(imagePath));
             } else {
                 logger.info("Could not load user {}s's profile image. Falling back to default.", userId);
-                image = Files.readAllBytes(Paths.get(FILE_PATH_ROOT + "default-image.svg"));
+                image = Files.readAllBytes(Paths.get(FILE_PATH_ROOT + "default-image.png"));
             }
         } catch (IOException e) {
             logger.error("Could not load default profile picture fallback.", e);
