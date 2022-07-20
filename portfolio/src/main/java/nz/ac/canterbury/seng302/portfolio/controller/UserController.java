@@ -59,11 +59,10 @@ public class UserController {
     /**
      * Get method for the first page of the list of users
      * @param principal Authentication information containing user info
-     * @param mv Parameters sent to thymeleaf template to be rendered into HTML
      * @return The user list page
      */
     @GetMapping("/users")
-    public ModelAndView users(@AuthenticationPrincipal AuthState principal) {
+    public ModelAndView users(@AuthenticationPrincipal AuthState principal, ModelAndView mv) {
         int userId = PrincipalUtils.getUserId(principal);
         int limit = 10;
         PersistentSort sort;
@@ -81,7 +80,7 @@ public class UserController {
                         role.ordinal() <= Collections.max(user.getRoles()).ordinal())
                 .toList();
 
-        ModelAndView mv = new ModelAndView("userList");
+        mv = new ModelAndView("userList");
         mv.addObject("user", user);
         mv.addObject("usersList", usersList);
         mv.addObject("currentUser", userAccountClientService.getUser(principal));
@@ -100,7 +99,6 @@ public class UserController {
     /**
      * Get method for the current page of users from the list
      * @param principal Authentication information containing user info
-     * @param mv Parameters sent to thymeleaf template to be rendered into HTML
      * @return The list of user fragment
      */
     @GetMapping("/usersList")

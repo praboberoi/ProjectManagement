@@ -14,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -171,73 +174,6 @@ public class UserAccountClientService {
             return true;
         }
         return false;
-    }
-
-    /**
-     * This method gets data about a User Profile image from a StreamObserver and returns
-     * a StreamObserver about the FileUploadStatus response.
-     * @param responseObserver The request containing image information
-     * @return The response observer records the result of the operation
-     */
-    public StreamObserver<UploadUserProfilePhotoRequest> getImage(StreamObserver<FileUploadStatusResponse> responseObserver){
-        return new StreamObserver<>() {
-
-        OutputStream writer;
-            FileUploadStatus status = FileUploadStatus.IN_PROGRESS;
-            User user;
-            Path path;
-
-            /**
-             * Sets the OutputStream on the first request and then sends
-             * the data to be saved on subsequent requests
-             *
-             * @param request Request containing image information
-             */
-            @Override
-            public void onNext(UploadUserProfilePhotoRequest request) {
-                try {
-                    if (request.hasMetaData()) {
-                        path = getFilePath(request);
-                        writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-//                    user = userRepository.getUserByUserId(request.getMetaData().getUserId());
-                    } else {
-                        writeFile(writer, request.getFileContent());
-                    }
-                } catch (IOException e) {
-                    this.onError(e);
-                }
-            }
-
-            /**
-             * Updates file upload status
-             *
-             * @param t the error occurred on the stream
-             */
-            @Override
-            public void onError(Throwable t) {
-                status = FileUploadStatus.FAILED;
-                this.onCompleted();
-            }
-
-            /**
-             * Compiles file upload status response
-             */
-            @Override
-            public void onCompleted() {
-                closeFile(writer);
-                status = FileUploadStatus.IN_PROGRESS.equals(status) ? FileUploadStatus.SUCCESS : status;
-                FileUploadStatusResponse response = FileUploadStatusResponse.newBuilder()
-                        .setStatus(status)
-                        .setMessage("File upload progress: " + status)
-                        .build();
-                user.setProfileImagePath(String.valueOf(path));
-//            userRepository.save(user);
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-
-            }
-        };
-
     }
 
 

@@ -362,9 +362,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         Sort sort;
 
         if (request.getOrderBy().isEmpty()) {
-            sort = Sort.by(Sort.Order.by("userId").ignoreCase().with(Direction.ASC));
+            sort = Sort.by(Sort.Order.by("userId").ignoreCase().with(Sort.Direction.ASC));
         } else {
-            sort = Sort.by(Sort.Order.by(request.getOrderBy()).ignoreCase().with(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC), Sort.Order.by("lastName").ignoreCase().with(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC));
+            sort = Sort.by(Sort.Order.by(request.getOrderBy()).ignoreCase().with(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC), Sort.Order.by("lastName").ignoreCase().with(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC));
         }
         
         if (request.getLimit() == 0) {

@@ -1,4 +1,4 @@
-let page = 0;
+// let page = 0;
 let messageDanger = document.getElementById("messageDanger");
 let messageSuccess = document.getElementById("messageSuccess");
 
@@ -41,11 +41,8 @@ function getUserDataTable(newPage) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                document.getElementById("userListDataTable").innerHTML = httpRequest.responseText;
-
-                page = newPage;
-            }
+            document.getElementById("userListDataTable").innerHTML = httpRequest.responseText;
+            page = newPage;
         }
     }
 
@@ -60,11 +57,12 @@ function getUserDataTable(newPage) {
  * @param {UserRole} role
  * @param {int} userId
  */
-function removeRole(role, userId, roles) {
+function removeRole(role, userId) {
     httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = function (qualifiedName, value) {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            console.log(httpRequest.response)
             if (httpRequest.status === 200) {
                 const roleElement = document.getElementById(`user${userId}Role${role}`)
                 roleElement.remove()
@@ -107,7 +105,8 @@ function addRole(userId, role) {
             } else {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
-                messageDanger.innerText = httpRequest.response;            }
+                messageDanger.innerText = httpRequest.response;
+            }
         }
     }
 
