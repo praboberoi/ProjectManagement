@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
+import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -56,16 +57,17 @@ public class ProjectController {
         @PathVariable int projectId,
         String startDate,
         String endDate,
-        @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+        @AuthenticationPrincipal AuthState principal) throws IncorrectDetailsException {
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
-            Project project = new Project();
-            project.setProjectId(projectId);
-            project.setStartDate(Date.valueOf(startDate));
-            project.setEndDate(Date.valueOf(endDate));
+            Project project = new Project.Builder()
+                    .projectId(projectId)
+                    .startDate(Date.valueOf(startDate))
+                    .endDate(Date.valueOf(endDate))
+                    .build();
             dashboardService.verifyProject(project);
             return ResponseEntity.status(HttpStatus.OK).body(null);
-        } catch (Exception e) {
+        } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
     }

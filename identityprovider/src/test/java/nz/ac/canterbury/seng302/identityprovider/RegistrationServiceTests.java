@@ -134,4 +134,28 @@ class RegistrationServiceTests {
                 + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
                 + " are invalid");
     }
+
+    /**
+     * Tests that a sprint with too long a description will not be valid
+     */
+    @Test
+    public void givenInvalidBio_whenUserValidated_thenFailsValidation() {
+        requestBuilder.setBio("0123456789".repeat(26)); //260 characters
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+        assertEquals(1, result.size(), "Valid user's "
+        + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
+        + " are invalid");
+    }
+
+    /**
+     * Tests that a sprint with the maximum character count will be valid
+     */
+    @Test
+    public void givenValidBio_whenUserValidated_thenSucceedsValidation() {
+        requestBuilder.setBio("0123456789".repeat(25)); //250 characters
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+        assertEquals(0, result.size(), "Valid user's "
+        + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
+        + " are invalid");
+    }
 }

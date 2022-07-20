@@ -15,7 +15,7 @@ const projectId = document.getElementById('projectId').value;
 /**
  * Checks the start date and end date of the project and displays an error if it is invalid
  */
-function checkDates() {
+function checkProjectDates() {
     const startDate = startDateElement.value;
     const endDate = endDateElement.value;
     startDateElement.setCustomValidity("");
@@ -119,9 +119,9 @@ function checkEndDate() {
 function checkProjectName() {
     let projectName = document.getElementById('project-name');
     let projectNameError = document.getElementById('projectNameError');
-    if (projectName.value.length < 1) {
+    if (projectName.value.length < 1 || projectName.value.length > 32) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project Name must not be empty";
+        projectNameError.innerText = "Project Name must not be empty or greater than 32 characters";
     } else if (! projectNameRegex.test(projectName.value)) {
         projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not start with space characters";
@@ -130,6 +130,29 @@ function checkProjectName() {
         projectNameError.innerText = null;
     }
 }
+
+/**
+ * Updates the characters remaining in the description.
+ */
+function checkProjectDescription () {
+    let descriptionElement = document.getElementById("projectDescription");
+    let descErrorElement = document.getElementById("descriptionError");
+
+    let charMessage = document.getElementById("charCount");
+    let charCount = descriptionElement.value.length;
+    charMessage.innerText = charCount + ' '
+
+    if (descriptionElement.value.length > 250)
+    {
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Description must be less than 250 characters."
+    } else {
+        descErrorElement.classList.remove("formError");
+        descErrorElement.innerText = null;
+    }
+
+}
+
 
 /**
  * Calls the server to test for sprints falling outside of the project
@@ -152,6 +175,10 @@ function checkProjectName() {
             }
         }
     }
+
+
+
+
 
     httpRequest.open('POST', '/verifyProject/' + projectId, true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');

@@ -2,10 +2,9 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
-import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,31 +15,32 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
-import java.time.LocalDate;
 import java.util.List;
 
 @Controller
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
-    @Autowired private SprintService sprintService;
     @Value("${apiPrefix}") private String apiPrefix;
 
+    /**
+    * Adds common model elements used by all controller methods.
+    */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
 
     /**
-     * Adds the project list to the Dashboard.
-     * Gets the list of the current user's roles
-     * Opens dashboard.html
-     * @param model
-     * @param principal - current user.
-     * @return name of the dashboard html file.
+     * Maps all the projects, current user and user's role to the dashboard.html page
+     * @param model Of type {@link Model}
+     * @param principal Current user of type {@link AuthState}
+     * @return dashboard.html file
      */
     @RequestMapping(path = "/dashboard",method = RequestMethod.GET)
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
-            dashboardService.clearCache();
-            model.addAttribute("apiPrefix", apiPrefix);
             List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
             model.addAttribute("roles", userAccountClientService.getUserRole(principal));
@@ -52,31 +52,37 @@ public class DashboardController {
         }
     }
 
+
     /**
-     * Opens project.html and populates it with a new Project object
-     * @param model
-     * @return
+     * Maps a new project, current user, user's role and button info to projectForm.html
+     * @param model Of type {@link Model}
+     * @param principal Of type{@link AuthState}
+     * @return projectForm.html file
      */
     @RequestMapping(path="/dashboard/newProject", method = RequestMethod.GET)
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        model.addAttribute("apiPrefix", apiPrefix);
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         Project newProject = dashboardService.getNewProject();
+        List<Date> dateRange = dashboardService.getProjectDateRange(newProject);
         model.addAttribute("project", newProject);
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
         model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
         model.addAttribute("user", userAccountClientService.getUser(principal));
-        model.addAttribute("projectDateMin", Date.valueOf(LocalDate.now().minusYears(1)));
-        model.addAttribute("projectDateMax", Date.valueOf(LocalDate.now().plusYears(10)));
+        model.addAttribute("projectStartDateMin", dateRange.get(0));
+        model.addAttribute("projectStartDateMax", Date.valueOf(newProject.getEndDate().toLocalDate().minusDays(1)));
+        model.addAttribute("projectEndDateMin", Date.valueOf(newProject.getStartDate().toLocalDate().plusDays(1)));
+        model.addAttribute("projectEndDateMax", dateRange.get(1));
         return "projectForm";
     }
 
-
     /**
      * Saves project object to the database and redirects to dashboard page
-     * @param project
-     * @return
+     * @param project Of type {@link Project}
+     * @param model Of type {@link Model}
+     * @param ra Of type {@link RedirectAttributes}
+     * @param principal Of type {@link AuthState}
+     * @return Either the dashboard.html file or error.html file
      */
     @RequestMapping(path="/dashboard/saveProject", method = RequestMethod.POST)
     public String saveProject(
@@ -84,25 +90,29 @@ public class DashboardController {
             Model model,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
-            dashboardService.verifyProject(project);
+                dashboardService.verifyProject(project);
             String message =  dashboardService.saveProject(project);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
-        } catch (Exception e) {
+        } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             model.addAttribute("apiPrefix", apiPrefix);
             return "redirect:/dashboard";
+        } catch (Exception e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
+            return "error";
         }
     }
 
     /**
-     * Opens edit page (project.html) and populates with given project
-     * @param projectId ID of project selected
-     * @param model
-     * @return
+     * Maps an existing project, current user, user's role and button info to projectForm.html
+     * @param projectId Of type int
+     * @param model Of type {@link Model}
+     * @param ra Of type {@link RedirectAttributes}
+     * @param principal Of type {@link AuthState}
+     * @return projectForm.html file or dashboard.html file
      */
     @RequestMapping(path="/dashboard/editProject/{projectId}", method = RequestMethod.GET)
     public String showEditForm(
@@ -111,30 +121,33 @@ public class DashboardController {
         Model model,
         RedirectAttributes ra,
         @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             Project project  = dashboardService.getProject(projectId);
-            model.addAttribute("apiPrefix", apiPrefix);
+            List<Date> dateRange = dashboardService.getProjectDateRange(project);
             model.addAttribute("project", project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("projectDateMin", Date.valueOf(LocalDate.now().minusYears(1)));
-            model.addAttribute("projectDateMax", Date.valueOf(LocalDate.now().plusYears(10)));
+            model.addAttribute("projectStartDateMin", dateRange.get(0));
+            model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
+            model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
+            model.addAttribute("projectEndDateMax", dateRange.get(1));
             return "projectForm";
-        } catch (Exception e) {
+        } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            model.addAttribute("apiPrefix", apiPrefix);
-            return "redirect:/dashboard";
+                return "redirect:/dashboard";
         }
     }
 
     /**
-     * Deletes project from the database using projectId
-     * @param projectId ID for selected project
-     * @return
-     * @throws Exception If project is not found in the database
+     * Deletes the project and all the related sprints
+     * @param projectId Of type int
+     * @param ra Of type {@link RedirectAttributes}
+     * @param model of type {@link Model}
+     * @param principal of type {@link AuthState}
+     * @return dashboard.html file or error.html file
      */
     @RequestMapping(path="/dashboard/deleteProject/{projectId}", method = RequestMethod.POST)
     public String deleteProject(
@@ -142,19 +155,19 @@ public class DashboardController {
         RedirectAttributes ra,
         Model model,
         @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-            model.addAttribute("apiPrefix", apiPrefix);
-            Project project  = dashboardService.getProject(projectId);
+                Project project  = dashboardService.getProject(projectId);
             String message = "Successfully Deleted " + project.getProjectName();
-            sprintService.deleteAllSprints(projectId);
             dashboardService.deleteProject(projectId);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/dashboard";
-        } catch (Exception e) {
+        } catch (IncorrectDetailsException e) {
             model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }
+
+
 
 }
