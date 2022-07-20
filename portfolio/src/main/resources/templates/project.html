@@ -48,15 +48,13 @@
         Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]
 
       <div id ="edit-del-buttons">
-      <div th:each="role: ${roles}">
-        <div class="container-fluid p-0" th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+        <div class="container-fluid p-0" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
           <a type="button" class="btn btn-outline-primary me-2"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
           <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModalProject" th:data-id = "${project.projectId}"
                   th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
             <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
         </div>
-      </div>
       </div>
 
     </div>
