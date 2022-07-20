@@ -133,7 +133,6 @@ public class UserController {
         if (user == null) {
             return new ResponseEntity("User cannot be found in database", HttpStatus.BAD_REQUEST);
         }
-        System.out.println("DELETING: userId: " + userId + "/LoggedInId: " + loggedInUser.getId());
         if (Integer.parseInt(userId) == loggedInUser.getId()){
             return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
@@ -179,7 +178,6 @@ public class UserController {
             return new ResponseEntity("Insufficient Permissions", HttpStatus.FORBIDDEN);
 
         }
-        System.out.println("ADDING: userId: " + userId + "/LoggedInId: " + user.getUserId());
 
         if (userId == user.getUserId()){
             return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
