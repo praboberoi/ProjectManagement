@@ -133,6 +133,10 @@ public class UserController {
         if (user == null) {
             return new ResponseEntity("User cannot be found in database", HttpStatus.BAD_REQUEST);
         }
+        if (highestUserRole.get() == 0) {
+            return new ResponseEntity("You do not have these permissions", HttpStatus.FORBIDDEN);
+
+        }
         if (Integer.parseInt(userId) == loggedInUser.getId()){
             return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
