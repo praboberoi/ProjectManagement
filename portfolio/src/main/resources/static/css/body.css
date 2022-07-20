@@ -205,10 +205,12 @@ a.asc.sort:before {
 a.desc.sort:after {
     border: unset;
 }
+
 /* for screen sizes less than 415 */
 @media screen and (max-width: 415px) {
 
     #accountPage-font, #editAccountPage-font, #projectForm-font{
         font-size: 25px !important;
     }
-}
+} 
+ 
