@@ -82,14 +82,15 @@ function addRole(userId, role) {
 
     httpRequest.onreadystatechange = function() {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            const pageMessage = document.getElementById("pageMessage");
             if (httpRequest.status === 200) {
-                const userRole = document.getElementById(`user${userId}Row`);
-                userRole.innerHTML = httpRequest.responseText;
-                pageMessage.innerHTML = "<div>&nbsp;</div>";
+                messageDanger.hidden = true;
+                getUserDataTable(page)
+                messageSuccess.hidden = false;
+                messageSuccess.innerText = httpRequest.response
             } else {
-                pageMessage.innerHTML = httpRequest.responseText;
-            }
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.response;            }
         }
     }
 

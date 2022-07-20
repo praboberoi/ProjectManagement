@@ -164,8 +164,7 @@ public class UserController {
      * @return The updated user row or an error message
      */
     @PostMapping(value = "user/{userId}/addRole")
-    public ModelAndView addRole(@AuthenticationPrincipal AuthState principal, @PathVariable int userId, @RequestParam("role") UserRole newRole) {
-        ModelAndView mv =  new ModelAndView();
+    public ResponseEntity<String> addRole(@AuthenticationPrincipal AuthState principal, @PathVariable int userId, @RequestParam("role") UserRole newRole) {
         User user = new User(userAccountClientService.getUser(principal));
         List<UserRole> roleList = Arrays.asList(UserRole.values())
             .stream().filter(role ->
@@ -173,36 +172,22 @@ public class UserController {
             .toList();
 
         if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
-            mv.setViewName("fragments::errorMessage");
-            mv.setStatus(HttpStatus.FORBIDDEN);
-            mv.addObject("messageDanger", "Insufficient permissions.");
-            return mv;
+            return new ResponseEntity("Insufficient Permissions", HttpStatus.FORBIDDEN);
+
         }
 
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
         if (!response.getIsSuccess()) {
-            mv.setViewName("fragments::errorMessage");
             switch(response.getMessage()) {
             case "User already has this role.":
-                mv.setStatus(HttpStatus.CONFLICT);
-                break;
+                return new ResponseEntity(response.getMessage(), HttpStatus.CONFLICT);
             case "User could not be found.":
-                mv.setStatus(HttpStatus.NOT_FOUND);
+                return new ResponseEntity(response.getMessage(), HttpStatus.NOT_FOUND);
             default:
-                mv.setStatus(HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity(response.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
             }
-
-            mv.addObject("messageDanger", response.getMessage());
-            return mv;
         }
 
-        mv.setViewName("userList::userFragment");
-
-        User updatedUser = new User(userAccountClientService.getUser(userId));
-        mv.addObject("user", updatedUser);
-        mv.addObject("roleList", roleList);
-
-        mv.setStatus(HttpStatus.OK);
-        return mv;
+        return new ResponseEntity("Successfully added " + newRole, HttpStatus.OK);
     }
 }
