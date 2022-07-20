@@ -62,7 +62,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         if (userRepository.getUserByUsername(request.getUsername()) != null) {
             ValidationError.Builder errorBuilder = ValidationError.newBuilder();
             errorBuilder.setFieldName("usernameError");
-            errorBuilder.setErrorText("Username must unique.");
+            errorBuilder.setErrorText("Username must be unique.");
             reply.addValidationErrors(errorBuilder);
             reply.setIsSuccess(false);
             reply.setMessage("User already exists");

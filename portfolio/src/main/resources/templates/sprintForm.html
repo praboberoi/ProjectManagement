@@ -19,7 +19,7 @@
 <header>
     <div th:replace="fragments :: header"></div>
 </header>
-<div th:replace="fragments :: project-and-sprint"></div>
+<div th:replace="fragments :: sidebar"></div>
 
 <body>
 <div class="main">
@@ -29,7 +29,7 @@
     </div>
     <div class="projectForm">
         <form id="createSprintForm" onsubmit="return validateForm()" action="#" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
-            <input type="hidden" id="projectId" th:field="*{project.projectId}"/>
+            <input type="hidden" id="projectId" th:field="${project.projectId}"/>
             <input type="hidden" id="sprintId" th:field="*{sprintId}" />
             <div>
                 <input type="hidden" id = "projectStartDate" name= "projectStartDate" th:value="${project.startDate}">
@@ -55,30 +55,32 @@
         </div>
         <div class="row">
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkDates()">
+                <input style="font-size:15px;" type="date" class="form-control" id="startDate" th:field="*{startDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkSprintDates()" required>
                 <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
             </div>
             <div class="col-md-6 ms-auto">
-                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkDates()">
+                <input style="font-size:15px;" type="date" class="form-control" id="endDate" th:field="*{endDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkSprintDates()" required>
                 <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
             </div>
         </div>
 
-
         <br>
         <div class="mb-3">
-            <label for="message-text" class="col-form-label" >Sprint Description</label>
-            <textarea class="form-control" id="message-text" th:field="*{description}"></textarea>
+            <label for="sprintDescription" class="col-form-label" >Sprint Description</label>
+            <textarea class="form-control mt-50" th:value="${sprintDescription}" id="sprintDescription" maxlength="250" rows="5" th:field="*{description}" oninput="checkSprintDescription()"></textarea>
+            <span id="charCount" th:value="${charCount}">[[*{description.length}]] </span> / 250 characters used.
+            <p id="descriptionError" th:text="${descriptionError}" class="error-msg"></p>
         </div>
         <div class="d-flex flex-row justify-content-end p-0">
             <button type= "submit" name="submit" class="btn btn-outline-primary me-3">
                 <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
-            <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${projectId}}">
+            <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${project.projectId}}">
                 <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
         </div>
     </form>
 </div>
     <script th:src="@{{apiPrefix}/javascript/sprintForm.js(apiPrefix=${apiPrefix})}"> </script>
-    <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"> </script>
+<script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"> </script>
+</div>
 </body>
 </html>
