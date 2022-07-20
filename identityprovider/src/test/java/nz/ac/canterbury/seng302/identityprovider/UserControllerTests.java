@@ -83,7 +83,7 @@ class UserControllerTests {
 		.perform(get("/profile/1"))
 		.andExpect(status().isOk())
 		.andExpect(result -> {
-			assertEquals("image/svg+xml", result.getResponse().getContentType());
+			assertEquals("image/png", result.getResponse().getContentType());
         });
     }
 }

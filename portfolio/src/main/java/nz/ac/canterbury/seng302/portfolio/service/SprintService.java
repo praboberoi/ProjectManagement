@@ -24,6 +24,10 @@ public class SprintService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintRepository sprintRepository;
 
+    public SprintService(ProjectRepository projectRepository, SprintRepository sprintRepository) {
+        this.projectRepo = projectRepository;
+        this.sprintRepository = sprintRepository;
+    }
     /**
      * To get a new sprint with the appropriate default values.
      * @param project Of type Project
@@ -193,8 +197,9 @@ public class SprintService {
      * Verifies the current sprint to make sure there are no manual changes
      * made to the HTML page at the client.
      * @throws IncorrectDetailsException Is raised if the sprint values are incorrect.
+     * @return
      */
-    public void verifySprint(Sprint sprint) throws IncorrectDetailsException {
+    public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
         if (sprint.getStartDate().after(sprint.getEndDate()))
             throw new IncorrectDetailsException("Sprint start date can not be after sprint end date");
 
@@ -206,6 +211,9 @@ public class SprintService {
 
         if (sprint.getEndDate().after(sprint.getProject().getEndDate()))
             throw new IncorrectDetailsException("Sprint end date can not be after project end date");
+
+        if(sprint.getDescription().length() > 250)
+            throw new IncorrectDetailsException("Project description too long");
 
         List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
         try {
@@ -224,6 +232,7 @@ public class SprintService {
             throw new IncorrectDetailsException("Sprint dates can not overlap with another sprint");
 
         }
+        return true;
     }
 
     /**

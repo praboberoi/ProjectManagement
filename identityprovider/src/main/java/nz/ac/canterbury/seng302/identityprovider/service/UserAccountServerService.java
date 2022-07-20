@@ -25,6 +25,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import org.h2.util.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 /**
  * Grpc service used to perform function relating to users. This includes registration, editing and retriving User objects
@@ -36,6 +38,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     private final UserRepository userRepository;
 
     private final static Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
+    private final Logger logger = LoggerFactory.getLogger(UserAccountServerService.class);
 
     @Value("${hostAddress}")
     private String hostAddress;
@@ -66,7 +69,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         if (userRepository.getUserByUsername(request.getUsername()) != null) {
             ValidationError.Builder errorBuilder = ValidationError.newBuilder();
             errorBuilder.setFieldName("usernameError");
-            errorBuilder.setErrorText("Username must unique.");
+            errorBuilder.setErrorText("Username must be unique.");
             reply.addValidationErrors(errorBuilder);
             reply.setIsSuccess(false);
             reply.setMessage("User already exists");
@@ -181,6 +184,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                     if (request.hasMetaData()) {
                         fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
                         path = FILE_PATH_ROOT.resolve(fileName);
+                        user = userRepository.getUserByUserId(request.getMetaData().getUserId());
+                        new File(String.valueOf(FILE_PATH_ROOT)).mkdirs();
                         File f = new File(String.valueOf(path));
                         if (f.exists()) {
                             try {
@@ -189,9 +194,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
                                 this.onError(e);
                             }
                         }
-
                         writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-                        user = userRepository.getUserByUserId(request.getMetaData().getUserId());
                     } else {
                         writeFile(writer, request.getFileContent());
                     }
@@ -207,6 +210,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
              */
             @Override
             public void onError(Throwable t) {
+                logger.error("An error occured while uploading the users profile photo", t);
                 status = FileUploadStatus.FAILED;
                 this.onCompleted();
             }
@@ -225,6 +229,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
 
                 user.setProfileImagePath(String.valueOf(fileName));
                 userRepository.save(user);
+                logger.info("User {}'s profile photo has been saved to {}", user.getUserId(), fileName);
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
 
@@ -251,7 +256,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         try {
             writer.close();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("An error occured while closing the writer", e);
         }
     }
 

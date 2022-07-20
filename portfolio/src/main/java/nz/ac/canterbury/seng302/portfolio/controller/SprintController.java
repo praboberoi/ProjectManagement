@@ -88,9 +88,10 @@ public class SprintController {
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            List<String> dateRange = sprintService.getSprintDateRange(currentProject, newSprint);
 
-            model.addAttribute("sprintDateMin", currentProject.getStartDate());
-            model.addAttribute("sprintDateMax", currentProject.getEndDate());
+            model.addAttribute("sprintDateMin", dateRange.get(0));
+            model.addAttribute("sprintDateMax", dateRange.get(1));
 
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
@@ -120,17 +121,20 @@ public class SprintController {
             int id,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
-        Sprint currentSprint = new Sprint();
         try {
+            System.out.println("This is the project Id: " + projectId);
             Project project = projectService.getProjectById(projectId);
-            currentSprint.setProject(project);
-            currentSprint.setStartDate(Date.valueOf(startDate));
-            currentSprint.setEndDate(Date.valueOf(endDate));
-            currentSprint.setSprintLabel(label);
-            currentSprint.setSprintId(id);
+            Sprint currentSprint = new Sprint.Builder()
+                    .project(project)
+                    .sprintId(id)
+                    .sprintLabel(label)
+                    .startDate(Date.valueOf(startDate))
+                    .endDate(Date.valueOf(endDate))
+                    .build();
             sprintService.verifySprint(currentSprint);
+            System.out.println("No Error!");
             return ResponseEntity.status(HttpStatus.OK).body(null);
-        } catch (Exception e) {
+        } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
     }

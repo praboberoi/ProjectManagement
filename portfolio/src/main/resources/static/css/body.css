@@ -3,10 +3,10 @@ css for the body of each page
  */
 
 .main{
-    padding-right: 40px;
-    padding-left: 300px;
+    padding-left: min(15%, 250px);
     padding-top: 60px;
-
+    margin-left: 20px;
+    margin-right: 20px;
 }
 
 .project-card{
@@ -164,9 +164,32 @@ header, sidebar
     border-right: 1px solid #eee;
     width:250px;
 }
+#edit-del-buttons {
+    margin-left: auto;
+}
 
 #navbarDropdown {
     color: white;
+.card-header {
+    display: flex;
+}
+
+td {
+    word-wrap: break-word;
+    max-width: 180px;
+}
+
+.mobile-only{
+    display:none
+}
+.desktop-only{
+    display:table;
+    width: 100%
+}
+
+@media (max-width:850px){
+    .desktop-only{display:none}
+    .mobile-only{display:block}
 }
 
 /* Sort button styles from https://codepen.io/xaprio/pen/NWPXwOj */

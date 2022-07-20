@@ -38,7 +38,7 @@ function checkSprintName() {
 /**
  * Checks that the start and end dates of the sprint are valid
  */
-function checkDates() {
+function checkSprintDates() {
     const startDate = startDateElement.value;
     const endDate = endDateElement.value;
     startDateElement.setCustomValidity("");
@@ -100,6 +100,28 @@ function checkEndDate() {
 
     endDateError.innerText = "";
     endDateElement.classList.remove("formError")
+}
+
+/**
+ * Updates the characters remaining in the description.
+ */
+function checkSprintDescription () {
+    let descriptionElement = document.getElementById("sprintDescription");
+    let descErrorElement = document.getElementById("descriptionError");
+
+    let charMessage = document.getElementById("charCount");
+    let charCount = descriptionElement.value.length;
+    charMessage.innerText = charCount + ' '
+
+    if (descriptionElement.value.length > 250)
+    {
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Description must be less than 250 characters."
+    } else {
+        descErrorElement.classList.remove("formError");
+        descErrorElement.innerText = null;
+    }
+
 }
 
 /**

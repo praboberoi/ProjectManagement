@@ -11,3 +11,4 @@
 node_modules/
 env.bat
 */profilePhotos/
+identityprovider/target/cucumber-report.html
