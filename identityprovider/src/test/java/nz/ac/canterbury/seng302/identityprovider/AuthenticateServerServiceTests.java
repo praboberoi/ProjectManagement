@@ -63,7 +63,6 @@ public class AuthenticateServerServiceTests {
             fail("The call did not terminate in time");
         }
         List<AuthenticateResponse> results = responseObserver.getValues();
-        System.out.println(results);
         AuthenticateResponse response = results.get(0);
         assertTrue(response.getSuccess());
     }

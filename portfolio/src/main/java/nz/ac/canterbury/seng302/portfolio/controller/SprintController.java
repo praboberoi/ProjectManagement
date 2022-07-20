@@ -122,7 +122,6 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
-            System.out.println("This is the project Id: " + projectId);
             Project project = projectService.getProjectById(projectId);
             Sprint currentSprint = new Sprint.Builder()
                     .project(project)
@@ -132,7 +131,6 @@ public class SprintController {
                     .endDate(Date.valueOf(endDate))
                     .build();
             sprintService.verifySprint(currentSprint);
-            System.out.println("No Error!");
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
