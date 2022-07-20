@@ -158,7 +158,7 @@ public class UserController {
 
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
         if (!response.getIsSuccess()) {
-            return new ResponseEntity(response.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
         return new ResponseEntity("Role deleted successfully", HttpStatus.OK);
     }
