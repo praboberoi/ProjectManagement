@@ -132,6 +132,7 @@ public class User implements Serializable {
     }
 
     public User(UserResponse response) {
+        this.userId = response.getId();
         this.username = response.getUsername();
         this.firstName = response.getFirstName();
         this.lastName = response.getLastName();
@@ -146,7 +147,6 @@ public class User implements Serializable {
         }
         this.roles = response.getRolesList();
         this.dateCreated = new Date(response.getCreated().getSeconds());
-        this.userId = response.getId();
     }
 
     /**

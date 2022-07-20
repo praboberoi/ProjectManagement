@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
+import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,6 +33,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 /**
  * Controller for the account page
@@ -66,6 +68,7 @@ public class AccountController {
             Model model
     ) {
         this.addAttributesToModel(principal, model);
+        model.addAttribute("apiPrefix", apiPrefix);
         return "account";
     }
 
@@ -117,6 +120,7 @@ public class AccountController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
+        model.addAttribute("apiPrefix", apiPrefix);
         this.addAttributesToModel(principal, model);
 
         return "editAccount";
@@ -194,7 +198,7 @@ public class AccountController {
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
 
 
-        
+
         return "editAccount";
     }
 
@@ -205,7 +209,11 @@ public class AccountController {
         User user = new User(idpResponse);
 
         model.addAttribute("user", user);
-        model.addAttribute("roles", user.getRoles().stream().map(UserRole::name).collect(Collectors.joining(",")).toLowerCase());
+
+        StringBuilder roles = new StringBuilder();
+        user.getRoles().forEach(role -> roles.append(capitaliseFirstLetter(role.toString() + ", ")));
+        model.addAttribute("roles",
+                user.getRoles().size() > 0 ? roles.substring(0, roles.length() - 2): user.getRoles());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
@@ -236,6 +244,14 @@ public class AccountController {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    static String capitaliseFirstLetter(String name) {
+        if (name.contains("_")) {
+            String[] role = name.split("_");
+            return capitaliseFirstLetter(role[0]) + " " + capitaliseFirstLetter(role[1]);
+        } else
+            return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }
 
 }
