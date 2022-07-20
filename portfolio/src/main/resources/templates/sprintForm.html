@@ -29,7 +29,7 @@
     </div>
     <div class="projectForm">
         <form id="createSprintForm" onsubmit="return validateForm()" action="#" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
-            <input type="hidden" id="projectId" th:field="*{project.projectId}"/>
+            <input type="hidden" id="projectId" th:field="${project.projectId}"/>
             <input type="hidden" id="sprintId" th:field="*{sprintId}" />
             <div>
                 <input type="hidden" id = "projectStartDate" name= "projectStartDate" th:value="${project.startDate}">
@@ -74,7 +74,7 @@
         <div class="d-flex flex-row justify-content-end p-0">
             <button type= "submit" name="submit" class="btn btn-outline-primary me-3">
                 <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
-            <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${projectId}}">
+            <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${project.projectId}}">
                 <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
         </div>
     </form>
