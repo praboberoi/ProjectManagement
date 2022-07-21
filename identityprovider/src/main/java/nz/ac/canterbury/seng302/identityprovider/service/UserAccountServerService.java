@@ -1,11 +1,7 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import com.google.protobuf.ByteString;
-
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
-
+import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
@@ -16,6 +12,9 @@ import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+
 import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -23,6 +22,7 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.h2.util.StringUtils;
 import org.slf4j.Logger;
@@ -296,6 +296,59 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
     }
 
     /**
+     * Uses the request to add the new role to the user.
+     * If the user is not found the response sets a message and success as false, and if the addition is successful, it sets the response success as true.
+     * @param request :contains the id of the user to add the role to, and the role to add to the user.
+     * @param responseObserver: set success true if added role to user, else false.
+     */
+    public void addRoleToUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
+        User user = userRepository.getUserByUserId(request.getUserId());
+        UserRoleChangeResponse.Builder userRoleChangeResponse = UserRoleChangeResponse.newBuilder();
+
+        if (user == null) {
+            userRoleChangeResponse.setIsSuccess(false);
+            userRoleChangeResponse.setMessage("User could not be found.");
+            responseObserver.onNext(userRoleChangeResponse.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        if (user.getRoles().contains(request.getRole())) {
+            userRoleChangeResponse.setIsSuccess(false);
+            userRoleChangeResponse.setMessage("User already has this role.");
+            responseObserver.onNext(userRoleChangeResponse.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        user.addRole(request.getRole());
+        userRepository.save(user);
+        userRoleChangeResponse.setIsSuccess(true);
+        userRoleChangeResponse.setMessage(String.format("User with id %s has had role %s added successfully", user.getUserId(), request.getRole()));
+        responseObserver.onNext(userRoleChangeResponse.build());
+        responseObserver.onCompleted();
+    }
+
+
+    /**
+     * Uses the request to remove a role from the user.
+     * If the user is not found the response sets a message and success as false, and if the removal is successful, it sets the response success as true.
+     * @param request :contains the id of the user to remove the role from, and the role to remove from the user.
+     * @param responseObserver: set success true if removed role from user, else false.
+     */
+    public void removeRoleFromUser(ModifyRoleOfUserRequest request, StreamObserver<UserRoleChangeResponse> responseObserver) {
+        User user = userRepository.getUserByUserId(request.getUserId());
+        UserRoleChangeResponse.Builder userRoleChangeResponse = UserRoleChangeResponse.newBuilder();
+
+        user.removeRole(request.getRole());
+        userRepository.save(user);
+        userRoleChangeResponse.setIsSuccess(true);
+        userRoleChangeResponse.setMessage(String.format("User with id %s has had role %s removed successfully", user.getUserId(), request.getRole()));
+        responseObserver.onNext(userRoleChangeResponse.build());
+        responseObserver.onCompleted();
+    }
+
+    /**
      * Gets all users from the db and returns them packaged into a protobuf
      *
      * @param request          Request containing the offset, limit and order of users to get
@@ -309,9 +362,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         Sort sort;
 
         if (request.getOrderBy().isEmpty()) {
-            sort = Sort.by(Sort.Order.by("userId").ignoreCase().with(Direction.ASC));
+            sort = Sort.by(Sort.Order.by("userId").ignoreCase().with(Sort.Direction.ASC));
         } else {
-            sort = Sort.by(Sort.Order.by(request.getOrderBy()).ignoreCase().with(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC), Sort.Order.by("lastName").ignoreCase().with(request.getIsAscendingOrder()? Direction.ASC:Direction.DESC));
+            sort = Sort.by(Sort.Order.by(request.getOrderBy()).ignoreCase().with(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC), Sort.Order.by("lastName").ignoreCase().with(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC));
         }
         
         if (request.getLimit() == 0) {
@@ -322,7 +375,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         }
 
         List<UserResponse> preparedUsers = users.stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList());
-        
+
         PaginatedUsersResponse reply = ResponseUtils.preparePaginatedUsersResponse(preparedUsers, resultSetSize);
 
         responseObserver.onNext(reply);

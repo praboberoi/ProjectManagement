@@ -14,6 +14,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -173,6 +176,42 @@ public class UserAccountClientService {
         return false;
     }
 
+
+    /**
+     * Writes image file to profilePhotos
+     * @param writer OutputStream containing pathway
+     * @param content Image content
+     */
+    private void writeFile(OutputStream writer, ByteString content) throws IOException {
+        writer.write(content.toByteArray());
+        writer.flush();
+    }
+
+    /**
+     * Creates file name and writer
+     * @param request Contains image information
+     * @return Writer containing information to save file
+     */
+    private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
+        Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
+        var fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+        return SERVER_BASE_PATH.resolve(fileName);
+    }
+
+    /**
+     * Closes OutputStream
+     * @param writer The OutputStream
+     */
+    private void closeFile(OutputStream writer){
+        try {
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
+
     /**
      * Sends an upload image request to the server
      * @param id Id of user (required)
@@ -183,6 +222,7 @@ public class UserAccountClientService {
     public void uploadImage(final int id, final String ext, final MultipartFile file) throws IOException {
         // request observer from UserAccountServiceGrpc
         StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountServiceStub.uploadUserProfilePhoto(new UserAccountClientService.FileUploadObserver());
+
         // build metadata from proto in user_accounts.proto
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
                 .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
@@ -223,6 +263,30 @@ public class UserAccountClientService {
         public void onCompleted(){
 
         }
+    }
+
+    /**
+     * Sends a ModifyRoleOfUserRequest to delete a user's role, returns the success or failure of the request
+     * @param userId ID of the user whose role is being deleted
+     * @param role The role being deleted
+     * @return A UserRoleChangeResponse object containing success or failure of the request
+     */
+    public UserRoleChangeResponse removeUserRole(int userId, UserRole role) {
+        UserRoleChangeResponse response = userAccountStub.removeRoleFromUser(
+                ModifyRoleOfUserRequest.newBuilder().setRole(role).setUserId(userId).build());
+        return response;
+    }
+
+    /**
+     * Sends a ModifyRoleOfUserRequest to add a user's role, returns the success or failure of the request
+     * @param userId ID of the user whose role is being deleted
+     * @param role The role being added
+     * @return A UserRoleChangeResponse object containing success or failure of the request
+     */
+    public UserRoleChangeResponse addRoleToUser(int userId, UserRole role) {
+        UserRoleChangeResponse response = userAccountStub.addRoleToUser(
+            ModifyRoleOfUserRequest.newBuilder().setUserId(userId).setRole(role).build());
+        return response;
     }
 
 }

@@ -84,7 +84,7 @@ message ProfilePhotoUploadMetadata {
    int32 UserId = 1;
    string FileType = 2;
 }
-message UploadUserProfilePhotoRequest { 
+message UploadUserProfilePhotoRequest {
    oneof UploadData {
       ProfilePhotoUploadMetadata MetaData = 1;
       bytes FileContent = 2;
