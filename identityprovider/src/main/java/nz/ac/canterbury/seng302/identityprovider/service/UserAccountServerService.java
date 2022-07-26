@@ -4,6 +4,8 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import nz.ac.canterbury.seng302.identityprovider.model.Group;
+import nz.ac.canterbury.seng302.identityprovider.model.GroupRepository;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
@@ -27,6 +29,7 @@ import java.util.stream.Collectors;
 import org.h2.util.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 /**
  * Grpc service used to perform function relating to users. This includes registration, editing and retriving User objects
@@ -36,6 +39,10 @@ import org.springframework.beans.factory.annotation.Value;
 public class UserAccountServerService extends UserAccountServiceGrpc.UserAccountServiceImplBase {
 
     private final UserRepository userRepository;
+
+    @Autowired
+    GroupRepository groupRepository;
+
 
     private final static Path FILE_PATH_ROOT = Paths.get("./profilePhotos/");
     private final Logger logger = LoggerFactory.getLogger(UserAccountServerService.class);
@@ -55,6 +62,8 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      */
     @Override
     public void register(UserRegisterRequest request, StreamObserver<UserRegisterResponse> responseObserver) {
+        Group group = new Group();
+        groupRepository.save(group);
         RegistrationService controller = new RegistrationService(userRepository);
         UserRegisterResponse.Builder reply = UserRegisterResponse.newBuilder();
         reply.addAllValidationErrors(controller.validateUserDetails(request));
