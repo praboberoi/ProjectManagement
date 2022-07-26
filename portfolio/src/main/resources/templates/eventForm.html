@@ -38,7 +38,7 @@
       </div>
       <div class="mb-3">
         <label for="event-name" class="col-form-label required">Event Name</label>
-        <input style="font-size:20px;" type="text" class="form-control required" id="event-name" placeholder="Event Name" th:field="*{eventName}" onkeyup="checkEventName()" required>
+        <input style="font-size:20px;" type="text" class="form-control required" id="event-name" th:field="*{eventName}" onkeyup="checkEventName()" required>
         <p id="eventNameError" th:text="${eventNameError}" class="error-msg"></p>
       </div>
 
@@ -91,7 +91,7 @@
       <br>
 
       <div class="d-flex flex-row justify-content-end p-0">
-        <button type= "submit" class="btn btn-outline-primary me-3">
+        <button type="submit" name="submit" class="btn btn-outline-primary me-3">
           <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
         <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${projectId}}">
           <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
@@ -101,5 +101,6 @@
 
 </div>
 <script th:src="@{{apiPrefix}/javascript/eventForm.js(apiPrefix=${apiPrefix})}"></script>
+<script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"> </script>
 </body>
 </html>

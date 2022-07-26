@@ -26,7 +26,9 @@ public class EventService {
      */
     public Event getNewEvent() {
         try {
-            Event newEvent = new Event();
+            Event newEvent = new Event.Builder()
+                    .eventName("New Event")
+                    .build();
             isNew = true;
             return newEvent;
         } catch (Exception e) {

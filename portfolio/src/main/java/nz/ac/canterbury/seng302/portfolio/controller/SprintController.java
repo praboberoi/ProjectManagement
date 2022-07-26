@@ -22,10 +22,14 @@ import java.util.List;
 
 @Controller
 public class SprintController {
-    @Autowired private SprintService sprintService;
-    @Autowired private ProjectService projectService;
-    @Autowired private UserAccountClientService userAccountClientService;
-    @Value("${apiPrefix}") private String apiPrefix;
+    @Autowired
+    private SprintService sprintService;
+    @Autowired
+    private ProjectService projectService;
+    @Autowired
+    private UserAccountClientService userAccountClientService;
+    @Value("${apiPrefix}")
+    private String apiPrefix;
 
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
@@ -33,6 +37,7 @@ public class SprintController {
      * @param projectId - ID of the project selected to view.
      * @param principal - Current User.
      * @param model
+     * @param ra Redirect Attribute frontend message object
      * @return - name of the html page to display
      */
     @RequestMapping(path="/project/{projectId}", method = RequestMethod.GET)
@@ -58,14 +63,17 @@ public class SprintController {
 
     /**
      * Displays page for adding a new sprint
+     * @param projectId - ID of the project selected to view.
+     * @param principal - Current User.
      * @param model
-     * @return
+     * @param ra Redirect Attribute frontend message object
+     * @return New sprint form page or redirect to project is error occurs
      */
     @RequestMapping(path="/project/{projectId}/newSprint", method = RequestMethod.GET)
     public String newSprint(
-            Model model,
             @PathVariable ("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
+            Model model,
             RedirectAttributes ra){
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
@@ -96,7 +104,7 @@ public class SprintController {
      * @param projectId ID of the project to check
      * @param startDate New start date of the project
      * @param endDate New end date of the project
-     * @param principal
+     * @param principal Current user
      * @return ResponseEntity containing a string message
      */
     @PostMapping("/project/{projectId}/verifySprint")
@@ -121,8 +129,11 @@ public class SprintController {
 
     /**
      * Saves a sprint and redirects to project page
-     * @param sprint
-     * @return
+     * @param projectId ID of the project
+     * @param sprint Sprint object to be saved
+     * @param principal Current user
+     * @param ra Redirect Attribute frontend message object
+     * @return Project page of corrosponding projectId
      */
     @PostMapping(path="/project/{projectId}/saveSprint")
     public String saveSprint(
@@ -145,8 +156,11 @@ public class SprintController {
         /**
          * Directs to page for editing a sprint
          * @param sprintId ID for sprint being edited
+         * @param projectId ID of the project
          * @param model
-         * @return
+         * @param principal Current user
+         * @param ra Redirect Attribute frontend message object
+         * @return Sprint form page with selected sprint or redirect to project page on error
          */
     /*make sure to update project.html for path*/
     @RequestMapping(path="/project/{projectId}/editSprint/{sprintId}", method = RequestMethod.GET)
@@ -181,6 +195,9 @@ public class SprintController {
      * Deletes a sprint and redirects back to project page
      * @param sprintId ID of sprint being deleted
      * @param model
+     * @param projectId ID of sprint parent project
+     * @param principal Current user
+     * @param ra Redirect Attribute frontend message object
      * @return
      */
     @RequestMapping(path="/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
@@ -210,6 +227,7 @@ public class SprintController {
      * @param sprintId Sprint to change
      * @param startDate New start date of the sprint
      * @param endDate New end date of the sprint
+     * @param principal Current user
      * @return An error message if sprint can't save
      */
     @PostMapping("/sprint/{sprintId}/editSprint")

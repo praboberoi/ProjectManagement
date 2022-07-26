@@ -30,11 +30,9 @@ function checkEventName() {
     } else if (! eventNameSpacesRegex.test(eventName.value)) {
         eventName.classList.add("formError");
         eventNameError.innerText = "Event name must not start or end with space characters";
-        eventName.setCustomValidity("Invalid field.");
     } else {
         eventName.classList.remove("formError");
         eventNameError.innerText = null;
-        eventName.setCustomValidity("");
     }
 }
 
@@ -56,8 +54,6 @@ function checkEventDates() {
         endDateError.innerText = "End Date must be on or after the Start Date";
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
-        startDateElement.setCustomValidity("Invalid field.");
-        endDateElement.setCustomValidity("Invalid field.");
         return;
     }
 
@@ -110,8 +106,6 @@ function checkEndDate() {
 function checkEventTimes() {
     const startTime = startTimeElement.valueAsNumber;
     const endTime = endTimeElement.valueAsNumber;
-    startTimeElement.setCustomValidity("");
-    endTimeElement.setCustomValidity("");
 
     const startDate = new Date(startDateElement.value);
     const endDate = new Date(endDateElement.value);
@@ -120,8 +114,6 @@ function checkEventTimes() {
         endTimeError.innerText = "End Time must be after the Start Time";
         startTimeElement.classList.add("formError");
         endTimeElement.classList.add("formError");
-        startTimeElement.setCustomValidity("Invalid field.");
-        endTimeElement.setCustomValidity("Invalid field.");
         return;
     }
         startTimeElement.classList.remove("formError");

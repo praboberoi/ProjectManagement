@@ -20,11 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class EventController {
     @Autowired
-    private DashboardService dashboardService;
-    @Autowired
     private UserAccountClientService userAccountClientService;
-    @Autowired
-    private SprintService sprintService;
     @Autowired
     private EventService eventService;
     @Autowired
@@ -42,7 +38,9 @@ public class EventController {
      * @return link of the html page to display
      */
     @RequestMapping(path = "/project/{projectId}/newEvent", method = RequestMethod.GET)
-    public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal, @PathVariable ("projectId") int projectId) {
+    public String newEvent(Model model,
+                           @AuthenticationPrincipal AuthState principal,
+                           @PathVariable ("projectId") int projectId) {
         if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/{projectId}";
         model.addAttribute("apiPrefix", apiPrefix);
         Event newEvent = eventService.getNewEvent();
@@ -71,12 +69,16 @@ public class EventController {
     /**
      * Checks if event dates are valid and if it is saves the event
      * @param event Event object
+     * @param principal Current User
+     * @param ra Redirect Attribute frontend message object
      * @return link of html page to display
      */
     @PostMapping(path = "/project/{projectId}/saveEvent")
     public String saveEvent(
             @ModelAttribute Event event,
-            RedirectAttributes ra) {
+            RedirectAttributes ra,
+            @AuthenticationPrincipal AuthState principal) {
+        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
         String message = "";
         try {
             message = eventService.verifyEvent(event);
