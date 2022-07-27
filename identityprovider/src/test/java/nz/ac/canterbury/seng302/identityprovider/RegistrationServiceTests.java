@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit tests for methods in the UserAccountServerService class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class RegistrationServiceTests {
 
     private UserRegisterRequest.Builder requestBuilder;
