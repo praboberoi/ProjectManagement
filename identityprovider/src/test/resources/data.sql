@@ -91,3 +91,12 @@ MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (41,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (42,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (43,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (44,0,0);
+
+MERGE INTO groups (group_id,short_name,long_name) VALUES (1, 'Team 400', '400: Bad Request');
+MERGE INTO groups (group_id,short_name,long_name) VALUES (2, 'Team 300', 'Bolt Development');
+
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (1, 1);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (1, 2);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (2, 1);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (4, 1);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (16, 2);

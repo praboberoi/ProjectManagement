@@ -57,6 +57,9 @@ public class User implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     public Date dateCreated;
 
+    @ManyToMany(mappedBy = "users")
+    List<Groups> groups;
+
     public int getUserId() {
         return userId;
     }
