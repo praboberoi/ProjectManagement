@@ -86,7 +86,7 @@ public class EventServiceTest {
                 .endTime("20:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals(resultString, "The end time cannot be the same as the start time when event is on the same day");
+        assertEquals(resultString, "The events start must be before the event ends");
     }
 
     /**
@@ -104,7 +104,7 @@ public class EventServiceTest {
                 .endTime("19:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals(resultString, "The end time cannot be before the start time when event is on the same day");
+        assertEquals(resultString, "The events start must be before the event ends");
     }
 
     /**

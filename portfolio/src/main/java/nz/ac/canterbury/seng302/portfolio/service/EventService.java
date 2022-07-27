@@ -45,42 +45,33 @@ public class EventService {
     public String verifyEvent(Event event) throws ParseException {
         if (event == null) return ("No Event");
 
-        if (event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null)
+        if (event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null)
             return ("Event values are null");
 
         // checks if event name starts or ends with space
         if (!event.getEventName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
             return ("Event name must not start or end with space characters");
+        } else if (event.getEndDate().before(event.getStartDate())){
+            return ("The event end date cannot be before the event start date");
         }
 
-        if (event.getEndDate() != null && event.getStartDate() != null) {
-            if (event.getEndDate().before(event.getStartDate())){
-                return ("The event end date cannot be before the event start date");
-            }
-        }
-        if (event.getStartTime() != null && event.getEndTime() != null) {
+        try {
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            try {
-                Date d1 = (Date) sdf.parse(event.getStartTime());
-                Date d2 = (Date) sdf.parse(event.getEndTime());
-                // Check start date is same as end date
-                if (event.getStartDate().equals(event.getEndDate())) {
-                    // End time before start time
-                    if (d2.before(d1)) {
-                        return ("The end time cannot be before the start time when event is on the same day");
-                    }
-                    // Start and end time is the same
-                    if (d2.equals(d1)) {
-                        return ("The end time cannot be the same as the start time when event is on the same day");
-                    }
+            Date d1 = (Date) sdf.parse(event.getStartTime());
+            Date d2 = (Date) sdf.parse(event.getEndTime());
+            // Check if start date is same as end date
+            if (event.getStartDate().equals(event.getEndDate())) {
+                // End time before start time or start and end time is the same
+                if (d2.before(d1) || d2.equals(d1)) {
+                    return ("The events start must be before the event ends");
                 }
-            } catch (ParseException e) {
-                return ("Error with start and end time");
-            } catch (Exception e) {
-                return ("Error with start and end time validation");
             }
+            return("Event has been verified");
+        } catch (ParseException e) {
+            return ("Error with start and end time");
+        } catch (Exception e) {
+            return ("Error with start and end time validation");
         }
-        return("Event has been verified");
     }
 
     /**
@@ -95,7 +86,6 @@ public class EventService {
             message = "Successfully Created " + event.getEventName();
             isNew = false;
         } else {
-            System.out.println("edit existing event");
             currentEvent.setEventName(event.getEventName());
             currentEvent.setEndDate(event.getEndDate());
             currentEvent.setStartDate(event.getStartDate());
