@@ -167,25 +167,18 @@ public class UserController {
         }
         if (highestUserRole.get() == 0) {
             return new ResponseEntity("You do not have these permissions", HttpStatus.FORBIDDEN);
-
-        }
-        if (Integer.parseInt(userId) == loggedInUser.getId()){
-            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
 
         if (!user.getRolesList().contains(UserRole.valueOf(role))) {
             return new ResponseEntity("User does not have this role.", HttpStatus.BAD_REQUEST);
-
         }
 
         if (user.getRolesList().size() == 1) {
             return new ResponseEntity("User must have a role.", HttpStatus.BAD_REQUEST);
-
         }
 
         if (highestUserRole.get() < UserRole.valueOf(role).getNumber()) {
             return new ResponseEntity("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
-
         }
 
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
