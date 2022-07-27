@@ -87,7 +87,7 @@ public class EventService {
             eventRepository.save(currentEvent);
             return message;
         } catch (Exception e) {
-            throw new Exception("Failure Saving Project");
+            throw new Exception("Failure Saving Event");
         }
     }
 }
