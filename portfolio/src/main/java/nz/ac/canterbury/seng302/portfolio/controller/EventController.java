@@ -85,7 +85,7 @@ public class EventController {
                 ra.addFlashAttribute("messageSuccess", message);
             }
         } catch (Exception e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute("messageDanger", "Internal Server Error: The event could not be saved, please try again later.");
         }
         return "redirect:/project/{projectId}";
     }
