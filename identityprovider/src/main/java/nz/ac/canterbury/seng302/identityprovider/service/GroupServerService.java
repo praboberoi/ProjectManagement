@@ -29,6 +29,8 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
     /**
      * Gets a list of users that don't have a group and returns it to the gRPC client
+     * @param request          Empty protobuf request
+     * @param responseObserver Returns to previous method with data
      */
     @Override
     public void getMembersWithoutAGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
@@ -40,6 +42,8 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
     /**
      * Gets a list of users that are teachers and returns it to the gRPC client
+     * @param request          Empty protobuf request
+     * @param responseObserver Returns to previous method with data
      */
     @Override
     public void getTeachingStaffGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
