@@ -37,10 +37,9 @@ class GroupServerServiceIntergrationTests {
 
     /**
      * Tests whether the method getMembersWithoutAGroup returns the correct number of users
-     * @throws Exception thrown during awaitCompletion method
      */
     @Test
-    void givenSampleData_whenUsersWithNoGroupsCalled_thenCorrectUsersReturned() throws Exception {
+    void givenSampleData_whenUsersWithNoGroupsCalled_thenCorrectUsersReturned() {
         Empty request = Empty.getDefaultInstance();
         StreamRecorder<GroupDetailsResponse> responseObserver = StreamRecorder.create();
         groupServerService.getMembersWithoutAGroup(request, responseObserver);
