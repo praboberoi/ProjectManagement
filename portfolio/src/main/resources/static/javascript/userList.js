@@ -102,6 +102,10 @@ function addRole(userId, role) {
                 getUserDataTable(page)
                 messageSuccess.hidden = false;
                 messageSuccess.innerText = httpRequest.response
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
             } else {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
