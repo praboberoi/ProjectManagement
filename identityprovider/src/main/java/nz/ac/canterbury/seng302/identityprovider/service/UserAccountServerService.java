@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import com.google.protobuf.ByteString;
-import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
@@ -22,7 +21,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import org.h2.util.StringUtils;
 import org.slf4j.Logger;
@@ -362,7 +360,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
         Sort sort;
 
         if (request.getOrderBy().isEmpty()) {
-            sort = Sort.by(Sort.Order.by("userId").ignoreCase().with(Sort.Direction.ASC));
+            sort = Sort.by(Sort.Order.by("userId").with(Sort.Direction.ASC));
         } else {
             sort = Sort.by(Sort.Order.by(request.getOrderBy()).ignoreCase().with(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC), Sort.Order.by("lastName").ignoreCase().with(request.getIsAscendingOrder()? Sort.Direction.ASC: Sort.Direction.DESC));
         }
