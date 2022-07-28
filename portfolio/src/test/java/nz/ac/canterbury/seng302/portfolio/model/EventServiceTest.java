@@ -41,7 +41,7 @@ public class EventServiceTest {
         Event emptyEvent = null;
         assertNull(emptyEvent);
         String resultString = eventService.verifyEvent(emptyEvent);
-        assertEquals(resultString, "No Event");
+        assertEquals("No Event", resultString);
     }
 
     /**
@@ -52,7 +52,7 @@ public class EventServiceTest {
         Event emptyEvent = new Event();
         assertNull(emptyEvent.getEventName());
         String resultString = eventService.verifyEvent(emptyEvent);
-        assertEquals(resultString, "Event values are null");
+        assertEquals("Event values are null", resultString);
     }
 
     /**
@@ -69,7 +69,7 @@ public class EventServiceTest {
                 .endTime("21:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals(resultString, "The event end date cannot be before the event start date");
+        assertEquals("The event end date cannot be before the event start date", resultString);
     }
 
     /**
@@ -120,6 +120,6 @@ public class EventServiceTest {
                 .endTime("21:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals(resultString, "Event has been verified");
+        assertEquals("Event has been verified", resultString);
     }
 }

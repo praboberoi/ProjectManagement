@@ -51,7 +51,7 @@
           <label for="endDate" class="form-label required">Start Time</label>
         </div>
       </div>
-<!-- Start Date & Time-->
+      <!-- Start Date & Time-->
       <div class="row">
         <div class="col-md-6 ms-auto">
           <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkEventDates()" required>
@@ -76,7 +76,7 @@
         </div>
       </div>
 
-<!--End Date & Time-->
+      <!--End Date & Time-->
       <div class="row">
         <div class="col-md-6 ms-auto">
           <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkEventDates()" required>

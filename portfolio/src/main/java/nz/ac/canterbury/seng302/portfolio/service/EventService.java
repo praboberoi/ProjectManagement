@@ -2,14 +2,12 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 
 /**
     Client service used to communicate to the database
@@ -97,7 +95,7 @@ public class EventService {
             eventRepository.save(currentEvent);
             return message;
         } catch (Exception e) {
-            throw new Exception("Failure Saving Project");
+            throw new Exception("Failure Saving Event");
         }
     }
 }
