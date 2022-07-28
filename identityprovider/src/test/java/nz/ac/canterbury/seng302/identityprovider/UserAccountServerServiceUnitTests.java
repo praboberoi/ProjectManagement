@@ -1,16 +1,25 @@
 package nz.ac.canterbury.seng302.identityprovider;
 
+import io.grpc.ManagedChannel;
+import io.grpc.Server;
+import io.grpc.inprocess.InProcessChannelBuilder;
+import io.grpc.inprocess.InProcessServerBuilder;
 import io.grpc.internal.testing.StreamRecorder;
+import io.grpc.testing.GrpcCleanupRule;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 
+import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -24,12 +33,14 @@ import static org.mockito.Mockito.when;
 /**
  * Unit tests for methods in the UserAccountServerService class
  */
-@DataJpaTest
+@SpringBootTest
+@ActiveProfiles("test")
+@DirtiesContext
 class UserAccountServerServiceUnitTests {
-
+    
     @MockBean
     private UserRepository userRepository;
-
+    
     private UserAccountServerService userAccountServerService;
 
     /**

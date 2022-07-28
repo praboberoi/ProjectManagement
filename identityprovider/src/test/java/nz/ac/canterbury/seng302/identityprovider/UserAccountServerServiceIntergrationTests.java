@@ -1,10 +1,10 @@
 package nz.ac.canterbury.seng302.identityprovider;
 
 import io.grpc.internal.testing.StreamRecorder;
+import io.grpc.testing.GrpcCleanupRule;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
-import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserRequest;
@@ -15,31 +15,32 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
-import org.junit.jupiter.api.BeforeAll;
+import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
-import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for methods in the UserAccountServerService class
  */
-@DataJpaTest
-@TestInstance(Lifecycle.PER_CLASS)
+@SpringBootTest
+@ActiveProfiles("test")
+@DirtiesContext
 class UserAccountServerServiceIntergrationTests {
 
+    @Rule
+    public GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
+    
     @Autowired
     private UserRepository userRepository;
 
@@ -66,17 +67,6 @@ class UserAccountServerServiceIntergrationTests {
         return user;
     }
 
-    @BeforeAll
-    void initUserRepository() {
-        userRepository.saveAll(Arrays.asList(
-                createTestUser(1),
-                createTestUser(2),
-                createTestUser(3),
-                createTestUser(4),
-                createTestUser(5)
-        ));
-    }
-
     @BeforeEach
     void initUAServerService() {
         userAccountServerService = new UserAccountServerService(userRepository);
@@ -87,6 +77,7 @@ class UserAccountServerServiceIntergrationTests {
      * @throws Exception thrown during awaitCompletion method
      */
     @Test
+    @Transactional
     void testUserCreation() throws Exception {
         UserRegisterRequest request = UserRegisterRequest.newBuilder()
                 .setUsername("tu123")
@@ -102,7 +93,7 @@ class UserAccountServerServiceIntergrationTests {
         List<UserRegisterResponse> results = responseObserver.getValues();
         assertEquals(1, results.size());
         UserRegisterResponse response = results.get(0);
-        assertTrue(response.getIsSuccess());
+        assertTrue(response.getIsSuccess(), response.getMessage());
     }
 
     /**
@@ -125,6 +116,7 @@ class UserAccountServerServiceIntergrationTests {
      * the operation
      */
     @Test
+    @Transactional
     void givenValidUserRequest_WhenEditUserCalled_ThenResponseRecordedAsSuccess()
     {
         EditUserRequest request =
@@ -139,6 +131,7 @@ class UserAccountServerServiceIntergrationTests {
      * Testing that when the UserAccountServerService is given a valid edit user call, the user is actually edited.
      */
     @Test
+    @Transactional
     void givenValidEditUserRequest_WhenEditUserCalled_ThenUserIsEdited() {
         EditUserRequest request =
                 EditUserRequest.newBuilder().setUserId(1).setBio("Test").setEmail("Test@gmail.com").setLastName("Test").setFirstName("Test").setNickname("Test").setPersonalPronouns("Test").build();
@@ -164,7 +157,7 @@ class UserAccountServerServiceIntergrationTests {
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
-        assertEquals(5, response.getUsersCount());
+        assertEquals(44, response.getUsersCount());
     }
 
     /**
@@ -186,13 +179,13 @@ class UserAccountServerServiceIntergrationTests {
      * specified in the paginated users request
      */
     @Test
-    void givenPaginatedUsersRequest_when3UserLimit_andPage2_then2UsersReturned() {
-        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).build();
+    void givenPaginatedUsersRequest_when5UserLimit_andLastPage_then4UsersReturned() {
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(8).setLimit(5).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
-        assertEquals(2, response.getUsersCount());
+        assertEquals(4, response.getUsersCount());
     }
 
     /**
@@ -218,17 +211,17 @@ class UserAccountServerServiceIntergrationTests {
      * specified in the paginated users request
      */
     @Test
-    void givenPaginatedUsersRequest_whenFirstNameSortDesc_thenCorrectUsersReturned() {
-        User testUser = userRepository.getUserByUserId(4);
+    void givenPaginatedUsersRequest_whenFirstNameSortAsc_thenCorrectUsersReturned() {
+        User testUser = userRepository.getUserByUsername("Alex");
 
-        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOrderBy("firstName").setIsAscendingOrder(false).build();
+        GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOrderBy("firstName").setIsAscendingOrder(true).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
 
         UserResponse testUserResponse = ResponseUtils.prepareUserResponse(testUser, null);
 
         userAccountServerService.getPaginatedUsers(request, responseObserver);
         PaginatedUsersResponse response = responseObserver.getValues().get(0);
-        assertEquals(testUserResponse, response.getUsersList().get(1));
+        assertEquals(testUserResponse, response.getUsersList().get(0));
     }
 
     /**
@@ -237,7 +230,7 @@ class UserAccountServerServiceIntergrationTests {
      */
     @Test
     void givenPaginatedUsersRequest_whenFirstNameSortDesc_and3UserLimit_andPage2__thenCorrectUsersReturned() {
-        User testUser = userRepository.getUserByUserId(2);
+        User testUser = userRepository.getUserByUsername("Sebastian");
 
         GetPaginatedUsersRequest request = GetPaginatedUsersRequest.newBuilder().setOffset(1).setLimit(3).setOrderBy("firstName").setIsAscendingOrder(false).build();
         StreamRecorder<PaginatedUsersResponse> responseObserver = StreamRecorder.create();
