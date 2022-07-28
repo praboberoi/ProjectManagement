@@ -50,4 +50,20 @@ class GroupServerServiceIntergrationTests {
         GroupDetailsResponse response = results.get(0);
         assertEquals(40, response.getMembersCount(), "Incorrect number of users returned in 'no group' group");
     }
+
+    /**
+     * Tests whether the method getTeachingStaffGroup returns the correct number of users
+     */
+    @Test
+    void givenSampleData_whenTeachingStaffGroupCalled_thenCorrectUsersReturned() {
+        Empty request = Empty.getDefaultInstance();
+        StreamRecorder<GroupDetailsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.getTeachingStaffGroup(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<GroupDetailsResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+        GroupDetailsResponse response = results.get(0);
+        assertEquals(4, response.getMembersCount(), "Incorrect number of users returned in 'no group' group");
+    }
 }

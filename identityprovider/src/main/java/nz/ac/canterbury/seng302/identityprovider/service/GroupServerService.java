@@ -37,4 +37,15 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
+
+    /**
+     * Gets a list of users that are teachers and returns it to the gRPC client
+     */
+    @Override
+    public void getTeachingStaffGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
+        GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
+        reply.addAllMembers(groupsRepository.findTeacherGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
 }

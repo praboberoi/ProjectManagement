@@ -11,6 +11,9 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface GroupsRepository extends PagingAndSortingRepository<Groups, Integer> {
-    @Query(value = "SELECT u FROM User u LEFT JOIN u.groups g WHERE g IS NULL")
+    @Query(value = "SELECT user FROM User user LEFT JOIN user.groups groups WHERE groups IS NULL")
     List<User> findUsersNotInGroup();
+    
+    @Query(value = "SELECT user FROM User user JOIN user.roles role WHERE role = 1")
+    List<User> findTeacherGroup();
 }
