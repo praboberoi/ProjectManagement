@@ -90,7 +90,7 @@ function removeRole(role, userId) {
         }
 
 
-    httpRequest.open('DELETE', '/usersList/removeRole', true);
+    httpRequest.open('DELETE', apiPrefix + '/usersList/removeRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     httpRequest.send("role=" + role + "&userId=" + userId);
 }
@@ -123,7 +123,7 @@ function addRole(userId, role) {
         }
     }
 
-    httpRequest.open('POST', 'user/' + userId + '/addRole', true);
+    httpRequest.open('POST', apiPrefix + '/user/' + userId + '/addRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     httpRequest.send("role=" + role);
 }
