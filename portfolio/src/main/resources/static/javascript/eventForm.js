@@ -1,4 +1,4 @@
-// Regular expression for Project Name field. No leading white spaces or empty field.
+// Regular expression for Sprint Name field. No leading white spaces or empty field.
 const eventNameRegex = /^\S/
 const eventNameSpacesRegex = /^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$/
 
