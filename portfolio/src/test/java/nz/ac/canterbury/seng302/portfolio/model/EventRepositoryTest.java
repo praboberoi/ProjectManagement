@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import java.sql.Date;
 import java.util.Calendar;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
@@ -24,16 +25,30 @@ public class EventRepositoryTest {
 
     @Autowired 
     private EventRepository eventRepo;
+    @Autowired
+    private ProjectRepository projectRepository;
+
 
     private Event.Builder basicEventBuilder;
+    private Project project;
 
     /**
      * Creates an event builder
      */
     @BeforeEach
     public void init() {
+        Project project = new Project.Builder()
+                .projectName("Project 2020")
+                .description("First Attempt")
+                .startDate(new Date(2020, 3, 12))
+                .endDate(new Date(2021, 1, 10))
+                .build();
+
+        projectRepository.save(project);
+
         basicEventBuilder = new Event.Builder()
         .eventId(1)
+        .project(project)
         .eventName("testEvent")
         .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
         .endDate(new Date(Calendar.getInstance().getTimeInMillis()))
@@ -41,6 +56,10 @@ public class EventRepositoryTest {
                 .endTime("21:00");
     }
 
+    @AfterEach
+    public void tearDown() {
+        projectRepository.delete(project);
+    }
     /**
      * Adds an event and checks if it exists by id
      */

@@ -182,6 +182,15 @@ public class Event {
         }
 
         /**
+         * Builds the builder with the current project
+         * @param project Project containing the event
+         * @return The current event builder
+         */
+        public Builder project(Project project) {
+            this.project = project;
+            return this;
+        }
+        /**
          * Updates the event's name
          * @param eventName Name of the project
          * @return Event builder
@@ -214,7 +223,7 @@ public class Event {
         /**
          * Builds the current builder with the given start time
          * @param startTime
-         * @return
+         * @return The current event builder
          */
         public Builder startTime(String startTime){
             this.startTime = startTime;
@@ -224,7 +233,7 @@ public class Event {
         /**
          * Builds the current builder with the given end time
          * @param endTime
-         * @return
+         * @return The current event builder
          */
         public Builder endTime(String endTime){
             this.endTime = endTime;
