@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider;
 
 import io.grpc.internal.testing.StreamRecorder;
-import io.grpc.testing.GrpcCleanupRule;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.UserAccountServerService;
@@ -15,7 +14,6 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,9 +35,6 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @DirtiesContext
 class UserAccountServerServiceIntergrationTests {
-
-    @Rule
-    public GrpcCleanupRule grpcCleanup = new GrpcCleanupRule();
     
     @Autowired
     private UserRepository userRepository;
