@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -89,7 +88,7 @@ public class EventController {
                 ra.addFlashAttribute("messageSuccess", message);
             }
         } catch (Exception e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute("messageDanger", "Internal Server Error: The event could not be saved, please try again later.");
         }
         return "redirect:/project/{projectId}";
     }
