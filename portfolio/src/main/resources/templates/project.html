@@ -157,9 +157,9 @@
 <!--  Button to create new events-->
   <div class="container-fluid d-flex p-0">
     <h3 class="pe-3">Events</h3>
-    <div th:each="role: ${roles}">
+    <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
       <!-- If a user is a STUDENT do not show the 'create' event button !-->
-      <div th:if="${role} eq 'TEACHER' or ${role} eq 'COURSE_ADMINISTRATOR'">
+      <div>
         <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
           <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
       </div>
@@ -171,6 +171,7 @@
   <div id="cal">
     <div id="calendarMessage" class="alert text-center"></div>
       <div id='calendar'/>
+  </div>
   </div>
   <br>
 </div>
