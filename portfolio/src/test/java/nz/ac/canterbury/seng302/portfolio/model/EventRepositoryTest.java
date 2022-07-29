@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -18,9 +19,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 /**
  * Test class for the event class and event repository. This handles CRUD operations.
  */
-@DataJpaTest 
-@RunWith(SpringRunner.class) 
-@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
+@SpringBootTest
+@DirtiesContext
 public class EventRepositoryTest {
 
     @Autowired 
@@ -38,6 +38,7 @@ public class EventRepositoryTest {
     @BeforeEach
     public void init() {
         Project project = new Project.Builder()
+                .projectId(1)
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new Date(2020, 3, 12))
@@ -66,8 +67,9 @@ public class EventRepositoryTest {
     @Test
     public void givenEventExists_FindByEventId() {
         Event testEvent = basicEventBuilder.build();
+        System.out.println("test: " + testEvent);
         eventRepo.save(testEvent);
-        assertEquals(testEvent, eventRepo.findById(1).get());
+        assertEquals(testEvent, eventRepo.findById(1));
     }
 
     /**
