@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.identityprovider;
 
 import io.grpc.internal.testing.StreamRecorder;
 import nz.ac.canterbury.seng302.identityprovider.model.GroupsRepository;
+import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.GroupServerService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
@@ -16,6 +17,8 @@ import com.google.protobuf.Empty;
 
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import static org.junit.jupiter.api.Assertions.*;
 /**
  * Unit tests for methods in the GroupServerService class
@@ -28,10 +31,13 @@ class GroupServerServiceIntergrationTests {
     @Autowired
     private GroupsRepository groupsRepository;
 
+    @Autowired
+    private UserRepository userRepository;
+
     private GroupServerService groupServerService;
 
     @BeforeEach
-    void initUAServerService() {
+    void initServerService() {
         groupServerService = new GroupServerService(groupsRepository);
     }
 
@@ -65,5 +71,40 @@ class GroupServerServiceIntergrationTests {
         assertEquals(1, results.size());
         GroupDetailsResponse response = results.get(0);
         assertEquals(4, response.getMembersCount(), "Incorrect number of users returned in 'teacher' group");
+    }
+
+    /**
+     * Tests whether the method deleteGroup deletes the group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenDeleteGroupCalled_thenGroupCannotBeFound() {
+        DeleteGroupRequest request = DeleteGroupRequest.newBuilder().setGroupId(1).build();
+        StreamRecorder<DeleteGroupResponse> responseObserver = StreamRecorder.create();
+        groupServerService.deleteGroup(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<DeleteGroupResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+        DeleteGroupResponse response = results.get(0);
+        assertTrue(response.getIsSuccess(), "Group was not deleted successfully: " + response.getMessage());
+        assertFalse(groupsRepository.findById(1).isPresent());
+    }
+
+    /**
+     * Tests if users are deleted when a group is deleted
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenDeleteGroupCalled_thenUsersStillExist() {
+        DeleteGroupRequest request = DeleteGroupRequest.newBuilder().setGroupId(1).build();
+        StreamRecorder<DeleteGroupResponse> responseObserver = StreamRecorder.create();
+        groupServerService.deleteGroup(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<DeleteGroupResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        assertNotNull(userRepository.getUserByUserId(1));
     }
 }
