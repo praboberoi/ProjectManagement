@@ -63,6 +63,11 @@
                     </th:block>
                     <li th:if="${!user.getRoles().containsAll(roleList)}" class="list-inline-item">
                       <div class="dropdown" th:hidden="!${adminOrTeacher == true}">
+                        <style>
+                          .dropdown-toggle::after {
+                            content: none;
+                          }
+                        </style>
                         <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" th:disabled="${user.username == currentUser.username}" th:hidden="${user.username == currentUser.username}"data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           +
                         </button>
