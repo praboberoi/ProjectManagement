@@ -2,7 +2,7 @@ const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'medium
 const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
 const adminRoles = ['TEACHER', 'COURSE_ADMINISTRATOR'];
-DATE_OPTIONS = {year: 'numeric', month: 'short', day: 'numeric'};
+const DATE_OPTIONS = {year: 'numeric', month: 'short', day: 'numeric'};
 let calendar;
 let clicked = true;
 
@@ -11,6 +11,7 @@ let clicked = true;
  * @param sprintList A list of all the sprints in the project
  */
 function renderCalendar(sprintList) {
+
     calendar = new FullCalendar.Calendar(CALENDAR_EL, {
         initialView: 'dayGridMonth',
         firstDay: 1,
@@ -18,7 +19,7 @@ function renderCalendar(sprintList) {
         eventResizableFromStart: true,
         validRange: {
             start: projectStartDate,
-            end: projectEndDate
+            end: new Date(projectEndDate)
         },
         eventMouseEnter: function (info) {
             if (userRoles.some(role => adminRoles.indexOf(role) >= 0)) {

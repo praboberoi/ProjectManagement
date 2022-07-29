@@ -1,7 +1,12 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.security.SignatureException;
 import net.devh.boot.grpc.server.service.GrpcService;
 
 import nz.ac.canterbury.seng302.identityprovider.authentication.AuthenticationServerInterceptor;
@@ -21,6 +26,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticationServiceGrp
 public class AuthenticateServerService extends AuthenticationServiceImplBase{
 
     private final UserRepository userRepository;
+    private Logger logger = LoggerFactory.getLogger(AuthenticateServerService.class);
 
     public AuthenticateServerService(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -36,18 +42,32 @@ public class AuthenticateServerService extends AuthenticationServiceImplBase{
         AuthenticateResponse.Builder reply = AuthenticateResponse.newBuilder();
         String username = request.getUsername();
         String password = request.getPassword();
-        User user = userRepository.getUserByUsername(username);
+        String sessionToken = AuthenticationServerInterceptor.SESSION_TOKEN.get();
+        String token = sessionToken != null ? sessionToken.replaceFirst("Bearer ", "") : "";
+        if (!token.equals("null") && username.equals("") && password.equals("")) {
+            try {
+                username = jwtTokenService.getUsernameFromToken(token);
+            } catch (SignatureException | MalformedJwtException e) {
+                username = "";
+            }
+            
+            logger.debug("Attempting to re-athenticate user {}", username);
+        }
 
-        if (user != null && !username.equals("") && username.equals(user.getUsername()) && EncryptionUtilities.encryptPassword(user.getSalt(), password).equals(user.getPassword())) {
-            String token = jwtTokenService.generateTokenForUser(user.getUsername(), user.getUserId(), user.getFirstName() + user.getLastName(), user.getRoles());
+        User user = userRepository.getUserByUsername(username);
+        if ((request.getUsername().equals("") && jwtTokenService.validateToken(token)) ||
+         (user != null && !username.equals("") 
+            && username.equals(user.getUsername()) 
+            && EncryptionUtilities.encryptPassword(user.getSalt(), password).equals(user.getPassword()))) {
+        token = jwtTokenService.generateTokenForUser(user.getUsername(), user.getUserId(), user.getFirstName() + user.getLastName(), user.getRoles());
             reply
-                .setEmail("validuser@email.com")
+                .setEmail(user.getEmail())
                 .setFirstName(user.getFirstName())
                 .setLastName(user.getLastName())
                 .setMessage("Logged in successfully!")
                 .setSuccess(true)
                 .setToken(token)
-                .setUserId(1)
+                .setUserId(user.getUserId())
                 .setUsername(user.getUsername());
         } else {
             reply

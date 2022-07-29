@@ -68,6 +68,30 @@ public class EditUserAccountServiceTests {
     }
 
     /**
+     *  Tests personal pronoun with special characters and digits
+     */
+    @Test
+    void givenSpecialCharAndDigit_whenPersonalPronounValidation_thenShowValidationError(){
+        requestBuilder.setPersonalPronouns("they#0");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+
+        assertEquals(1, result.size(), "Special character # and digits not allowed\n"
+                + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
+    }
+
+    /**
+     *  Tests personal pronoun with allowed special characters
+     */
+    @Test
+    void givenSpecialChar_whenPersonalPronounValidation_thenNoValidationError(){
+        requestBuilder.setPersonalPronouns("she + me & my");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+
+        assertEquals(0, result.size(), "+ & special characters is allowed\n"
+                + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
+    }
+
+    /**
      * Tests user validation with a multiple invalid entries
      */
     @Test

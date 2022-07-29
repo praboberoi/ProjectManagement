@@ -21,12 +21,47 @@ public class ValidationUtilities {
     }
 
     /**
+     * Checks if a string has consecutive - e.g ---
+     * @param str String to be checked.
+     * @return true if str contains special characters.
+     */
+    public static boolean hasDashSpecial(String str) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+
+    /**
+     * Checks if a string has consecutive " " e.g "   "
+     * @param str String to be checked.
+     * @return true if str contains special characters.
+     */
+    public static boolean hasSpaceSpecial(String str) {
+        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\-]+( [A-Za-z0-9\\-]+)*$");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    /**
      * Checks if a string has a special character that aren't allowed in names e.g !?@, allowing - and " ".
      * @param str String to be checked.
      * @return true if str contains disallowed characters.
      */
     public static boolean hasNameSpecial(String str) {
         Pattern pattern = Pattern.compile("[^a-zA-Z0-9 '-]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    /**
+     * Checks if a string has a special character that aren't allowed in pronouns e.g !?@
+     * allows ',',  ' ',  '-'  '+',  '&'.
+     * @param str String to be checked.
+     * @return true if str contains disallowed characters.
+     */
+    public static boolean hasPronounSpecial(String str) {
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9 ,+&-]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
@@ -61,7 +96,7 @@ public class ValidationUtilities {
     public static boolean isEmail(String str) {
         return str.matches(
                 "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
-                + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$"
+                + "[^-]([A-Za-z0-9-])*(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$"
         );
     }
 

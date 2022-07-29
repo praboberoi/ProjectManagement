@@ -10,8 +10,10 @@ import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SignatureException;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 
 import javax.crypto.SecretKey;
@@ -47,6 +49,12 @@ public class JwtTokenUtil implements Serializable {
 	// retrieve username from jwt token
 	public String getUsernameFromToken(String token) {
 		return getClaimFromToken(token, Claims::getSubject);
+	}
+
+	// retrieve user id from jwt token
+	public Integer getUserIdFromToken(String token) {
+		Claims claims = getAllClaimsFromToken(token);
+		return Integer.parseInt(getClaimAsDTO("nameid", claims).getValue());
 	}
 
 	// retrieve expiration date from jwt token
@@ -153,6 +161,23 @@ public class JwtTokenUtil implements Serializable {
 	 * @return True if token validates, False otherwise
 	 */
 	public Boolean validateToken(String token) {
-		return !isTokenExpired(token);
+		try {
+			return !isTokenExpired(token);
+		} catch (SignatureException | MalformedJwtException e) {
+			return false;
+		}
+	}
+
+	/**
+	 * Validate the roles of the user stored in the token
+	 * @param token JWT token string
+	 * @param userRoles The users current roles
+	 * @return True if token roles match, False otherwise
+	 */
+	public Boolean validateTokenRoles(String token, List<UserRole> userRoles) {
+		Claims claims = getAllClaimsFromToken(token);
+
+		return getClaimAsDTO(ROLE_CLAIM_TYPE, claims).getValue()
+			.equals(userRoles.stream().map(UserRole::name).collect(Collectors.joining(",")));
 	}
 }
