@@ -23,8 +23,6 @@ public class Deadline {
     @Column(nullable = false)
     private Date date;
 
-    @Column(nullable = false)
-    private String time;
 
     /**
      * No args Constructor for the Deadline.
@@ -36,13 +34,11 @@ public class Deadline {
      * @param name The name of the deadline
      * @param project Project associated with the deadline
      * @param date Date of the deadline
-     * @param time Time of the deadline
      */
-    public Deadline(String name, Project project, Date date, String time){
+    public Deadline(String name, Project project, Date date){
         this.name = name;
         this.project = project;
         this.date = date;
-        this.time = time;
     }
 
     /**
@@ -50,14 +46,12 @@ public class Deadline {
      * @param name The name of the deadline
      * @param project Project associated with the deadline
      * @param date Date of the deadline
-     * @param time Time of the deadline
      */
-    public Deadline(int deadlineId, String name, Project project, Date date, String time) {
+    public Deadline(int deadlineId, String name, Project project, Date date) {
         this.deadlineID = deadlineId;
         this.name = name;
         this.project = project;
         this.date = date;
-        this.time = time;
     }
 
 
@@ -93,14 +87,6 @@ public class Deadline {
         this.date = date;
     }
 
-    public String getTime() {
-        return time;
-    }
-
-    public void setTime(String time) {
-        this.time = time;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -109,8 +95,7 @@ public class Deadline {
 
         return deadlineID == deadline.deadlineID
                 && name.equals(deadline.name)
-                && date.equals(deadline.date)
-                && time.equals(deadline.time);
+                && date.equals(deadline.date);
     }
 
     /**
@@ -121,7 +106,6 @@ public class Deadline {
         private String name;
         private Project project;
         private Date date;
-        private String time;
 
         /**
          * Builds the builder with the current deadlineId
@@ -163,22 +147,13 @@ public class Deadline {
             return this;
         }
 
-        /**
-         * Builds the builder with the current time
-         * @param time Time of the deadline
-         * @return The current builder
-         */
-        public Builder time(String time) {
-            this.time = time;
-            return this;
-        }
 
         /**
          * Returns a new Deadline object with the all the parameters of the current builder
          * @return Object of type Deadline
          */
         public Deadline build() {
-            return new Deadline(deadlineId, name, project, date, time);
+            return new Deadline(deadlineId, name, project, date);
         }
     }
 }
