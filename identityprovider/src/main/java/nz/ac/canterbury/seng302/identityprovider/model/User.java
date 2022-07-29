@@ -8,6 +8,7 @@ import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -50,6 +51,7 @@ public class User implements Serializable {
     private String profileImagePath;
 
     @ElementCollection(fetch = FetchType.EAGER)
+    @OrderColumn(name = "order_column")
     private List<UserRole> roles = new ArrayList<>();
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -148,6 +150,7 @@ public class User implements Serializable {
     public void setProfileImagePath(String profileImagePath) { this.profileImagePath = profileImagePath; }
 
     public void setRoles(List<UserRole> roles) {
+        Collections.sort(roles);
         this.roles = roles;
     }
 
@@ -156,16 +159,37 @@ public class User implements Serializable {
     }
 
     /**
+     * Creates a new ArrayList type of roles (because cannot add a UserRole to an Abstract list)
+     * and the new list including the new role replaces the old list.
+     * @param role : role to be added to the users list of roles.
+     */
+    public void addRole(UserRole role) {
+        List<UserRole> updatedRoles = new ArrayList<>(roles);
+        updatedRoles.add(role);
+        setRoles(updatedRoles);
+    }
+
+    /**
+     * Creates a new ArrayList type of roles (because cannot remove a UserRole from an Abstract list)
+     * and the new list without the specified role replaces the old list.
+     * @param role : role to be removed to the users list of roles.
+     */
+    public void removeRole(UserRole role) {
+        List<UserRole> updatedRoles = new ArrayList<>(roles);
+        updatedRoles.remove(role);
+        setRoles(updatedRoles);
+    }
+
+    /**
      * Blank constructor required by JPA
      */
     public User() {
-
     }
 
     /**
      * Creates a new user from a registration request
      * @param request Proto class which contains required idp user info
-     * @param password The new users encrypted passord
+     * @param password The new users encrypted password
      * @param salt The salt used during the encryption of the password
      */
     public User(UserRegisterRequest request, String password, String salt) {

@@ -4,10 +4,10 @@ import com.google.protobuf.ByteString;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
-import nz.ac.canterbury.seng302.shared.util.FileUploadStatus;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
+
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,10 +15,8 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.List;
 
@@ -111,6 +109,21 @@ public class UserAccountClientService {
         return response;
     }
 
+
+    /**
+     * Request a list of users from the IDP server and prepares them for use
+     * @param page The page to retrive, indexing starts at 0
+     * @param limit The number of users to retrieve, 0 for no limit
+     * @param order The field that the results are ordered by
+     * @param isAsc If the results are in accending or decending order
+     * @return List of unpackaged users
+     * @throws StatusRuntimeException
+     */
+    public PaginatedUsersResponse getUsers(int page, int limit, UserField order, boolean isAsc) throws StatusRuntimeException{
+        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setOrderBy(order.value).setIsAscendingOrder(isAsc).setLimit(limit).setOffset(page).build());
+        return response;
+    }
+
     /**
      * Gets currently logged-in user's account
      * @param principal The security principal of the currently logged-in user
@@ -124,6 +137,18 @@ public class UserAccountClientService {
                 .orElse("-100"));
 
         UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
+        return response;
+    }
+
+    /**
+     * Deletes the selected users profile picture
+     * @param userId The id of the user
+     * @return
+     */
+    public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) {
+        DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
+            DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
+            );
         return response;
     }
 
@@ -145,80 +170,10 @@ public class UserAccountClientService {
      */
     public boolean checkUserIsTeacherOrAdmin(@AuthenticationPrincipal AuthState principal) {
         List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if (!(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
+        if ((userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
             return true;
         }
         return false;
-    }
-
-
-
-
-    /**
-     * This method gets data about a User Profile image from a StreamObserver and returns
-     * a StreamObserver about the FileUploadStatus response.
-     * @param responseObserver The request containing image information
-     * @return The response observer records the result of the operation
-     */
-    public StreamObserver<UploadUserProfilePhotoRequest> getImage(StreamObserver<FileUploadStatusResponse> responseObserver){
-        return new StreamObserver<>() {
-
-        OutputStream writer;
-            FileUploadStatus status = FileUploadStatus.IN_PROGRESS;
-            User user;
-            Path path;
-
-            /**
-             * Sets the OutputStream on the first request and then sends
-             * the data to be saved on subsequent requests
-             *
-             * @param request Request containing image information
-             */
-            @Override
-            public void onNext(UploadUserProfilePhotoRequest request) {
-                try {
-                    if (request.hasMetaData()) {
-                        path = getFilePath(request);
-                        writer = Files.newOutputStream(path, StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-//                    user = userRepository.getUserByUserId(request.getMetaData().getUserId());
-                    } else {
-                        writeFile(writer, request.getFileContent());
-                    }
-                } catch (IOException e) {
-                    this.onError(e);
-                }
-            }
-
-            /**
-             * Updates file upload status
-             *
-             * @param t the error occurred on the stream
-             */
-            @Override
-            public void onError(Throwable t) {
-                status = FileUploadStatus.FAILED;
-                this.onCompleted();
-            }
-
-            /**
-             * Compiles file upload status response
-             */
-            @Override
-            public void onCompleted() {
-                closeFile(writer);
-                status = FileUploadStatus.IN_PROGRESS.equals(status) ? FileUploadStatus.SUCCESS : status;
-                FileUploadStatusResponse response = FileUploadStatusResponse.newBuilder()
-                        .setStatus(status)
-                        .setMessage("File upload progress: " + status)
-                        .build();
-                user.setProfileImagePath(String.valueOf(path));
-//            userRepository.save(user);
-                responseObserver.onNext(response);
-                responseObserver.onCompleted();
-
-            }
-        };
-
     }
 
 
@@ -239,7 +194,7 @@ public class UserAccountClientService {
      */
     private Path getFilePath(UploadUserProfilePhotoRequest request) throws IOException {
         Path SERVER_BASE_PATH = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto");
-        var fileName = "UesrProfle" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
+        var fileName = "UserProfile" + request.getMetaData().getUserId() + "." + request.getMetaData().getFileType();
         return SERVER_BASE_PATH.resolve(fileName);
     }
 
@@ -278,7 +233,6 @@ public class UserAccountClientService {
         streamObserver.onNext(metadata);
 
         // upload file in chunks and upload as a stream
-//        InputStream inputStream = Files.newInputStream(path);
         InputStream inputStream = file.getInputStream();
         byte[] bytes = new byte[4096];
         int size;
@@ -291,10 +245,6 @@ public class UserAccountClientService {
         // close stream
         inputStream.close();
         streamObserver.onCompleted();
-        // write image to portfolio when image has been successfully uploaded
-        Path path = Paths.get("portfolio/src/main/resources/static/cachedprofilephoto/" + "UserProfile" + id + "." + ext);
-        Files.write(path, file.getBytes());
-
     }
     /**
      * Returns a status update when the file upload is complete using protos
@@ -302,7 +252,6 @@ public class UserAccountClientService {
     private static class FileUploadObserver implements StreamObserver<FileUploadStatusResponse>{
         @Override
         public void onNext(FileUploadStatusResponse fileUploadStatusResponse) {
-            System.out.println("File upload status" + fileUploadStatusResponse.getStatus());
         }
 
         @Override
@@ -314,6 +263,30 @@ public class UserAccountClientService {
         public void onCompleted(){
 
         }
+    }
+
+    /**
+     * Sends a ModifyRoleOfUserRequest to delete a user's role, returns the success or failure of the request
+     * @param userId ID of the user whose role is being deleted
+     * @param role The role being deleted
+     * @return A UserRoleChangeResponse object containing success or failure of the request
+     */
+    public UserRoleChangeResponse removeUserRole(int userId, UserRole role) {
+        UserRoleChangeResponse response = userAccountStub.removeRoleFromUser(
+                ModifyRoleOfUserRequest.newBuilder().setRole(role).setUserId(userId).build());
+        return response;
+    }
+
+    /**
+     * Sends a ModifyRoleOfUserRequest to add a user's role, returns the success or failure of the request
+     * @param userId ID of the user whose role is being deleted
+     * @param role The role being added
+     * @return A UserRoleChangeResponse object containing success or failure of the request
+     */
+    public UserRoleChangeResponse addRoleToUser(int userId, UserRole role) {
+        UserRoleChangeResponse response = userAccountStub.addRoleToUser(
+            ModifyRoleOfUserRequest.newBuilder().setUserId(userId).setRole(role).build());
+        return response;
     }
 
 }

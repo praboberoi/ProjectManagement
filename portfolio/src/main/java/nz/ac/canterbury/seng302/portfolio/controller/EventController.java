@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.*;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,14 +38,15 @@ public class EventController {
      * @return link of the html page to display
      */
     @RequestMapping(path = "/project/{projectId}/newEvent", method = RequestMethod.GET)
-    public String newEvent(Model model,
-                           @AuthenticationPrincipal AuthState principal,
-                           @PathVariable ("projectId") int projectId) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/{projectId}";
+    public String newEvent(
+            Model model,
+            @AuthenticationPrincipal AuthState principal,
+            @PathVariable ("projectId") int projectId) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
         model.addAttribute("apiPrefix", apiPrefix);
         Event newEvent = eventService.getNewEvent();
         if (newEvent == null) return "redirect:/project/{projectId}";
-        Project currentProject = null;
+        Project currentProject;
         try {
             currentProject = projectService.getProjectById(projectId);
         } catch (Exception e) {
@@ -76,8 +78,9 @@ public class EventController {
     public String saveEvent(
             @ModelAttribute Event event,
             RedirectAttributes ra,
-            @AuthenticationPrincipal AuthState principal) {
-        if (userAccountClientService.checkUserIsTeacherOrAdmin(principal)) return null;
+            @AuthenticationPrincipal AuthState principal,
+            @PathVariable ("projectId") int projectId) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
         String message = "";
         try {
             message = eventService.verifyEvent(event);

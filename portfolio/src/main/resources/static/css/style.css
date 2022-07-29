@@ -6,7 +6,7 @@
 }
 
 .contentSquare {
-    width: 50%;
+    max-width: 800px;
     height: auto;
     background-color: white;
     margin: 100px auto;
@@ -30,7 +30,7 @@
 }
 
 .icon {
-    vertical-align: -.1em; !important;
+    vertical-align: -.1em important;
 }
 
 
@@ -62,7 +62,7 @@
 }
 
 
-.login-container, .contentContainer {
+.login-container, .content_container {
     align-items: center;
     margin: auto;
     text-align: left;
@@ -93,7 +93,8 @@ label {
     text-align: left;
 }
 
-.form-control{
+.form-control, #username, #firstName, #lastName, #pronouns,
+#bio, #email, #nickname, #password, #confirmPassword{
     border-radius: 64px;
     color: #07173B;
     width:100%;
@@ -189,7 +190,6 @@ label {
 }
 
 
-
 .required:after {
     content:"*";
     color: red;
@@ -203,10 +203,11 @@ label {
     font-size:15px !important;
 }
 
-/* Responsive layout - when the screen is less than 600px wide, make the two columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 950px) {
+
+/* Responsive layout - when the screen is less than 850px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 850px) {
     .login_square, .login-container{
-        width: 90%;
+        width: 80%;
     }
 
     .box1 {

@@ -1,0 +1,147 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <title>LENSfolio - Users</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Custom css for body-->
+    <link th:href="@{{apiPrefix}/css/body.css(apiPrefix=${apiPrefix})}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
+  </head>
+
+  <!--fragments-->
+  <header>
+    <div th:replace="fragments :: header"></div>
+  </header>
+  <div th:replace="fragments :: sidebar"></div>
+
+  <body>
+    <div class="main">
+      <br>
+      <div class="page-title">
+        <h2 id="name">Users</h2>
+      </div>
+      <br>
+      <div class="alert alert-danger text-center" id="messageDanger" hidden></div>
+      <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
+
+      <!-- Table for users -->
+      <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
+        <table class="table table-bordered table-hover">
+          <thead class = "table-light">
+          <tr>
+            <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'username')? asc + ' table-active' : ''}" onclick="sortByField('username')">Username</a></th>
+            <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'firstName')? asc + ' table-active' : ''}" onclick="sortByField('firstName')">Name</a></th>
+            <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'nickname')? asc + ' table-active' : ''}" onclick="sortByField('nickname')">Nickname</a></th>
+            <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'roles')? asc + ' table-active' : ''}" onclick="sortByField('roles')">Roles</a></th>
+          </tr>
+          </thead>
+          <tbody>
+            <th:block th:each="user : ${usersList}">
+              <tr th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment">
+                <td th:id="'user' + ${user.userId} + 'Username'">[[${user.username}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]] [[${user.lastName}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Nickname'">[[${user.nickname}]]</td>
+                <td th:id="'user' + ${user.userId} + 'Roles'">
+                  <ul style="list-style-type: none">
+                    <th:block th:each = "role : ${user.getRoles()}">
+                        <li style="display:inline" th:id="'user' + ${user.userId} + 'Role' + ${role}">
+                          <button th:id="'user' + ${user.userId} + 'Role' + ${role} + Btn"
+                                  th:data-role = '${role}' th:data-userId = '${user.userId}'
+                                  th:data-roles="${user.getRoles()}"
+                                  th:disabled="${(currentUser.getRolesValueList().size() == 1 and currentUser.getRolesValueList().contains(0)) or user.username == currentUser.username or (!currentUser.getRolesValueList().contains(2) and currentUser.getRolesValueList().contains(1) and role.getNumber() == 2) or  user.getRoles().size() == 1}"
+                                  onclick="removeRole(this.getAttribute('data-role'), this.getAttribute('data-userId'))"
+                                  class="btn btn-outline-secondary btn-sm">
+                              [[${role.getNumber() == 2} ? 'COURSE ADMINISTRATOR' : ${role}]]
+                              <img th:id="'user' + ${user.userId} + 'Role' + ${role} + img" width="13" height="13"
+                                   th:hidden="${(currentUser.getRolesValueList().size() == 1 and currentUser.getRolesValueList().contains(0)) or user.username == currentUser.username or (!currentUser.getRolesValueList().contains(2) and currentUser.getRolesValueList().contains(1) and role.getNumber() == 2) or  user.getRoles().size() == 1}"
+                                   class="icon" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/>
+                          </button>
+                        </li>
+                    </th:block>
+                    <li th:if="${!user.getRoles().containsAll(roleList)}" class="list-inline-item">
+                      <div class="dropdown" th:hidden="!${adminOrTeacher == true}">
+                        <style>
+                          .dropdown-toggle::after {
+                            content: none;
+                          }
+                        </style>
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" th:disabled="${user.username == currentUser.username}" th:hidden="${user.username == currentUser.username}"data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                          +
+                        </button>
+                        <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                          <th:block th:each="role : ${roleList}">
+                            <div th:if="${!user.getRoles().contains(role)}" class="text-center">
+                              <li><a class="dropdown-item" th:onclick="addRole([[${user.userId}]], [[${role}]])">[[${role}]]</a></li>
+                            </div>
+                          </th:block>
+                        </ul>
+                      </div>
+                    </li>
+                  </ul>
+              </tr>
+            </th:block>
+          </tbody>
+        </table>
+        <nav class="text-center">
+          <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${page == 0}? 'disabled' : ''">
+              <a role='button' class="page-link" th:onclick="'getUserDataTable(0)'"><span aria-hidden="true">&laquo;</span></a>
+            </li>
+
+            <li class="page-item" th:classappend="${page == 0}? 'disabled' : ''">
+              <a role='button' class="page-link" onclick="prevPage()"><span aria-hidden="true">&lsaquo;</span></a>
+            </li>
+
+            <li class="page-item" th:classappend="${(0 == page)? 'active' : ''}">
+              <a role='button' class="page-link" th:onclick="'getUserDataTable(0)'" th:text="${1}"></a>
+            </li>
+
+            <th:block th:if="${page} > 2 + 1" >
+              <li class="page-item">
+                <a role='label' class="page-link">...</a>
+              </li>
+            </th:block>
+            
+            <th:block th:if="${pages} > 2" th:each="i: ${#numbers.sequence(T(Math).max(2, page - 1), T(Math).min(pages - 1, page + 3))}">
+              <li class="page-item" th:classappend="${(i == page + 1)? 'active' : ''}">
+                <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${i - 1} + ')'" th:text="${i}"></a>
+              </li>
+            </th:block>
+
+            <th:block th:if="${pages - 4} > ${page}" >
+              <li class="page-item">
+                <a role='label' class="page-link">...</a>
+              </li>
+            </th:block>
+
+            <th:block th:if="${pages} != 1">
+              <li class="page-item" th:classappend="${(pages == page + 1)? 'active' : ''}">
+                <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${pages - 1} + ')'" th:text="${pages}"></a>
+              </li>
+            </th:block>
+
+            <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
+              <a role='button' class="page-link" onclick="nextPage()"><span aria-hidden="true">&rsaquo;</span></a>
+            </li>
+            <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
+              <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${pages - 1} + ')'"><span aria-hidden="true">&raquo;</span></a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+  </div>
+
+    <script th:src="@{https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js}" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+    <script th:inline="javascript">
+      let apiPrefix = [[${apiPrefix}]];
+      let page = [[${page}]];
+      let sortField = [[${order}]];
+      let isAsc = [[${asc}]];
+    </script>
+    <script th:src='@{{apiPrefix}/javascript/userList.js(apiPrefix=${apiPrefix})}'></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
+  </body>
+</html>
