@@ -32,19 +32,19 @@ public class Deadline {
     public Deadline() {}
 
     /**
-     * Creates a Deadline with an auto-generated ID
+     * Constructor for deadline with arguments
      * @param name The name of the deadline
      * @param project Project associated with the deadline
      * @param date Date of the deadline
      * @param time Time of the deadline
      */
-    public Deadline(String name, Project project, Date date, String time){
+    public Deadline(int deadlineId, String name, Project project, Date date, String time) {
+        this.deadlineID = deadlineId;
         this.name = name;
         this.project = project;
         this.date = date;
         this.time = time;
     }
-
 
     public int getDeadlineID() {
         return deadlineID;
@@ -163,7 +163,7 @@ public class Deadline {
          * @return Object of type Deadline
          */
         public Deadline build() {
-            return new Deadline(name, project, date, time);
+            return new Deadline(deadlineId, name, project, date, time);
         }
     }
 }

@@ -36,5 +36,8 @@ public class DeadlineService {
             throw new IncorrectDetailsException("Failed to locate deadline in the database");
     }
 
+    public void deleteDeadline(int deadlineId) {
+        deadlineRepository.deleteById(deadlineId);
+    }
 
 }
