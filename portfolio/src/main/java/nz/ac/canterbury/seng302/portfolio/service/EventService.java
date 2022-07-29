@@ -15,8 +15,6 @@ import java.text.SimpleDateFormat;
 @Service
 public class EventService {
     @Autowired EventRepository eventRepository;
-    private boolean isNew = false;
-    private Event currentEvent;
 
     /**
      * Creates a new event with a name
@@ -27,7 +25,6 @@ public class EventService {
             Event newEvent = new Event.Builder()
                     .eventName("New Event")
                     .build();
-            isNew = true;
             return newEvent;
         } catch (Exception e) {
             e.getMessage();
@@ -79,20 +76,13 @@ public class EventService {
      */
     public String saveEvent(Event event) throws Exception {
         String message;
-        if (isNew) {
-            currentEvent = event;
+        if (event.getEventId() == 0) {
             message = "Successfully Created " + event.getEventName();
-            isNew = false;
         } else {
-            currentEvent.setEventName(event.getEventName());
-            currentEvent.setEndDate(event.getEndDate());
-            currentEvent.setStartDate(event.getStartDate());
-            currentEvent.setStartTime(event.getStartTime());
-            currentEvent.setEndTime(event.getEndTime());
             message = "Successfully Saved " + event.getEventName();
         }
         try {
-            eventRepository.save(currentEvent);
+            event = eventRepository.save(event);
             return message;
         } catch (Exception e) {
             throw new Exception("Failure Saving Event");

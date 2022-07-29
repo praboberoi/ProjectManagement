@@ -5,6 +5,9 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -27,6 +30,7 @@ public class EventController {
     private ProjectService projectService;
     @Value("${apiPrefix}")
     private String apiPrefix;
+    private Logger logger = LoggerFactory.getLogger(EventController.class);
 
 
     /**
@@ -88,9 +92,11 @@ public class EventController {
                 ra.addFlashAttribute("messageDanger", message);
             } else {
                 message = eventService.saveEvent(event);
+                logger.info("Event {} has been created by user {}", event.getEventId(), PrincipalUtils.getUserId(principal));
                 ra.addFlashAttribute("messageSuccess", message);
             }
         } catch (Exception e) {
+            logger.error("An error occured while creating an event.", e);
             ra.addFlashAttribute("messageDanger", "Internal Server Error: The event could not be saved, please try again later.");
         }
         return "redirect:/project/{projectId}";
