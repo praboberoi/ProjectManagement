@@ -29,17 +29,6 @@ public class Deadline {
      */
     public Deadline() {}
 
-    /**
-     * Creates a Deadline with an auto-generated ID
-     * @param name The name of the deadline
-     * @param project Project associated with the deadline
-     * @param date Date of the deadline
-     */
-    public Deadline(String name, Project project, Date date){
-        this.name = name;
-        this.project = project;
-        this.date = date;
-    }
 
     /**
      * Creates a Deadline with an manually generated ID
