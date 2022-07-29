@@ -16,11 +16,10 @@ public class DeadlineService {
 
     /**
      * Creates a new deadline
-     * @return
+     * @return of type Deadline
      */
     public Deadline getNewDeadline() {
-        Deadline deadline = new Deadline.Builder().build();
-        return deadline;
+        return new Deadline();
     }
 
     /**

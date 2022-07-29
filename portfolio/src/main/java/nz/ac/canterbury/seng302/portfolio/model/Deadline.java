@@ -45,21 +45,6 @@ public class Deadline {
         this.time = time;
     }
 
-    /**
-     * Creates a Deadline with an manually generated ID
-     * @param name The name of the deadline
-     * @param project Project associated with the deadline
-     * @param date Date of the deadline
-     * @param time Time of the deadline
-     */
-    public Deadline(int deadlineId, String name, Project project, Date date, String time) {
-        this.deadlineID = deadlineId;
-        this.name = name;
-        this.project = project;
-        this.date = date;
-        this.time = time;
-    }
-
 
     public int getDeadlineID() {
         return deadlineID;
@@ -178,7 +163,7 @@ public class Deadline {
          * @return Object of type Deadline
          */
         public Deadline build() {
-            return new Deadline(deadlineId, name, project, date, time);
+            return new Deadline(name, project, date, time);
         }
     }
 }
