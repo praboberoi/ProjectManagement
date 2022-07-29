@@ -41,8 +41,14 @@ function getUserDataTable(newPage) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            document.getElementById("userListDataTable").innerHTML = httpRequest.responseText;
-            page = newPage;
+            if (httpRequest.status === 200) {
+                document.getElementById("userListDataTable").innerHTML = httpRequest.responseText;
+                page = newPage;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            } 
         }
     }
 
@@ -62,7 +68,6 @@ function removeRole(role, userId) {
 
     httpRequest.onreadystatechange = function (qualifiedName, value) {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            console.log(httpRequest.response)
             if (httpRequest.status === 200) {
                 const roleElement = document.getElementById(`user${userId}Role${role}`)
                 roleElement.remove()
@@ -72,6 +77,10 @@ function removeRole(role, userId) {
                 messageSuccess.hidden = false;
                 messageSuccess.innerText = httpRequest.response
 
+                } else if (httpRequest.status === 400) {
+                    messageDanger.hidden = false;
+                    messageSuccess.hidden = true;
+                    messageDanger.innerText = "Bad Request";
                 } else {
                     messageDanger.hidden = false;
                     messageSuccess.hidden = true;
@@ -81,7 +90,7 @@ function removeRole(role, userId) {
         }
 
 
-    httpRequest.open('DELETE', '/usersList/removeRole', true);
+    httpRequest.open('DELETE', apiPrefix + '/usersList/removeRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     httpRequest.send("role=" + role + "&userId=" + userId);
 }
@@ -102,6 +111,10 @@ function addRole(userId, role) {
                 getUserDataTable(page)
                 messageSuccess.hidden = false;
                 messageSuccess.innerText = httpRequest.response
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
             } else {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
@@ -110,7 +123,7 @@ function addRole(userId, role) {
         }
     }
 
-    httpRequest.open('POST', 'user/' + userId + '/addRole', true);
+    httpRequest.open('POST', apiPrefix + '/user/' + userId + '/addRole', true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     httpRequest.send("role=" + role);
 }
