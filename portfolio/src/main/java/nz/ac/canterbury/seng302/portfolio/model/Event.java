@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import java.sql.Date;
+import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -14,8 +15,7 @@ public class Event {
      * ID for the event
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int eventId;
 
     /**
@@ -152,11 +152,11 @@ public class Event {
         if (!(o instanceof Event)) return false;
         Event event = (Event) o;
         return eventId == event.eventId 
-        && eventName.equals(event.eventName) 
-        && startDate.equals(event.startDate) 
-        && endDate.equals(event.endDate)
-        && startTime.equals(event.startTime)
-                && endTime.equals(event.endTime);
+        && Objects.equals(eventName, event.eventName)
+        && Objects.equals(startDate, event.startDate)
+        && Objects.equals(endDate, event.endDate)
+        && Objects.equals(startTime, event.startTime)
+        && Objects.equals(endTime, event.endTime);
     }
 
     /**
