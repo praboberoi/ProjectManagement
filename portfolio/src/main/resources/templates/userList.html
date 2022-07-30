@@ -47,7 +47,7 @@
                 <td th:id="'user' + ${user.userId} + 'Roles'">
                   <ul style="list-style-type: none">
                     <th:block th:each = "role : ${user.getRoles()}">
-                        <li style="padding-bottom:3%; display:inline -ms-flex" th:id="'user' + ${user.userId} + 'Role' + ${role}">
+                        <li style="padding-bottom:3%; display:inline" th:id="'user' + ${user.userId} + 'Role' + ${role}">
                           <button th:id="'user' + ${user.userId} + 'Role' + ${role} + Btn"
                                   th:data-role = '${role}' th:data-userId = '${user.userId}'
                                   th:data-roles="${user.getRoles()}"
@@ -68,7 +68,7 @@
                             content: none;
                           }
                         </style>
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" th:disabled="${user.username == currentUser.username}" th:hidden="${user.username == currentUser.username}"data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           +
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
