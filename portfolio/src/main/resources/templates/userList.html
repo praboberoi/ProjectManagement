@@ -105,7 +105,7 @@
               </li>
             </th:block>
             
-            <th:block th:if="${pages} > 2" th:each="i: ${#numbers.sequence(T(Math).max(2, page - 1), T(Math).min(pages - 1, page + 3))}">
+            <th:block th:if="${pages} > 2" th:each="i: ${#numbers.sequence(T(java.lang.Math).max(2, page - 1), T(java.lang.Math).min(pages - 1, page + 3))}">
               <li class="page-item" th:classappend="${(i == page + 1)? 'active' : ''}">
                 <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${i - 1} + ')'" th:text="${i}"></a>
               </li>
