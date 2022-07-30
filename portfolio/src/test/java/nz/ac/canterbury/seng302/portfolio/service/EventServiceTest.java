@@ -1,17 +1,13 @@
-package nz.ac.canterbury.seng302.portfolio.model;
+package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.service.EventService;
-import org.apache.tomcat.jni.Local;
+import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
-
 import java.sql.Date;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.Calendar;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
@@ -19,11 +15,8 @@ import static org.junit.jupiter.api.Assertions.assertNull;
  * Test class for the event service class.
  */
 public class EventServiceTest {
-
-    @Autowired
-    private EventRepository eventRepository;
     private EventService eventService = new EventService();
-    private  Event.Builder eventBuilder;
+    private Event.Builder eventBuilder;
 
     /**
      * Creates an event builder
@@ -39,9 +32,8 @@ public class EventServiceTest {
     @Test
     public void givenEventIsNull_ThenShowErrorMessage() throws Exception {
         Event emptyEvent = null;
-        assertNull(emptyEvent);
         String resultString = eventService.verifyEvent(emptyEvent);
-        assertEquals(resultString, "No Event");
+        assertEquals("No Event", resultString);
     }
 
     /**
@@ -52,7 +44,7 @@ public class EventServiceTest {
         Event emptyEvent = new Event();
         assertNull(emptyEvent.getEventName());
         String resultString = eventService.verifyEvent(emptyEvent);
-        assertEquals(resultString, "Event values are null");
+        assertEquals("Event values are null", resultString);
     }
 
     /**
@@ -69,7 +61,7 @@ public class EventServiceTest {
                 .endTime("21:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals(resultString, "The event end date cannot be before the event start date");
+        assertEquals("The event end date cannot be before the event start date", resultString);
     }
 
     /**
@@ -86,7 +78,7 @@ public class EventServiceTest {
                 .endTime("20:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals(resultString, "The events start must be before the event ends");
+        assertEquals("The events start must be before the event ends", resultString);
     }
 
     /**
@@ -104,7 +96,7 @@ public class EventServiceTest {
                 .endTime("19:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals(resultString, "The events start must be before the event ends");
+        assertEquals("The events start must be before the event ends", resultString);
     }
 
     /**
@@ -120,6 +112,6 @@ public class EventServiceTest {
                 .endTime("21:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals(resultString, "Event has been verified");
+        assertEquals("Event has been verified", resultString);
     }
 }

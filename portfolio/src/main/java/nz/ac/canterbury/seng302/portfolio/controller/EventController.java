@@ -55,7 +55,6 @@ public class EventController {
             currentProject = projectService.getProjectById(projectId);
         } catch (Exception e) {
             e.getMessage();
-//            TODO: redirect to error page when merged
             return "redirect:/project/{projectId}";
         }
 

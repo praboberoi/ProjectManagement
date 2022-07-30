@@ -5,8 +5,8 @@ import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.Date;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 /**
@@ -22,8 +22,13 @@ public class EventService {
      */
     public Event getNewEvent() {
         try {
+            LocalDate now = LocalDate.now();
             Event newEvent = new Event.Builder()
                     .eventName("New Event")
+                    .startDate(java.sql.Date.valueOf(now))
+                    .endDate(java.sql.Date.valueOf(now.plusDays(1)))
+                    .startTime("00:00")
+                    .endTime("00:00")
                     .build();
             return newEvent;
         } catch (Exception e) {
@@ -37,35 +42,32 @@ public class EventService {
      * @param event The event object to verify
      * @return Message explaining the error
      * */
-    public String verifyEvent(Event event) throws ParseException {
-        if (event == null) return ("No Event");
-
-        if (event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null)
+    public String verifyEvent(Event event) {
+        if (event == null)  {
+            return ("No Event");
+        } else if (event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
             return ("Event values are null");
-
-        // checks if event name starts or ends with space
-        if (!event.getEventName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
+        } else if (!event.getEventName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
+            // checks if event name starts or ends with space.
             return ("Event name must not start or end with space characters");
         } else if (event.getEndDate().before(event.getStartDate())){
             return ("The event end date cannot be before the event start date");
-        }
-
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-            Date d1 = (Date) sdf.parse(event.getStartTime());
-            Date d2 = (Date) sdf.parse(event.getEndTime());
-            // Check if start date is same as end date
-            if (event.getStartDate().equals(event.getEndDate())) {
-                // End time before start time or start and end time is the same
-                if (d2.before(d1) || d2.equals(d1)) {
-                    return ("The events start must be before the event ends");
+        } else {
+            try {
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+                Date d1 = (Date) sdf.parse(event.getStartTime());
+                Date d2 = (Date) sdf.parse(event.getEndTime());
+                // Check if start date is same as end date
+                if (event.getStartDate().equals(event.getEndDate())) {
+                    // End time before start time or start and end time is the same
+                    if (d2.before(d1) || d2.equals(d1)) {
+                        return ("The events start must be before the event ends");
+                    }
                 }
+                return("Event has been verified");
+            } catch (Exception e) {
+                return ("Error with start and end time validation");
             }
-            return("Event has been verified");
-        } catch (ParseException e) {
-            return ("Error with start and end time");
-        } catch (Exception e) {
-            return ("Error with start and end time validation");
         }
     }
 

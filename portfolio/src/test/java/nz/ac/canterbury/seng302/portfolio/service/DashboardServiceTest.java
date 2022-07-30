@@ -1,16 +1,22 @@
-package nz.ac.canterbury.seng302.portfolio.model;
+package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.sql.Date;
@@ -21,8 +27,7 @@ import java.util.Calendar;
  * Unit tests for methods in the sprintService class
  */
 @SpringBootTest
-class SprintServiceTest {
-    Project project;
+class DashboardServiceTest {
     
     @MockBean
     private SprintRepository sprintRepository;
@@ -30,46 +35,41 @@ class SprintServiceTest {
     @MockBean
     private ProjectRepository projectRepository;
 
-    @Autowired
-    private SprintService sprintService;
+    @Mock
+    private SprintService mockSprintService = mock(SprintService.class);
 
-    private Sprint.Builder sprintBuilder;
+    @Autowired
+    private DashboardService dashboardService;
+
+    private Project.Builder projectBuilder;
 
     /**
      * Prepares tests by initilizing the sprint service and creating a valid project and sprint builder
      */
     @BeforeEach
     public void setup() {
-        sprintService = new SprintService(projectRepository, sprintRepository);
+        dashboardService = new DashboardService(projectRepository, mockSprintService);
 
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 1);
 
-        project = new Project.Builder()
+        projectBuilder = new Project.Builder()
         .projectName("Project 2020")
         .description("First Attempt")
         .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
-        .endDate(new Date(c.getTimeInMillis()))
-        .build();
-
-        sprintBuilder = new Sprint.Builder()
-        .sprintLabel("Sprint 1")
-        .sprintName("Sprint 1")
-        .description("This is a sprint description")
-        .project(project)
-        .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
-        .endDate(new Date(Calendar.getInstance().getTimeInMillis()));
+        .endDate(new Date(c.getTimeInMillis()));
         when(sprintRepository.findByProject(any())).thenReturn(Arrays.asList());
+        when(mockSprintService.getSprintByProject(anyInt())).thenReturn(Arrays.asList());
     }
     
     /**
      * Tests that a sprint with normal inputs will be valid
      */
     @Test
-    public void givenValidSprint_whenSprintValidated_thenSucceedsValidation() {
-        Sprint sprint = sprintBuilder.build();
+    public void givenValidProject_whenProjectValidated_thenSucceedsValidation() {
+        Project project = projectBuilder.build();
         assertDoesNotThrow(() -> {
-            assertTrue(sprintService.verifySprint(sprint));
+            dashboardService.verifyProject(project);
         });
     }
 
@@ -78,10 +78,10 @@ class SprintServiceTest {
      */
     @Test
     public void givenInvalidSprintDescription_whenSprintValidated_thenFailsValidation() {
-        Sprint sprint = sprintBuilder
+        Project project = projectBuilder
             .description("0123456789".repeat(26)) //260 characters
             .build();
-            assertThrows(IncorrectDetailsException.class, () -> {sprintService.verifySprint(sprint);});
+            assertThrows(Exception.class, () -> {dashboardService.verifyProject(project);});
     }
 
     /**
@@ -89,11 +89,11 @@ class SprintServiceTest {
      */
     @Test
     public void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
-        Sprint sprint = sprintBuilder
+        Project project = projectBuilder
             .description("0123456789".repeat(25)) //250 characters
             .build();
             assertDoesNotThrow(() -> {
-                assertTrue(sprintService.verifySprint(sprint));
+                dashboardService.verifyProject(project);
             });
     }
 
