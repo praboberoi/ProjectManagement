@@ -4,9 +4,8 @@ import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -29,11 +28,9 @@ public class GroupControllerTest {
     @MockBean
     private GroupService groupService;
 
-    MockedStatic<PrincipalUtils> mockedPrincipalUtils;
-
-    @BeforeEach
-    private void initStaticMocks() {
-        mockedPrincipalUtils = mockStatic(PrincipalUtils.class);
+    @BeforeAll
+    private static void initStaticMocks() {
+        mockStatic(PrincipalUtils.class);
     }
 
     /**
