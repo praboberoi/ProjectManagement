@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Optional;
 import org.slf4j.Logger;
 
@@ -41,7 +42,7 @@ public class DeadlineService {
     }
 
     /**
-     * Delets deadline object from the database
+     * Deletes deadline object from the database
      * @param deadlineId
      */
     public String deleteDeadline(int deadlineId) throws IncorrectDetailsException, PersistenceException {
@@ -58,6 +59,41 @@ public class DeadlineService {
         } catch (PersistenceException e) {
             logger.error("Failure deleting Deadline", e);
             throw new IncorrectDetailsException("Failure deleting Deadline");
+        }
+    }
+
+    /**
+     * Saves a deadline object to the database
+     * @param deadline of type Deadline
+     * @return message  based on whether it is a new deadline or existing deadline being updated
+     * @throws PersistenceException
+     */
+    public String saveDeadline(Deadline deadline) throws PersistenceException {
+        String message;
+        if (deadline.getDeadlineID() == 0)
+            message = "Successfully Created " + deadline.getName();
+        else
+            message = "Successfully Updated " + deadline.getName();
+        deadlineRepository.save(deadline);
+        return message;
+    }
+
+    /**
+     * Verifies the current deadline name and date
+     * @param deadline The deadline object to verify
+     * @throws IncorrectDetailsException raised if deadline values are invalid
+     */
+    public void verifyDeadline(Deadline deadline) throws IncorrectDetailsException {
+        if (deadline == null) {
+            throw new IncorrectDetailsException("No deadline");
+        } else if (deadline.getName() == null || deadline.getDate() == null || deadline.getTime() == null) {
+            throw new IncorrectDetailsException("Deadline values cannot be null");
+        } else if (deadline.getName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
+            throw new IncorrectDetailsException("Deadline name must not start or end with space characters");
+        } else if (deadline.getDate().after(deadline.getProject().getEndDate())) {
+            throw new IncorrectDetailsException("Deadline date cannot be after project end date");
+        } else if (deadline.getDate().before(deadline.getProject().getStartDate())) {
+            throw new IncorrectDetailsException("Deadline date cannot be before project start date");
         }
     }
 
