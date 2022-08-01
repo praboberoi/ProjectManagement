@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,6 +20,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * Unit tests for methods in the UserAccountServerService class
  */
 @SpringBootTest
+@ActiveProfiles("test")
+@DirtiesContext
 class RegistrationServiceTests {
 
     private UserRegisterRequest.Builder requestBuilder;
@@ -133,5 +137,29 @@ class RegistrationServiceTests {
         assertEquals(0, result.size(), "Valid user's "
                 + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
                 + " are invalid");
+    }
+
+    /**
+     * Tests that a sprint with too long a description will not be valid
+     */
+    @Test
+    public void givenInvalidBio_whenUserValidated_thenFailsValidation() {
+        requestBuilder.setBio("0123456789".repeat(26)); //260 characters
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+        assertEquals(1, result.size(), "Valid user's "
+        + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
+        + " are invalid");
+    }
+
+    /**
+     * Tests that a sprint with the maximum character count will be valid
+     */
+    @Test
+    public void givenValidBio_whenUserValidated_thenSucceedsValidation() {
+        requestBuilder.setBio("0123456789".repeat(25)); //250 characters
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+        assertEquals(0, result.size(), "Valid user's "
+        + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
+        + " are invalid");
     }
 }

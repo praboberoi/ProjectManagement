@@ -14,24 +14,23 @@
     <!-- Custom css for body-->
     <link rel="stylesheet" type="text/css" th:href="@{{apiPrefix}/css/body.css(apiPrefix=${apiPrefix})}"/>
 
-    <title>[[${pageTitle}]]</title>
+    <title>LENSfolio - [[${pageTitle}]]</title>
 </head>
 
 <!--fragments-->
 <header>
     <div th:replace="fragments :: header"></div>
 </header>
-<div th:replace="fragments :: project-and-sprint"></div>
+<div th:replace="fragments :: sidebar"></div>
 <body>
 <div class="main">
     <br>
     <div class="page-title">
-        <h2>[[${pageTitle}]]</h2>
+        <h2 id="projectForm-font">[[${pageTitle}]]</h2>
     </div>
     <div class="projectForm">
-        <form id="createProjectForm" onsubmit="return validateForm()" th:action="@{{apiPrefix}/dashboard/saveProject(apiPrefix=${apiPrefix})}" method="post" th:object="${project}" >
+        <form id="createProjectForm" onsubmit="return validateForm()" action="#" th:action="@{{apiPrefix}/dashboard/saveProject(apiPrefix=${apiPrefix})}" method="post" th:object="${project}" >
             <input type="hidden" th:field="*{projectId}">
-
             <div class="mb-3">
                 <label for="project-name" class="col-form-label required">Project Name</label>
                 <input style="font-size:20px;" type="text" class="form-control required" id="project-name" placeholder="Project {Year}" th:field="*{projectName}" onkeyup="checkProjectName()" required>
@@ -49,20 +48,22 @@
             </div>
             <div class="row">
                 <div class="col-md-6 ms-auto">
-                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDates()" required>
+                    <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectStartDateMin}" th:max="${projectStartDateMax}" onchange="checkProjectDates()" required>
                     <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDates()" required>
+                    <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectEndDateMin}" th:max="${projectEndDateMax}" onchange="checkDates()" required>
                     <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
                 </div>
             </div>
             <div class="mb-3">
-                <label style="font-size:20px;" for="inputProjectDescription" class="form-label">Project Description</label>
-                <textarea class="form-control mt-50" id="inputProjectDescription" rows="5" th:field="*{description}"></textarea>
+                <label style="font-size:20px;" for="projectDescription" class="form-label">Project Description</label>
+                <textarea class="form-control mt-50" th:value="${projectDescription}" id="projectDescription" maxlength="250" rows="5" th:field="*{description}" oninput="checkProjectDescription()"></textarea>
+                <span id="charCount" th:value="${charCount}">[[*{description.length}]] </span> / 250 characters used.
+                <p id="descriptionError" th:text="${descriptionError}" class="error-msg"></p>
             </div>
             <div class="d-flex flex-row justify-content-end p-0">
-                <button type= "submit" class="btn btn-outline-primary me-3">
+                <button type= "submit" id="save-submit-button" class="btn btn-outline-primary me-3">
                     <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
                 <a type="button" class="btn btn-outline-secondary" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
@@ -72,5 +73,7 @@
 
 </div>
 <script th:src="@{{apiPrefix}/javascript/projectForm.js(apiPrefix=${apiPrefix})}"></script>
+<script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
+
 </body>
 </html>
