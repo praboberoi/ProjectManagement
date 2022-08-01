@@ -63,6 +63,9 @@ public class Event {
 
     /**
      * Creates an Event with an auto-generated ID
+     * @param project The project the event is contained in
+     * @param startTime The start time of the event
+     * @param endTime The end time of the event
      * @param eventName The name of the event
      * @param startDate When the event starts
      * @param endDate When the event ends
