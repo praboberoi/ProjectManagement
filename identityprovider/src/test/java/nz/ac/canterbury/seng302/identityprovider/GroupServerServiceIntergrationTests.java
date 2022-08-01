@@ -107,4 +107,22 @@ class GroupServerServiceIntergrationTests {
 
         assertNotNull(userRepository.getUserByUserId(1));
     }
+
+    /**
+     * Tests if users are deleted when a group is deleted
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenDeleteGroupCalledOnNoGroup_thenUsersStillExist() {
+        DeleteGroupRequest request = DeleteGroupRequest.newBuilder().build();
+        StreamRecorder<DeleteGroupResponse> responseObserver = StreamRecorder.create();
+        groupServerService.deleteGroup(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<DeleteGroupResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        DeleteGroupResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Group was incorrectly deleted: " + response.getMessage());
+    }
 }
