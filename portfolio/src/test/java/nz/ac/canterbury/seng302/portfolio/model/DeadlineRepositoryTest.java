@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.Date;
 import java.util.Arrays;
@@ -16,6 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
+@ActiveProfiles("test")
 public class DeadlineRepositoryTest {
 
     @Autowired
@@ -30,7 +32,7 @@ public class DeadlineRepositoryTest {
     @BeforeEach
     public void setup() {
         project = new Project.Builder()
-                .projectId(1)
+                .projectId(99)
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new Date(2020, 3, 12))
