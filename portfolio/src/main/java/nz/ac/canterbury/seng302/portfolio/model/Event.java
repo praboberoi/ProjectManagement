@@ -19,7 +19,7 @@ public class Event {
     private int eventId;
 
     /**
-     * Project ID that the event is contained in
+     * Project that the event is contained in
      * Foreign key
      */
     @ManyToOne(optional = false)
