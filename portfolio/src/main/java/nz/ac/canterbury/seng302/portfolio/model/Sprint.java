@@ -14,8 +14,7 @@ public class Sprint {
      * ID for the sprint
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int sprintId;
 
     /**
