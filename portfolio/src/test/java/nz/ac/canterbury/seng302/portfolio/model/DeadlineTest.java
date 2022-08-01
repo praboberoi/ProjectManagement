@@ -1,12 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.sql.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeadlineTest {
     private Deadline deadline1;
@@ -57,4 +56,45 @@ public class DeadlineTest {
         assertEquals(project, deadline1.getProject());
         assertNotEquals(project2, deadline1.getProject());
     }
+
+    @Test
+    public void givenDeadlineExists_SetProject() {
+        Project proj = new Project();
+        deadline1.setProject(proj);
+        assertEquals(proj, deadline1.getProject());
+        assertNotEquals(project, deadline1.getProject());
+    }
+
+    @Test
+    public void givenDeadlineExists_GetSprintName() {
+        assertEquals("DeadlineTest 1", deadline1.getName());
+        assertNotEquals("DeadlineTest 2", deadline1.getName());
+    }
+
+    @Test
+    public void givenDeadlineExists_SetSprintName() {
+        deadline1.setName("Test");
+        assertEquals("Test", deadline1.getName());
+        assertNotEquals("DeadlineTest 1", deadline1.getName());
+    }
+
+    @Test
+    public void givenDeadlineExists_GetDate() {
+        assertEquals(new Date(2021,1,1), deadline1.getDate());
+        assertNotEquals(new Date(2021,1,1), deadline2.getDate());
+    }
+
+    @Test
+    public void givenDeadlineExists_SetDate() {
+        deadline1.setDate(new Date(2021, 3, 12));
+        assertEquals(new Date(2021, 3, 12), deadline1.getDate());
+        assertNotEquals(new Date(2021,1,1), deadline1.getDate());
+    }
+
+    @Test
+    public void testEquals() {
+        assertEquals(false, deadline1.equals(deadline2));
+        assertEquals(true, deadline1.equals(deadline1));
+    }
+
 }
