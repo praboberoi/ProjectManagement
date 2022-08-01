@@ -48,11 +48,12 @@ public class EventController {
             @PathVariable ("projectId") int projectId) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
         model.addAttribute("apiPrefix", apiPrefix);
-        Event newEvent = eventService.getNewEvent();
-        if (newEvent == null) return "redirect:/project/{projectId}";
+        Event newEvent;
         Project currentProject;
         try {
             currentProject = projectService.getProjectById(projectId);
+            newEvent = eventService.getNewEvent(currentProject);
+            if (newEvent == null) return "redirect:/project/{projectId}";
         } catch (Exception e) {
             e.getMessage();
             return "redirect:/project/{projectId}";

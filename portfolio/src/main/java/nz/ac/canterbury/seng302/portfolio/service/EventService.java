@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,10 +21,11 @@ public class EventService {
      * Creates a new event with a name
      * @return of type Event
      */
-    public Event getNewEvent() {
+    public Event getNewEvent(Project project) {
         try {
             LocalDate now = LocalDate.now();
             Event newEvent = new Event.Builder()
+                    .project(project)
                     .eventName("New Event")
                     .startDate(java.sql.Date.valueOf(now))
                     .endDate(java.sql.Date.valueOf(now.plusDays(1)))
@@ -81,6 +83,12 @@ public class EventService {
         if (event.getEventId() == 0) {
             message = "Successfully Created " + event.getEventName();
         } else {
+            currentEvent.setProject(event.getProject());
+            currentEvent.setEventName(event.getEventName());
+            currentEvent.setEndDate(event.getEndDate());
+            currentEvent.setStartDate(event.getStartDate());
+            currentEvent.setStartTime(event.getStartTime());
+            currentEvent.setEndTime(event.getEndTime());
             message = "Successfully Saved " + event.getEventName();
         }
         try {
