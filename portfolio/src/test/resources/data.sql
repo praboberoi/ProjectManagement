@@ -1,0 +1,1 @@
+MERGE INTO project (project_id, project_name, description, start_date, end_date) VALUES (1, 'SENG303', 'Experimental third year software engineering project', '2022-07-15', '2022-07-20');
