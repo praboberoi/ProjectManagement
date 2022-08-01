@@ -61,7 +61,7 @@ public class EventService {
                 if (event.getStartDate().equals(event.getEndDate())) {
                     // End time before start time or start and end time is the same
                     if (d2.before(d1) || d2.equals(d1)) {
-                        return ("The events start must be before the event ends");
+                        return ("The start of the event must occur before the end of the event");
                     }
                 }
                 return("Event has been verified");

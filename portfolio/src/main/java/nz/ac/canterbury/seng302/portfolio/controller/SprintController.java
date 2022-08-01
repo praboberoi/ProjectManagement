@@ -85,7 +85,6 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
-            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);

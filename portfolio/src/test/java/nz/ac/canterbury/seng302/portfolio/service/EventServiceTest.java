@@ -78,7 +78,7 @@ public class EventServiceTest {
                 .endTime("20:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals("The events start must be before the event ends", resultString);
+        assertEquals("The start of the event must occur before the end of the event", resultString);
     }
 
     /**
@@ -96,7 +96,7 @@ public class EventServiceTest {
                 .endTime("19:00")
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
-        assertEquals("The events start must be before the event ends", resultString);
+        assertEquals("The start of the event must occur before the end of the event", resultString);
     }
 
     /**
