@@ -58,7 +58,7 @@ public class EventController {
 //            TODO: redirect to error page when merged
             return "redirect:/project/{projectId}";
         }
-
+        
         model.addAttribute("event", newEvent);
         model.addAttribute("pageTitle", "Add New Event");
         model.addAttribute("submissionName", "Create");

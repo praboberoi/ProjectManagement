@@ -28,7 +28,7 @@
   </div>
   <div class="projectForm">
     <form id="createEventForm" onsubmit="return validateForm()" th:action="@{${apiPrefix} + '/project/' + ${projectId} + '/saveEvent'}" method="post" th:object="${event}" >
-      <input type="hidden" th:field="*{projectId}">
+      <input type="hidden" th:field="*{project}">
 
       <div class="mb-3">
         <label for="project-name" class="col-form-label required">Event Name</label>
