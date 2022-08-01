@@ -38,34 +38,34 @@ public class SprintController {
         model.addAttribute("apiPrefix", apiPrefix);
     }
 
-    /**
-     * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
-     * to the individual project pages.
-     * @param projectId ID of the project selected to view
-     * @param principal Current User of type {@link AuthState}
-     * @param model Of type {@link Model}
-     * @param ra Redirect Attribute frontend message object
-     * @return - name of the html page to display
-     */
-    @RequestMapping(path="/project/{projectId}", method = RequestMethod.GET)
-    public String showSprintList(
-            @PathVariable("projectId") int projectId,
-            @AuthenticationPrincipal AuthState principal,
-            Model model,
-            RedirectAttributes ra) {
-        try {
-            List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
-            Project project = projectService.getProjectById(projectId);
-            model.addAttribute("listSprints", listSprints);
-            model.addAttribute("project", project);
-            model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
-            model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "project";
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/dashboard";
-        }
-    }
+//    /**
+//     * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
+//     * to the individual project pages.
+//     * @param projectId ID of the project selected to view
+//     * @param principal Current User of type {@link AuthState}
+//     * @param model Of type {@link Model}
+//     * @param ra Redirect Attribute frontend message object
+//     * @return - name of the html page to display
+//     */
+//    @RequestMapping(path="/project/{projectId}", method = RequestMethod.GET)
+//    public String showSprintList(
+//            @PathVariable("projectId") int projectId,
+//            @AuthenticationPrincipal AuthState principal,
+//            Model model,
+//            RedirectAttributes ra) {
+//        try {
+//            List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+//            Project project = projectService.getProjectById(projectId);
+//            model.addAttribute("listSprints", listSprints);
+//            model.addAttribute("project", project);
+//            model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
+//            model.addAttribute("user", userAccountClientService.getUser(principal));
+//            return "project";
+//        } catch (IncorrectDetailsException e) {
+//            ra.addFlashAttribute("messageDanger", e.getMessage());
+//            return "redirect:/dashboard";
+//        }
+//    }
 
     /**
      * Displays page for adding a new sprint
@@ -193,7 +193,6 @@ public class SprintController {
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
-            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
