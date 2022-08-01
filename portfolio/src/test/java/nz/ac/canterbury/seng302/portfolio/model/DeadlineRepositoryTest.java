@@ -86,7 +86,7 @@ public class DeadlineRepositoryTest {
     @Test
     public void givenDeadlineExists_FindById() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
-        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDeadlineID(deadline2.getDeadlineID()).toArray());
+        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDeadlineId(deadline2.getDeadlineID()).toArray());
     }
 
     @Test
