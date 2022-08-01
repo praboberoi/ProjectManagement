@@ -29,7 +29,7 @@ public interface DeadlineRepository extends CrudRepository<Deadline, Integer> {
      * @param deadlineID ID of the deadline
      * @return List of a deadline with the given ID
      */
-    List<Deadline> findById(int deadlineID);
+    List<Deadline> findByDeadlineID(int deadlineID);
 
     /**
      * Obtains a list of deadlines by the given Date

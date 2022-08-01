@@ -47,7 +47,7 @@ public class DeadlineRepositoryTest {
                 .build();
 
         deadline2 = new Deadline.Builder()
-                .deadlineId(3)
+                .deadlineId(999)
                 .name("DeadlineTest 2")
                 .date(new Date(2021,2,1))
                 .project(project)
@@ -86,7 +86,7 @@ public class DeadlineRepositoryTest {
     @Test
     public void givenDeadlineExists_FindById() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
-        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findById(3).toArray());
+        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDeadlineID(deadline2.getDeadlineID()).toArray());
     }
 
     @Test
