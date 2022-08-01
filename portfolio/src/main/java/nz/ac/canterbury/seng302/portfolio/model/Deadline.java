@@ -11,7 +11,7 @@ public class Deadline {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(nullable = false)
-    private int deadlineID;
+    private int deadlineId;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "projectId", nullable = false)
@@ -37,7 +37,7 @@ public class Deadline {
      * @param date Date of the deadline
      */
     public Deadline(int deadlineId, String name, Project project, Date date) {
-        this.deadlineID = deadlineId;
+        this.deadlineId = deadlineId;
         this.name = name;
         this.project = project;
         this.date = date;
@@ -45,11 +45,11 @@ public class Deadline {
 
 
     public int getDeadlineID() {
-        return deadlineID;
+        return deadlineId;
     }
 
-    public void setDeadlineID(int deadlineID) {
-        this.deadlineID = deadlineID;
+    public void setDeadlineID(int deadlineId) {
+        this.deadlineId = deadlineId;
     }
 
     public Project getProject() {
@@ -82,7 +82,7 @@ public class Deadline {
 
         if (!(o instanceof Deadline deadline)) return false;
 
-        return deadlineID == deadline.deadlineID
+        return deadlineId == deadline.deadlineId
                 && name.equals(deadline.name)
                 && date.equals(deadline.date);
     }
