@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.Date;
 import java.util.Arrays;
@@ -16,9 +17,12 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @DataJpaTest
+@ActiveProfiles("test")
 class SprintRepositoryTest {
-    @Autowired private SprintRepository sprintRepository;
-    @Autowired private ProjectRepository projectRepository;
+    @Autowired 
+    private SprintRepository sprintRepository;
+    @Autowired 
+    private ProjectRepository projectRepository;
     private Sprint sprint1;
     private Sprint sprint2;
     private Project project;

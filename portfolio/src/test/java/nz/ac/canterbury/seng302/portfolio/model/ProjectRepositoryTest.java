@@ -5,8 +5,7 @@ import org.junit.jupiter.api.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-
+import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.Date;
 
@@ -14,13 +13,17 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import javax.transaction.Transactional;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
+@ActiveProfiles("test")
 class ProjectRepositoryTest {
     @Autowired private ProjectRepository projectRepo;
 
     @Test
+    @Transactional
     public void givenProjectExists_FindByProjectName() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
@@ -50,6 +53,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void givenProjectsExists_FindByProjectNameContaining() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
@@ -80,6 +84,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void givenDescriptionExists_findByDescription() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
@@ -110,6 +115,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void givenDescriptionExists_findByDescriptionContaining() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
@@ -141,6 +147,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void givenDateExists_FindByStartDate() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
@@ -158,6 +165,7 @@ class ProjectRepositoryTest {
     }
 
     @Test
+    @Transactional
     public void givenEndDateExists_FindByEndDate() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
