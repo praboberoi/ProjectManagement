@@ -93,12 +93,12 @@ public class Event {
         this.endTime = endTime;
     }
 
-    public Project getProjectId() {
+    public Project getProject() {
         return this.project;
     }
 
-    public void setProjectId(Project projectId) {
-        this.project = projectId;
+    public void setProject(Project project) {
+        this.project = project;
     }
 
     public int getEventId() {
