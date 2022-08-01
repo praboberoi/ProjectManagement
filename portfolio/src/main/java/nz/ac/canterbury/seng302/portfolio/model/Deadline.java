@@ -1,17 +1,22 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
  * The data class for Deadlines. Contains the id, name, and date of the deadline for storage in the db.
  */
 @Entity
 public class Deadline {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false)
-    private int deadlineID;
+    private int deadlineId;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "projectId", nullable = false)
@@ -21,10 +26,9 @@ public class Deadline {
     private String name;
 
     @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
     private Date date;
-
-    @Column(nullable = false)
-    private String time;
 
     /**
      * No args Constructor for the Deadline.
@@ -38,20 +42,19 @@ public class Deadline {
      * @param date Date of the deadline
      * @param time Time of the deadline
      */
-    public Deadline(int deadlineId, String name, Project project, Date date, String time) {
-        this.deadlineID = deadlineId;
+    public Deadline(int deadlineId, String name, Project project, Date date) {
+        this.deadlineId = deadlineId;
         this.name = name;
         this.project = project;
         this.date = date;
-        this.time = time;
     }
 
-    public int getDeadlineID() {
-        return deadlineID;
+    public int getDeadlineId() {
+        return deadlineId;
     }
 
-    public void setDeadlineID(int deadlineID) {
-        this.deadlineID = deadlineID;
+    public void setDeadlineId(int deadlineId) {
+        this.deadlineId = deadlineId;
     }
 
     public Project getProject() {
@@ -70,20 +73,33 @@ public class Deadline {
         this.name = name;
     }
 
+
     public Date getDate() {
         return date;
+    }
+
+    public String getDateOnly() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(date);
     }
 
     public void setDate(Date date) {
         this.date = date;
     }
 
-    public String getTime() {
-        return time;
+    public String getTime() throws ParseException {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        return formatter.format(date);
     }
 
-    public void setTime(String time) {
-        this.time = time;
+    @Override
+    public String toString() {
+        return "Deadline{" +
+                "deadlineId=" + deadlineId +
+                ", projectId=" + project.getProjectId() +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                '}';
     }
 
     @Override
@@ -92,10 +108,9 @@ public class Deadline {
 
         if (!(o instanceof Deadline deadline)) return false;
 
-        return deadlineID == deadline.deadlineID
+        return deadlineId == deadline.deadlineId
                 && name.equals(deadline.name)
-                && date.equals(deadline.date)
-                && time.equals(deadline.time);
+                && date.equals(deadline.date);
     }
 
     /**
@@ -106,7 +121,6 @@ public class Deadline {
         private String name;
         private Project project;
         private Date date;
-        private String time;
 
         /**
          * Builds the builder with the current deadlineId
@@ -149,21 +163,11 @@ public class Deadline {
         }
 
         /**
-         * Builds the builder with the current time
-         * @param time Time of the deadline
-         * @return The current builder
-         */
-        public Builder time(String time) {
-            this.time = time;
-            return this;
-        }
-
-        /**
          * Returns a new Deadline object with the all the parameters of the current builder
          * @return Object of type Deadline
          */
         public Deadline build() {
-            return new Deadline(deadlineId, name, project, date, time);
+            return new Deadline(deadlineId, name, project, date);
         }
     }
 }

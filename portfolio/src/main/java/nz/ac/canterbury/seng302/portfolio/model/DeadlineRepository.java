@@ -13,20 +13,20 @@ public interface DeadlineRepository extends CrudRepository<Deadline, Integer> {
      * @param deadlineName Name of the deadline(s)
      * @return List of deadline(s) with the given name
      */
-    List<Deadline> findByName(String deadlineName);
+    public List<Deadline> findByName(String deadlineName);
 
     /**
      * Obtains a list of deadlines in the given project.
      * @param project Project containing deadlines
      * @return List of deadline(s) with the given project
      */
-    List<Deadline> findByProject(Project project);
+    public List<Deadline> findByProject(Project project);
 
     /**
      * Counts the deadlines based on the given project
      * @param project Project containing deadline(s)
      * @return A count of deadline(s) within the project
      */
-    int countByProject(Project project);
+    public int countByProject(Project project);
 
 }

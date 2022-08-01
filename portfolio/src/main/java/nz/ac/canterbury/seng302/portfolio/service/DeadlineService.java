@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaBuilder;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 import org.slf4j.Logger;
 
@@ -23,9 +25,7 @@ public class DeadlineService {
      * Creates a new deadline
      * @return of type Deadline
      */
-    public Deadline getNewDeadline() {
-        return new Deadline();
-    }
+    public Deadline getNewDeadline() {return new Deadline();}
 
     /**
      * Gets deadline object from the database
@@ -70,7 +70,7 @@ public class DeadlineService {
      */
     public String saveDeadline(Deadline deadline) throws PersistenceException {
         String message;
-        if (deadline.getDeadlineID() == 0)
+        if (deadline.getDeadlineId() == 0)
             message = "Successfully Created " + deadline.getName();
         else
             message = "Successfully Updated " + deadline.getName();
@@ -86,7 +86,7 @@ public class DeadlineService {
     public void verifyDeadline(Deadline deadline) throws IncorrectDetailsException {
         if (deadline == null) {
             throw new IncorrectDetailsException("No deadline");
-        } else if (deadline.getName() == null || deadline.getDate() == null || deadline.getTime() == null) {
+        } else if (deadline.getName() == null || deadline.getDate() == null) {
             throw new IncorrectDetailsException("Deadline values cannot be null");
         } else if (deadline.getName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
             throw new IncorrectDetailsException("Deadline name must not start or end with space characters");

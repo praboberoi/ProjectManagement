@@ -45,6 +45,9 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Sprint> sprints;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private List<Deadline> deadlines;
+
     /**
      * No args Constructor of the Project.
      */
