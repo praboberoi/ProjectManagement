@@ -148,7 +148,11 @@ public class Event {
         this.endTime = endTime;
     }
 
-
+    /**
+     * Overrides for comparing event objects
+     * @param o Object being compared
+     * @return True or False
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
