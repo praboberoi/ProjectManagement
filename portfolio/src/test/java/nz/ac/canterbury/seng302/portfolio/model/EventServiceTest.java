@@ -63,6 +63,7 @@ public class EventServiceTest {
         //Event with end date before start date
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
+                .project(new Project())
                 .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
                 .endDate(Date.valueOf(LocalDate.now().minusDays(7)))
                 .startTime("20:00")
@@ -81,6 +82,8 @@ public class EventServiceTest {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
                 .startDate(currentDate)
+                .project(new Project())
+
                 .endDate(currentDate)
                 .startTime("20:00")
                 .endTime("20:00")
@@ -99,6 +102,8 @@ public class EventServiceTest {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
                 .startDate(currentDate)
+                .project(new Project())
+
                 .endDate(currentDate)
                 .startTime("20:00")
                 .endTime("19:00")
@@ -114,6 +119,7 @@ public class EventServiceTest {
     public void givenEventWithCorrectValues_ThenShowSuccessMsg() throws Exception {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
+                .project(new Project())
                 .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
                 .endDate(new Date(Calendar.getInstance().getTimeInMillis()))
                 .startTime("20:00")

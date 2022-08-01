@@ -41,7 +41,7 @@ public class EventService {
     public String verifyEvent(Event event) throws ParseException {
         if (event == null) return ("No Event");
 
-        if (event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
+        if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
             return ("Event values are null");
         } else if (event.getEndDate().before(event.getStartDate())) {
             return ("The event end date cannot be before the event start date");
@@ -76,6 +76,7 @@ public class EventService {
             message = "Successfully Created " + event.getEventName();
             isNew = false;
         } else {
+            currentEvent.setProject(event.getProject());
             currentEvent.setEventName(event.getEventName());
             currentEvent.setEndDate(event.getEndDate());
             currentEvent.setStartDate(event.getStartDate());
