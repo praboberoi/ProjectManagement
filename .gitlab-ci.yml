@@ -1,3 +1,10 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
 stages:
   - tagChecking
   - publishProtosToLocalMavenRepo
@@ -18,12 +25,30 @@ junit-porfolio:
   script:
     - cd portfolio
     - ./gradlew test
+  artifacts:
+    paths:
+      - portfolio/build/jacoco/test-report.xml
 
 junit-identityprovider:
   stage: test
   script:
     - cd identityprovider
     - ./gradlew test
+  artifacts:
+    paths:
+      - identityprovider/build/jacoco/test-report.xml
+
+sonarqube-analysis:
+  stage: sonarqube
+  variables:
+    GIT_FETCH_EXTRA_FLAGS: --unshallow
+    GIT_DEPTH: 0
+  script:     
+    - cd identityprovider
+    - ./gradlew sonarqube -P SONARQUBE=${SONARQUBE}
+    - cd ../portfolio
+    - ./gradlew sonarqube -P SONARQUBE=${SONARQUBE}
+  allow_failure: true
 
 publish-protos-to-maven-local:
   stage: publishProtosToLocalMavenRepo
@@ -122,24 +147,3 @@ deploy-production-portfolio:
       - portfolio/build/libs
   only:
     - tags
-
-sonarqube-analysis:
-  stage: sonarqube
-  image: gradle:jre11-slim
-  variables:
-    SONAR_USER_HOME: "${CI_PROJECT_DIR}/.sonar"  # Defines the location of the analysis task cache
-    GIT_DEPTH: "0"  # Tells git to fetch all the branches of the project, required by the analysis task
-  cache:
-    key: "${CI_JOB_NAME}"
-    paths:
-      - .sonar/cache
-  script:     
-    - cd identityprovider
-    - ./gradlew sonarqube -P SONARQUBE=${SONARQUBE}
-    - cd ../portfolio
-    - ./gradlew sonarqube -P SONARQUBE=${SONARQUBE}
-  allow_failure: true
-  only:
-    - merge_requests
-    - master # or the name of your main branch
-    - develop
