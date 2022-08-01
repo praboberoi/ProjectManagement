@@ -11,9 +11,24 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface GroupsRepository extends PagingAndSortingRepository<Groups, Integer> {
+    /**
+     * Selects all users that are not in a group
+     * @return List of groupless users
+     */
     @Query(value = "SELECT user FROM User user LEFT JOIN user.groups groups WHERE groups IS NULL")
     List<User> findUsersNotInGroup();
     
+    /**
+     * Selects all users that have the role Teacher
+     * @return List of Teacher users
+     */
     @Query(value = "SELECT user FROM User user JOIN user.roles role WHERE role = 1")
     List<User> findTeacherGroup();
+
+    /**
+     * Delete the selected group from the database
+     * @param groupId Group to delete
+     * @return number of groups deleted (1=success, 0=failed)
+     */
+    long deleteGroupByGroupId(int groupId);
 }

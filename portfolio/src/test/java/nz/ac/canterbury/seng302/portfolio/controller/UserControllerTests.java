@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.portfolio;
+package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.controller.UserController;
 import nz.ac.canterbury.seng302.portfolio.model.PersistentSort;

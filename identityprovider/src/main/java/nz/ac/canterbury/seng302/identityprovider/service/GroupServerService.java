@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.google.protobuf.Empty;
@@ -22,6 +24,8 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     
     @Value("${hostAddress}")
     private String hostAddress;
+
+    Logger logger = LoggerFactory.getLogger(GroupServerService.class);
 
     public GroupServerService(GroupsRepository groupsRepository) {
         this.groupsRepository = groupsRepository;
@@ -49,6 +53,33 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     public void getTeachingStaffGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
         GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
         reply.addAllMembers(groupsRepository.findTeacherGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+
+    /**
+     * Delete a group from the database and return if the deletion was successful to the gRPC client
+     * @param request          Delete group request containing the id of the group to delete
+     * @param responseObserver Returns to previous method with data
+     */
+    @Override
+    public void deleteGroup(DeleteGroupRequest request, StreamObserver<DeleteGroupResponse> responseObserver) {
+        DeleteGroupResponse.Builder reply = DeleteGroupResponse.newBuilder();
+        try {
+            if (groupsRepository.deleteGroupByGroupId(request.getGroupId()) == 1) {
+                logger.info("Group {} has been deleted", request.getGroupId());
+                reply.setIsSuccess(true);
+                reply.setMessage(String.format("Group %d deleted successfully", request.getGroupId()));
+            } else {
+                reply.setIsSuccess(false);
+                reply.setMessage(String.format("Unable to delete group %d", request.getGroupId()));
+            }
+        } catch (Exception e) {
+            logger.error("An error occured while deleting group {}", request.getGroupId(), e);
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("An error occured while deleting group %d", request.getGroupId()));
+        }
+
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
