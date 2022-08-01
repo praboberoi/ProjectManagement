@@ -13,6 +13,7 @@ import java.util.List;
 
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 public class DeadlineRepositoryTest {
@@ -80,6 +81,17 @@ public class DeadlineRepositoryTest {
     public void givenDeadlineExists_FindByDate() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
         assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDate(new Date(2021,2,1)).toArray());
+    }
+
+    @Test
+    public void givenDeadlineExists_FindById() {
+        List<Deadline> deadlineList = Arrays.asList(deadline2);
+        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findById(3).toArray());
+    }
+
+    @Test
+    public void givenDeadlineExists_CountByProject() {
+        assertEquals(2, deadlineRepository.countByProject(project));
     }
 
     @Test
