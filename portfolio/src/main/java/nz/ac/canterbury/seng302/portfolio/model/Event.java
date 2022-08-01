@@ -81,7 +81,9 @@ public class Event {
 
     /**
      * Creates an Event with a manually specified ID
-     * @param eventId The event's ID
+     * @param project The project the event is contained in
+     * @param startTime The start time of the event
+     * @param endTime The end time of the event
      * @param eventName The name of the event
      * @param startDate When the event starts
      * @param endDate When the event ends
