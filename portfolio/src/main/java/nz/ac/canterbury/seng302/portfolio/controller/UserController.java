@@ -161,10 +161,6 @@ public class UserController {
         }
         if (highestUserRole.get() == 0) {
             return new ResponseEntity("You do not have these permissions", HttpStatus.FORBIDDEN);
-
-        }
-        if (Integer.parseInt(userId) == loggedInUser.getId()){
-            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
 
         if (!user.getRolesList().contains(role)) {
@@ -208,11 +204,7 @@ public class UserController {
             return new ResponseEntity("Insufficient Permissions", HttpStatus.FORBIDDEN);
 
         }
-
-        if (userId == user.getUserId()){
-            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
-        }
-
+        
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
         if (!response.getIsSuccess()) {
             switch(response.getMessage()) {
