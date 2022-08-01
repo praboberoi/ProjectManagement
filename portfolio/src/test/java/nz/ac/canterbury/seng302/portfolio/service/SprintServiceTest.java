@@ -12,6 +12,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -25,6 +26,7 @@ import java.util.Calendar;
  * Unit tests for methods in the sprintService class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class SprintServiceTest {
     Project project;
     

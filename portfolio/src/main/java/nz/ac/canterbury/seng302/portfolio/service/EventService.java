@@ -83,12 +83,6 @@ public class EventService {
         if (event.getEventId() == 0) {
             message = "Successfully Created " + event.getEventName();
         } else {
-            currentEvent.setProject(event.getProject());
-            currentEvent.setEventName(event.getEventName());
-            currentEvent.setEndDate(event.getEndDate());
-            currentEvent.setStartDate(event.getStartDate());
-            currentEvent.setStartTime(event.getStartTime());
-            currentEvent.setEndTime(event.getEndTime());
             message = "Successfully Saved " + event.getEventName();
         }
         try {
