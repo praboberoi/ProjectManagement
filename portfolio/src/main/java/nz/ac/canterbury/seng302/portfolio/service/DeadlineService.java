@@ -1,12 +1,16 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.Deadline;
-import nz.ac.canterbury.seng302.portfolio.model.DeadlineRepository;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.List;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.Optional;
 import org.slf4j.Logger;
 
@@ -16,6 +20,7 @@ import org.slf4j.Logger;
 @Service
 public class DeadlineService {
     @Autowired private DeadlineRepository deadlineRepository;
+    @Autowired private ProjectRepository projectRepository;
     private Logger logger = LoggerFactory.getLogger(DeadlineService.class);
 
     /**
@@ -36,6 +41,16 @@ public class DeadlineService {
             return result.get();
         else
             throw new IncorrectDetailsException("Failed to locate deadline in the database");
+    }
+
+    /**
+     * Returns a list of deadlines that are related to the given project ID
+     * @param projectId of type int
+     * @return a list of deadlines from a project specified by its Id.
+     */
+    public List<Deadline> getDeadlineByProject(int projectId) {
+        Optional<Project> current = projectRepository.findById(projectId);
+        return current.map(project -> deadlineRepository.findByProject(project)).orElse(List.of());
     }
 
     /**
