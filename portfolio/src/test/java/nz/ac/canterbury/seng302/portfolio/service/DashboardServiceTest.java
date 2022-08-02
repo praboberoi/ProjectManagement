@@ -5,38 +5,31 @@ import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
-import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.sql.Date;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Unit tests for methods in the sprintService class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class DashboardServiceTest {
     
-    @MockBean
+    @SpyBean
     private SprintRepository sprintRepository;
 
-    @MockBean
+    @SpyBean
     private ProjectRepository projectRepository;
-
-    @Mock
-    private SprintService mockSprintService = mock(SprintService.class);
 
     @Autowired
     private DashboardService dashboardService;
@@ -48,8 +41,6 @@ class DashboardServiceTest {
      */
     @BeforeEach
     public void setup() {
-        dashboardService = new DashboardService(projectRepository, mockSprintService);
-
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 1);
 
@@ -58,8 +49,6 @@ class DashboardServiceTest {
         .description("First Attempt")
         .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
         .endDate(new Date(c.getTimeInMillis()));
-        when(sprintRepository.findByProject(any())).thenReturn(Arrays.asList());
-        when(mockSprintService.getSprintByProject(anyInt())).thenReturn(Arrays.asList());
     }
     
     /**
@@ -95,6 +84,15 @@ class DashboardServiceTest {
             assertDoesNotThrow(() -> {
                 dashboardService.verifyProject(project);
             });
+    }
+    
+    /**
+     * Checks that all sample data projects are returned
+     */
+    @Test
+    public void givenProjectDatabaseWithProjects_whenGetAllProjectsCalled_thenAllProjectReturned() {
+        List<Project> returnList = dashboardService.getAllProjects();
+        assertEquals(1, returnList.size());
     }
 
 }

@@ -11,7 +11,7 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class CookieUtil {
 
-    public static void create(HttpServletResponse httpServletResponse, String name, String value, Boolean secure, Integer maxAge, String domain) {
+    public static Cookie create(HttpServletResponse httpServletResponse, String name, String value, Boolean secure, Integer maxAge, String domain) {
         Cookie cookie = new Cookie(name, value);
         cookie.setSecure(secure);
         cookie.setHttpOnly(true);
@@ -21,6 +21,7 @@ public class CookieUtil {
         }
         cookie.setPath("/");
         httpServletResponse.addCookie(cookie);
+        return cookie;
     }
 
     public static void clear(HttpServletResponse httpServletResponse, String name) {

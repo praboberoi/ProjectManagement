@@ -16,6 +16,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -36,25 +37,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest req, HttpServletResponse res, FilterChain chain) throws IOException, ServletException {
-        PreAuthenticatedAuthenticationToken authentication = getAuthentication(req);
+        PreAuthenticatedAuthenticationToken authentication = getAuthentication(req, null);
         
         if(!authentication.isAuthenticated()) {
             AuthenticateResponse reply = getAuthenticateClientService(req).reAuthenticate();
             if (reply != null && reply.getSuccess()) {
                 var domain = req.getHeader("host");
-                CookieUtil.create(
+                Cookie newCookie = CookieUtil.create(
                     res,
                     "lens-session-token",
                     reply.getToken(),
                     true,
                     5 * 60 * 60, // Expires in 5 hours
                     domain.startsWith("localhost") ? null : domain
-                    );
-                    authentication = getAuthentication(req);
-                } else {
-                    CookieUtil.clear(res, "lens-session-token");
-                }
+                );
+                authentication = getAuthentication(req, newCookie.getValue());
+            } else {
+                CookieUtil.clear(res, "lens-session-token");
             }
+        }
             
         SecurityContextHolder.getContext().setAuthentication(authentication);
         chain.doFilter(req, res);
@@ -66,14 +67,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * in any of our controllers just by adding an @AuthenticationPrincipal parameter.
      *
      * @param request HTTP request sent by client
+     * @param lensSessionCookieJwtString lensfolio cookie string
      * @return PreAuth token with the authState of user, and whether they are authenticated
      */
-    private PreAuthenticatedAuthenticationToken getAuthentication(HttpServletRequest request) {
+    private PreAuthenticatedAuthenticationToken getAuthentication(HttpServletRequest request, String lensSessionCookieJwtString) {
         // Create an auth token for an unauthenticated user
         PreAuthenticatedAuthenticationToken authToken = new PreAuthenticatedAuthenticationToken(null, null);
         authToken.setAuthenticated(false);
 
-        String lensSessionCookieJwtString = CookieUtil.getValue(request, "lens-session-token");
+        if (lensSessionCookieJwtString == null) {
+            lensSessionCookieJwtString = CookieUtil.getValue(request, "lens-session-token");
+        }
         if (!StringUtils.hasText(lensSessionCookieJwtString)) {
             // No cookie with jwt session token found, return unauthenticated token
             return authToken;

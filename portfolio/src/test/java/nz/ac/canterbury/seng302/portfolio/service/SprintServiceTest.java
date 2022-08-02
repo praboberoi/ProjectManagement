@@ -10,16 +10,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
 
 import java.sql.Date;
-import java.util.Arrays;
 import java.util.Calendar;
 
 /**
@@ -65,7 +63,6 @@ class SprintServiceTest {
         .project(project)
         .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
         .endDate(new Date(Calendar.getInstance().getTimeInMillis()));
-        when(sprintRepository.findByProject(any())).thenReturn(Arrays.asList());
     }
     
     /**

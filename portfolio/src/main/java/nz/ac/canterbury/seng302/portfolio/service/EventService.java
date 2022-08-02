@@ -45,9 +45,9 @@ public class EventService {
      * @return Message explaining the error
      * */
     public String verifyEvent(Event event) {
-        if (event == null)  {
+        if (event == null) {
             return ("No Event");
-        } else if (event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
+        } else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
             return ("Event values are null");
         } else if (event.getEventName().length() < 1) {
             return ("Event name must not be empty");
