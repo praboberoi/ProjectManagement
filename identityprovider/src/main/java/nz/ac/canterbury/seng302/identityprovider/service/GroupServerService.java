@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -92,11 +93,13 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
      */
     @Override
     public void getPaginatedGroups(GetPaginatedGroupsRequest request, StreamObserver<PaginatedGroupsResponse> responseObserver) {
-        Iterable<Groups> groups = groupsRepository.findAll();
+        List<Groups> groups = (List<Groups>) groupsRepository.findAll();
         PaginatedGroupsResponse.Builder response = PaginatedGroupsResponse.newBuilder();
         for (Groups group : groups) {
             response.addGroups(ResponseUtils.prepareGroupDetailResponse(group, hostAddress));
         }
+
+        response.setResultSetSize(groups.size());
 
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();
