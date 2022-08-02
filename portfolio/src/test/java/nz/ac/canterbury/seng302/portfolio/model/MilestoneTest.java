@@ -7,11 +7,18 @@ import java.sql.Date;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Entity tests for the milestones
+ */
 public class MilestoneTest {
     private Milestone milestone1;
     private Milestone milestone2;
     private Project project;
 
+    /**
+     * This method provides the functionality for all tests to be run by creating a new project and 2 milestone
+     * entities prior to each test being run.
+     */
 
     @BeforeEach
     public void setup() {
@@ -38,14 +45,21 @@ public class MilestoneTest {
                 .build();
     }
 
+    /**
+     * This test checks that when a milestone entity's method for it's id is called, it returns it's id.
+     */
     @Test
-    public void givenMilestoneExists_GetMilestoneId(){
+    public void givenMilestoneExists_WhenGetMilestoneId_ThenMilestoneIdReturned(){
         assertEquals(1, milestone1.getMilestoneId());
         assertNotEquals(2, milestone1.getMilestoneId());
     }
 
+    /**
+     * This test asserts that when a milestone has a project and it's method is called asking for the project it
+     * returns the correct project.
+     */
     @Test
-    public void givenMilestoneExists_GetProject() {
+    public void givenMilestoneExists_WhenMilestoneGetProject_ThenCorrectProjectReturned() {
         Project project2 = new Project.Builder()
                 .projectName("Project 2021")
                 .description("Second Attempt")
@@ -57,6 +71,9 @@ public class MilestoneTest {
         assertNotEquals(project2, milestone1.getProject());
     }
 
+    /**
+     * Asserts that given a milestone, the milestones project can be updated
+     */
     @Test
     public void givenMilestoneExists_SetProject() {
         Project proj = new Project();
@@ -65,12 +82,18 @@ public class MilestoneTest {
         assertNotEquals(project, milestone1.getProject());
     }
 
+    /**
+     * Asserts that given a milestone, the correct name is returned when getName() is called
+     */
     @Test
     public void givenMilestoneExists_GetMilestoneName() {
         assertEquals("MilestoneTest 1", milestone1.getName());
         assertNotEquals("MilestoneTest 2", milestone1.getName());
     }
 
+    /**
+     * Asserts that given a milestone, the milestones name can be updated
+     */
     @Test
     public void givenMilestoneExists_SetMilestoneName() {
         milestone1.setName("Test");
@@ -78,12 +101,18 @@ public class MilestoneTest {
         assertNotEquals("MilestoneTest 1", milestone1.getName());
     }
 
+    /**
+     * Asserts that given a milestone, the correct date is returned
+     */
     @Test
     public void givenMilestoneExists_GetDate() {
         assertEquals(new Date(2021,1,1), milestone1.getDate());
         assertNotEquals(new Date(2021,1,1), milestone2.getDate());
     }
 
+    /**
+     * Asserts that given a milestone, the milestone's date can be updated
+     */
     @Test
     public void givenMilestoneExists_SetDate() {
         milestone1.setDate(new Date(2021, 3, 12));
@@ -91,6 +120,9 @@ public class MilestoneTest {
         assertNotEquals(new Date(2021,1,1), milestone1.getDate());
     }
 
+    /**
+     * Tests that the override equal method for milestones works correctly
+     */
     @Test
     public void testEquals() {
         assertEquals(false, milestone1.equals(milestone2));

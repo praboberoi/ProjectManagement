@@ -16,6 +16,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * Tests for the milestone repository
+ */
 @DataJpaTest
 @ActiveProfiles("test")
 public class MilestoneRepositoryTest {
@@ -26,9 +29,11 @@ public class MilestoneRepositoryTest {
     private ProjectRepository projectRepository;
     private Milestone milestone1;
     private Milestone milestone2;
-    private Milestone milestone3;
     private Project project;
 
+    /**
+     * Initialises a test project, and two test milestones
+     */
     @BeforeEach
     public void setup() {
         project = new Project.Builder()
@@ -60,6 +65,9 @@ public class MilestoneRepositoryTest {
         milestone2 = milestoneRepository.save(milestone2);
     }
 
+    /**
+     * Removes the test project and milestones from the repository
+     */
     @AfterEach
     public void tearDown() {
         milestoneRepository.delete(milestone1);
@@ -67,6 +75,9 @@ public class MilestoneRepositoryTest {
         projectRepository.delete(project);
     }
 
+    /**
+     * Asserts that the correct milestone is returned when findByName is called on the milestone repository
+     */
     @Test
     public void givenMilestoneExists_FindByMilestoneName() {
         List<Milestone> milestoneList = Arrays.asList(milestone2);
@@ -78,24 +89,36 @@ public class MilestoneRepositoryTest {
         assertArrayEquals(emptyList.toArray(), milestoneRepository.findByName("No").toArray());
     }
 
-
+    /**
+     * Asserts that the correct milestone is returned when findByDate is called on the milestone repository
+     */
     @Test
     public void givenMilestoneExists_FindByDate() {
         List<Milestone> milestoneList = Arrays.asList(milestone2);
         assertArrayEquals(milestoneList.toArray(), milestoneRepository.findByDate(new Date(2021,2,1)).toArray());
     }
 
+    /**
+     * Asserts that the correct milestone is returned when findByMilestoneId is called on the milestone repository
+     */
     @Test
     public void givenMilestoneExists_FindById() {
         List<Milestone> milestoneList = Arrays.asList(milestone2);
         assertArrayEquals(milestoneList.toArray(), milestoneRepository.findByMilestoneId(milestone2.getMilestoneId()).toArray());
     }
 
+    /**
+     * Asserts that the correct number of milestones is returned when countByProject is called on the milestone
+     * repository
+     */
     @Test
     public void givenMilestoneExists_CountByProject() {
         assertEquals(2, milestoneRepository.countByProject(project));
     }
 
+    /**
+     * Asserts that the correct milestones are returned when findByProject is called on the milestone repository
+     */
     @Test
     public void givenMilestoneExists_FindByProject() {
         List<Milestone> milestoneList = Arrays.asList(milestone1, milestone2);
