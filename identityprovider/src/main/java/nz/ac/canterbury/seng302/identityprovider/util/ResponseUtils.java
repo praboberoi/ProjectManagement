@@ -1,10 +1,13 @@
 package nz.ac.canterbury.seng302.identityprovider.util;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.google.protobuf.Timestamp;
 
+import nz.ac.canterbury.seng302.identityprovider.model.Groups;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
+import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
@@ -13,6 +16,8 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
  * communicated along the gRPC pipeline
  */
 public class ResponseUtils {
+
+    private ResponseUtils() {}
 
     /**
      * Packages a user object into a userResponse protobuf object
@@ -46,5 +51,15 @@ public class ResponseUtils {
         PaginatedUsersResponse.Builder response = PaginatedUsersResponse.newBuilder();
         response.addAllUsers(users).setResultSetSize((int)resultSetSize);
        return response.build();
+    }
+
+    public static GroupDetailsResponse prepareGroupDetailResponse(Groups group, String hostAddress) {
+        GroupDetailsResponse.Builder response = GroupDetailsResponse.newBuilder();
+        response.addAllMembers(group.getUsers().stream().map(user -> prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
+        response.setGroupId(group.getGroupId());
+        response.setLongName(group.getLongName());
+        response.setShortName(group.getShortName());
+
+        return response.build();
     }
 }
