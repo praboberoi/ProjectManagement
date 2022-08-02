@@ -19,9 +19,9 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 @DataJpaTest
 @ActiveProfiles("test")
 class SprintRepositoryTest {
-    @Autowired 
+    @Autowired
     private SprintRepository sprintRepository;
-    @Autowired 
+    @Autowired
     private ProjectRepository projectRepository;
     private Sprint sprint1;
     private Sprint sprint2;
