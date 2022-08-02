@@ -125,4 +125,23 @@ class GroupServerServiceIntergrationTests {
         DeleteGroupResponse response = results.get(0);
         assertFalse(response.getIsSuccess(), "Group was incorrectly deleted: " + response.getMessage());
     }
+
+    /**
+     * Tests that all the groups are returned.
+     */
+    @Test
+    void givenSampleData_whenGetPaginatedGroupsIsCalledWithNoParameters_thenAllGroupsAreReturned() {
+        GetPaginatedGroupsRequest request = GetPaginatedGroupsRequest.newBuilder().build();
+        StreamRecorder<PaginatedGroupsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.getPaginatedGroups(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<PaginatedGroupsResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        PaginatedGroupsResponse response = results.get(0);
+        assertEquals(response.getResultSetSize(), 2, "Incorrect number of groups received.");
+        GroupDetailsResponse testGroup = response.getGroups(0);
+        assertEquals(testGroup.getGroupId(), 1);
+    }
 }
