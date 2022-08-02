@@ -28,9 +28,16 @@ public class EventController {
     private EventService eventService;
     @Autowired
     private ProjectService projectService;
-    @Value("${apiPrefix}")
-    private String apiPrefix;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
+    @Value("${apiPrefix}") private String apiPrefix;
+
+    /**
+     * Adds common model elements used by all controller methods.
+     */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
 
 
     /**

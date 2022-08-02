@@ -27,10 +27,10 @@
     <h2>[[${pageTitle}]]</h2>
   </div>
   <div class="projectForm">
-    <form id="createEventForm" onsubmit="return validateForm()" th:action="@{${apiPrefix} + '/project/' + ${projectId} + '/saveEvent'}" method="post" th:object="${event}" >
-      <input type="hidden" th:field="*{projectId}">
+    <form id="createEventForm" onsubmit="return validateForm()" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveEvent'}" method="post" th:object="${event}" >
+      <input type="hidden" th:field="*{project.projectId}">
       <div>
-        <input type="hidden" id="projectId" th:field="*{projectId}"/>
+        <input type="hidden" id="projectId" th:field="*{project.projectId}"/>
         <input type="hidden" id = "projectStartDate" name= "projectStartDate" th:value="${project.startDate}">
         <input type="hidden" id = "projectEndDate" name= "projectEndDate" th:value="${project.endDate}">
       </div>
@@ -91,7 +91,7 @@
       <div class="d-flex flex-row justify-content-end p-0">
         <button type="submit" name="submit" class="btn btn-outline-primary me-3">
           <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
-        <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${projectId}}">
+        <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${project.projectId}}">
           <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
       </div>
     </form>

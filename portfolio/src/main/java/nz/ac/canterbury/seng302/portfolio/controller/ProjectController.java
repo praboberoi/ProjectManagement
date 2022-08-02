@@ -13,10 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
@@ -33,6 +30,13 @@ public class ProjectController {
     @Autowired private UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
 
+    /**
+     * Adds common model elements used by all controller methods.
+     */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
 
     /**
      * Gets all of the sprints and returns it in a ResponseEntity
@@ -52,6 +56,7 @@ public class ProjectController {
      * @param projectId ID of the project selected to view
      * @param principal Current User of type {@link AuthState}
      * @param model Of type {@link Model}
+     * @param ra Redirect Attribute frontend message object
      * @return - name of the html page to display
      */
     @RequestMapping(path="/project/{projectId}", method = RequestMethod.GET)
