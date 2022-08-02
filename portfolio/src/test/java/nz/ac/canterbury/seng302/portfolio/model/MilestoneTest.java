@@ -46,7 +46,7 @@ public class MilestoneTest {
     }
 
     /**
-     * This test checks that when a milestone entity's method for it's id is called, it returns it's id.
+     * Asserts that the correct milestone ID is retrieved when getMilestoneId() is called.
      */
     @Test
     public void givenMilestoneExists_WhenGetMilestoneId_ThenMilestoneIdReturned(){

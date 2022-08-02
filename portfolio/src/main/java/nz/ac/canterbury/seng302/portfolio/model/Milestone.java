@@ -9,7 +9,7 @@ import java.sql.Date;
 @Entity
 public class Milestone {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
     private int milestoneId;
 
@@ -32,6 +32,7 @@ public class Milestone {
 
     /**
      * Creates a Milestone with a manually generated ID
+     * @param milestoneId The ID of the milestone
      * @param name The name of the milestone
      * @param project Project associated with the milestone
      * @param date Date of the milestone
@@ -76,6 +77,11 @@ public class Milestone {
         this.date = date;
     }
 
+    /**
+     * Overrides the comparison for two milestone objects
+     * @param o An object being compared to a milestone
+     * @return True or False, whether the objects are equal
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -84,6 +90,7 @@ public class Milestone {
 
         return milestoneId == milestone.milestoneId
                 && name.equals(milestone.name)
+                && project.equals(milestone.project)
                 && date.equals(milestone.date);
     }
 
