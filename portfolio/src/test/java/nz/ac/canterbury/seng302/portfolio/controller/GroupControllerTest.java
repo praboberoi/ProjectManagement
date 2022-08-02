@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 
@@ -28,6 +29,9 @@ public class GroupControllerTest {
     @MockBean
     private GroupService groupService;
 
+    @MockBean
+    private UserAccountClientService userAccountClientService;
+
     @BeforeAll
     private static void initStaticMocks() {
         mockStatic(PrincipalUtils.class);
@@ -35,7 +39,7 @@ public class GroupControllerTest {
 
     /**
      * Checks that the group delete functionality will be called correctly for teachers
-     * @throws Exception Expection thrown during mockmvc runtime
+     * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
     void givenTeacherUserAndGroupExists_whenDeleteGroupCalled_thenGroupIsDeleted() throws Exception{
