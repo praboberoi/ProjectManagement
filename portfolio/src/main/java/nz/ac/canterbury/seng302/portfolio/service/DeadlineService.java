@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 import org.slf4j.Logger;
 
@@ -43,9 +40,11 @@ public class DeadlineService {
 
     /**
      * Deletes deadline object from the database
-     * @param deadlineId
+     * @param deadlineId of type int
+     * @return Message of type String
+     * @throws IncorrectDetailsException if unable to delete the deadline
      */
-    public String deleteDeadline(int deadlineId) throws IncorrectDetailsException, PersistenceException {
+    public String deleteDeadline(int deadlineId) throws IncorrectDetailsException {
         try {
             Optional<Deadline> deadline = deadlineRepository.findById(deadlineId);
             if(deadline.isPresent()) {
@@ -68,14 +67,19 @@ public class DeadlineService {
      * @return message  based on whether it is a new deadline or existing deadline being updated
      * @throws PersistenceException
      */
-    public String saveDeadline(Deadline deadline) throws PersistenceException {
+    public String saveDeadline(Deadline deadline) throws IncorrectDetailsException {
         String message;
-        if (deadline.getDeadlineId() == 0)
-            message = "Successfully Created " + deadline.getName();
-        else
-            message = "Successfully Updated " + deadline.getName();
-        deadlineRepository.save(deadline);
-        return message;
+        try {
+            if (deadline.getDeadlineId() == 0)
+                message = "Successfully Created " + deadline.getName();
+            else
+                message = "Successfully Updated " + deadline.getName();
+            deadlineRepository.save(deadline);
+            return message;
+        } catch (PersistenceException e) {
+            logger.error("Failure to save the deadline", e);
+            throw new IncorrectDetailsException("Failure to save the deadline");
+        }
     }
 
     /**
