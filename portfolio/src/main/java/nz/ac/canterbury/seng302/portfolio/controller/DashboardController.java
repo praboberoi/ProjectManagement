@@ -38,7 +38,7 @@ public class DashboardController {
      * @param principal Current user of type {@link AuthState}
      * @return dashboard.html file
      */
-    @RequestMapping(path = "/dashboard",method = RequestMethod.GET)
+    @GetMapping(path = "/dashboard")
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
@@ -60,7 +60,7 @@ public class DashboardController {
      * @param principal Of type{@link AuthState}
      * @return projectForm.html file
      */
-    @RequestMapping(path="/dashboard/newProject", method = RequestMethod.GET)
+    @GetMapping(path="/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         model.addAttribute("apiPrefix", apiPrefix);
@@ -86,7 +86,7 @@ public class DashboardController {
      * @param principal Of type {@link AuthState}
      * @return Either the dashboard.html file or error.html file
      */
-    @RequestMapping(path="/dashboard/saveProject", method = RequestMethod.POST)
+    @PostMapping(path="/dashboard/saveProject")
     public String saveProject(
             Project project,
             Model model,
