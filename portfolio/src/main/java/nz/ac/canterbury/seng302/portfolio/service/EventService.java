@@ -49,6 +49,10 @@ public class EventService {
             return ("No Event");
         } else if (event.getEventName() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
             return ("Event values are null");
+        } else if (event.getEventName().length() < 1) {
+            return ("Event Name must not be empty");
+        } else if (event.getEventName().length() > 50) {
+            return ("Event name cannot be more than 50 characters");
         } else if (!event.getEventName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
             // checks if event name starts or ends with space.
             return ("Event name must not start or end with space characters");
