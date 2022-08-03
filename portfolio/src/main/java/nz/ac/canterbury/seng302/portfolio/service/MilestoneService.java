@@ -23,7 +23,7 @@ public class MilestoneService {
     private MilestoneRepository milestoneRepository;
     @Autowired
     private ProjectRepository projectRepository;
-    private Logger logger = LoggerFactory.getLogger(MilestoneService.class);
+    private final Logger logger = LoggerFactory.getLogger(MilestoneService.class);
 
     /**
      * Creates a new milestone
@@ -53,7 +53,7 @@ public class MilestoneService {
      */
     public List<Milestone> getMilestoneByProject(int projectId) throws IncorrectDetailsException {
         Optional<Project> current = projectRepository.findById(projectId);
-        if (!current.isPresent()) {
+        if (current.isEmpty()) {
             throw new IncorrectDetailsException("Failed to locate and project with ID: " + projectId);
         }
 
@@ -84,5 +84,51 @@ public class MilestoneService {
         }
     }
 
+    /**
+     * Saves a milestone object to the database
+     * @param milestone Object of type milestone
+     * @return Success message of creation if it is a new milestone or updating if it is an existing milestone
+     * @throws IncorrectDetailsException If unable to save the milestone
+     */
+    public String saveMilestone(Milestone milestone) throws IncorrectDetailsException {
+        String message;
+        try {
+            if (milestone.getMilestoneId() == 0)
+                message = "Successfully created " + milestone.getName();
+            else
+                message = "Successfully updated " + milestone.getName();
 
+            milestoneRepository.save(milestone);
+            return message;
+
+        } catch (PersistenceException e) {
+            logger.error("Failure to save the milestone ", e);
+            throw new IncorrectDetailsException("Failure to save the milestone");
+        }
+    }
+
+    /**
+     * Verifies the current milestone's name, date and project
+     * @param milestone The milestone object to verify
+     * @throws IncorrectDetailsException Raised if the milestone values are invalid
+     */
+    public void verifyMilestone(Milestone milestone) throws IncorrectDetailsException {
+
+        Project milestoneProject;
+
+        if (milestone == null)
+            throw new IncorrectDetailsException("No milestone");
+
+        if (milestone.getName() == null || milestone.getDate() == null || milestone.getProject() == null)
+            throw new IncorrectDetailsException("Milestone values cannot be null");
+        else
+            milestoneProject = milestone.getProject();
+
+        if (milestone.getName().matches("^[A-Za-z\\d]+(?: +[A-Za-z\\d]+)*$"))
+            throw new IncorrectDetailsException("Milestone name must not start or end with space characters");
+        if (milestone.getDate().after(milestoneProject.getEndDate()))
+            throw new IncorrectDetailsException("The milestone's date cannot be after the project end date");
+        if (milestone.getDate().before(milestoneProject.getStartDate()))
+            throw new IncorrectDetailsException("The milestone's date cannot be before the project start date");
+    }
 }
