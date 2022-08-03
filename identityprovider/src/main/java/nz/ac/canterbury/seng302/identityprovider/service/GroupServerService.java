@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 
 import java.util.stream.Collectors;
 
+import nz.ac.canterbury.seng302.identityprovider.model.Groups;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.*;
 @GrpcService
 public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase {
 
-    private GroupsRepository groupsRepository;
+    private final GroupsRepository groupsRepository;
     
     @Value("${hostAddress}")
     private String hostAddress;
@@ -75,12 +76,35 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 reply.setMessage(String.format("Unable to delete group %d", request.getGroupId()));
             }
         } catch (Exception e) {
-            logger.error("An error occured while deleting group {}", request.getGroupId(), e);
+            logger.error("An error occurred while deleting group {}", request.getGroupId(), e);
             reply.setIsSuccess(false);
-            reply.setMessage(String.format("An error occured while deleting group %d", request.getGroupId()));
+            reply.setMessage(String.format("An error occurred while deleting group %d", request.getGroupId()));
         }
 
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
+
+    /**
+     * Create a group from the database and return if the creation was successful to the gRPC client
+     * @param request          Create group request containing the id of the group to create
+     * @param responseObserver Returns to previous method with data
+     */
+    @Override
+    public void createGroup(CreateGroupRequest request, StreamObserver<CreateGroupResponse> responseObserver) {
+        CreateGroupResponse.Builder reply = CreateGroupResponse.newBuilder();
+        try {
+            Groups newGroup = new Groups(request.getLongName(), request.getShortName());
+            groupsRepository.save(newGroup);
+            reply.setIsSuccess(true);
+            reply.setMessage("Group created successfully");
+        } catch (Exception e) {
+            logger.error("An error occurred while creating group", e);
+            reply.setIsSuccess(false);
+            reply.setMessage("An error occurred while creating group.");
+        }
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+
 }

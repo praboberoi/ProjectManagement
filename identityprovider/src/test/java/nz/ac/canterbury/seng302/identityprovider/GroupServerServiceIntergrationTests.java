@@ -125,4 +125,22 @@ class GroupServerServiceIntergrationTests {
         DeleteGroupResponse response = results.get(0);
         assertFalse(response.getIsSuccess(), "Group was incorrectly deleted: " + response.getMessage());
     }
+
+    /**
+     * Tests that the group is created successfully.
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenCreateGroupCalled_thenTheGroupExists() {
+        CreateGroupRequest request = CreateGroupRequest.newBuilder().build();
+        StreamRecorder<CreateGroupResponse> responseObserver = StreamRecorder.create();
+        groupServerService.createGroup(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<CreateGroupResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        CreateGroupResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Group was incorrectly created: " + response.getMessage());
+    }
 }
