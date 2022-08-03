@@ -124,6 +124,8 @@ public class MilestoneService {
         else
             milestoneProject = milestone.getProject();
 
+        if (milestone.getName().length() > 20)
+            throw new IncorrectDetailsException("Milestone name must be less than 20 characters");
         if (milestone.getName().matches("^[A-Za-z\\d]+(?: +[A-Za-z\\d]+)*$"))
             throw new IncorrectDetailsException("Milestone name must not start or end with space characters");
         if (milestone.getDate().after(milestoneProject.getEndDate()))
