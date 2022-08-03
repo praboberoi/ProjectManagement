@@ -1,5 +1,9 @@
-package nz.ac.canterbury.seng302.portfolio.model;
+package nz.ac.canterbury.seng302.portfolio.services;
 
+import nz.ac.canterbury.seng302.portfolio.model.Deadline;
+import nz.ac.canterbury.seng302.portfolio.model.DeadlineRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import org.junit.jupiter.api.Assertions;
@@ -19,7 +23,7 @@ import static org.mockito.Mockito.when;
 
 
 @SpringBootTest
-public class deadlineServiceTest {
+public class DeadlineServiceTest {
 
     @MockBean
     private DeadlineRepository deadlineRepository;
