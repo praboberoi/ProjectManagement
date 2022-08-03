@@ -10,7 +10,6 @@ import java.sql.Date;
 public class Milestone {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
     private int milestoneId;
 
     @ManyToOne(optional = false)

@@ -55,8 +55,7 @@ public class MilestoneTest {
     }
 
     /**
-     * This test asserts that when a milestone has a project and it's method is called asking for the project it
-     * returns the correct project.
+     * Asserts that the correct project is retrieved when getProject() is called on a milestone
      */
     @Test
     public void givenMilestoneExists_WhenMilestoneGetProject_ThenCorrectProjectReturned() {
