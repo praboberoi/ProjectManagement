@@ -21,7 +21,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.ui.Model;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,12 +43,6 @@ public class UserController {
 
     public UserController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
-    }
-
-    @ModelAttribute
-    public void addAttributes(@AuthenticationPrincipal AuthState principal, Model model) {
-        model.addAttribute("adminOrTeacher", userAccountClientService.checkUserIsTeacherOrAdmin(principal));
-        model.addAttribute("apiPrefix", apiPrefix);
     }
 
     /**
