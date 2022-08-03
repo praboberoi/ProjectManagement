@@ -6,11 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
-import javax.persistence.criteria.CriteriaBuilder;
 import java.util.List;
-import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.Optional;
 import org.slf4j.Logger;
 
@@ -23,6 +19,11 @@ public class DeadlineService {
     @Autowired private ProjectRepository projectRepository;
     private Logger logger = LoggerFactory.getLogger(DeadlineService.class);
 
+
+    public DeadlineService(DeadlineRepository deadlineRepository, ProjectRepository projectRepository) {
+        this.deadlineRepository = deadlineRepository;
+        this.projectRepository = projectRepository;
+    }
     /**
      * Creates a new deadline
      * @return of type Deadline
@@ -66,9 +67,9 @@ public class DeadlineService {
                 deadlineRepository.deleteById(deadlineId);
                 return "Successfully deleted " + deadline.get().getName();
             }
-            else {
+            else
                 throw new IncorrectDetailsException("Could not find given Deadline");
-            }
+
 
         } catch (PersistenceException e) {
             logger.error("Failure deleting Deadline", e);
@@ -80,7 +81,7 @@ public class DeadlineService {
      * Saves a deadline object to the database
      * @param deadline of type Deadline
      * @return message  based on whether it is a new deadline or existing deadline being updated
-     * @throws PersistenceException
+     * @throws IncorrectDetailsException if unable to save a deadline
      */
     public String saveDeadline(Deadline deadline) throws IncorrectDetailsException {
         String message;
@@ -107,8 +108,10 @@ public class DeadlineService {
             throw new IncorrectDetailsException("No deadline");
         } else if (deadline.getName() == null || deadline.getDate() == null) {
             throw new IncorrectDetailsException("Deadline values cannot be null");
-        } else if (deadline.getName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
+        } else if (deadline.getName().startsWith(" ") || deadline.getName().endsWith(" ")) {
             throw new IncorrectDetailsException("Deadline name must not start or end with space characters");
+        } else if (deadline.getName().length() > 20) {
+            throw new IncorrectDetailsException("Deadline name cannot exceed 20 characters");
         } else if (deadline.getDate().after(deadline.getProject().getEndDate())) {
             throw new IncorrectDetailsException("Deadline date cannot be after project end date");
         } else if (deadline.getDate().before(deadline.getProject().getStartDate())) {
