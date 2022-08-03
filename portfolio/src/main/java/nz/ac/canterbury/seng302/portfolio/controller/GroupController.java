@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.shared.identityprovider.CreateGroupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -67,12 +68,37 @@ public class GroupController {
      * @return Status of the request and corresponding message
      */
     @DeleteMapping(value = "/groups/{groupId}/delete")
-    public ResponseEntity<String> removeRole(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
+    public ResponseEntity<String> deleteGroup(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
         DeleteGroupResponse response = groupService.deleteGroup(groupId);
         
+        ResponseEntity.BodyBuilder reply;
+        if (response.getIsSuccess()) {
+            reply = ResponseEntity.status(HttpStatus.OK);
+        } else {
+            reply = ResponseEntity.status(HttpStatus.NOT_FOUND);
+        }
+        return reply.body(response.getMessage());
+    }
+
+    /**
+     * Attempts to create a group from in the idp server
+     * @param principal Authentication information containing user info
+     * @return Status of the request and corresponding message
+     */
+    @PostMapping(value = "/groups/create")
+    public ResponseEntity<String> createGroup(@AuthenticationPrincipal AuthState principal,
+                                              @RequestParam String shortName,
+                                              @RequestParam String longName,
+                                              Model model
+    ) {
+        if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+        CreateGroupResponse response = groupService.createGroup(shortName, longName);
+
         ResponseEntity.BodyBuilder reply;
         if (response.getIsSuccess()) {
             reply = ResponseEntity.status(HttpStatus.OK);
