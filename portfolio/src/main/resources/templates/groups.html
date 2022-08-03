@@ -46,23 +46,21 @@
             </div>
             <div class="modal-body">
                 <div class="groupForm">
-                    <form id="createGroupForm" method="post" th:object="${groups}" th:action="@{{apiPrefix}/groups/create(apiPrefix=${apiPrefix})}" >
+                    <form id="createGroupForm" method="post" th:object="${groups}" th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}" >
                         <div class="mb-3">
                             <label class="col-form-label">Group Short Name</label>
-                            <input style="font-size:20px;" type="text" class="form-control required" id="group-short-name" placeholder="New Group" maxlength="50" onkeyup="checkShortName()">
+                            <input style="font-size:20px;" type="text" class="form-control required" th:value="${shortName}"id="shortName" placeholder="New Group" maxlength="50" onkeyup="checkShortName()">
                             <span id="charCount" th:value="${charCount}">0 </span> / 50 characters used.
                             <p class="error-msg"></p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Group Long Name</label>
-                            <input style="font-size:20px;" type="text" class="form-control mt-50" th:value="${groupLongName}" id="group-long-name" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()"/>
+                            <input style="font-size:20px;" type="text" class="form-control mt-50" th:value="${longName}" id="longName" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()"/>
                             <span id="charCountLong" th:value="${charCount}">0 </span> / 100 characters used.
                         </div>
                         <div class="modal-footer">
-                            <form action="" method="post" id="deleteProject">
                                 <button type= "submit" id="save-submit-button" class="btn btn-outline-primary me-3">
                                     <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create</button>
-                            </form>
                             <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
                                 <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                         </div>

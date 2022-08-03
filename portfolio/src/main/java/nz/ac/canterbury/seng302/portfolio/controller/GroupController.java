@@ -88,12 +88,13 @@ public class GroupController {
      * @param principal Authentication information containing user info
      * @return Status of the request and corresponding message
      */
-    @PostMapping(value = "/groups/create")
+    @PostMapping(value = "/groups")
     public ResponseEntity<String> createGroup(@AuthenticationPrincipal AuthState principal,
                                               @RequestParam String shortName,
                                               @RequestParam String longName,
                                               Model model
     ) {
+        System.out.println("CONTROLLER");
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }

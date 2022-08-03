@@ -1,5 +1,5 @@
 function checkShortName() {
-    let groupShortNameElement = document.getElementById("group-short-name");
+    let groupShortNameElement = document.getElementById("shortName");
 
     let charMessage = document.getElementById("charCount");
     let charCount = groupShortNameElement.value.length;
@@ -8,7 +8,7 @@ function checkShortName() {
 }
 
 function checkLongName() {
-    let groupLongNameElement = document.getElementById("group-long-name");
+    let groupLongNameElement = document.getElementById("longName");
 
     let charMessage = document.getElementById("charCountLong");
     let charCount = groupLongNameElement.value.length;
