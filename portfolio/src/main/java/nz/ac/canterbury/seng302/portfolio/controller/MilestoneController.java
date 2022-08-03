@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.PersistenceException;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -104,6 +105,44 @@ public class MilestoneController {
             ra.addFlashAttribute("messageDanger", "Internal Server Error");
             return "error";
         }
+    }
+
+    /**
+     * Tries to set the selected milestone's date and name to those provided
+     * @param milestoneId The ID of the milestone being edited
+     * @param name The new name for the milestone
+     * @param date The new date for the milestone
+     * @param principal Of type {@link AuthState}
+     * @param ra Of type {@link RedirectAttributes}
+     * @return project.html or error.html
+     */
+    @PostMapping("/editMilestone/{milestoneId}")
+    public String editMilestone(
+            @PathVariable("milestoneId") int milestoneId,
+            String name,
+            Date date,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra) {
+
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            ra.addFlashAttribute("messageDanger", "You do not have permissions to perform this action");
+            return "redirect:/dashboard";
+        }
+        try {
+            Milestone milestone = milestoneService.getMilestone(milestoneId);
+            milestone.setDate(date);
+            milestone.setName(name);
+            milestoneService.verifyMilestone(milestone);
+            String message = milestoneService.saveMilestone(milestone);
+            ra.addFlashAttribute("messageSuccess", message);
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+        } catch (Exception ex) {
+            ra.addFlashAttribute("messageDanger", "Internal Server Error");
+            return "error";
+        }
+        return "redirect:/project/{projectId}";
+
     }
 
 }

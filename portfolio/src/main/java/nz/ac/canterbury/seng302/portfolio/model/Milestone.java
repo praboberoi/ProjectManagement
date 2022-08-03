@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 /**
  * The data class for Milestones. Contains the id, name, and date of the milestone for storage in the db.
