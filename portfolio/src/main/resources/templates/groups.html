@@ -28,12 +28,37 @@
     <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
 
     <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-        <a class="btn btn-outline-primary ms-0" id = "create-btn" data-toggle="modal" data-target="#conformationModal" >
+        <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" data-target="#conformationModal" >
             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
             Create Group
         </a>
     </div>
 
+    <div class="" id="group-container">
+        <div class="row">
+
+            <div id="group-list" class="col-4">
+                <div class="card project-card">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="card-body">
+                                <h5 class="card-title">
+                                    <a class=project-name th:href="@{${apiPrefix} + '/groups'}">Group Short Name</a>
+                                </h5>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="group-display" class="col-8">
+                <h5 class="card-title">
+                    <a class=project-name th:href="@{${apiPrefix} + '/groups'}">Group Short Name</a>
+                </h5>
+            </div>
+            
+        </div>
+    </div>
 </div>
 <div class="modal fade" id="conformationModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
