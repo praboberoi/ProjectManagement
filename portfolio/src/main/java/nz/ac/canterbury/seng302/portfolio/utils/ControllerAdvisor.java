@@ -21,9 +21,9 @@ public class ControllerAdvisor {
     @ModelAttribute
     public void addAttributes(@AuthenticationPrincipal AuthState principal, Model model) {
         model.addAttribute("apiPrefix", apiPrefix);
+        User user = new User(userAccountClientService.getUser(principal));
+        model.addAttribute("user", user);
         if (principal != null) {
-            User user = new User(userAccountClientService.getUser(principal));
-            model.addAttribute("user", user);
             model.addAttribute("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
         }
     }
