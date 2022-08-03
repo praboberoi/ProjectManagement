@@ -53,9 +53,9 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
      */
     @Override
     public void register(UserRegisterRequest request, StreamObserver<UserRegisterResponse> responseObserver) {
-        RegistrationService controller = new RegistrationService(userRepository);
+        RegistrationService registrationService = new RegistrationService(userRepository);
         UserRegisterResponse.Builder reply = UserRegisterResponse.newBuilder();
-        reply.addAllValidationErrors(controller.validateUserDetails(request));
+        reply.addAllValidationErrors(registrationService.validateUserDetails(request));
         if (reply.getValidationErrorsCount() != 0) {
             reply.setIsSuccess(false);
             reply.setMessage("Registration validation failed");
@@ -76,7 +76,7 @@ public class UserAccountServerService extends UserAccountServiceGrpc.UserAccount
             return;
         }
 
-        User user = controller.createUser(request);
+        User user = registrationService.createUser(request);
         if (user != null) {
             reply.setIsSuccess(true);
             reply.setNewUserId(user.getUserId());
