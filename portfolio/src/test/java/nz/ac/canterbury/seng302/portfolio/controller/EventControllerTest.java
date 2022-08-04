@@ -111,7 +111,7 @@ public class EventControllerTest {
      * @throws Exception Thrown during mockmvc run time 
      */
     @Test
-    public void givenServer_WhenNavigateToNewEventForm_ThenEventFormReturned() throws Exception{
+    void givenServer_WhenNavigateToNewEventForm_ThenEventFormReturned() throws Exception{
         when(projectService.getProjectById(1)).thenReturn(project);
         when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         this.mockMvc
@@ -130,7 +130,7 @@ public class EventControllerTest {
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
-    public void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() throws Exception{
+    void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() throws Exception{
         this.mockMvc
                 .perform(post("/project/1/saveEvent").flashAttr("event", event))
                 .andExpect(status().is3xxRedirection())
