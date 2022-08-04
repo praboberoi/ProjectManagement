@@ -59,7 +59,7 @@ public class MilestoneService {
     public List<Milestone> getMilestoneByProject(int projectId) throws IncorrectDetailsException {
         Optional<Project> current = projectRepository.findById(projectId);
         if (current.isEmpty()) {
-            throw new IncorrectDetailsException("Failed to locate and project with ID: " + projectId);
+            throw new IncorrectDetailsException("Failed to locate a project with ID: " + projectId);
         }
 
         List<Milestone> result = milestoneRepository.findByProject(current.get());

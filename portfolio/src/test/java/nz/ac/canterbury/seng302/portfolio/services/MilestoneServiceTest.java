@@ -94,7 +94,7 @@ public class MilestoneServiceTest {
     public void givenMilestoneAndProjectDoesNotExist_whenMilestoneByProjectRequested_thenExceptionThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 milestoneService.getMilestoneByProject(99));
-        assertEquals("Failed to locate any milestones under a project with ID: 99", exception.getMessage());
+        assertEquals("Failed to locate a project with ID: 99", exception.getMessage());
     }
 
     /**
