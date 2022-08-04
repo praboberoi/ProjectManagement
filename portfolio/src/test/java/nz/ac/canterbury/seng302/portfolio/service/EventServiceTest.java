@@ -155,4 +155,21 @@ public class EventServiceTest {
         String resultString = eventService.verifyEvent(newEvent);
         assertEquals("Event name cannot be more than 50 characters", resultString);
     }
+
+    /**
+     * Adds an event and checks if event name matches the regex format.
+     */
+    @Test
+    public void givenEventWithIncorrectNameFormat_WhenVerifyEvent_ThenShowErrorMsg() throws Exception {
+        Event newEvent = eventBuilder.eventId(1)
+                .eventName(" Event name with whitespace start")
+                .project(new Project())
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .startTime("20:00")
+                .endTime("21:00")
+                .build();
+        String resultString = eventService.verifyEvent(newEvent);
+        assertEquals("Event name must not start or end with space characters", resultString);
+    }
 }
