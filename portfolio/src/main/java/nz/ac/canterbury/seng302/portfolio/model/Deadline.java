@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * The data class for Deadlines. Contains the id, name, and date of the deadline for storage in the db.
@@ -105,12 +106,14 @@ public class Deadline {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
+        if (!(o instanceof Deadline)) return false;
+        Deadline deadline = (Deadline) o;
+        return deadlineId == deadline.deadlineId && project.equals(deadline.project) && name.equals(deadline.name) && date.equals(deadline.date);
+    }
 
-        if (!(o instanceof Deadline deadline)) return false;
-
-        return deadlineId == deadline.deadlineId
-                && name.equals(deadline.name)
-                && date.equals(deadline.date);
+    @Override
+    public int hashCode() {
+        return Objects.hash(deadlineId, project, name, date);
     }
 
     /**

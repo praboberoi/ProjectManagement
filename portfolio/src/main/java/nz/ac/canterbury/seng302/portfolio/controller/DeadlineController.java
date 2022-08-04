@@ -38,6 +38,14 @@ public class DeadlineController {
     @Autowired private UserAccountClientService userAccountClientService;
 
 
+    /**
+     * Adds common model elements used by all controller methods.
+     */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
+
 
     /**
      * Checks if deadline dates are valid and if it is saves the deadline
@@ -47,18 +55,16 @@ public class DeadlineController {
     @PostMapping(path = "/project/{projectId}/saveDeadline")
     public String saveDeadline(
             @ModelAttribute Deadline deadline,
-            RedirectAttributes ra) {
+            RedirectAttributes ra, @PathVariable String projectId) {
         try {
             deadlineService.verifyDeadline(deadline);
             String message = deadlineService.saveDeadline(deadline);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (IncorrectDetailsException ex) {
             ra.addFlashAttribute("messageDanger", ex.getMessage());
-        } catch (Exception e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
         }
         return "redirect:/project/{projectId}";
-        }
+    }
 
 
     /**
@@ -70,13 +76,13 @@ public class DeadlineController {
      * @param ra Of type {@link RedirectAttributes}
      * @return project.html or error.html
      */
-    @RequestMapping(path="/{projectId}/deleteDeadline/{deadlineId}", method = RequestMethod.POST)
+    @PostMapping(path="/{projectId}/deleteDeadline/{deadlineId}")
     public String deleteDeadline(
             @PathVariable("deadlineId") int deadlineId,
             Model model,
             @PathVariable int projectId,
             @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra){
+            RedirectAttributes ra) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             String message = deadlineService.deleteDeadline(deadlineId);
@@ -87,29 +93,6 @@ public class DeadlineController {
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
-        } catch (PersistenceException e) {
-            model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "error";
-        } catch (Exception e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "error";
         }
     }
-
-
-    @RequestMapping(path="/newDeadline", method = RequestMethod.GET)
-    public String newDeadline(Model model, RedirectAttributes ra) {
-        Deadline deadline = deadlineService.getNewDeadline();
-        try {
-            deadline.setProject(projectService.getProjectById(1));
-            model.addAttribute("deadline", deadline);
-            return "deadlineTest";
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/dashboard";
-        }
-
-    }
-
-
 }

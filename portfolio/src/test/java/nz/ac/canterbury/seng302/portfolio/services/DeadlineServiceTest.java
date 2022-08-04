@@ -90,7 +90,7 @@ public class DeadlineServiceTest {
     }
 
     /**
-     * Test to make sure an expected list of deadline is returned when deadlines are requested by project id that exists
+     * Test to make sure an expected list of deadlines is returned when deadlines are requested by project id that exists
      */
     @Test
     public void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlineIsReturned() {
@@ -106,7 +106,7 @@ public class DeadlineServiceTest {
     }
 
     /**
-     * Test to make sure that no exception is thrown when a deadline is thrown and an appropriate message is received
+     * Test to make sure that no exception is thrown when a deadline is deleted and an appropriate message is received
      */
     @Test
     public void givenDeadlineExists_whenDeleteDeadlineByIdRequested_thenAMessageIsReturned(){
@@ -116,7 +116,7 @@ public class DeadlineServiceTest {
     }
 
     /**
-     * Test to make sure an exception is thrown when a deadline is requested that does not exist
+     * Test to ensure an exception is thrown when a deadline that does not exist is requested.
      */
     @Test
     public void givenDeadlineDoesNotExist_whenDeleteDeadlineByIdRequested_thenAnExceptionIsThrown() {
@@ -142,7 +142,7 @@ public class DeadlineServiceTest {
      * Test to make sure an appropriate message is received when a new deadline is saved
      */
     @Test
-    public void givenNewDeadlineCreated_whenSaveDeadlineRequested_SuccessfullyCreatedMessageDisplayed() {
+    public void givenNewDeadlineCreated_whenSaveDeadlineRequested_thenSuccessfullyCreatedMessageDisplayed() {
         Deadline deadline1 = new Deadline.Builder()
                                     .deadlineId(0)
                                     .date(new Date())
