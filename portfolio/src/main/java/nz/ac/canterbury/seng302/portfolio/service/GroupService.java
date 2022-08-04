@@ -2,10 +2,14 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import org.springframework.stereotype.Service;
 
+import com.google.protobuf.Empty;
+
 import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupRequest;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupsServiceGrpc;
 
 /**
@@ -30,6 +34,16 @@ public class GroupService {
                 .setGroupId(groupId)
                 .build());
         return response;
+    }
+
+    public Groups getMembersWithoutAGroup() {
+        GroupDetailsResponse response = groupsStub.getMembersWithoutAGroup(Empty.newBuilder().build());
+        return new Groups(response);
+    }
+
+    public Groups getTeachingStaffGroup() {
+        GroupDetailsResponse response = groupsStub.getTeachingStaffGroup(Empty.newBuilder().build());
+        return new Groups(response);
     }
     
 }

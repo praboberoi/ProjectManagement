@@ -53,10 +53,11 @@ public class Groups {
     }
 
     public Groups () {}
-        public Groups(GroupDetailsResponse response) {
-            this.shortName = response.getShortName();
-            this.longName = response.getLongName();
-            this.groupId = response.getGroupId();
-            this.members = response.getMembersList();
-        }
+    
+    public Groups(GroupDetailsResponse response) {
+        this.shortName = response.getShortName();
+        this.longName = response.getLongName();
+        this.groupId = response.getGroupId();
+        this.members = response.getMembersList();
+    }
 }
