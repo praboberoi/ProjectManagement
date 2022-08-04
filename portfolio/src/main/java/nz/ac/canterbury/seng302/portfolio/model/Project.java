@@ -15,8 +15,7 @@ public class Project {
      * Id of the project
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @Column(nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int projectId;
 
     /**
