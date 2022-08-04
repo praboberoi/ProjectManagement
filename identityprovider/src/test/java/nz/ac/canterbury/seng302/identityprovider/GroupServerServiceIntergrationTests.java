@@ -54,7 +54,7 @@ class GroupServerServiceIntergrationTests {
         List<GroupDetailsResponse> results = responseObserver.getValues();
         assertEquals(1, results.size());
         GroupDetailsResponse response = results.get(0);
-        assertEquals(40, response.getMembersCount(), "Incorrect number of users returned in 'no group' group");
+        assertEquals(30, response.getMembersCount(), "Incorrect number of users returned in 'no group' group");
     }
 
     /**
