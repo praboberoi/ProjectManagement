@@ -27,13 +27,17 @@
     <h2>[[${pageTitle}]]</h2>
   </div>
   <div class="projectForm">
-    <form id="createEventForm" onsubmit="return validateForm()" th:action="@{${apiPrefix} + '/project/' + ${projectId} + '/saveEvent'}" method="post" th:object="${event}" >
-      <input type="hidden" th:field="*{project}">
-
+    <form id="createEventForm" onsubmit="return validateForm()" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveEvent'}" method="post" th:object="${event}" >
+      <input type="hidden" th:field="*{project.projectId}">
+      <div>
+        <input type="hidden" id="projectId" th:field="*{project.projectId}"/>
+        <input type="hidden" id = "projectStartDate" name= "projectStartDate" th:value="${project.startDate}">
+        <input type="hidden" id = "projectEndDate" name= "projectEndDate" th:value="${project.endDate}">
+      </div>
       <div class="mb-3">
-        <label for="project-name" class="col-form-label required">Event Name</label>
-        <input style="font-size:20px;" type="text" class="form-control required" id="project-name" placeholder="Event Name" th:field="*{eventName}" onkeyup="checkProjectName()" required>
-<!--        <p id="projectNameError" th:text="${eventNameError}" class="error-msg"></p>-->
+        <label for="event-name" class="col-form-label required">Event Name</label>
+        <input style="font-size:20px;" type="text" class="form-control required" id="event-name" th:field="*{eventName}" onkeyup="checkEventName()" required>
+        <p id="eventNameError" th:text="${eventNameError}" class="error-msg"></p>
       </div>
 
       <div style="height:30px;" class="row">
@@ -42,19 +46,20 @@
           <label  for="startDate" class="form-label date-font required">Start Date</label>
         </div>
         <div class="col-md-6 ms-auto">
-          <label for="endDate" class="form-label required">Start Time</label>
+          <label for="startTime" class="form-label required">Start Time</label>
         </div>
       </div>
       <!-- Start Date & Time-->
       <div class="row">
         <div class="col-md-6 ms-auto">
-          <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDates()" required>
+          <input type="date" class="form-control date-font" id="startDate" th:field="*{startDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkEventDates()" required>
           <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
         </div>
         <div class="col-md-6 ms-auto">
           <!--Timepicker-->
           <div>
-          <input type="time" class="form-control" id="startTime" name="startTime" onchange="checkTime()" required>
+          <input type="time" class="form-control" id="startTime" name="startTime" th:field="*{startTime}"  onchange="checkEventTimes()" required>
+            <p id="startTimeError" th:text="${startTimeError}" class="error-msg"></p>
           </div>
         </div>
       </div>
@@ -62,35 +67,38 @@
 
       <div style="height:30px;" class="row">
         <div class="col-md-6 ms-auto">
-          <label  for="startDate" class="form-label date-font required">End Date</label>
+          <label  for="endDate" class="form-label date-font required">End Date</label>
         </div>
         <div class="col-md-6 ms-auto">
-          <label for="endDate" class="form-label required">End Time</label>
+          <label for="endtime" class="form-label required">End Time</label>
         </div>
       </div>
 
       <!--End Date & Time-->
       <div class="row">
         <div class="col-md-6 ms-auto">
-          <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDates()" required>
+          <input type="date" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkEventDates()" required>
+          <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
         </div>
         <div class="col-md-6 ms-auto">
           <!--Timepicker-->
-          <input type="time" class="form-control" id="endTime" name="endTime"  required>
+          <input type="time" class="form-control" id="endTime" name="endTime" th:field="*{endTime}" onchange="checkEventTimes()" required>
+          <p id="endTimeError" th:text="${endTimeError}" class="error-msg"></p>
         </div>
       </div>
       <br>
 
       <div class="d-flex flex-row justify-content-end p-0">
-        <button type= "submit" class="btn btn-outline-primary me-3">
+        <button type="submit" name="submit" class="btn btn-outline-primary me-3">
           <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
-        <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${projectId}}">
+        <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${project.projectId}}">
           <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
       </div>
     </form>
   </div>
 
 </div>
-<script th:src="@{{apiPrefix}/javascript/projectForm.js(apiPrefix=${apiPrefix})}"></script>
+<script th:src="@{{apiPrefix}/javascript/eventForm.js(apiPrefix=${apiPrefix})}"></script>
+<script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
 </body>
 </html>

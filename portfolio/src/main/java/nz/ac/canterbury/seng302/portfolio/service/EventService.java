@@ -16,8 +16,6 @@ import java.text.SimpleDateFormat;
 @Service
 public class EventService {
     @Autowired EventRepository eventRepository;
-    private boolean isNew = false;
-    private Event currentEvent;
 
     /**
      * Creates a new event with a name
@@ -51,6 +49,10 @@ public class EventService {
             return ("No Event");
         } else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
             return ("Event values are null");
+        } else if (event.getEventName().length() < 1) {
+            return ("Event name must not be empty");
+        } else if (event.getEventName().length() > 50) {
+            return ("Event name cannot be more than 50 characters");
         } else if (!event.getEventName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
             // checks if event name starts or ends with space.
             return ("Event name must not start or end with space characters");
@@ -65,7 +67,7 @@ public class EventService {
                 if (event.getStartDate().equals(event.getEndDate())) {
                     // End time before start time or start and end time is the same
                     if (d2.before(d1) || d2.equals(d1)) {
-                        return ("The event's start must be before the event ends");
+                        return ("The start of the event must occur before the end of the event");
                     }
                 }
                 return("Event has been verified");
@@ -85,12 +87,6 @@ public class EventService {
         if (event.getEventId() == 0) {
             message = "Successfully Created " + event.getEventName();
         } else {
-            currentEvent.setProject(event.getProject());
-            currentEvent.setEventName(event.getEventName());
-            currentEvent.setEndDate(event.getEndDate());
-            currentEvent.setStartDate(event.getStartDate());
-            currentEvent.setStartTime(event.getStartTime());
-            currentEvent.setEndTime(event.getEndTime());
             message = "Successfully Saved " + event.getEventName();
         }
         try {
