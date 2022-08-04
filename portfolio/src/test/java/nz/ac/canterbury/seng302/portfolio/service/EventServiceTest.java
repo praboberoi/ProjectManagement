@@ -31,7 +31,7 @@ public class EventServiceTest {
      * Checks if event is null
      */
     @Test
-    public void givenEventIsNull_ThenShowErrorMessage() throws Exception {
+    public void givenEventIsNull_WhenVerifyEvent_ThenShowErrorMessage() throws Exception {
         Event emptyEvent = null;
         String resultString = eventService.verifyEvent(emptyEvent);
         assertEquals("No Event", resultString);
@@ -41,7 +41,7 @@ public class EventServiceTest {
      * Checks if event form has null values
      */
     @Test
-    public void givenEventWithNullValues_ThenShowNullMsg() throws Exception {
+    public void givenEventWithNullValues_WhenVerifyEvent_ThenShowNullMsg() throws Exception {
         Event emptyEvent = new Event();
         assertNull(emptyEvent.getEventName());
         String resultString = eventService.verifyEvent(emptyEvent);
@@ -52,7 +52,7 @@ public class EventServiceTest {
      * Adds an event and checks if event dates are valid
      */
     @Test
-    public void givenEventWithIncorrectDates_ThenShowErrorMsg() throws Exception {
+    public void givenEventWithIncorrectDates_WhenVerifyEvent_ThenShowErrorMsg() throws Exception {
         //Event with end date before start date
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
@@ -70,7 +70,7 @@ public class EventServiceTest {
      * Adds an event and checks for same event date and same event time
      */
     @Test
-    public void givenEventWithSameDateAndSameTime_ThenShowErrorMessage() throws Exception {
+    public void givenEventWithSameDateAndSameTime_WhenVerifyEvent_ThenShowErrorMessage() throws Exception {
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
@@ -90,7 +90,7 @@ public class EventServiceTest {
      * for events that start and end on the same date
      */
     @Test
-    public void givenEventWithSameDateAndEndTimeBeforeStartTime_ThenShowErrorMessage() throws Exception {
+    public void givenEventWithSameDateAndEndTimeBeforeStartTime_WhenVerifyEvent_ThenShowErrorMessage() throws Exception {
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
@@ -106,10 +106,10 @@ public class EventServiceTest {
     }
 
     /**
-     * Adds an event and checks if all event from values are valid
+     * Adds an event and checks if all event form values are valid
      */
     @Test
-    public void givenEventWithCorrectValues_ThenShowSuccessMsg() throws Exception {
+    public void givenEventWithCorrectValues_WhenVerifyEvent_ThenShowSuccessMsg() throws Exception {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
                 .project(new Project())
@@ -120,5 +120,39 @@ public class EventServiceTest {
                 .build();
         String resultString = eventService.verifyEvent(newEvent);
         assertEquals("Event has been verified", resultString);
+    }
+
+    /**
+     * Adds an event and checks if event name is empty.
+     */
+    @Test
+    public void givenEventWithEmptyName_WhenVerifyEvent_ThenShowErrorMsg() throws Exception {
+        Event newEvent = eventBuilder.eventId(1)
+                .eventName("")
+                .project(new Project())
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .startTime("20:00")
+                .endTime("21:00")
+                .build();
+        String resultString = eventService.verifyEvent(newEvent);
+        assertEquals("Event name must not be empty", resultString);
+    }
+
+    /**
+     * Adds an event and checks if event name exceeds 50 characters.
+     */
+    @Test
+    public void givenEventWithNameOverLimit_WhenVerifyEvent_ThenShowErrorMsg() throws Exception {
+        Event newEvent = eventBuilder.eventId(1)
+                .eventName("This is a event name thats more than 50 characters long")
+                .project(new Project())
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .startTime("20:00")
+                .endTime("21:00")
+                .build();
+        String resultString = eventService.verifyEvent(newEvent);
+        assertEquals("Event name cannot be more than 50 characters", resultString);
     }
 }
