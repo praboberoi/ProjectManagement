@@ -36,6 +36,9 @@ public class MilestoneServiceTest {
     private Milestone milestone;
     private Project project;
 
+    /**
+     * Set up creation of test milestone, project as well as relevant mockings
+     */
     @BeforeEach
     public void setUp() {
         project = new Project.Builder()
