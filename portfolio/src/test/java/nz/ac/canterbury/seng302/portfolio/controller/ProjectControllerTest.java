@@ -6,8 +6,11 @@ import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
+import org.junit.After;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -60,9 +63,11 @@ public class ProjectControllerTest {
 
     private Sprint testSprint;
 
+    private static MockedStatic<PrincipalUtils> mockedStaticDigiGateway;
+
     @BeforeAll
     private static void beforeAllInit() {
-        mockStatic(PrincipalUtils.class);
+        mockedStaticDigiGateway = mockStatic(PrincipalUtils.class);
     }
 
     @BeforeEach
@@ -100,6 +105,11 @@ public class ProjectControllerTest {
         userResponse.setCreated(Timestamp.newBuilder()
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        mockedStaticDigiGateway.close();
     }
 
     /**
