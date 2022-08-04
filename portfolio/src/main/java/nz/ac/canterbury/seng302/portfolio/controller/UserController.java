@@ -157,36 +157,33 @@ public class UserController {
             if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());});
 
         if (user == null) {
-            return new ResponseEntity<String>("User cannot be found in database", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User cannot be found in database", HttpStatus.BAD_REQUEST);
         }
         if (highestUserRole.get() == 0) {
-            return new ResponseEntity<String>("You do not have these permissions", HttpStatus.FORBIDDEN);
+            return new ResponseEntity<>("You do not have these permissions", HttpStatus.FORBIDDEN);
 
-        }
-        if (Integer.parseInt(userId) == loggedInUser.getId()){
-            return new ResponseEntity<String>("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
 
         if (!user.getRolesList().contains(role)) {
-            return new ResponseEntity<String>("User does not have this role.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User does not have this role.", HttpStatus.BAD_REQUEST);
 
         }
 
         if (user.getRolesList().size() == 1) {
-            return new ResponseEntity<String>("User must have a role.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User must have a role.", HttpStatus.BAD_REQUEST);
 
         }
 
         if (highestUserRole.get() < role.ordinal()) {
-            return new ResponseEntity<String>("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
 
         }
 
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), role);
         if (!response.getIsSuccess()) {
-            return new ResponseEntity<String>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity<String>("Role deleted successfully", HttpStatus.OK);
+        return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
     }
 
     /**
@@ -205,25 +202,22 @@ public class UserController {
             .toList();
 
         if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
-            return new ResponseEntity<String>("Insufficient Permissions", HttpStatus.FORBIDDEN);
-        }
+            return new ResponseEntity<>("Insufficient Permissions", HttpStatus.FORBIDDEN);
 
-        if (userId == user.getUserId()){
-            return new ResponseEntity<String>("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
         }
 
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
         if (!response.getIsSuccess()) {
             switch(response.getMessage()) {
             case "User already has this role.":
-                return new ResponseEntity<String>(response.getMessage(), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(response.getMessage(), HttpStatus.CONFLICT);
             case "User could not be found.":
-                return new ResponseEntity<String>(response.getMessage(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(response.getMessage(), HttpStatus.NOT_FOUND);
             default:
-                return new ResponseEntity<String>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<String>("Successfully added " + newRole, HttpStatus.OK);
+        return new ResponseEntity<>("Successfully added " + newRole, HttpStatus.OK);
     }
 }
