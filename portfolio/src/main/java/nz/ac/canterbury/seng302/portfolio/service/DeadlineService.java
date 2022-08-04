@@ -106,7 +106,7 @@ public class DeadlineService {
     public void verifyDeadline(Deadline deadline) throws IncorrectDetailsException {
         if (deadline == null) {
             throw new IncorrectDetailsException("No deadline");
-        } else if (deadline.getName() == null || deadline.getDate() == null) {
+        } else if (deadline.getName() == null || deadline.getDate() == null || deadline.getProject() == null) {
             throw new IncorrectDetailsException("Deadline values cannot be null");
         } else if (deadline.getName().startsWith(" ") || deadline.getName().endsWith(" ")) {
             throw new IncorrectDetailsException("Deadline name must not start or end with space characters");

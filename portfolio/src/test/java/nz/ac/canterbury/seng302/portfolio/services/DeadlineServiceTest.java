@@ -21,7 +21,9 @@ import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.mockito.Mockito.when;
 
-
+/**
+ * Unit tests for methods on DeadlineService class
+ */
 @SpringBootTest
 public class DeadlineServiceTest {
 
@@ -37,6 +39,9 @@ public class DeadlineServiceTest {
     private Deadline deadline;
     private Project project;
 
+    /**
+     * Initialises a project, deadline and values to be returned for mocking the DeadlineRepository and ProjectRepository.
+     */
     @BeforeEach
     public void setUp() {
         project = new Project.Builder()
@@ -61,10 +66,11 @@ public class DeadlineServiceTest {
         when(projectRepository.findById(1)).thenReturn(Optional.ofNullable(project));
 
         when(deadlineRepository.findByProject(project)).thenReturn(List.of(deadline));
-
-
     }
 
+    /**
+     * Test to make sure no exception is thrown when a deadline requested exists
+     */
     @Test
     public void givenDeadlineExists_whenDeadlineRequested_thenNoExceptionThrown() {
         assertDoesNotThrow(() -> {
@@ -72,6 +78,9 @@ public class DeadlineServiceTest {
         });
     }
 
+    /**
+     * Test to make sure that an exception is thrown when a deadline requested does not exist
+     */
     @Test
     public void givenDeadlineDoesNotExist_whenDeadlineRequested_thenExceptionThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
@@ -80,16 +89,25 @@ public class DeadlineServiceTest {
 
     }
 
+    /**
+     * Test to make sure an expected list of deadline is returned when deadlines are requested by project id that exists
+     */
     @Test
     public void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlineIsReturned() {
         Assertions.assertEquals(List.of(deadline), deadlineService.getDeadlineByProject(1));
     }
 
+    /**
+     * Test to make sure an empty list is returned when deadlines are requested by a project id that does not exist
+     */
     @Test
     public void givenDeadlineAndProjectDoesNotExist_whenDeadlineByProjectRequested_thenAnEmptyListIsReturned() {
         Assertions.assertEquals(List.of(), deadlineService.getDeadlineByProject(2));
     }
 
+    /**
+     * Test to make sure that no exception is thrown when a deadline is thrown and an appropriate message is received
+     */
     @Test
     public void givenDeadlineExists_whenDeleteDeadlineByIdRequested_thenAMessageIsReturned(){
         assertDoesNotThrow(() -> {
@@ -97,6 +115,9 @@ public class DeadlineServiceTest {
         });
     }
 
+    /**
+     * Test to make sure an exception is thrown when a deadline is requested that does not exist
+     */
     @Test
     public void givenDeadlineDoesNotExist_whenDeleteDeadlineByIdRequested_thenAnExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
@@ -104,6 +125,9 @@ public class DeadlineServiceTest {
         Assertions.assertEquals("Could not find given Deadline" , exception.getMessage());
     }
 
+    /**
+     * Test to make sure that an appropriate message is received when a deadline is saved after updating its details
+     */
     @Test
     public void givenDeadlineExist_whenSaveDeadlineRequested_successfulUpdateMessageDisplayed() {
         deadline.setName("Updated");
@@ -114,6 +138,9 @@ public class DeadlineServiceTest {
         }
     }
 
+    /**
+     * Test to make sure an appropriate message is received when a new deadline is saved
+     */
     @Test
     public void givenNewDeadlineCreated_whenSaveDeadlineRequested_SuccessfullyCreatedMessageDisplayed() {
         Deadline deadline1 = new Deadline.Builder()
@@ -130,6 +157,10 @@ public class DeadlineServiceTest {
         }
     }
 
+    /**
+     * Test to make sure an error is thrown and an appropriate error message is reviewed when a null object is
+     * sent for verifying a deadline
+     */
     @Test
     public void givenADeadlineDoesNotExist_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
@@ -137,6 +168,10 @@ public class DeadlineServiceTest {
         Assertions.assertEquals("No deadline", exception.getMessage());
     }
 
+    /**
+     * Test to make sure deadline verification throws an error with appropriate error message for deadlines
+     * with one of the fields left empty
+     */
     @Test
     public void givenDeadlineExistWithoutName_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         Deadline deadline1 = new Deadline.Builder()
@@ -145,11 +180,29 @@ public class DeadlineServiceTest {
                                     .project(project)
                                     .build();
 
-        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
-                deadlineService.verifyDeadline(deadline1));
-        Assertions.assertEquals("Deadline values cannot be null", exception.getMessage());
+        Deadline deadline2 = new Deadline.Builder()
+                                    .deadlineId(0)
+                                    .name("Missing date")
+                                    .project(project)
+                                    .build();
+
+        Deadline deadline3 = new Deadline.Builder()
+                                    .deadlineId(0)
+                                    .name("Missing project")
+                                    .date(new Date())
+                                    .build();
+        List<Deadline> deadlines = List.of(deadline1, deadline2, deadline3);
+        deadlines.forEach(currentDeadline -> {
+            IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                    deadlineService.verifyDeadline(currentDeadline));
+            Assertions.assertEquals("Deadline values cannot be null", exception.getMessage());
+                });
     }
 
+    /**
+     * Test to make sure deadline verification throws an error with appropriate error message for deadlines with incorrect
+     * names
+     */
     @Test
     public void givenDeadlineExistWithIncorrectName_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         Deadline deadline1 = new Deadline.Builder()
@@ -182,6 +235,10 @@ public class DeadlineServiceTest {
 
     }
 
+    /**
+     * Test to make sure deadline verification throws an error with appropriate error message for deadlines with incorrect
+     * dates
+     */
     @Test
     public void givenDeadlineExistWithIncorrectDate_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
@@ -201,6 +258,9 @@ public class DeadlineServiceTest {
         }
     }
 
+    /**
+     * Test no error is thrown for deadline verification for a deadline with correct values
+     */
     @Test
     public void givenDeadlineExistWithCorrectDetail_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         assertDoesNotThrow(() -> deadlineService.verifyDeadline(deadline));
