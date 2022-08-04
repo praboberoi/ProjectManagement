@@ -12,7 +12,6 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
-import org.junit.After;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,12 +27,12 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.Date;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = EventController.class)
@@ -126,4 +125,16 @@ public class EventControllerTest {
                 .andExpect(model().attribute("projectDateMax", project.getEndDate()));
     }
 
+    /**
+     * Test verification of event object and check that it redirect the user to the project page.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    public void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() throws Exception{
+        this.mockMvc
+                .perform(post("/project/1/saveEvent").flashAttr("event", event))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", nullValue()))
+                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + event.getEventName()));
+    }
 }
