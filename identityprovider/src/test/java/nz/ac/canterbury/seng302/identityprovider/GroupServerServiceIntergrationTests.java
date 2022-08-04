@@ -141,6 +141,6 @@ class GroupServerServiceIntergrationTests {
         assertEquals(1, results.size());
 
         CreateGroupResponse response = results.get(0);
-        assertFalse(response.getIsSuccess(), "Group was incorrectly created: " + response.getMessage());
+        assertTrue(response.getIsSuccess(), "Group was incorrectly created: " + response.getMessage());
     }
 }
