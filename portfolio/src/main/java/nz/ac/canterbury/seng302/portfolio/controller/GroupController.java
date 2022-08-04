@@ -1,6 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.PersistentSort;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.UserField;
+import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -15,8 +20,10 @@ import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
+import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -62,6 +69,7 @@ public class GroupController {
         model.addAttribute("listGroups", groups);
         model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
         model.addAttribute("user", userAccountClientService.getUser(principal));
+        model.addAttribute("selectedGroup", groupService.getMembersWithoutAGroup());
         return "groups";
     }
 
@@ -86,5 +94,48 @@ public class GroupController {
             reply = ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
         return reply.body(response.getMessage());
+    }
+
+    /**
+     * Get method for the selected group.
+     * @return The selected group fragment
+     */
+    @GetMapping("/groups/{groupId}")
+    public ModelAndView selectedGroup(
+            ModelAndView mv,
+            @PathVariable int groupId
+    ) {
+        Groups selectedGroup = groupService.getGroupById(groupId);
+        mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("selectedGroup", selectedGroup);
+        return mv;
+    }
+
+    /**
+     * Get method for the unassigned members group.
+     * @return The selected group fragment
+     */
+    @GetMapping("/groups/unassigned")
+    public ModelAndView unassignedGroup(
+            ModelAndView mv
+    ) {
+        Groups selectedGroup = groupService.getMembersWithoutAGroup();
+        mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("selectedGroup", selectedGroup);
+        return mv;
+    }
+
+    /**
+     * Get method for the teachers group.
+     * @return The teacher group fragment
+     */
+    @GetMapping("/groups/teachers")
+    public ModelAndView teachersGroup(
+            ModelAndView mv
+    ) {
+        Groups selectedGroup = groupService.getTeachingStaffGroup();
+        mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("selectedGroup", selectedGroup);
+        return mv;
     }
 }

@@ -41,7 +41,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     @Override
     public void getMembersWithoutAGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
         GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
-        reply.setShortName("Unassigned members");
+        reply.setShortName("Members without a group");
         reply.addAllMembers(groupsRepository.findUsersNotInGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
@@ -55,7 +55,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     @Override
     public void getTeachingStaffGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
         GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
-        reply.setShortName("Teachers");
+        reply.setShortName("Teaching Staff");
         reply.addAllMembers(groupsRepository.findTeacherGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
