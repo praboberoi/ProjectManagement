@@ -40,8 +40,8 @@ public class DeadlineTest {
 
     @Test
     public void givenDeadlineExists_GetDeadlineId(){
-        assertEquals(1, deadline1.getDeadlineID());
-        assertNotEquals(2, deadline1.getDeadlineID());
+        assertEquals(1, deadline1.getDeadlineId());
+        assertNotEquals(2, deadline1.getDeadlineId());
     }
 
     @Test
