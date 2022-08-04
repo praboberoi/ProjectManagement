@@ -25,6 +25,11 @@ public class MilestoneService {
     private ProjectRepository projectRepository;
     private final Logger logger = LoggerFactory.getLogger(MilestoneService.class);
 
+    public MilestoneService(MilestoneRepository milestoneRepository, ProjectRepository projectRepository) {
+        this.milestoneRepository = milestoneRepository;
+        this.projectRepository = projectRepository;
+    }
+
     /**
      * Creates a new milestone
      * @return of type milestone
@@ -125,8 +130,8 @@ public class MilestoneService {
             milestoneProject = milestone.getProject();
 
         if (milestone.getName().length() > 20)
-            throw new IncorrectDetailsException("Milestone name must be less than 20 characters");
-        if (milestone.getName().matches("^[A-Za-z\\d]+(?: +[A-Za-z\\d]+)*$"))
+            throw new IncorrectDetailsException("Milestone name cannot exceed 20 characters");
+        if (milestone.getName().startsWith(" ") || milestone.getName().endsWith(" "))
             throw new IncorrectDetailsException("Milestone name must not start or end with space characters");
         if (milestone.getDate().after(milestoneProject.getEndDate()))
             throw new IncorrectDetailsException("The milestone's date cannot be after the project end date");
