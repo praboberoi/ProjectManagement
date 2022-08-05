@@ -12,13 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.persistence.PersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import static org.junit.Assert.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -123,6 +124,11 @@ public class DeadlineServiceTest {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.deleteDeadline(2));
         Assertions.assertEquals("Could not find given Deadline" , exception.getMessage());
+
+        when(deadlineRepository.findById(1)).thenThrow(PersistenceException.class);
+        IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
+                deadlineService.deleteDeadline(1));
+        Assertions.assertEquals("Failure deleting Deadline" , exception1.getMessage());
     }
 
     /**
@@ -265,6 +271,32 @@ public class DeadlineServiceTest {
     public void givenDeadlineExistWithCorrectDetail_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         assertDoesNotThrow(() -> deadlineService.verifyDeadline(deadline));
     }
+
+    /**
+     * Test to check if a new deadline is requested a new Deadline object is returned with an id of 0 and null values
+     * for the remaining attributes.
+     */
+    @Test
+    public void givenDeadlineServiceExist_whenGetDeadlineRequested_thenANewDeadlineIsReturned() {
+        Deadline newDeadline = deadlineService.getNewDeadline();
+        assertInstanceOf(Deadline.class, newDeadline);
+        assertEquals(0, newDeadline.getDeadlineId());
+        assertNull(newDeadline.getDate());
+        assertNull(newDeadline.getName());
+        assertNull(newDeadline.getProject());
+    }
+
+    /**
+     * Test to check an appropriate error message is thrown when save deadline is requested due to JPA Persistence error
+     */
+    @Test
+    public void givenDeadlineExists_whenSaveDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
+        when(deadlineRepository.save(deadline)).thenThrow(PersistenceException.class);
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+            deadlineService.saveDeadline(deadline));
+        Assertions.assertEquals("Failure to save the deadline", exception.getMessage());
+    }
+
 
 
 }
