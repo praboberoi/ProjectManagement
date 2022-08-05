@@ -93,7 +93,7 @@ public class DeadlineServiceTest {
      * Test to make sure an expected list of deadlines is returned when deadlines are requested by project id that exists
      */
     @Test
-    public void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlineIsReturned() {
+    public void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlinesIsReturned() {
         Assertions.assertEquals(List.of(deadline), deadlineService.getDeadlineByProject(1));
     }
 
