@@ -140,8 +140,8 @@ class GroupServerServiceIntergrationTests {
 
         assertEquals(1, results.size());
         PaginatedGroupsResponse response = results.get(0);
-        assertEquals(response.getResultSetSize(), 2, "Incorrect number of groups received.");
+        assertEquals(6, response.getResultSetSize(),  "Incorrect number of groups received.");
         GroupDetailsResponse testGroup = response.getGroups(0);
-        assertEquals(testGroup.getGroupId(), 1);
+        assertEquals(1, testGroup.getGroupId());
     }
 }
