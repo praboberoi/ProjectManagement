@@ -27,10 +27,7 @@ public class GroupService {
      * @throws StatusRuntimeException Failure status of the server call
      */
     public DeleteGroupResponse deleteGroup(int groupId) throws StatusRuntimeException {
-        DeleteGroupResponse response = groupsStub.deleteGroup(DeleteGroupRequest.newBuilder()
-                .setGroupId(groupId)
-                .build());
-        return response;
+        return groupsStub.deleteGroup(DeleteGroupRequest.newBuilder().setGroupId(groupId).build());
     }
 
     /**
