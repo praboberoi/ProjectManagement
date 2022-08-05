@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -100,12 +101,14 @@ public class DeadlineTest {
         assertNotEquals(deadline1, new Deadline());
     }
 
-//    @Test
-//    public void givenDeadlineExists_getTime() {
-//        assertEquals("12:00 am", deadline1.getTime());
-//        assertNotEquals("11:00 am", deadline1.getTime());
-//        System.out.println(deadline1.getTime());
-//    }
+    @Test
+    public void givenDeadlineExists_getTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        java.util.Date date = new java.util.Date();
+        deadline1.setDate(date);
+        assertEquals(formatter.format(date), deadline1.getTime());
+        assertNotEquals("13:26:18", deadline1.getTime());
+    }
 
     @Test
     public void givenDeadlineExists_getDateOnly() {
