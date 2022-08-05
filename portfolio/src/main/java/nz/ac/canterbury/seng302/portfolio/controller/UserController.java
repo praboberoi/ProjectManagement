@@ -21,7 +21,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.ui.Model;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,12 +43,6 @@ public class UserController {
 
     public UserController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
-    }
-
-    @ModelAttribute
-    public void addAttributes(@AuthenticationPrincipal AuthState principal, Model model) {
-        model.addAttribute("adminOrTeacher", userAccountClientService.checkUserIsTeacherOrAdmin(principal));
-        model.addAttribute("apiPrefix", apiPrefix);
     }
 
     /**
@@ -160,11 +153,7 @@ public class UserController {
             return new ResponseEntity<String>("User cannot be found in database", HttpStatus.BAD_REQUEST);
         }
         if (highestUserRole.get() == 0) {
-            return new ResponseEntity<String>("You do not have these permissions", HttpStatus.FORBIDDEN);
-
-        }
-        if (Integer.parseInt(userId) == loggedInUser.getId()){
-            return new ResponseEntity<String>("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("You do not have these permissions", HttpStatus.FORBIDDEN);
         }
 
         if (!user.getRolesList().contains(role)) {
@@ -207,11 +196,7 @@ public class UserController {
         if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
             return new ResponseEntity<String>("Insufficient Permissions", HttpStatus.FORBIDDEN);
         }
-
-        if (userId == user.getUserId()){
-            return new ResponseEntity<String>("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
-        }
-
+        
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
         if (!response.getIsSuccess()) {
             switch(response.getMessage()) {
