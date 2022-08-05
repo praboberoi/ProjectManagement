@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.sql.Date;
+import java.util.Calendar;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,14 +27,14 @@ public class DeadlineTest {
         deadline1 = new Deadline.Builder()
                 .deadlineId(1)
                 .name("DeadlineTest 1")
-                .date(new java.util.Date(2021 - 1900,1,1))
+                .date(new java.util.Date(2021 - 1900, Calendar.FEBRUARY,1))
                 .project(project)
                 .build();
 
         deadline2 = new Deadline.Builder()
                 .deadlineId(1)
                 .name("DeadlineTest 2")
-                .date(new java.util.Date(2021 - 1900,2,1))
+                .date(new java.util.Date(2021 - 1900, Calendar.MARCH,1))
                 .project(project)
                 .build();
     }
@@ -80,23 +81,23 @@ public class DeadlineTest {
 
     @Test
     public void givenDeadlineExists_GetDate() {
-        assertEquals(new java.util.Date(2021 -1900,1,1), deadline1.getDate());
-        assertNotEquals(new java.util.Date(2021 -1900,1,1), deadline2.getDate());
+        assertEquals(new java.util.Date(2021 -1900, Calendar.FEBRUARY,1), deadline1.getDate());
+        assertNotEquals(new java.util.Date(2021 -1900, Calendar.FEBRUARY,1), deadline2.getDate());
     }
 
     @Test
     public void givenDeadlineExists_SetDate() {
-        deadline1.setDate(new java.util.Date(2021 - 1900, 3, 12));
-        assertEquals(new java.util.Date(2021 - 1900, 3, 12), deadline1.getDate());
-        assertNotEquals(new java.util.Date(2021 - 1900,1,1), deadline1.getDate());
+        deadline1.setDate(new java.util.Date(2021 - 1900, Calendar.APRIL, 12));
+        assertEquals(new java.util.Date(2021 - 1900, Calendar.APRIL, 12), deadline1.getDate());
+        assertNotEquals(new java.util.Date(2021 - 1900, Calendar.FEBRUARY,1), deadline1.getDate());
     }
 
     @Test
     public void testEquals() {
-        assertEquals(false, deadline1.equals(deadline2));
-        assertEquals(true, deadline1.equals(deadline1));
-        assertEquals(false, deadline1.equals(new Object()));
-        assertEquals(false, deadline1.equals(new Deadline()));
+        assertNotEquals(deadline1, deadline2);
+        assertEquals(deadline1, deadline1);
+        assertNotEquals(deadline1, new Object());
+        assertNotEquals(deadline1, new Deadline());
     }
 
     @Test
@@ -113,10 +114,10 @@ public class DeadlineTest {
 
     @Test
     public void givenDeadlineExists_setDate() {
-        java.util.Date date = new java.util.Date(2023 - 1900,1,1);
+        java.util.Date date = new java.util.Date(2023 - 1900, Calendar.FEBRUARY,1);
         deadline1.setDate(date);
         assertEquals(date, deadline1.getDate());
-        deadline1.setDate(new java.util.Date(2021 - 1900, 1,1));
+        deadline1.setDate(new java.util.Date(2021 - 1900, Calendar.FEBRUARY,1));
         assertNotEquals(date, deadline1.getDate());
     }
 

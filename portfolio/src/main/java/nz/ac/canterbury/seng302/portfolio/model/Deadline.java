@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.model;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
