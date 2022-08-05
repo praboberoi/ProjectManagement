@@ -5,6 +5,9 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
 import java.util.List;
 
+/**
+ * Groups Entity class
+ */
 public class Groups {
     private  String shortName;
     private String longName;
