@@ -16,11 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.persistence.PersistenceException;
 import java.util.List;
 
 /**
@@ -33,10 +28,10 @@ public class DeadlineController {
     private String apiPrefix;
     @Autowired
     private DeadlineService deadlineService;
-    @Autowired private ProjectService projectService;
 
-    @Autowired private UserAccountClientService userAccountClientService;
-
+    public DeadlineController(DeadlineService deadlineService) {
+        this.deadlineService = deadlineService;
+    }
 
     /**
      * Adds common model elements used by all controller methods.

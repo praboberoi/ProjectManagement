@@ -80,7 +80,7 @@ public class DeadlineServiceTest {
     }
 
     /**
-     * Test to make sure that an exception is thrown when a deadline requested does not exist
+     * Test to make sure that an exception is thrown when a requested deadline does not exist
      */
     @Test
     public void givenDeadlineDoesNotExist_whenDeadlineRequested_thenExceptionThrown() {
