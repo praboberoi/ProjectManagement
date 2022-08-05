@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
 
 import java.sql.Date;
+import java.text.ParseException;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -26,14 +27,14 @@ public class DeadlineTest {
         deadline1 = new Deadline.Builder()
                 .deadlineId(1)
                 .name("DeadlineTest 1")
-                .date(new Date(2021,1,1))
+                .date(new Date(2021 - 1900,1,1))
                 .project(project)
                 .build();
 
         deadline2 = new Deadline.Builder()
                 .deadlineId(1)
                 .name("DeadlineTest 2")
-                .date(new Date(2021,2,1))
+                .date(new Date(2021 - 1900,2,1))
                 .project(project)
                 .build();
     }
@@ -95,6 +96,38 @@ public class DeadlineTest {
     public void testEquals() {
         assertEquals(false, deadline1.equals(deadline2));
         assertEquals(true, deadline1.equals(deadline1));
+        assertEquals(false, deadline1.equals(new Object()));
+        assertEquals(false, deadline1.equals(new Deadline()));
     }
+
+    @Test
+    public void givenDeadlineExists_getTime() {
+        assertEquals("12:00 am", deadline1.getTime());
+        assertNotEquals("11:00 am", deadline1.getTime());
+    }
+
+    @Test
+    public void givenDeadlineExists_getDateOnly() {
+        assertEquals("01/02/2021", deadline1.getDateOnly());
+        assertNotEquals("02/02/2021", deadline1.getDateOnly());
+    }
+
+    @Test
+    public void givenDeadlineExists_setDate() {
+        Date date = new Date(2023 - 1900,1,1);
+        deadline1.setDate(date);
+        assertEquals(date, deadline1.getDate());
+        deadline1.setDate(new Date(2021 - 1900, 1,1));
+        assertNotEquals(date, deadline1.getDate());
+    }
+
+    @Test
+    public void givenDeadlineExists_setDeadlineId() {
+        deadline1.setDeadlineId(10);
+        assertEquals(10, deadline1.getDeadlineId());
+        assertNotEquals(1, deadline1.getDeadlineId());
+    }
+
+
 
 }

@@ -41,7 +41,6 @@ public class Deadline {
      * @param name The name of the deadline
      * @param project Project associated with the deadline
      * @param date Date of the deadline
-     * @param time Time of the deadline
      */
     public Deadline(int deadlineId, String name, Project project, Date date) {
         this.deadlineId = deadlineId;
@@ -79,7 +78,7 @@ public class Deadline {
         return date;
     }
 
-    public String getDateOnly() throws ParseException {
+    public String getDateOnly() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.format(date);
     }
@@ -88,7 +87,7 @@ public class Deadline {
         this.date = date;
     }
 
-    public String getTime() throws ParseException {
+    public String getTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
         return formatter.format(date);
     }
@@ -106,8 +105,7 @@ public class Deadline {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Deadline)) return false;
-        Deadline deadline = (Deadline) o;
+        if (!(o instanceof Deadline deadline)) return false;
         return deadlineId == deadline.deadlineId && project.equals(deadline.project) && name.equals(deadline.name) && date.equals(deadline.date);
     }
 
