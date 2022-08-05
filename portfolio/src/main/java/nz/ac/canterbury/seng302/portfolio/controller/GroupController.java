@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -31,8 +30,6 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    @Autowired private UserAccountClientService userAccountClientService;
-
     @Value("${apiPrefix}") private String apiPrefix;
 
     /**
@@ -42,7 +39,6 @@ public class GroupController {
     public void addAttributes(Model model) {
         model.addAttribute("apiPrefix", apiPrefix);
     }
-
 
     /**
      * Get message for empty registration page
@@ -61,8 +57,6 @@ public class GroupController {
     ) {
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         model.addAttribute("listGroups", groups);
-        model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
-        model.addAttribute("user", userAccountClientService.getUser(principal));
         model.addAttribute("selectedGroup", groupService.getMembersWithoutAGroup());
         return "groups";
     }

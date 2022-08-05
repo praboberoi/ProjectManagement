@@ -27,7 +27,7 @@
     <div class="alert alert-danger text-center" id="messageDanger" hidden></div>
     <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
 
-    <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+    <div th:if="${adminOrTeacher}">
         <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" data-target="#conformationModal" >
             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
             Create Group

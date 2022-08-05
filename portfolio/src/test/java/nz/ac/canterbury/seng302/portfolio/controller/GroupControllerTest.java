@@ -1,23 +1,29 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 
+import java.util.Collection;
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.hamcrest.Matchers.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 @WebMvcTest(controllers = GroupController.class)
@@ -31,6 +37,9 @@ public class GroupControllerTest {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+
+    @InjectMocks
+    private ControllerAdvisor controllerAdvisor;
 
     @BeforeAll
     private static void initStaticMocks() {
@@ -61,5 +70,61 @@ public class GroupControllerTest {
         mockMvc
             .perform(delete("/groups/1/delete"))
             .andExpect(status().isForbidden());
+    }
+
+    /**
+     * Checks that all the groups are returned when group page is requested
+     * @throws Exception Expection thrown during mockmvc runtime
+     */
+    @Test
+    void whenGroupPageRequested_thenAllGroupsReturned() throws Exception{
+        when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, null));
+        when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, null));
+        mockMvc
+            .perform(get("/groups"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("listGroups", Matchers.<Collection<Groups>> allOf(hasSize(2))));
+    }
+
+    /**
+     * Checks that a group are returned when a specific group is requested
+     * @throws Exception Expection thrown during mockmvc runtime
+     */
+    @Test
+    void whenSelectedGroupFragmentRequested_thenGroupIsReturned() throws Exception{
+        Groups selectedGroup = new Groups("Team: 400", "Bad Request", 1, null);
+        when(groupService.getGroupById(1)).thenReturn(selectedGroup);
+        mockMvc
+            .perform(get("/groups/unassigned"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("selectedGroup", selectedGroup));
+    }
+
+    /**
+     * Checks that a group are returned when the members without a group is requested
+     * @throws Exception Expection thrown during mockmvc runtime
+     */
+    @Test
+    void whenUnassignedFragmentRequested_thenGroupIsReturned() throws Exception{
+        Groups unassignedGroup = new Groups("Members without a group", null, 0, null);
+        when(groupService.getMembersWithoutAGroup()).thenReturn(unassignedGroup);
+        mockMvc
+            .perform(get("/groups/unassigned"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("selectedGroup", unassignedGroup));
+    }
+
+    /**
+     * Checks that a group are returned when the teacher group is requested
+     * @throws Exception Expection thrown during mockmvc runtime
+     */
+    @Test
+    void whenTeacherFragmentRequested_thenGroupIsReturned() throws Exception{
+        Groups teachingGroup = new Groups("Teaching Staff", null, 0, null);
+        when(groupService.getTeachingStaffGroup()).thenReturn(teachingGroup);
+        mockMvc
+            .perform(get("/groups/teachers"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("selectedGroup", teachingGroup));
     }
 }

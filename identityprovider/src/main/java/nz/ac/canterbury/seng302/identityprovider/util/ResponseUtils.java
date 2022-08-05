@@ -21,7 +21,8 @@ public class ResponseUtils {
 
     /**
      * Packages a user object into a userResponse protobuf object
-     * @param user User to be packaged
+     * @param user User to be packaged     
+     * @param hostAddress Address of the server (i.e. localhost:9000, /test/identity)
      * @return userResponse as a protobuf object
      */
     public static UserResponse prepareUserResponse(User user, String hostAddress) {
@@ -53,6 +54,12 @@ public class ResponseUtils {
        return response.build();
     }
 
+    /**
+     * Packages a group into a GroupDetailsResponse protobuf object 
+     * @param group Group to be packaged
+     * @param hostAddress Address of the server (i.e. localhost:9000, /test/identity)
+     * @return GroupDetailsResponse protobuf object
+     */
     public static GroupDetailsResponse prepareGroupDetailResponse(Groups group, String hostAddress) {
         GroupDetailsResponse.Builder response = GroupDetailsResponse.newBuilder();
         response.addAllMembers(group.getUsers().stream().map(user -> prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
