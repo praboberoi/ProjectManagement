@@ -66,6 +66,7 @@ public class GroupController {
 
     ) {
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        groups.addAll(groupService.getPaginatedGroups());
         model.addAttribute("listGroups", groups);
         model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
         model.addAttribute("user", userAccountClientService.getUser(principal));
