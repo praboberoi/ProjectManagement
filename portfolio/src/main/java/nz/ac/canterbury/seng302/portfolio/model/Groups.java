@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
 import java.util.List;
 
@@ -11,9 +10,9 @@ public class Groups {
 
     private int groupId;
 
-    private List<UserResponse> members;
+    private List<User> members;
 
-    public Groups(String shortName, String longName, int groupId, List<UserResponse> members) {
+    public Groups(String shortName, String longName, int groupId, List<User> members) {
         this.longName = longName;
         this.shortName = shortName;
         this.groupId = groupId;
@@ -44,11 +43,11 @@ public class Groups {
         this.groupId = groupId;
     }
 
-    public List<UserResponse> getMembers() {
+    public List<User> getMembers() {
         return members;
     }
 
-    public void setMembers(List<UserResponse> members) {
+    public void setMembers(List<User> members) {
         this.members = members;
     }
 
@@ -58,6 +57,6 @@ public class Groups {
         this.shortName = response.getShortName();
         this.longName = response.getLongName();
         this.groupId = response.getGroupId();
-        this.members = response.getMembersList();
+        this.members = response.getMembersList().stream().map(User::new).toList();
     }
 }

@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
+
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 import com.google.protobuf.Empty;
@@ -57,5 +60,14 @@ public class GroupService {
         GetGroupDetailsRequest groupDetailsRequest = GetGroupDetailsRequest.newBuilder().setGroupId(groupId).build();
         GroupDetailsResponse groupDetailsResponse = groupsStub.getGroupDetails(groupDetailsRequest);
         return new Groups(groupDetailsResponse);
+    }
+
+    /**
+     * Request all normal groups from the IDP.
+     * @return List of all groups
+     */
+    public List<Groups> getPaginatedGroups() {
+        PaginatedGroupsResponse response = groupsStub.getPaginatedGroups(GetPaginatedGroupsRequest.newBuilder().build());
+        return response.getGroupsList().stream().map(Groups::new).toList();
     }
 }
