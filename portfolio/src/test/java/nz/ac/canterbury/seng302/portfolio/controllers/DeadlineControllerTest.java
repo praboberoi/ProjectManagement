@@ -122,9 +122,11 @@ public class DeadlineControllerTest {
     @Test
     public void givenDeadlineExists_whenDeleteDeadlineIsRequested_thenAnAppropriateMessageIsDisplayed() {
         try {
-            when(deadlineService.deleteDeadline(1)).thenReturn("Successfully deleted " + deadline.getName());
+            when(deadlineService.deleteDeadline(1))
+                    .thenReturn("Successfully deleted " + deadline.getName());
 
-            when(deadlineService.deleteDeadline(3)).thenThrow(new IncorrectDetailsException("Failure deleting Deadline"));
+            when(deadlineService.deleteDeadline(3))
+                    .thenThrow(new IncorrectDetailsException("Failure deleting Deadline"));
 
             MockedStatic<PrincipalUtils> utilities = Mockito.mockStatic(PrincipalUtils.class);
 
@@ -143,7 +145,6 @@ public class DeadlineControllerTest {
                         .andExpect(status().is3xxRedirection())
                         .andExpect(flash().attribute("messageDanger", "Failure deleting Deadline"))
                         .andExpect(view().name("redirect:/project/{projectId}"));
-
 
             } catch (Exception e) {
                 e.printStackTrace();
