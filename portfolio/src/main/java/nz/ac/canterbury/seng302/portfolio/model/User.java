@@ -127,6 +127,10 @@ public class User implements Serializable {
         this.dateCreated = dateCreated;
     }
 
+    public void setRoles(List<UserRole> roles) {
+        this.roles = roles;
+    }
+
     public User() {
 
     }
