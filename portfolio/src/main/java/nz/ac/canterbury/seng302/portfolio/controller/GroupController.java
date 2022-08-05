@@ -89,14 +89,13 @@ public class GroupController {
      * @return Status of the request and corresponding message
      */
     @PostMapping(value = "/groups")
-    public ResponseEntity<String> createGroup(@AuthenticationPrincipal AuthState principal,
+    public String createGroup(@AuthenticationPrincipal AuthState principal,
                                               @RequestParam String shortName,
                                               @RequestParam String longName,
                                               Model model
     ) {
-        System.out.println("CONTROLLER");
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+            return "groups";
         }
         CreateGroupResponse response = groupService.createGroup(shortName, longName);
 
@@ -106,6 +105,6 @@ public class GroupController {
         } else {
             reply = ResponseEntity.status(HttpStatus.NOT_FOUND);
         }
-        return reply.body(response.getMessage());
+        return "groups";
     }
 }
