@@ -1,11 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import nz.ac.canterbury.seng302.portfolio.model.PersistentSort;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
-import nz.ac.canterbury.seng302.portfolio.utils.UserField;
-import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -23,7 +18,6 @@ import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -102,11 +96,10 @@ public class GroupController {
      */
     @GetMapping("/groups/{groupId}")
     public ModelAndView selectedGroup(
-            ModelAndView mv,
             @PathVariable int groupId
     ) {
         Groups selectedGroup = groupService.getGroupById(groupId);
-        mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView("groups::selectedGroup");
         mv.addObject("selectedGroup", selectedGroup);
         return mv;
     }
@@ -116,11 +109,9 @@ public class GroupController {
      * @return The selected group fragment
      */
     @GetMapping("/groups/unassigned")
-    public ModelAndView unassignedGroup(
-            ModelAndView mv
-    ) {
+    public ModelAndView unassignedGroup() {
         Groups selectedGroup = groupService.getMembersWithoutAGroup();
-        mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView("groups::selectedGroup");
         mv.addObject("selectedGroup", selectedGroup);
         return mv;
     }
@@ -130,11 +121,9 @@ public class GroupController {
      * @return The teacher group fragment
      */
     @GetMapping("/groups/teachers")
-    public ModelAndView teachersGroup(
-            ModelAndView mv
-    ) {
+    public ModelAndView teachersGroup() {
         Groups selectedGroup = groupService.getTeachingStaffGroup();
-        mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView("groups::selectedGroup");
         mv.addObject("selectedGroup", selectedGroup);
         return mv;
     }
