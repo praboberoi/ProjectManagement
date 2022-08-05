@@ -81,15 +81,15 @@ public class DeadlineTest {
 
     @Test
     public void givenDeadlineExists_GetDate() {
-        assertEquals(new Date(2021,1,1), deadline1.getDate());
-        assertNotEquals(new Date(2021,1,1), deadline2.getDate());
+        assertEquals(new Date(2021 -1900,1,1), deadline1.getDate());
+        assertNotEquals(new Date(2021 -1900,1,1), deadline2.getDate());
     }
 
     @Test
     public void givenDeadlineExists_SetDate() {
-        deadline1.setDate(new Date(2021, 3, 12));
-        assertEquals(new Date(2021, 3, 12), deadline1.getDate());
-        assertNotEquals(new Date(2021,1,1), deadline1.getDate());
+        deadline1.setDate(new Date(2021 - 1900, 3, 12));
+        assertEquals(new Date(2021 - 1900, 3, 12), deadline1.getDate());
+        assertNotEquals(new Date(2021 - 1900,1,1), deadline1.getDate());
     }
 
     @Test
