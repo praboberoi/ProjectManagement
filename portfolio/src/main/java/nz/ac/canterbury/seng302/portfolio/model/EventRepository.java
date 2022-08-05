@@ -22,4 +22,12 @@ public interface EventRepository extends CrudRepository<Event, Integer>{
      */
     Event findById(int eventId);
 
+    /**
+     * Obtains a list of sprints containing the given project.
+     * @param project of type Project.
+     * @return list of type Sprint.
+     */
+    List<Event> findByProject(Project project);
+
+
 }

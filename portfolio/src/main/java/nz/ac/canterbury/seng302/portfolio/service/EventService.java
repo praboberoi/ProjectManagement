@@ -3,12 +3,15 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.List;
+import java.util.Optional;
 
 /**
     Client service used to communicate to the database
@@ -16,6 +19,7 @@ import java.text.SimpleDateFormat;
 @Service
 public class EventService {
     @Autowired EventRepository eventRepository;
+    @Autowired private ProjectRepository projectRepository;
 
     /**
      * Creates a new event with a name
@@ -38,6 +42,17 @@ public class EventService {
         }
         return null;
     }
+
+    /**
+     * Returns a list of events that are related to the given project ID
+     * @param projectId of type int
+     * @return a list of events from a project specified by its Id.
+     */
+    public List<Event> getEventByProjectId(int projectId) {
+        Optional<Project> current = projectRepository.findById(projectId);
+        return current.map(project -> eventRepository.findByProject(project)).orElse(List.of());
+    }
+
 
     /**
      * Verifies the event date and time

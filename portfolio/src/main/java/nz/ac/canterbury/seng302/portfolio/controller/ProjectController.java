@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.*;
@@ -27,6 +28,7 @@ public class ProjectController {
     @Autowired private SprintService sprintService;
     @Autowired private DashboardService dashboardService;
     @Autowired private ProjectService projectService;
+    @Autowired private EventService eventService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
 
@@ -67,6 +69,7 @@ public class ProjectController {
             RedirectAttributes ra) {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            List<Event> listEvents = eventService.getEventByProjectId(projectId);
             Project project = projectService.getProjectById(projectId);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
