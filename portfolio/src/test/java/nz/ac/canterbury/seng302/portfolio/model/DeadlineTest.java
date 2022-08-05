@@ -101,7 +101,12 @@ public class DeadlineTest {
         assertEquals(deadline3, deadline2);
         deadline3.setDeadlineId(2);
         assertNotEquals(deadline3, deadline2);
-
+        deadline3.setDeadlineId(1);
+        deadline3.setName("DeadlineTest 3");
+        assertNotEquals(deadline3, deadline2);
+        deadline3.setName("DeadlineTest 2");
+        deadline3.setDate(new java.util.Date(2022 - 1900, Calendar.MARCH,1));
+        assertNotEquals(deadline3, deadline2);
         assertNotEquals(deadline1, new Object());
         assertNotEquals(deadline1, new Deadline());
     }
@@ -149,6 +154,11 @@ public class DeadlineTest {
         assertEquals(expectedString, deadline1.toString());
         assertNotEquals("", deadline1.toString());
         assertNotEquals(deadline2.toString(), deadline1.toString());
+    }
+
+    @Test
+    public void givenDeadlineExists_whenHashCodeIsRequested_thenAnIntegerIsReturned() {
+        assertInstanceOf(Integer.class, deadline1.hashCode());
     }
 
 
