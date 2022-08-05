@@ -66,20 +66,16 @@
 
       </div>
       <div class="card-body" id="projectDescription" >
-        <!--      <h5 class="card-title">Project Description:</h5>-->
         <p class="card-text">[[${project.Description}]]</p>
       </div>
 
 
-      <!--    <div id ="calenderObjects">-->
-      <!--        Calendar-->
-      <!--    </div>-->
-
     </div>
+
+<!--    Tabs for events/deadlines/milestones-->
     <div class="card" id="calendarOb" hidden>
       <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation"  href="#home">
-          <!--          <button class="nav-link active" type="button" id="plannerNav" role="tab" aria-selected="true" onclick="navToPlanner()">Planner</button>-->
 
           <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
             <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
@@ -108,16 +104,16 @@
 
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-          <!--          <p>Events 1</p>-->
           <div id="info">
             <div class="upcomingEvents">Upcoming Events:</div>
-
+<!--        Switch to show past events-->
             <div id="switch" class="form-check form-switch">
               <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
               <label class="form-check-label" for="flexSwitchCheckDefault">Show past events</label>
             </div>
           </div>
 
+<!--          Shows each individual event-->
           <div class="card" id = "eventCard" th:each="event : ${listEvents}">
             <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
             <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy')}]] [[${event.startTime}]] - End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy')}]] [[${event.endTime}]]</p>
@@ -136,7 +132,7 @@
           <div class="upcomingEvents">Upcoming Milestones:
           </div>
           <div class="card" id = "milestoneCard">
-            <h6 class="card-title">Survived in Seng 302: </h6>
+            <h6 class="card-title">Seng 302: </h6>
             <p class="eventDates">End Date: 21 July 2022 5pm</p>
           </div>
         </div>
@@ -194,35 +190,6 @@
               </div>
             </td>
           </tr>
-          <tr id="no">
-            <td colspan="100%" class="hiddenRow">
-              <div class="cc">
-                <div th:id="'R'+ ${sprint.sprintId}" class="collapse accordion-collapse" data-bs-parent=".table">
-                  <div id="cce" >
-                    <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
-                    Events <t></t>
-                    <p th:each="event : ${listEvents}">[[${event.eventName}]]
-                    <br>[[${#dates.format(event.startDate, 'dd MMM yyyy')}]]</p>
-                  </div>
-                  <div id="ccm">
-                    <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
-
-                    Deadlines
-                    <p>Coding Competion</p>
-                    <p>Start Date:21 July 2022</p>
-                  </div>
-                  <div id="cco">
-                    <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
-
-                    Milestones
-                  </div>
-                </div>
-              </div>
-            </td>
-
-          </tr>
-
-
 
         </th:block>
         </tbody>
@@ -269,29 +236,15 @@
     </div>
   </div>
 
-  <!--  Button to create new events-->
   <div  id="showEventLabel" hidden>
-    <!--  <div class="container-fluid d-flex p-0" >-->
-    <!--    <h3 class="pe-3">Events</h3>-->
-    <!--    <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">-->
-    <!--      &lt;!&ndash; If a user is a STUDENT do not show the 'create' event button !&ndash;&gt;-->
-    <!--      <div>-->
-    <!--        <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">-->
-    <!--          <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>-->
-    <!--      </div>-->
-    <!--    </div>-->
-    <!--  </div>-->
-
-    <br>
-    <br>
 
   </div>
   <div id="cal">
-    <!--    <div id="calendarMessage" class="alert text-center"></div>-->
+        <div id="calendarMessage" class="alert text-center"></div>
     <div id='calendar'/>
   </div>
 </div>
-<!--  <br>-->
+
 </div>
 
 <div class="modal fade" id="conformationModalProject" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">

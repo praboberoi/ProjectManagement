@@ -157,21 +157,14 @@ input:invalid{
 #projectCard {
     display: flex;
     height: 300px;
-    /*overflow-y: scroll;*/
 }
 
 #myTab{
     padding-left: 15px;
 }
 
-/*.card {*/
-/*    width: 600px;*/
-/*    !*display: flex;*!*/
-/*}*/
-
 #detailsCard {
     width: 800px;
-    /*height: 250px;*/
 }
 
 #calendarOb {
@@ -215,7 +208,6 @@ input:invalid{
 
 #cce, #ccm,#cco {
     width: 33.33%;
-    /*display: inline;*/
     float: left;
     padding-top: 10px;
     padding-bottom: 10px;
@@ -227,9 +219,7 @@ input:invalid{
 td.hiddenRow {
     background-color: #ececec; /* Assuming you want the hover color to be white */
 }
-/*.collapse-row.collapsed + tr {*/
-/*    display: none;*/
-/*}*/
+
 
 td {
     word-wrap: break-word;
@@ -256,9 +246,8 @@ div.upcomingEvents  {
     display: flex;
     justify-content: space-between;
 }
-/*#switch{*/
-/*    float: right;*/
-/*}*/
+
+
 .mobile-only{
     display:none
 }
