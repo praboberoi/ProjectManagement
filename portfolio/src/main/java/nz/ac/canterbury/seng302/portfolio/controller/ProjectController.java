@@ -71,6 +71,7 @@ public class ProjectController {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             Project project = projectService.getProjectById(projectId);
+            model.addAttribute("listEvents", listEvents);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
