@@ -207,12 +207,28 @@ public class UserControllerTests {
    }
 
    /**
+    * Tests that the user cannot delete a role of a user that doesn't exist
+    * @throws Exception
+    */
+    @Test
+    void givenTeacherUser_whenRemoveRoleCalled_thenNoUserError() throws Exception {
+        UserResponse user = createTestUserResponse(2).addRoles(UserRole.TEACHER).build();
+        when(userAccountClientService.getUser(null)).thenReturn(user);
+        when(userAccountClientService.getUser(1)).thenReturn(null);
+        this.mockMvc
+            .perform(delete("/usersList/removeRole?userId=1&role=STUDENT"))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("User cannot be found in database"));
+   }
+
+   /**
     * Tests that the user will not be able to add a role of higher permissions
     * @throws Exception
     */
     @Test
     void givenTeacherUser_whenAddCourseAdminRoleCalled_thenPermsTooLow() throws Exception {
         UserResponse user = createTestUserResponse(2).addRoles(UserRole.TEACHER).build();
+        when(userAccountClientService.checkUserIsTeacherOrAdmin(null)).thenReturn(true);
         when(userAccountClientService.getUser(null)).thenReturn(user);
         this.mockMvc
             .perform(post("/user/1/addRole?role=COURSE_ADMINISTRATOR"))
@@ -268,5 +284,23 @@ public class UserControllerTests {
             .perform(post("/user/1/addRole?role=TEACHER"))
             .andExpect(status().isOk())
             .andExpect(content().string("Successfully added TEACHER"));
+   }
+
+   /**
+    * Tests that an error will be thrown if a user doesn't exist
+    * @throws Exception
+    */
+    @Test
+    void givenAdminUser_whenAddTeacherRoleCalled_thenUserNotExist() throws Exception {
+        UserResponse user = createTestUserResponse(2).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        when(userAccountClientService.getUser(null)).thenReturn(user);
+        when(userAccountClientService.checkUserIsTeacherOrAdmin(null)).thenReturn(true);
+        when(userAccountClientService.addRoleToUser(1, UserRole.TEACHER)).thenReturn(
+            UserRoleChangeResponse.newBuilder().setIsSuccess(false).setMessage("User could not be found.").build()
+        );
+        this.mockMvc
+            .perform(post("/user/1/addRole?role=TEACHER"))
+            .andExpect(status().isNotFound())
+            .andExpect(content().string("User could not be found."));
    }
 }
