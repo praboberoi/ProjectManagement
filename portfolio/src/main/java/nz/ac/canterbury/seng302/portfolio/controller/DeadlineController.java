@@ -28,7 +28,7 @@ public class DeadlineController {
     @Autowired
     private DeadlineService deadlineService;
 
-    private final String redirectToProjectPage = "redirect:/project/{projectId}";
+    private final static String redirectToProjectPage = "redirect:/project/{projectId}";
 
     public DeadlineController(DeadlineService deadlineService) {
         this.deadlineService = deadlineService;
