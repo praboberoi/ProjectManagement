@@ -21,7 +21,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.ui.Model;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -44,12 +43,6 @@ public class UserController {
 
     public UserController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
-    }
-
-    @ModelAttribute
-    public void addAttributes(@AuthenticationPrincipal AuthState principal, Model model) {
-        model.addAttribute("adminOrTeacher", userAccountClientService.checkUserIsTeacherOrAdmin(principal));
-        model.addAttribute("apiPrefix", apiPrefix);
     }
 
     /**
@@ -161,28 +154,25 @@ public class UserController {
         }
         if (highestUserRole.get() == 0) {
             return new ResponseEntity<>("You do not have these permissions", HttpStatus.FORBIDDEN);
-
         }
 
         if (!user.getRolesList().contains(role)) {
             return new ResponseEntity<>("User does not have this role.", HttpStatus.BAD_REQUEST);
-
         }
 
         if (user.getRolesList().size() == 1) {
             return new ResponseEntity<>("User must have a role.", HttpStatus.BAD_REQUEST);
-
         }
 
         if (highestUserRole.get() < role.ordinal()) {
             return new ResponseEntity<>("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
-
         }
 
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), role);
         if (!response.getIsSuccess()) {
             return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+        
         return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
     }
 
@@ -203,7 +193,6 @@ public class UserController {
 
         if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
             return new ResponseEntity<>("Insufficient Permissions", HttpStatus.FORBIDDEN);
-
         }
 
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);

@@ -22,14 +22,6 @@ public class RegisterController {
 
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
-    
-    /**
-    * Adds common model elements used by all controller methods.
-    */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
 
     public RegisterController(UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
