@@ -188,7 +188,7 @@ input:invalid{
 #eventCard, #deadlineCard, #milestoneCard {
     margin-left: 20px;
     margin-right: 20px;
-    margin-top: 15px;
+    margin-bottom: 15px;
     padding-left: 10px;
 }
 
@@ -236,9 +236,29 @@ td {
     max-width: 180px;
 }
 
-
-
-
+.addButton {
+    margin-left: 20px;
+}
+#info {
+    display: flex;
+}
+label.form-check-label {
+    color: #636363;
+}
+.upcomingEvents, #switch {
+    margin-left: 30px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    width: 170px;
+}
+div.upcomingEvents  {
+    display: flex;
+    justify-content: space-between;
+}
+/*#switch{*/
+/*    float: right;*/
+/*}*/
 .mobile-only{
     display:none
 }

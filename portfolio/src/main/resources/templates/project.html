@@ -95,24 +95,46 @@
             <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
             Milestones</button>
         </li>
+        <li class="addButton">
+          <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+            <!-- If a user is a STUDENT do not show the 'create' event button !-->
+            <div>
+              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
+            </div>
+          </div>
+        </li>
       </ul>
 
       <div class="tab-content" id="myTabContent">
-        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab" >
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
           <!--          <p>Events 1</p>-->
+          <div id="info">
+            <div class="upcomingEvents">Upcoming Events:</div>
+
+            <div id="switch" class="form-check form-switch">
+              <input class="form-check-input" type="checkbox" id="flexSwitchCheckDefault">
+              <label class="form-check-label" for="flexSwitchCheckDefault">Show past events</label>
+            </div>
+          </div>
+
           <div class="card" id = "eventCard" th:each="event : ${listEvents}">
             <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
-            <p class="eventDates">Start Date: 21 April 2022 5pm - End Date: 21 July 2022 5pm</p>
+            <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy')}]] [[${event.startTime}]] - End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy')}]] [[${event.endTime}]]</p>
           </div>
 
         </div>
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+          <div class="upcomingEvents">Upcoming Deadlines:
+          </div>
           <div class="card" id = "deadlineCard">
             <h6 class="card-title">End of Sprint 5: </h6>
             <p class="eventDates">End Date: 21 July 2022 5pm</p>
           </div>
         </div>
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+          <div class="upcomingEvents">Upcoming Milestones:
+          </div>
           <div class="card" id = "milestoneCard">
             <h6 class="card-title">Survived in Seng 302: </h6>
             <p class="eventDates">End Date: 21 July 2022 5pm</p>
@@ -178,7 +200,9 @@
                 <div th:id="'R'+ ${sprint.sprintId}" class="collapse accordion-collapse" data-bs-parent=".table">
                   <div id="cce" >
                     <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
-                    Events
+                    Events <t></t>
+                    <p th:each="event : ${listEvents}">[[${event.eventName}]]
+                    <br>[[${#dates.format(event.startDate, 'dd MMM yyyy')}]]</p>
                   </div>
                   <div id="ccm">
                     <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
@@ -247,16 +271,16 @@
 
   <!--  Button to create new events-->
   <div  id="showEventLabel" hidden>
-    <div class="container-fluid d-flex p-0" >
-      <h3 class="pe-3">Events</h3>
-      <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-        <!-- If a user is a STUDENT do not show the 'create' event button !-->
-        <div>
-          <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
-            <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
-        </div>
-      </div>
-    </div>
+    <!--  <div class="container-fluid d-flex p-0" >-->
+    <!--    <h3 class="pe-3">Events</h3>-->
+    <!--    <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">-->
+    <!--      &lt;!&ndash; If a user is a STUDENT do not show the 'create' event button !&ndash;&gt;-->
+    <!--      <div>-->
+    <!--        <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">-->
+    <!--          <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>-->
+    <!--      </div>-->
+    <!--    </div>-->
+    <!--  </div>-->
 
     <br>
     <br>
