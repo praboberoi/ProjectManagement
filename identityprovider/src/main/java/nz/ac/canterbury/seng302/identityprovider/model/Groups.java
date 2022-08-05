@@ -14,10 +14,10 @@ public class Groups {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int groupId;
 
-    @Column(unique = true, nullable = false, length = 15)
+    @Column(unique = true, nullable = false, length = 50)
     private String shortName;
 
-    @Column(unique = true, nullable = false, length = 25)
+    @Column(unique = true, nullable = false, length = 100)
     private String longName;
 
     @ManyToMany

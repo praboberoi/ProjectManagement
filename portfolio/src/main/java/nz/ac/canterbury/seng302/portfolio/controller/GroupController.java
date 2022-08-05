@@ -15,6 +15,7 @@ import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,19 +93,24 @@ public class GroupController {
     public String createGroup(@AuthenticationPrincipal AuthState principal,
                                               @RequestParam String shortName,
                                               @RequestParam String longName,
-                                              Model model
+                                              Model model,
+                              RedirectAttributes ra
     ) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
-            return "groups";
+            ra.addFlashAttribute("messageDanger", "Insufficient permissions to create group.");
+            return "redirect:/groups";
         }
         CreateGroupResponse response = groupService.createGroup(shortName, longName);
-
+        model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
+        model.addAttribute("user", userAccountClientService.getUser(principal));
         ResponseEntity.BodyBuilder reply;
         if (response.getIsSuccess()) {
             reply = ResponseEntity.status(HttpStatus.OK);
+            ra.addFlashAttribute("messageSuccess", response.getMessage());
         } else {
             reply = ResponseEntity.status(HttpStatus.NOT_FOUND);
+            ra.addFlashAttribute("messageDanger", response.getMessage());
         }
-        return "groups";
+        return "redirect:/groups";
     }
 }

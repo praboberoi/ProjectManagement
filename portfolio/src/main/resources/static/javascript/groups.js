@@ -12,6 +12,9 @@ function checkLongName() {
 
     let charMessage = document.getElementById("charCountLong");
     let charCount = groupLongNameElement.value.length;
+    if (charCount < 1) {
+
+    }
     charMessage.innerText = charCount + ' '
 
 }

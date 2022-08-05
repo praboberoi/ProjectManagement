@@ -23,6 +23,15 @@
     <div class="page-title">
         <h2 id="name">Groups</h2>
     </div>
+    <div id="toRefresh">
+        <br>
+        <div th:if="${messageSuccess}" class="alert alert-success text-center">
+            [[${messageSuccess}]]
+        </div>
+        <div th:if="${messageDanger}" class="alert alert-danger text-center">
+            [[${messageDanger}]]
+        </div>
+    </div>
     <br>
     <div class="alert alert-danger text-center" id="messageDanger" hidden></div>
     <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
