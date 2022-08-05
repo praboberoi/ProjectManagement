@@ -31,4 +31,18 @@ public interface GroupsRepository extends PagingAndSortingRepository<Groups, Int
      * @return number of groups deleted (1=success, 0=failed)
      */
     long deleteGroupByGroupId(int groupId);
+
+    /**
+     * Get the group that has the short name selected.
+     * @param groupShortName group to get
+     * @return
+     */
+    Groups getAllByShortNameEquals(String groupShortName);
+
+    /**
+     * Get the group that has the long name selected.
+     * @param groupLongName group to get
+     * @return
+     */
+    Groups getAllByLongNameEquals(String groupLongName);
 }

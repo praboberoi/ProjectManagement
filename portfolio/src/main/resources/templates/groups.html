@@ -57,15 +57,16 @@
                 <div class="groupForm">
                     <form id="createGroupForm" method="post" th:object="${groups}" th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}" >
                         <div class="mb-3">
-                            <label class="col-form-label">Group Short Name</label>
-                            <input style="font-size:20px;" type="text" class="form-control required" name="shortName" th:value="${shortName}"id="shortName" placeholder="New Group" maxlength="50" onkeyup="checkShortName()">
+                            <label class="col-form-label required">Group Short Name</label>
+                            <input style="font-size:20px;" type="text" class="form-control required" name="shortName" th:value="${shortName}"id="shortName" placeholder="New Group" maxlength="50" onkeyup="checkShortName()" required>
                             <span id="charCount" th:value="${charCount}">0 </span> / 50 characters used.
-                            <p class="error-msg"></p>
+                            <p id="shortNameError" th:text="${shortNameError}" class="error-msg"></p>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Group Long Name</label>
-                            <input style="font-size:20px;" type="text" class="form-control mt-50" th:value="${longName}" name="longName" id="longName" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()"/>
+                            <label class="form-label required">Group Long Name</label>
+                            <input style="font-size:20px;" type="text" class="form-control mt-50" th:value="${longName}" name="longName" id="longName" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()" required/>
                             <span id="charCountLong" th:value="${charCount}">0 </span> / 100 characters used.
+                            <p id="longNameError" th:text="${longNameError}" class="error-msg"></p>
                         </div>
                         <div class="modal-footer">
                                 <button type= "submit" id="save-submit-button" class="btn btn-outline-primary me-3">

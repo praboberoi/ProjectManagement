@@ -88,6 +88,10 @@ a.project-name {
 
 }
 
+.required:after {
+    content:"*";
+    color: red;
+}
 
 #back-btn{
     margin-top: 8px;
@@ -106,6 +110,9 @@ input:invalid{
 
 .asterisk {
     color: red;
+}
+.form-control{
+    border-color: #07173B;
 }
 
 .formError {

@@ -93,6 +93,9 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     @Override
     public void createGroup(CreateGroupRequest request, StreamObserver<CreateGroupResponse> responseObserver) {
         CreateGroupResponse.Builder reply = CreateGroupResponse.newBuilder();
+        if (groupsRepository.getAllByShortNameEquals(request.getShortName()) == null) {
+
+        } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) == null)
         try {
             Groups newGroup = new Groups(request.getLongName(), request.getShortName());
             groupsRepository.save(newGroup);
