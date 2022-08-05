@@ -95,7 +95,7 @@ public class GroupControllerTest {
         Groups selectedGroup = new Groups("Team: 400", "Bad Request", 1, null);
         when(groupService.getGroupById(1)).thenReturn(selectedGroup);
         mockMvc
-            .perform(get("/groups/unassigned"))
+            .perform(get("/groups/1"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("selectedGroup", selectedGroup));
     }
