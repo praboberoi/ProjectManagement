@@ -41,4 +41,4 @@ function getSelectedGroup(selectedGroupId) {
 
     httpRequest.open('GET', apiPrefix + `/groups/${selectedGroupId}`);
     httpRequest.send();
-};
+}
