@@ -11,9 +11,11 @@ import java.util.Collection;
 import java.util.List;
 
 import org.hamcrest.Matchers;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -43,9 +45,16 @@ public class GroupControllerTest {
     @InjectMocks
     private ControllerAdvisor controllerAdvisor;
 
+    private static MockedStatic<PrincipalUtils> mockedUtil;
+
     @BeforeAll
     private static void initStaticMocks() {
-        mockStatic(PrincipalUtils.class);
+        mockedUtil = mockStatic(PrincipalUtils.class);
+    }
+
+    @AfterAll
+    public static void close() {
+        mockedUtil.close();
     }
 
     /**
