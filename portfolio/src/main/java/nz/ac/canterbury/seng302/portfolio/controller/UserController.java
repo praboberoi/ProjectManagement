@@ -147,32 +147,33 @@ public class UserController {
         UserResponse user = userAccountClientService.getUser(parseInt(userId));
         AtomicInteger highestUserRole = new AtomicInteger(0);
         loggedInUser.getRolesList().forEach(usersRole ->  {
-            if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());});
+            if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());
+        });
 
         if (user == null) {
-            return new ResponseEntity<>("User cannot be found in database", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User cannot be found in database", HttpStatus.NOT_FOUND);
         }
         if (highestUserRole.get() == 0) {
             return new ResponseEntity<>("You do not have these permissions", HttpStatus.FORBIDDEN);
         }
 
         if (!user.getRolesList().contains(role)) {
-            return new ResponseEntity<>("User does not have this role.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User does not have this role.", HttpStatus.NOT_FOUND);
         }
 
         if (user.getRolesList().size() == 1) {
-            return new ResponseEntity<>("User must have a role.", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User must have a role.", HttpStatus.METHOD_NOT_ALLOWED);
         }
 
         if (highestUserRole.get() < role.ordinal()) {
-            return new ResponseEntity<>("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User cannot delete this " + role + " role", HttpStatus.FORBIDDEN);
         }
 
         UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), role);
         if (!response.getIsSuccess()) {
             return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        
+
         return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
     }
 
@@ -194,7 +195,7 @@ public class UserController {
         if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
             return new ResponseEntity<>("Insufficient Permissions", HttpStatus.FORBIDDEN);
         }
-
+        
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
         if (!response.getIsSuccess()) {
             switch(response.getMessage()) {
