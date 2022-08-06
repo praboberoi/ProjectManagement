@@ -123,4 +123,24 @@ public class GroupController {
         mv.addObject("selectedGroup", selectedGroup);
         return mv;
     }
+
+    /**
+     * Removes the selected users from the selected group
+     * @param listOfUserIds List of users to remove in csv format
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param principal Authentication information containing user info
+     * @return Response with status code and message
+     */
+    @PostMapping("/groups/removeMembers")
+    public ResponseEntity<String> sprintEditForm(
+            String listOfUserIds,
+            Model model,
+            @AuthenticationPrincipal AuthState principal){
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+        List<Integer> userIds = Arrays.stream(listOfUserIds.split(",")).map(Integer::parseInt).toList();
+        
+        return ResponseEntity.status(HttpStatus.OK).body("Users removed from group.");
+    }
 }
