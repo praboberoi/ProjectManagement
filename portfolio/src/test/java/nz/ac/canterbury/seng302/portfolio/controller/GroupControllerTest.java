@@ -55,7 +55,7 @@ public class GroupControllerTest {
         when(groupService.deleteGroup(anyInt())).thenReturn(DeleteGroupResponse.newBuilder().setIsSuccess(true).setMessage("Group 1 has been deleted").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
-            .perform(delete("/groups/1/delete"))
+            .perform(delete("/groups/1"))
             .andExpect(status().isOk());
     }
 
@@ -68,7 +68,7 @@ public class GroupControllerTest {
         when(groupService.deleteGroup(anyInt())).thenReturn(DeleteGroupResponse.newBuilder().setIsSuccess(true).setMessage("Group 1 has been deleted").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         mockMvc
-            .perform(delete("/groups/1/delete"))
+            .perform(delete("/groups/1"))
             .andExpect(status().isForbidden());
     }
 

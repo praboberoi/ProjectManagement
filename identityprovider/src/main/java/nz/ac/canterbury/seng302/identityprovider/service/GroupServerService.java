@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.protobuf.Empty;
 
@@ -67,10 +68,12 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
      * @param responseObserver Returns to previous method with data
      */
     @Override
+    @Transactional
     public void deleteGroup(DeleteGroupRequest request, StreamObserver<DeleteGroupResponse> responseObserver) {
         DeleteGroupResponse.Builder reply = DeleteGroupResponse.newBuilder();
         try {
-            if (groupsRepository.deleteGroupByGroupId(request.getGroupId()) == 1) {
+            if (groupsRepository.existsById(request.getGroupId())) {
+                groupsRepository.deleteById(request.getGroupId());
                 logger.info("Group {} has been deleted", request.getGroupId());
                 reply.setIsSuccess(true);
                 reply.setMessage(String.format("Group %d deleted successfully", request.getGroupId()));

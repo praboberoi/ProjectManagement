@@ -74,8 +74,9 @@
                                     <li class="nav-item" role="presentation">
                                       <button class="nav-link active" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab" aria-controls="members" aria-selected="true">Members</button>
                                     </li>
-                                    <li class="nav-item" role="presentation">
-                                      <button class="nav-link" id="edit-group-tab" data-bs-toggle="tab" data-bs-target="#edit-group" type="button" role="tab" aria-controls="edit-group" aria-selected="false">Edit Groups</button>
+                                    
+                                    <li th:if="${adminOrTeacher && selectedGroup.groupId != 0}" class="nav-item" role="presentation">
+                                      <button class="nav-link" id="edit-group-tab" data-bs-toggle="tab" data-bs-target="#edit-group" type="button" role="tab" aria-controls="edit-group" aria-selected="false">Edit Group</button>
                                     </li>
                                 </ul>
                                 <div class="tab-content" id="myTabContent">
@@ -83,7 +84,13 @@
                                         <p th:text="${selectedGroup.members}" />
                                     </div>
                                     <div class="tab-pane" id="edit-group" role="tabpanel" aria-labelledby="edit-group-tab">
-                                        
+                                        <div class="container-fluid pt-2">
+                                            <button type="button" class="btn btn-outline-primary me-2">
+                                            <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+                                            
+                                            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModal" th:onclick="'deleteGroup(' + ${selectedGroup.groupId} + ')'">
+                                            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"> Delete</button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
