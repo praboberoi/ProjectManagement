@@ -70,7 +70,22 @@
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${selectedGroup.shortName}" />
                                 <h3 class="card-text" th:text="${selectedGroup.longName}" />
-                                <p th:text="${selectedGroup.members}" />
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                      <button class="nav-link active" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab" aria-controls="members" aria-selected="true">Members</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                      <button class="nav-link" id="edit-group-tab" data-bs-toggle="tab" data-bs-target="#edit-group" type="button" role="tab" aria-controls="edit-group" aria-selected="false">Edit Groups</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane show active" id="members" role="tabpanel" aria-labelledby="members-tab">
+                                        <p th:text="${selectedGroup.members}" />
+                                    </div>
+                                    <div class="tab-pane" id="edit-group" role="tabpanel" aria-labelledby="edit-group-tab">
+                                        
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -120,6 +135,7 @@
 <script th:inline="javascript">
     let apiPrefix = [[${apiPrefix}]];
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 <script th:src="@{{apiPrefix}/javascript/groups.js(apiPrefix=${apiPrefix})}"></script>
 </body>
 </html>
