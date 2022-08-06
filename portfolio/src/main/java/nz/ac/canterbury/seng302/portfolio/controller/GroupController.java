@@ -18,6 +18,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -56,7 +57,7 @@ public class GroupController {
 
     ) {
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
-        groups.addAll(groupService.getPaginatedGroups());
+        groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         model.addAttribute("listGroups", groups);
         model.addAttribute("selectedGroup", groupService.getMembersWithoutAGroup());
         return "groups";
