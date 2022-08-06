@@ -98,7 +98,7 @@ public class UserControllerTests {
    /**
     * Test's the getTimePassed function of Account Controller, in this we are testing the blue sky that everything
     * works after 20 days pass
-    * @throws Exception Expection thrown during checking time
+    * @throws Exception Exception thrown during mockMVC run
     */
    @Test
    void givenUserLoggedIn_whenUserListIsRequested_thenUsersAreReturned() throws Exception{
@@ -124,7 +124,7 @@ public class UserControllerTests {
 
    /**
     * Tests that the user will get a successful result when deleting a role
-    * @throws Exception
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenUserHasRole_whenRemoveRoleCalled_thenRoleDeletedSuccessfully() throws Exception {
@@ -139,8 +139,8 @@ public class UserControllerTests {
    }
 
    /**
-    * Tests that a student user will get an access denined result when deleting a role
-    * @throws Exception
+    * Tests that a student user will get an access denied result when deleting a role
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenStudentUserAndUserHasRole_whenRemoveRoleCalled_thenPermissionDenied() throws Exception {
@@ -156,8 +156,8 @@ public class UserControllerTests {
    }
 
    /**
-    * Tests that the user will get an access denined result when deleting a role
-    * @throws Exception
+    * Tests that the user will get an access denied result when deleting a role
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenTeacherUserAndUserDoesntHaveRole_whenRemoveRoleCalled_thenPermissionDenied() throws Exception {
@@ -174,7 +174,7 @@ public class UserControllerTests {
 
    /**
     * Tests that the user will not be able to delete the last role on a user
-    * @throws Exception
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenTeacherUserAndUserHasStudentRole_whenRemoveRoleCalled_thenUserMustHaveRole() throws Exception {
@@ -191,7 +191,7 @@ public class UserControllerTests {
 
    /**
     * Tests that the user will not be able to delete a role of higher permissions
-    * @throws Exception
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenTeacherUserAndUserHasCourseAdminRole_whenRemoveRoleCalled_thenPermsTooLow() throws Exception {
@@ -208,7 +208,7 @@ public class UserControllerTests {
 
    /**
     * Tests that the user cannot delete a role of a user that doesn't exist
-    * @throws Exception
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenTeacherUser_whenRemoveRoleCalled_thenNoUserError() throws Exception {
@@ -223,7 +223,7 @@ public class UserControllerTests {
 
    /**
     * Tests that the user will not be able to add a role of higher permissions
-    * @throws Exception
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenTeacherUser_whenAddCourseAdminRoleCalled_thenPermsTooLow() throws Exception {
@@ -238,7 +238,7 @@ public class UserControllerTests {
 
    /**
     * Tests that the user will not be able to add a role as a student
-    * @throws Exception
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenStudentUser_whenAddStudentRoleCalled_thenPermsTooLow() throws Exception {
@@ -252,7 +252,7 @@ public class UserControllerTests {
 
    /**
     * Tests that the user will not be able to add an existing role to a user
-    * @throws Exception
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenAdminUserAndUserWithStudentRole_whenAddStudentRoleCalled_thenConflict() throws Exception {
@@ -269,8 +269,8 @@ public class UserControllerTests {
    }
 
    /**
-    * Tests that the a role will be added to a user in correct conditions
-    * @throws Exception
+    * Tests that a role will be added to a user in correct conditions
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenAdminUserAndUserWithStudentRole_whenAddTeacherRoleCalled_thenRoleAddedSuccessfully() throws Exception {
@@ -288,7 +288,7 @@ public class UserControllerTests {
 
    /**
     * Tests that an error will be thrown if a user doesn't exist
-    * @throws Exception
+    * @throws Exception Exception thrown during mockMVC run
     */
     @Test
     void givenAdminUser_whenAddTeacherRoleCalled_thenUserNotExist() throws Exception {
