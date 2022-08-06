@@ -108,7 +108,7 @@ function removeUsers(groupId) {
             } else if (httpRequest.status === 400) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
-                messageDanger.innerText = "Bad Request";
+                messageDanger.innerText = httpRequest.responseText;
             }
         }
     }
