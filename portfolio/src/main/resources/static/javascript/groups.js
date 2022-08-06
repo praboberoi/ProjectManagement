@@ -44,6 +44,31 @@ function getSelectedGroup(selectedGroupId) {
 }
 
 /**
+ * Calls the server to delete the selected group and show the unassgned members group on success
+ * @param groupId Id of the group to delete
+ */
+function deleteGroup(groupId) {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                messageSuccess.hidden = false
+                messageDanger.hidden = true;
+                messageSuccess.innerText = httpRequest.responseText;
+                getSelectedGroup("unassigned")
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.responseText;
+            }
+        }
+    }
+
+    httpRequest.open('DELETE', apiPrefix + `/groups/${groupId}`);
+    httpRequest.send();
+}
+
+/**
  * Selects and highlights the group members selected. Functions with shift and control clicking.
  * @param event The click event on the group member
  */
@@ -92,29 +117,4 @@ function selectUser(event) {
         event.target.closest('tr').classList.add('selected');
         event.target.closest('tr').classList.add('table-info');
     }
-}
-
-/**
- * Calls the server to delete the selected group and show the unassgned members group on success
- * @param groupId Id of the group to delete
- */
-function deleteGroup(groupId) {
-    let httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function (){
-        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                messageSuccess.hidden = false
-                messageDanger.hidden = true;
-                messageSuccess.innerText = httpRequest.responseText;
-                getSelectedGroup("unassigned")
-            } else {
-                messageDanger.hidden = false;
-                messageSuccess.hidden = true;
-                messageDanger.innerText = httpRequest.responseText;
-            }
-        }
-    }
-
-    httpRequest.open('DELETE', apiPrefix + `/groups/${groupId}`);
-    httpRequest.send();
 }
