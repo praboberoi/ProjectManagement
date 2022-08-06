@@ -104,7 +104,7 @@ function removeUsers(groupId) {
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                document.getElementById("selectedGroup").outerHTML = httpRequest.responseText;
+                getSelectedGroup(groupId)
             } else if (httpRequest.status === 400) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
@@ -113,7 +113,7 @@ function removeUsers(groupId) {
         }
     }
     
-    httpRequest.open('POST', apiPrefix + `/groups/removeMembers`);
+    httpRequest.open('POST', apiPrefix + `/groups/${groupId}/removeMembers`);
     let params = new FormData();
     document.querySelectorAll('.selected').forEach(row => {
         userIds.push(row.querySelector('.userId').textContent)

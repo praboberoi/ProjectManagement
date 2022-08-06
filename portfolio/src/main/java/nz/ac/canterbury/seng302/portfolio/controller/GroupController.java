@@ -14,6 +14,8 @@ import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
+
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Arrays;
@@ -131,8 +133,9 @@ public class GroupController {
      * @param principal Authentication information containing user info
      * @return Response with status code and message
      */
-    @PostMapping("/groups/removeMembers")
+    @PostMapping("/groups/{groupId}/removeMembers")
     public ResponseEntity<String> sprintEditForm(
+            @PathVariable Integer groupId,
             String listOfUserIds,
             Model model,
             @AuthenticationPrincipal AuthState principal){
@@ -140,7 +143,11 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
         List<Integer> userIds = Arrays.stream(listOfUserIds.split(",")).map(Integer::parseInt).toList();
-        
-        return ResponseEntity.status(HttpStatus.OK).body("Users removed from group.");
+        RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
+        if (response.getIsSuccess()) {
+            return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
+        }
     }
 }
