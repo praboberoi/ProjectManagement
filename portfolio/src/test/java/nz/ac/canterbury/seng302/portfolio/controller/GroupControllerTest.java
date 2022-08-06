@@ -8,6 +8,8 @@ import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 
 import java.util.Collection;
+import java.util.List;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -78,8 +80,8 @@ public class GroupControllerTest {
      */
     @Test
     void whenGroupPageRequested_thenAllGroupsReturned() throws Exception{
-        when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, null));
-        when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, null));
+        when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, List.of()));
+        when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, List.of()));
         mockMvc
             .perform(get("/groups"))
             .andExpect(status().isOk())
