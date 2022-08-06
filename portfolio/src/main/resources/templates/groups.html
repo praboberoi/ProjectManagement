@@ -69,27 +69,42 @@
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${selectedGroup.shortName}" />
                                 <h3 class="card-text" th:text="${selectedGroup.longName}" />
-                                <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
-                                    <table class="table table-bordered table-hover">
-                                      <thead class = "table-light">
-                                      <tr>
-                                        <th scope="col" style="width:auto">Username</th>
-                                        <th scope="col" style="width:auto">Name</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                        <th:block th:each="user : ${selectedGroup.members}">
-                                          <tr draggable="true" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" role="button" th:onclick="'selectUser(event)'">
-                                            <td th:id="'user' + ${user.userId} + 'username'">
-                                                <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
-                                                [[${user.username}]]
-                                            </td>
-                                            <td th:id="'user' + ${user.userId} + 'fullname'">
-                                                [[${user.firstName}]] [[${user.lastName}]]
-                                            </td>
-                                        </th:block>
-                                      </tbody>
-                                    </table>
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                      <button class="nav-link active" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab" aria-controls="members" aria-selected="true">Members</button>
+                                    </li>
+                                    <li class="nav-item" role="presentation">
+                                      <button class="nav-link" id="edit-group-tab" data-bs-toggle="tab" data-bs-target="#edit-group" type="button" role="tab" aria-controls="edit-group" aria-selected="false">Edit Groups</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane show active" id="members" role="tabpanel" aria-labelledby="members-tab">
+                                        <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
+                                            <table class="table table-bordered table-hover">
+                                              <thead class = "table-light">
+                                              <tr>
+                                                <th scope="col" style="width:auto">Username</th>
+                                                <th scope="col" style="width:auto">Name</th>
+                                              </tr>
+                                              </thead>
+                                              <tbody>
+                                                <th:block th:each="user : ${selectedGroup.members}">
+                                                  <tr draggable="true" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" role="button" th:onclick="'selectUser(event)'">
+                                                    <td th:id="'user' + ${user.userId} + 'username'">
+                                                        <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
+                                                        [[${user.username}]]
+                                                    </td>
+                                                    <td th:id="'user' + ${user.userId} + 'fullname'">
+                                                        [[${user.firstName}]] [[${user.lastName}]]
+                                                    </td>
+                                                </th:block>
+                                              </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="edit-group" role="tabpanel" aria-labelledby="edit-group-tab">
+                                        
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -140,6 +155,7 @@
 <script th:inline="javascript">
     let apiPrefix = [[${apiPrefix}]];
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 <script th:src="@{{apiPrefix}/javascript/groups.js(apiPrefix=${apiPrefix})}"></script>
 </body>
 </html>
