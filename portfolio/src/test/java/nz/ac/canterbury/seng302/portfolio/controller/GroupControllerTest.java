@@ -1,11 +1,16 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -28,14 +33,27 @@ public class GroupControllerTest {
     @MockBean
     private GroupService groupService;
 
+    @MockBean
+    private UserAccountClientService userAccountClientService;
+
+    @InjectMocks
+    private ControllerAdvisor controllerAdvisor;
+
+    private static MockedStatic<PrincipalUtils> mockedUtil;
+
     @BeforeAll
     private static void initStaticMocks() {
-        mockStatic(PrincipalUtils.class);
+        mockedUtil = mockStatic(PrincipalUtils.class);
+    }
+
+    @AfterAll
+    public static void close() {
+        mockedUtil.close();
     }
 
     /**
      * Checks that the group delete functionality will be called correctly for teachers
-     * @throws Exception Expection thrown during mockmvc runtime
+     * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
     void givenTeacherUserAndGroupExists_whenDeleteGroupCalled_thenGroupIsDeleted() throws Exception{
