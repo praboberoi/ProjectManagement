@@ -70,4 +70,15 @@ public class GroupService {
         PaginatedGroupsResponse response = groupsStub.getPaginatedGroups(GetPaginatedGroupsRequest.newBuilder().build());
         return response.getGroupsList().stream().map(Groups::new).toList();
     }
+
+    /**
+     * Request the removal of users from the group from the IDP.
+     * @param userIds List of users to be removed
+     * @param groupId Group users are to be removed from
+     * @return Success status and message
+     */
+    public RemoveGroupMembersResponse removeGroupMembers(List<Integer> userIds, int groupId) {
+        RemoveGroupMembersRequest request = RemoveGroupMembersRequest.newBuilder().setGroupId(groupId).addAllUserIds(userIds).build();
+        return groupsStub.removeGroupMembers(request);
+    }
 }
