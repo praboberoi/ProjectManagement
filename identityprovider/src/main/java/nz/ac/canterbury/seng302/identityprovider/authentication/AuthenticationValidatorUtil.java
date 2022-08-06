@@ -28,7 +28,7 @@ public class AuthenticationValidatorUtil {
         boolean tokenIsValid;
         try {
             tokenIsValid = jwtTokenUtil.validateToken(sessionToken);
-            if(!jwtTokenUtil.validateTokenRoles(sessionToken, user == null ? null : user.getRoles())) {
+            if(user != null && !jwtTokenUtil.validateTokenRoles(sessionToken, user.getRoles())) {
                 sessionToken = jwtTokenUtil.generateTokenForUser(user.getUsername(), user.getUserId(), user.getFirstName() + user.getLastName(), user.getRoles());
             }
         } catch (SignatureException | MalformedJwtException e) {

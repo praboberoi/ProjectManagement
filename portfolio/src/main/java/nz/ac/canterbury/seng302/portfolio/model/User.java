@@ -35,6 +35,20 @@ public class User implements Serializable {
 
     private Date dateCreated;
 
+    /**
+     * Constructor for project
+     * @param userId The user's id
+     * @param username The user's username
+     * @param firstName The user's first name
+     * @param lastName The user's last name
+     * @param nickname The user's nickname
+     * @param bio The user's bio
+     * @param pronouns The user's pronouns
+     * @param email The user's email address
+     * @param profileImagePath The path for the user's profile image
+     * @param roles The user's roles
+     * @param dateCreated The date the user was created
+     */
     public User(int userId, String username, String firstName, String lastName, String nickname, String bio, String pronouns, String email, String profileImagePath, List<UserRole> roles, Date dateCreated) {
         this.userId = userId;
         this.username = username;
@@ -127,10 +141,18 @@ public class User implements Serializable {
         this.dateCreated = dateCreated;
     }
 
+    public void setRoles(List<UserRole> roles) {
+        this.roles = roles;
+    }
+
     public User() {
 
     }
 
+    /**
+     * Constructor for a user from a protobuf user response
+     * @param response Response from the idp
+     */
     public User(UserResponse response) {
         this.userId = response.getId();
         this.username = response.getUsername();
