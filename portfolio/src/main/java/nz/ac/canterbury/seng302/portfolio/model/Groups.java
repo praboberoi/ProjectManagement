@@ -54,9 +54,9 @@ public class Groups {
     public Groups () {}
     
     public Groups(GroupDetailsResponse response) {
+        this.groupId = response.getGroupId();
         this.shortName = response.getShortName();
         this.longName = response.getLongName();
-        this.groupId = response.getGroupId();
         this.members = response.getMembersList().stream().map(User::new).toList();
     }
 }
