@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
 import java.util.List;
 
 /**
@@ -27,6 +30,9 @@ public class DeadlineController {
 
     @Autowired
     private DeadlineService deadlineService;
+
+    @Autowired
+    private ProjectService projectService;
 
     private final static String redirectToProjectPage = "redirect:/project/{projectId}";
 
@@ -89,6 +95,40 @@ public class DeadlineController {
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return redirectToProjectPage;
+        }
+    }
+
+    /**
+     * Maps an existing deadline, current user, user's role and button info to the deadline form
+     * @param deadlineId Of type int
+     * @param projectId Of type int
+     * @param model Of type {@link Model}
+     * @param principal Of type {@link AuthState}
+     * @param ra Of type {@link RedirectAttributes}
+     * @return deadlineForm.html or project.html
+     */
+    @RequestMapping(path="/project/{projectId}/editDeadline/{deadlineId}", method = RequestMethod.GET)
+    public String deadlineEditForm(
+            @PathVariable("deadlineId") int deadlineId,
+            @PathVariable("projectId") int projectId,
+            Model model,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra){
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        try {
+            Project currentProject = projectService.getProjectById(projectId);
+            Deadline deadline = deadlineService.getDeadline(deadlineId);
+            model.addAttribute("deadline", deadline);
+            model.addAttribute("project", currentProject);
+            model.addAttribute("pageTitle", "Edit Deadline: " + deadline.getName());
+            model.addAttribute("deadlineMin", currentProject.getStartDate());
+            model.addAttribute("deadlineMax", currentProject.getEndDate());
+            model.addAttribute("submissionName", "Save");
+            model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
+            return "deadlineForm";
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
         }
     }
 }
