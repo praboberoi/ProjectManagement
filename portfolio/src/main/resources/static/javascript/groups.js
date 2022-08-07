@@ -124,3 +124,34 @@ function removeUsers(groupId) {
     httpRequest.send(params);
     httpRequest.send();
 }
+
+/**
+ * Makes a call to the server and removes the selected members from the group
+ * @param groupId Id of the selected group
+ */
+ function removeTeachers(groupId) {
+    let httpRequest = new XMLHttpRequest();
+    let userIds = []
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                getSelectedGroup(groupId)
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.responseText;
+            }
+        }
+    }
+    
+    httpRequest.open('POST', apiPrefix + `/groups/removeTeachers`);
+    let params = new FormData();
+    document.querySelectorAll('.selected').forEach(row => {
+        userIds.push(row.querySelector('.userId').textContent)
+    })
+    params.append('listOfUserIds', userIds.join(','));
+    console.log(userIds)
+
+    httpRequest.send(params);
+    httpRequest.send();
+}
