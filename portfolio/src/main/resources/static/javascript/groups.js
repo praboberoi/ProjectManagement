@@ -23,6 +23,27 @@ function checkLongName() {
 }
 
 /**
+ * Makes a call to the server and replaces the current group list with the new one
+ */
+ function updateGroupList() {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                document.getElementById("group-list").outerHTML = httpRequest.responseText;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            }
+        }
+    }
+
+    httpRequest.open('GET', apiPrefix + `/groups/list`);
+    httpRequest.send();
+}
+
+/**
  * Makes a call to the server and replaces the current group with the new one
  */
 function getSelectedGroup(selectedGroupId) {
@@ -104,12 +125,25 @@ function removeUsers(groupId) {
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                getSelectedGroup(groupId)
-            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = true;
+                messageSuccess.hidden = false;
+                messageSuccess.innerText = httpRequest.responseText;
+            } else if (httpRequest.status === 500) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "An error occured on the server, please try again later";
+            } else {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
                 messageDanger.innerText = httpRequest.responseText;
             }
+
+            if (groupId == -1) {
+                getSelectedGroup('teachers')
+            } else {
+                getSelectedGroup(groupId)
+            }
+            updateGroupList()
         }
     }
     
@@ -119,36 +153,6 @@ function removeUsers(groupId) {
         userIds.push(row.querySelector('.userId').textContent)
     })
     params.append('listOfUserIds', userIds.join(','));
-
-    httpRequest.send(params);
-}
-
-/**
- * Makes a call to the server and removes the selected members from the group
- * @param groupId Id of the selected group
- */
- function removeTeachers(groupId) {
-    let httpRequest = new XMLHttpRequest();
-    let userIds = []
-    httpRequest.onreadystatechange = function (){
-        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                getSelectedGroup(groupId)
-            } else if (httpRequest.status === 400) {
-                messageDanger.hidden = false;
-                messageSuccess.hidden = true;
-                messageDanger.innerText = httpRequest.responseText;
-            }
-        }
-    }
-    
-    httpRequest.open('POST', apiPrefix + `/groups/removeTeachers`);
-    let params = new FormData();
-    document.querySelectorAll('.selected').forEach(row => {
-        userIds.push(row.querySelector('.userId').textContent)
-    })
-    params.append('listOfUserIds', userIds.join(','));
-    console.log(userIds)
 
     httpRequest.send(params);
 }

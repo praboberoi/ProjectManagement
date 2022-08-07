@@ -1,11 +1,21 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 Given("I select group {int}", (groupId) => {
+    cy.intercept({
+        method: 'GET',
+        url: '/groups/*',
+    }).as('groupCheck')
     cy.get('#group' + groupId + 'Card').find('a').click()
+    cy.wait('@groupCheck')
 });
 
 Given("I select the Teaching Staff group", () => {
-    cy.get('#select-teachers').click()
+    cy.intercept({
+        method: 'GET',
+        url: '/groups/*',
+    }).as('groupCheck')
+    cy.get('#select-teachers').click()    
+    cy.wait('@groupCheck')
 });
 
 Given("I select the Unassigned Members group", () => {

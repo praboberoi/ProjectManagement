@@ -44,7 +44,7 @@ Feature: U5. Groups and group membership
   Scenario: AC6 Attempting to remove a user from “members without a group” does nothing.
     Given I login as an admin
     And I navigate to Groups
-    When I select user CypressGroupGuineaPig
+    When I select user CypressUnassignedGuineaPig
     Then Remove users not available
 
   Scenario: AC1 removing a user from this group removes their teacher role.
