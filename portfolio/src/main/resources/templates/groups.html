@@ -73,8 +73,13 @@
                                             <h5 class="card-title" th:text="${selectedGroup.shortName}" />
                                             <h3 class="card-text" th:text="${selectedGroup.longName}" />
                                         </div>
-                                        <div class="container-fluid p-0 col-auto">
+                                        <div th:if="${selectedGroup.groupId != 0}" class="container-fluid p-0 col-auto">
                                             <button type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'">
+                                                Remove selected users
+                                            </button>
+                                        </div>
+                                        <div th:if="${selectedGroup.groupId != 0 && selectedGroup.shortName.contains('Teach')}" class="container-fluid p-0 col-auto">
+                                            <button type="button" class="btn btn-outline-secondary" th:onclick="'removeTeachers()'">
                                                 Remove selected users
                                             </button>
                                         </div>

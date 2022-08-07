@@ -136,7 +136,6 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     @Override
     public void removeGroupMembers(RemoveGroupMembersRequest request, StreamObserver<RemoveGroupMembersResponse> responseObserver) {
         RemoveGroupMembersResponse.Builder reply = RemoveGroupMembersResponse.newBuilder();
-        System.out.println(request.getGroupId());
         Groups group = groupsRepository.findById(request.getGroupId()).orElse(null);
         if (group == null) {
             reply.setIsSuccess(false);
