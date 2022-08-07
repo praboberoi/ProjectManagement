@@ -247,6 +247,11 @@ div.upcomingEvents  {
     justify-content: space-between;
 }
 
+.createBtn {
+    margin-left: 20px;
+    margin-top: 7px;
+    margin-bottom: 7px;
+}
 
 .mobile-only{
     display:none
