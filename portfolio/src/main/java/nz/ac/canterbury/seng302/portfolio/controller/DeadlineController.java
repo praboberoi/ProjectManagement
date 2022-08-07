@@ -34,10 +34,12 @@ public class DeadlineController {
     @Autowired
     private ProjectService projectService;
 
+
     private final static String redirectToProjectPage = "redirect:/project/{projectId}";
 
-    public DeadlineController(DeadlineService deadlineService) {
+    public DeadlineController(DeadlineService deadlineService, ProjectService projectService) {
         this.deadlineService = deadlineService;
+        this.projectService = projectService;
     }
 
     /**
@@ -107,7 +109,7 @@ public class DeadlineController {
      * @param ra Of type {@link RedirectAttributes}
      * @return deadlineForm.html or project.html
      */
-    @RequestMapping(path="/project/{projectId}/editDeadline/{deadlineId}", method = RequestMethod.GET)
+    @GetMapping(path="/project/{projectId}/editDeadline/{deadlineId}")
     public String deadlineEditForm(
             @PathVariable("deadlineId") int deadlineId,
             @PathVariable("projectId") int projectId,
