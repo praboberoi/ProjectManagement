@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext
-class GroupServerServiceIntergrationTests {
+class GroupServerServiceIntegrationTests {
 
     @Autowired
     private GroupsRepository groupsRepository;
