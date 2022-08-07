@@ -22,7 +22,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.*;
 public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase {
 
     private final GroupsRepository groupsRepository;
-    
+
     @Value("${hostAddress}")
     private String hostAddress;
 
@@ -32,8 +32,10 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         this.groupsRepository = groupsRepository;
     }
 
+
     /**
      * Gets a list of users that don't have a group and returns it to the gRPC client
+     *
      * @param request          Empty protobuf request
      * @param responseObserver Returns to previous method with data
      */
@@ -45,8 +47,10 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         responseObserver.onCompleted();
     }
 
+
     /**
      * Gets a list of users that are teachers and returns it to the gRPC client
+     *
      * @param request          Empty protobuf request
      * @param responseObserver Returns to previous method with data
      */
@@ -58,8 +62,10 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         responseObserver.onCompleted();
     }
 
+
     /**
      * Delete a group from the database and return if the deletion was successful to the gRPC client
+     *
      * @param request          Delete group request containing the id of the group to delete
      * @param responseObserver Returns to previous method with data
      */
@@ -80,34 +86,49 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             reply.setIsSuccess(false);
             reply.setMessage(String.format("An error occurred while deleting group %d", request.getGroupId()));
         }
-
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
 
+
     /**
      * Create a group from the database and return if the creation was successful to the gRPC client
+     *
      * @param request          Create group request containing the id of the group to create
      * @param responseObserver Returns to previous method with data
      */
     @Override
     public void createGroup(CreateGroupRequest request, StreamObserver<CreateGroupResponse> responseObserver) {
         CreateGroupResponse.Builder reply = CreateGroupResponse.newBuilder();
-        if (groupsRepository.getAllByShortNameEquals(request.getShortName()) == null) {
-
-        } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) == null)
-        try {
-            Groups newGroup = new Groups(request.getLongName(), request.getShortName());
-            groupsRepository.save(newGroup);
-            reply.setIsSuccess(true);
-            reply.setMessage("Group created successfully");
-        } catch (Exception e) {
-            logger.error("An error occurred while creating group", e);
+        if (request.getShortName().length() < 3 || request.getShortName().length() > 50 || request.getLongName().length() < 3 || request.getLongName().length() > 100) {
             reply.setIsSuccess(false);
-            reply.setMessage("An error occurred while creating group.");
+            reply.setMessage("Incorrect group details entered");
+        } else if (groupsRepository.getAllByShortNameEquals(request.getShortName()) != null) {
+            reply.setIsSuccess(false);
+            if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null) {
+                reply.setMessage(String.format("Group with short name %s and long name %s already exists", request.getShortName(), request.getLongName()));
+            } else {
+                reply.setMessage(String.format("Group with short name %s already exists", request.getShortName()));
+            }
+        } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null) {
+                reply.setIsSuccess(false);
+                reply.setMessage(String.format("Group with long name %s already exists", request.getLongName()));
+            } else {
+                try {
+                    Groups newGroup = new Groups(request.getLongName(), request.getShortName());
+                    groupsRepository.save(newGroup);
+                    reply.setIsSuccess(true);
+                    reply.setMessage("Group created successfully");
+                } catch (Exception e) {
+                    logger.error("An error occurred while creating group", e);
+                    reply.setIsSuccess(false);
+                    reply.setMessage("An error occurred while creating group.");
+                }
+
+            }
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
         }
-        responseObserver.onNext(reply.build());
-        responseObserver.onCompleted();
+
     }
 
-}
