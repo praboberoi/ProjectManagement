@@ -7,6 +7,8 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,6 +24,7 @@ import java.util.List;
 public class DashboardController {
     @Autowired private DashboardService dashboardService;
     @Autowired private UserAccountClientService userAccountClientService;
+    private Logger logger = LoggerFactory.getLogger(DashboardController.class);
     @Value("${apiPrefix}") private String apiPrefix;
 
     /**
@@ -63,7 +66,6 @@ public class DashboardController {
     @RequestMapping(path="/dashboard/newProject", method = RequestMethod.GET)
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        model.addAttribute("apiPrefix", apiPrefix);
         Project newProject = dashboardService.getNewProject();
         List<Date> dateRange = dashboardService.getProjectDateRange(newProject);
         model.addAttribute("project", newProject);
@@ -94,16 +96,17 @@ public class DashboardController {
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-        dashboardService.verifyProject(project);
+            dashboardService.verifyProject(project);
             String message =  dashboardService.saveProject(project);
             ra.addFlashAttribute("messageSuccess", message);
+            logger.info("Project {} has been created by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
             return "redirect:/dashboard";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            model.addAttribute("apiPrefix", apiPrefix);
             return "redirect:/dashboard";
         } catch (Exception e) {
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            logger.error("An error occured while saving a project.", e);
             return "error";
         }
     }
@@ -159,7 +162,7 @@ public class DashboardController {
         @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
-                Project project  = dashboardService.getProject(projectId);
+            Project project  = dashboardService.getProject(projectId);
             String message = "Successfully Deleted " + project.getProjectName();
             dashboardService.deleteProject(projectId);
             ra.addFlashAttribute("messageSuccess", message);
