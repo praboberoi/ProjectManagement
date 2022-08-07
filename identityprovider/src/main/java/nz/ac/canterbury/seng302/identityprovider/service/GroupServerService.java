@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 import nz.ac.canterbury.seng302.identityprovider.model.Groups;
@@ -11,6 +12,7 @@ import com.google.protobuf.Empty;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
+import nz.ac.canterbury.seng302.identityprovider.model.Groups;
 import nz.ac.canterbury.seng302.identityprovider.model.GroupsRepository;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
@@ -42,6 +44,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     @Override
     public void getMembersWithoutAGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
         GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
+        reply.setShortName("Members without a group");
         reply.addAllMembers(groupsRepository.findUsersNotInGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
@@ -57,6 +60,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     @Override
     public void getTeachingStaffGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
         GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
+        reply.setShortName("Teaching Staff");
         reply.addAllMembers(groupsRepository.findTeacherGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
@@ -113,22 +117,40 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null) {
                 reply.setIsSuccess(false);
                 reply.setMessage(String.format("Group with long name %s already exists", request.getLongName()));
-            } else {
-                try {
-                    Groups newGroup = new Groups(request.getLongName(), request.getShortName());
-                    groupsRepository.save(newGroup);
-                    reply.setIsSuccess(true);
-                    reply.setMessage("Group created successfully");
-                } catch (Exception e) {
-                    logger.error("An error occurred while creating group", e);
-                    reply.setIsSuccess(false);
-                    reply.setMessage("An error occurred while creating group.");
-                }
-
+        } else {
+            try {
+                Groups newGroup = new Groups(request.getLongName(), request.getShortName());
+                groupsRepository.save(newGroup);
+                reply.setIsSuccess(true);
+                reply.setMessage("Group created successfully");
+            } catch (Exception e) {
+                logger.error("An error occurred while creating group", e);
+                reply.setIsSuccess(false);
+                reply.setMessage("An error occurred while creating group.");
             }
-            responseObserver.onNext(reply.build());
-            responseObserver.onCompleted();
+
+        }
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+    /**
+     * Gets all groups from the database and returns them to the gRPC client
+     * @param request           The filters for pagination
+     * @param responseObserver  Returns to previous method with data
+     */
+    @Override
+    public void getPaginatedGroups(GetPaginatedGroupsRequest request, StreamObserver<PaginatedGroupsResponse> responseObserver) {
+        List<Groups> groups = (List<Groups>) groupsRepository.findAll();
+        PaginatedGroupsResponse.Builder response = PaginatedGroupsResponse.newBuilder();
+        for (Groups group : groups) {
+            response.addGroups(ResponseUtils.prepareGroupDetailResponse(group, hostAddress));
         }
 
+        response.setResultSetSize(groups.size());
+
+        responseObserver.onNext(response.build());
+        responseObserver.onCompleted();
     }
+
+}
 

@@ -38,3 +38,24 @@ function checkLongName() {
     charMessage.innerText = charCount + ' '
 
 }
+
+/**
+ * Makes a call to the server and replaces the current user data table with the new one
+ */
+function getSelectedGroup(selectedGroupId) {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                document.getElementById("selectedGroup").outerHTML = httpRequest.responseText;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            }
+        }
+    }
+
+    httpRequest.open('GET', apiPrefix + `/groups/${selectedGroupId}`);
+    httpRequest.send();
+};

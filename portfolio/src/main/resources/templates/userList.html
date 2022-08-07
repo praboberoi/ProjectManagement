@@ -32,10 +32,10 @@
         <table class="table table-bordered table-hover">
           <thead class = "table-light">
           <tr>
-            <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'username')? asc + ' table-active' : ''}" onclick="sortByField('username')">Username</a></th>
-            <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'firstName')? asc + ' table-active' : ''}" onclick="sortByField('firstName')">Name</a></th>
-            <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'nickname')? asc + ' table-active' : ''}" onclick="sortByField('nickname')">Nickname</a></th>
-            <th scope="col" style="width:25%"><a type="button" class="sort" th:classappend="${(order == 'roles')? asc + ' table-active' : ''}" onclick="sortByField('roles')">Roles</a></th>
+            <th scope="col" style="width:auto"><a type="button" class="sort" th:classappend="${(order == 'username')? asc + ' table-active' : ''}" onclick="sortByField('username')">Username</a></th>
+            <th scope="col" style="width:auto"><a type="button" class="sort" th:classappend="${(order == 'firstName')? asc + ' table-active' : ''}" onclick="sortByField('firstName')">Name</a></th>
+            <th scope="col" style="width:auto"><a type="button" class="sort" th:classappend="${(order == 'nickname')? asc + ' table-active' : ''}" onclick="sortByField('nickname')">Nickname</a></th>
+            <th scope="col" style="width:auto"><a type="button" class="sort" th:classappend="${(order == 'roles')? asc + ' table-active' : ''}" onclick="sortByField('roles')">Roles</a></th>
           </tr>
           </thead>
           <tbody>
@@ -47,16 +47,16 @@
                 <td th:id="'user' + ${user.userId} + 'Roles'">
                   <ul style="list-style-type: none">
                     <th:block th:each = "role : ${user.getRoles()}">
-                        <li style="display:inline" th:id="'user' + ${user.userId} + 'Role' + ${role}">
+                        <li style="padding-bottom:3%; display:inline" th:id="'user' + ${user.userId} + 'Role' + ${role}">
                           <button th:id="'user' + ${user.userId} + 'Role' + ${role} + Btn"
                                   th:data-role = '${role}' th:data-userId = '${user.userId}'
                                   th:data-roles="${user.getRoles()}"
-                                  th:disabled="${(currentUser.getRolesValueList().size() == 1 and currentUser.getRolesValueList().contains(0)) or user.username == currentUser.username or (!currentUser.getRolesValueList().contains(2) and currentUser.getRolesValueList().contains(1) and role.getNumber() == 2) or  user.getRoles().size() == 1}"
+                                  th:disabled="${(currentUser.getRolesValueList().size() == 1 and currentUser.getRolesValueList().contains(0)) or (!currentUser.getRolesValueList().contains(2) and currentUser.getRolesValueList().contains(1) and role.getNumber() == 2) or user.getRoles().size() == 1}"
                                   onclick="removeRole(this.getAttribute('data-role'), this.getAttribute('data-userId'))"
                                   class="btn btn-outline-secondary btn-sm">
-                              [[${role.getNumber() == 2} ? 'COURSE ADMINISTRATOR' : ${role}]]
+                              [[${role.getNumber() == 2 ? 'Course Admin' : role.name().substring(0,1) + role.name().substring(1, role.name.length()).toLowerCase()}]]
                               <img th:id="'user' + ${user.userId} + 'Role' + ${role} + img" width="13" height="13"
-                                   th:hidden="${(currentUser.getRolesValueList().size() == 1 and currentUser.getRolesValueList().contains(0)) or user.username == currentUser.username or (!currentUser.getRolesValueList().contains(2) and currentUser.getRolesValueList().contains(1) and role.getNumber() == 2) or  user.getRoles().size() == 1}"
+                                   th:hidden="${(currentUser.getRolesValueList().size() == 1 and currentUser.getRolesValueList().contains(0)) or (!currentUser.getRolesValueList().contains(2) and currentUser.getRolesValueList().contains(1) and role.getNumber() == 2) or user.getRoles().size() == 1}"
                                    class="icon" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/>
                           </button>
                         </li>
@@ -68,7 +68,7 @@
                             content: none;
                           }
                         </style>
-                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" th:disabled="${user.username == currentUser.username}" th:hidden="${user.username == currentUser.username}"data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                           +
                         </button>
                         <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
@@ -124,7 +124,7 @@
             </th:block>
 
             <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
-              <a role='button' class="page-link" onclick="nextPage()"><span aria-hidden="true">&rsaquo;</span></a>
+              <a role='button' id="next-page" class="page-link" onclick="nextPage()"><span aria-hidden="true">&rsaquo;</span></a>
             </li>
             <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
               <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${pages - 1} + ')'"><span aria-hidden="true">&raquo;</span></a>

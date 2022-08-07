@@ -2,7 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -27,16 +27,7 @@ import java.util.List;
 public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
-    @Autowired private UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
-    
-    /**
-    * Adds common model elements used by all controller methods.
-    */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
 
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
@@ -58,7 +49,6 @@ public class SprintController {
                 model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
-            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "project";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -87,7 +77,6 @@ public class SprintController {
                 model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
-            model.addAttribute("user", userAccountClientService.getUser(principal));
             List<String> dateRange = sprintService.getSprintDateRange(currentProject, newSprint);
 
             model.addAttribute("sprintDateMin", dateRange.get(0));
@@ -164,7 +153,6 @@ public class SprintController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
-            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         }
     }
@@ -193,7 +181,6 @@ public class SprintController {
                 model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
-            model.addAttribute("user", userAccountClientService.getUser(principal));
             model.addAttribute("sprintDateMin", currentProject.getStartDate());
             model.addAttribute("sprintDateMax", currentProject.getEndDate());
             model.addAttribute("submissionName", "Save");
@@ -232,7 +219,6 @@ public class SprintController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
-            model.addAttribute("user", userAccountClientService.getUser(principal));
             return "error";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());

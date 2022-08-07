@@ -20,7 +20,7 @@ public class Groups {
     @Column(unique = true, nullable = false, length = 100)
     private String longName;
 
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_groups", joinColumns = @JoinColumn(name = "group_id", referencedColumnName = "GroupId"), inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "UserId"))
     private List<User> users;
 

@@ -26,7 +26,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext
-class GroupServerServiceIntergrationTests {
+class GroupServerServiceIntegrationTests {
 
     @Autowired
     private GroupsRepository groupsRepository;
@@ -54,7 +54,7 @@ class GroupServerServiceIntergrationTests {
         List<GroupDetailsResponse> results = responseObserver.getValues();
         assertEquals(1, results.size());
         GroupDetailsResponse response = results.get(0);
-        assertEquals(40, response.getMembersCount(), "Incorrect number of users returned in 'no group' group");
+        assertEquals(29, response.getMembersCount(), "Incorrect number of users returned in 'no group' group");
     }
 
     /**
@@ -70,7 +70,7 @@ class GroupServerServiceIntergrationTests {
         List<GroupDetailsResponse> results = responseObserver.getValues();
         assertEquals(1, results.size());
         GroupDetailsResponse response = results.get(0);
-        assertEquals(4, response.getMembersCount(), "Incorrect number of users returned in 'teacher' group");
+        assertEquals(3, response.getMembersCount(), "Incorrect number of users returned in 'teacher' group");
     }
 
     /**
@@ -125,6 +125,26 @@ class GroupServerServiceIntergrationTests {
         DeleteGroupResponse response = results.get(0);
         assertFalse(response.getIsSuccess(), "Group was incorrectly deleted: " + response.getMessage());
     }
+
+    /**
+     * Tests that all the groups currently stored in the idp database are returned when a paginated group request is made.
+     */
+    @Test
+    void givenSampleData_whenGetPaginatedGroupsIsCalledWithNoParameters_thenAllGroupsAreReturned() {
+        GetPaginatedGroupsRequest request = GetPaginatedGroupsRequest.newBuilder().build();
+        StreamRecorder<PaginatedGroupsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.getPaginatedGroups(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<PaginatedGroupsResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        PaginatedGroupsResponse response = results.get(0);
+        assertEquals(6, response.getResultSetSize(),  "Incorrect number of groups received.");
+        GroupDetailsResponse testGroup = response.getGroups(0);
+        assertEquals(1, testGroup.getGroupId());
+    }
+}
 
     /**
      * Tests that the group is created successfully.

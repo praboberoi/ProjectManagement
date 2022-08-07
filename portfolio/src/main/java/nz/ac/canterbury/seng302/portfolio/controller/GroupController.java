@@ -11,10 +11,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
+import org.springframework.web.servlet.ModelAndView;
+
+import java.util.Arrays;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
@@ -61,6 +69,35 @@ public class GroupController {
         return "groups";
     }
 
+    /**
+     * Adds common model elements used by all controller methods.
+     */
+    @ModelAttribute
+    public void addAttributes(Model model) {
+        model.addAttribute("apiPrefix", apiPrefix);
+    }
+
+    /**
+     * Get message for empty registration page
+     * @param request HTTP request sent to this endpoint
+     * @param response HTTP response that will be returned by this endpoint
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Registration html page
+     */
+    @GetMapping(path="/groups")
+    public String groups(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @AuthenticationPrincipal AuthState principal
+
+    ) {
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        model.addAttribute("listGroups", groups);
+        model.addAttribute("selectedGroup", groupService.getMembersWithoutAGroup());
+        return "groups";
+    }
+
 
     /**
      * Attempts to delete a group from the idp server
@@ -85,15 +122,53 @@ public class GroupController {
     }
 
     /**
+     * Get method for the selected group.
+     * @return The selected group fragment
+     */
+    @GetMapping("/groups/{groupId}")
+    public ModelAndView selectedGroup(
+            @PathVariable int groupId
+    ) {
+        Groups selectedGroup = groupService.getGroupById(groupId);
+        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("selectedGroup", selectedGroup);
+        return mv;
+    }
+
+    /**
+     * Get method for the unassigned members group.
+     * @return The selected group fragment
+     */
+    @GetMapping("/groups/unassigned")
+    public ModelAndView unassignedGroup() {
+        Groups selectedGroup = groupService.getMembersWithoutAGroup();
+        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("selectedGroup", selectedGroup);
+        return mv;
+    }
+
+    /**
+     * Get method for the teachers group.
+     * @return The teacher group fragment
+     */
+    @GetMapping("/groups/teachers")
+    public ModelAndView teachersGroup() {
+        Groups selectedGroup = groupService.getTeachingStaffGroup();
+        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("selectedGroup", selectedGroup);
+        return mv;
+    }
+
+    /**
      * Attempts to create a group from in the idp server
      * @param principal Authentication information containing user info
      * @return Status of the request and corresponding message
      */
     @PostMapping(value = "/groups")
     public String createGroup(@AuthenticationPrincipal AuthState principal,
-                                              @RequestParam String shortName,
-                                              @RequestParam String longName,
-                                              Model model,
+                              @RequestParam String shortName,
+                              @RequestParam String longName,
+                              Model model,
                               RedirectAttributes ra
     ) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {

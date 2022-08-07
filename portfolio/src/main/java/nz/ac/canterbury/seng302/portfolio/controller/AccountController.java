@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
@@ -9,7 +8,6 @@ import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
-import org.apache.tomcat.util.buf.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -32,8 +30,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 /**
  * Controller for the account page
@@ -43,14 +39,6 @@ public class AccountController {
 
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
-
-    /**
-    * Adds common model elements used by all controller methods.
-    */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
 
     public AccountController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
@@ -68,7 +56,6 @@ public class AccountController {
             Model model
     ) {
         this.addAttributesToModel(principal, model);
-        model.addAttribute("apiPrefix", apiPrefix);
         return "account";
     }
 
@@ -120,7 +107,6 @@ public class AccountController {
             @AuthenticationPrincipal AuthState principal,
             Model model
     ) {
-        model.addAttribute("apiPrefix", apiPrefix);
         this.addAttributesToModel(principal, model);
 
         return "editAccount";
@@ -167,11 +153,11 @@ public class AccountController {
             // original filename of image user has uploaded
             String extension = multipartFile.getContentType();
             // check if file is an accepted image type
-            ArrayList<String> acceptedFileTypes = new ArrayList<String>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
+            ArrayList<String> acceptedFileTypes = new ArrayList<>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
-                if (multipartFile.getContentType() == MediaType.IMAGE_GIF_VALUE) {
+                if (MediaType.IMAGE_GIF_VALUE.equals(multipartFile.getContentType())) {
                     extension = "gif";
-                } else if (multipartFile.getContentType() == MediaType.IMAGE_PNG_VALUE) {
+                } else if (MediaType.IMAGE_PNG_VALUE.equals(multipartFile.getContentType())) {
                     extension = "png";
                 } else {
                     extension = "jpeg";
@@ -179,7 +165,7 @@ public class AccountController {
                 userAccountClientService.uploadImage(userId, extension, multipartFile);
             } else {
                 String msgString;
-                msgString = String.format("File must be an image of type jpg, jpeg or png");
+                msgString = "File must be an image of type jpg, jpeg or png";
                 ra.addFlashAttribute("messageDanger", msgString);
                 return "editAccount";
             }
@@ -190,7 +176,7 @@ public class AccountController {
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
-            msgString = String.format("Successfully updated details");
+            msgString = "Successfully updated details";
             ra.addFlashAttribute("messageSuccess", msgString);
             return "account";
         }
@@ -207,8 +193,6 @@ public class AccountController {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
-
-        model.addAttribute("user", user);
 
         StringBuilder roles = new StringBuilder();
         user.getRoles().forEach(role -> roles.append(capitaliseFirstLetter(role.toString() + ", ")));
