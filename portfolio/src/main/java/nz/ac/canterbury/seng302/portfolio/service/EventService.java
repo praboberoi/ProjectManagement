@@ -33,8 +33,6 @@ public class EventService {
                     .eventName("New Event")
                     .startDate(java.sql.Date.valueOf(now))
                     .endDate(java.sql.Date.valueOf(now.plusDays(1)))
-                    .startTime("00:00")
-                    .endTime("00:00")
                     .build();
             return newEvent;
         } catch (Exception e) {
@@ -62,7 +60,7 @@ public class EventService {
     public String verifyEvent(Event event) {
         if (event == null) {
             return ("No Event");
-        } else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
+        } else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null) {
             return ("Event values are null");
         } else if (event.getEventName().length() < 1) {
             return ("Event name must not be empty");
@@ -74,21 +72,21 @@ public class EventService {
         } else if (event.getEndDate().before(event.getStartDate())){
             return ("The event end date cannot be before the event start date");
         } else {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                Date d1 = (Date) sdf.parse(event.getStartTime());
-                Date d2 = (Date) sdf.parse(event.getEndTime());
-                // Check if start date is same as end date
-                if (event.getStartDate().equals(event.getEndDate())) {
-                    // End time before start time or start and end time is the same
-                    if (d2.before(d1) || d2.equals(d1)) {
-                        return ("The start of the event must occur before the end of the event");
-                    }
-                }
+//            try {
+//                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+////                Date d1 = (Date) sdf.parse(event.getStartTime());
+////                Date d2 = (Date) sdf.parse(event.getEndTime());
+//                // Check if start date is same as end date
+//                if (event.getStartDate().equals(event.getEndDate())) {
+//                    // End time before start time or start and end time is the same
+//                    if (d2.before(d1) || d2.equals(d1)) {
+//                        return ("The start of the event must occur before the end of the event");
+//                    }
+//                }
                 return("Event has been verified");
-            } catch (Exception e) {
-                return ("Error with start and end time validation");
-            }
+//            } catch (Exception e) {
+//                return ("Error with start and end time validation");
+//            }
         }
     }
 

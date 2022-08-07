@@ -48,7 +48,7 @@ function checkEventDates() {
 
     checkStartDate();
     checkEndDate();
-    checkEventTimes()
+    // checkEventTimes()
     if (startDate > endDate ) {
         startDateError.innerText = "Start Date must be on or before the End Date.";
         endDateError.innerText = "End Date must be on or after the Start Date";

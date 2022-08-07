@@ -95,14 +95,18 @@ public class EventController {
         String message = "";
         try {
             message = eventService.verifyEvent(event);
+            System.out.println("event veriiiiiiffffyyyy");
             if (message != "Event has been verified") {
                 ra.addFlashAttribute("messageDanger", message);
+                System.out.println("event 1111 veriiiiiiffffyyyy");
             } else {
                 message = eventService.saveEvent(event);
                 logger.info("Event {} has been created by user {}", event.getEventId(), PrincipalUtils.getUserId(principal));
                 ra.addFlashAttribute("messageSuccess", message);
+                System.out.println("event 22222  veriiiiiiffffyyyy");
             }
         } catch (Exception e) {
+            System.out.println("event 33333   veriiiiiiffffyyyy");
             logger.error("An error occured while creating an event.", e);
             ra.addFlashAttribute("messageDanger", "Internal Server Error: The event could not be saved, please try again later.");
         }
