@@ -124,7 +124,7 @@
             </th:block>
 
             <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
-              <a role='button' class="page-link" onclick="nextPage()"><span aria-hidden="true">&rsaquo;</span></a>
+              <a role='button' id="next-page" class="page-link" onclick="nextPage()"><span aria-hidden="true">&rsaquo;</span></a>
             </li>
             <li class="page-item" th:classappend="${page == pages-1}? 'disabled' : ''">
               <a role='button' class="page-link" th:onclick="'getUserDataTable(' + ${pages - 1} + ')'"><span aria-hidden="true">&raquo;</span></a>

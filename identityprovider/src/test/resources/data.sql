@@ -44,7 +44,7 @@ MERGE INTO user (user_id, bio,date_created,email,first_name,last_name,nickname,p
 MERGE INTO user (user_id, bio,date_created,email,first_name,last_name,nickname,password,profile_image_path,pronouns,salt,username) VALUES (44,'','2022-07-21 08:45:16.945000000','mario.russo@xtra.co.nz','Mario','Russo','','v86TaJPuaDW8Td0F4JYX51coW62/8CKU5ciLA4+DzdQ=',null,'','AyXr+VxVEMtEAYI+eyiHtQ==','Mario');
 
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (1,1,0);
-MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (2,1,0);
+MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (2,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (2,1,1);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (3,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (3,1,1);
