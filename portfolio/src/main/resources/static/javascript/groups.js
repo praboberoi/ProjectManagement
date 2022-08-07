@@ -49,7 +49,6 @@ function getSelectedGroup(selectedGroupId) {
  */
 function selectUser(event) {
     let userTable = document.querySelectorAll("#userListDataTable tr")
-    console.log(event.target.closest('tr'))
 
     if (event.shiftKey) {
         let selected = document.querySelector(".currently-selected")
