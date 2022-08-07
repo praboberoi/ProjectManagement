@@ -6,7 +6,6 @@ import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
-import org.junit.After;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,10 +22,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -66,11 +67,11 @@ public class ProjectControllerTest {
 
     private Sprint testSprint;
 
-    private static MockedStatic<PrincipalUtils> mockedStaticDigiGateway;
+    private static MockedStatic<PrincipalUtils> mockedPrincipalUtils;
 
     @BeforeAll
     private static void beforeAllInit() {
-        mockedStaticDigiGateway = mockStatic(PrincipalUtils.class);
+        mockedPrincipalUtils = mockStatic(PrincipalUtils.class);
     }
 
     @BeforeEach
@@ -81,7 +82,7 @@ public class ProjectControllerTest {
         testList.add("testRole");
         when(PrincipalUtils.getUserRole(any())).thenReturn(testList);
         LocalDate now = LocalDate.now();
-        project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
+        project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusMonths(1)));
         user = new User.Builder()
                 .userId(0)
                 .username("TimeTester")
@@ -112,7 +113,7 @@ public class ProjectControllerTest {
 
     @AfterAll
     public static void afterAll() {
-        mockedStaticDigiGateway.close();
+        mockedPrincipalUtils.close();
     }
 
     /**
@@ -133,4 +134,27 @@ public class ProjectControllerTest {
                 .andExpect(model().attribute("user", userResponse.build()));
     }
 
+    /**
+     * Test verification of project dates and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenVerifyProject_ThenProjectVerifiedSuccessfully() throws Exception{
+        this.mockMvc
+                .perform(post("/verifyProject/1?" + "startDate=" + project.getStartDate() + "&endDate=" + project.getEndDate()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+    }
+
+    /**
+     * Test get all sprints and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetAllSprints_ThenSprintsReturnedSuccessfully() throws Exception{
+        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        this.mockMvc
+                .perform(get("/project/1/getAllSprints"))
+                .andExpect(status().isOk());
+    }
 }

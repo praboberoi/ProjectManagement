@@ -60,11 +60,11 @@ public class EventControllerTest {
 
     UserResponse.Builder userResponse;
 
-    private static MockedStatic<PrincipalUtils> mockedStaticDigiGateway;
+    private static MockedStatic<PrincipalUtils> mockedPrincipalUtils;
 
     @BeforeAll
     private static void initStaticMocks() {
-        mockedStaticDigiGateway = mockStatic(PrincipalUtils.class);
+        mockedPrincipalUtils = mockStatic(PrincipalUtils.class);
     }
 
     @BeforeEach
@@ -102,7 +102,7 @@ public class EventControllerTest {
 
     @AfterAll
     public static void after() {
-        mockedStaticDigiGateway.close();
+        mockedPrincipalUtils.close();
     }
 
     /**

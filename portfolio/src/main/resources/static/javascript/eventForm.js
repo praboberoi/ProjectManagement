@@ -24,12 +24,20 @@ const endTimeError = document.getElementById('endTimeError');
 function checkEventName() {
     let eventName = document.getElementById('event-name');
     let eventNameError = document.getElementById('eventNameError');
+
+    let charMessage = document.getElementById("charCount");
+    let charCount = eventName.value.length;
+    charMessage.innerText = charCount + ' '
+
     if (eventName.value.length < 1) {
         eventName.classList.add("formError");
         eventNameError.innerText = "Event Name must not be empty";
     } else if (! eventNameSpacesRegex.test(eventName.value)) {
         eventName.classList.add("formError");
         eventNameError.innerText = "Event name must not start or end with space characters";
+    } else if (eventName.value.length > 50) {
+        eventName.classList.add("formError");
+        eventNameError.innerText = "Event name cannot be more than 50 characters."
     } else {
         eventName.classList.remove("formError");
         eventNameError.innerText = null;

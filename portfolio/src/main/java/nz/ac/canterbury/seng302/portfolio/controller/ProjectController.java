@@ -7,6 +7,8 @@ import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -30,6 +32,7 @@ public class ProjectController {
     @Autowired private ProjectService projectService;
     @Autowired private EventService eventService;
     @Autowired private UserAccountClientService userAccountClientService;
+    private Logger logger = LoggerFactory.getLogger(ProjectController.class);
     @Value("${apiPrefix}") private String apiPrefix;
 
     /**

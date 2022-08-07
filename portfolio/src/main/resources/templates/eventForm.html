@@ -37,6 +37,9 @@
       <div class="mb-3">
         <label for="event-name" class="col-form-label required">Event Name</label>
         <input style="font-size:20px;" type="text" class="form-control required" id="event-name" th:field="*{eventName}" onkeyup="checkEventName()" required>
+        <div>
+          <span id="charCount" th:value="${charCount}">[[*{eventName.length}]] </span> / 50 characters used.
+        </div>
         <p id="eventNameError" th:text="${eventNameError}" class="error-msg"></p>
       </div>
 
