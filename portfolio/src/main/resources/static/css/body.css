@@ -175,7 +175,7 @@ input:invalid{
 
 }
 #myTabContent{
-    overflow-y: scroll;
+    overflow-y: auto;
 }
 
 #eventCard, #deadlineCard, #milestoneCard {
