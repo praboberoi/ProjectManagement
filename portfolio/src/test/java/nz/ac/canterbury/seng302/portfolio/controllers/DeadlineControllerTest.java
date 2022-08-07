@@ -13,6 +13,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -42,6 +43,9 @@ public class DeadlineControllerTest {
 
     @MockBean
     private ControllerAdvisor controllerAdvisor;
+
+    @Value("${apiPrefix}")
+    private String apiPrefix;
 
     private Project project;
 
@@ -158,5 +162,42 @@ public class DeadlineControllerTest {
                 e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Tests to make sure the appropriate attributes are added and the correct redirection is made when calling the deadlineEditForm
+     */
+    @Test
+    public void givenDeadlineExists_whenDeadlineEditFormRequested_thenAnAppropriateMessageIsDisplayed() {
+        try {
+            when(projectService.getProjectById(1)).thenReturn(project);
+            when(deadlineService.getDeadline(1)).thenReturn(deadline);
+            when(projectService.getProjectById(2)).thenThrow(IncorrectDetailsException.class);
+
+            MockedStatic<PrincipalUtils> utilities = Mockito.mockStatic(PrincipalUtils.class);
+
+            utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+
+            this.mockMvc.perform(MockMvcRequestBuilders
+                    .get("/project/1/editDeadline/1"))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attribute("deadline", deadline))
+                    .andExpect(model().attribute("project", project))
+                    .andExpect(model().attribute("deadlineMin", project.getStartDate()))
+                    .andExpect(model().attribute("deadlineMax", project.getEndDate()))
+                    .andExpect(model().attribute("submissionName", "Save"))
+                    .andExpect(model().attribute("image", apiPrefix + "/icons/save-icon.svg"))
+                    .andExpect(model().attribute("pageTitle", "Edit Deadline: " + deadline.getName()))
+                    .andExpect(view().name("deadlineForm"));
+
+
+            this.mockMvc.perform(MockMvcRequestBuilders
+                            .get("/project/1/editDeadline/2"))
+                    .andExpect(flash().attribute("messageDanger", "Project not found"))
+                    .andExpect(view().name("redirect:/project/{projectId}"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
