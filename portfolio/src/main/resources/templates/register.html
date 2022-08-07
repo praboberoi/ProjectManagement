@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
     <head>
         <title>LENSfolio - Register</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
@@ -74,7 +74,7 @@
                         <p id="confirmPasswordError" th:text="${confirmPasswordError}" class="error-msg"></p>
                     </div><br>
                         <div class="container-fluid d-flex justify-content-end p-0">
-                        <button class="btn btn-outline-primary me-3" type="submit">
+                        <button class="btn btn-outline-primary me-3" type="submit" id="submit">
                             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Submit</button>
                         <a type="button" class="btn btn-outline-secondary" th:href="@{{apiPrefix}/login(apiPrefix=${apiPrefix})}">
                             <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>
