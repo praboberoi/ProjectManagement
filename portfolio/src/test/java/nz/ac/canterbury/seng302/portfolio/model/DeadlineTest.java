@@ -9,6 +9,9 @@ import java.util.Calendar;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * Test class for the deadline entity
+ */
 public class DeadlineTest {
     private Deadline deadline1;
     private Deadline deadline2;

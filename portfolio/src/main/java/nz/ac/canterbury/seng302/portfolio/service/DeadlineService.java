@@ -112,6 +112,8 @@ public class DeadlineService {
             throw new IncorrectDetailsException("Deadline name must not start or end with space characters");
         } else if (deadline.getName().length() > 20) {
             throw new IncorrectDetailsException("Deadline name cannot exceed 20 characters");
+        } else if (deadline.getName().length() < 3) {
+            throw new IncorrectDetailsException("Deadline name must be at least 3 characters");
         } else if (deadline.getDate().after(deadline.getProject().getEndDate())) {
             throw new IncorrectDetailsException("Deadline date cannot be after project end date");
         } else if (deadline.getDate().before(deadline.getProject().getStartDate())) {
