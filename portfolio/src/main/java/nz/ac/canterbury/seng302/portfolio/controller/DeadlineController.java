@@ -35,7 +35,7 @@ public class DeadlineController {
     private ProjectService projectService;
 
 
-    private final static String redirectToProjectPage = "redirect:/project/{projectId}";
+    private final static String RedirectToProjectPage = "redirect:/project/{projectId}";
 
     public DeadlineController(DeadlineService deadlineService, ProjectService projectService) {
         this.deadlineService = deadlineService;
@@ -67,7 +67,7 @@ public class DeadlineController {
         } catch (IncorrectDetailsException ex) {
             ra.addFlashAttribute("messageDanger", ex.getMessage());
         }
-        return redirectToProjectPage;
+        return RedirectToProjectPage;
     }
 
 
@@ -93,10 +93,10 @@ public class DeadlineController {
             ra.addFlashAttribute("messageSuccess", message);
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             model.addAttribute("listDeadlines", listDeadlines);
-            return redirectToProjectPage;
+            return RedirectToProjectPage;
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            return redirectToProjectPage;
+            return RedirectToProjectPage;
         }
     }
 
@@ -130,7 +130,7 @@ public class DeadlineController {
             return "deadlineForm";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/{projectId}";
+            return RedirectToProjectPage;
         }
     }
 }
