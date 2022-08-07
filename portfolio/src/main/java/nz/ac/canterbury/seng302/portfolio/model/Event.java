@@ -38,19 +38,21 @@ public class Event {
     private String eventName;
 
     /**
-     * Start date for the event
+     * Start date and time for the event
      */
+    @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
     private Date startDate;
+
     /**
      * End date and time for the event
      */
+    @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
     private Date endDate;
 
-    private Date date;
 
     /**
      * No args Constructor of the Event.
@@ -124,12 +126,12 @@ public class Event {
 
     public String getDateOnly() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return formatter.format(date);
+        return formatter.format(startDate);
     }
 
     public String getTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-        return formatter.format(date);
+        return formatter.format(startDate);
     }
 
 
