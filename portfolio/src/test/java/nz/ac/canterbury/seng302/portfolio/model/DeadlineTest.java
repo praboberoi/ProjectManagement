@@ -14,7 +14,9 @@ public class DeadlineTest {
     private Deadline deadline2;
     private Project project;
 
-
+    /**
+     * Initialises test projects and deadlines for the tests
+     */
     @BeforeEach
     public void setup() {
         project = new Project.Builder()
@@ -40,12 +42,18 @@ public class DeadlineTest {
                 .build();
     }
 
+    /**
+     * Asserts that when getDeadlineId() is called then the correct ID is returned
+     */
     @Test
     public void givenDeadlineExists_whenDeadlineIdIsRequested_thenIdIsReturned(){
         assertEquals(1, deadline1.getDeadlineId());
         assertNotEquals(2, deadline1.getDeadlineId());
     }
 
+    /**
+     * Asserts that when getProject() is called on a deadline then the correct project is returned
+     */
     @Test
     public void givenDeadlineExists_whenProjectIsRequested_thenAssociatedProjectIsReturned() {
         Project project2 = new Project.Builder()
@@ -59,6 +67,9 @@ public class DeadlineTest {
         assertNotEquals(project2, deadline1.getProject());
     }
 
+    /**
+     * Asserts that when setProject() is called on a deadline then the deadline's project is correctly updated
+     */
     @Test
     public void givenDeadlineExists_whenChangeInProjectIsRequested_thenAssociatedProjectIsUpdated() {
         Project proj = new Project();
@@ -67,12 +78,18 @@ public class DeadlineTest {
         assertNotEquals(project, deadline1.getProject());
     }
 
+    /**
+     * Asserts that when getName() is called on an existing deadline then the correct name is returned
+     */
     @Test
     public void givenDeadlineExists_whenDeadlineNameIsRequested_thenDeadlineNameIsReturned() {
         assertEquals("DeadlineTest 1", deadline1.getName());
         assertNotEquals("DeadlineTest 2", deadline1.getName());
     }
 
+    /**
+     * Asserts that when setName() is called on a deadline then the deadline's name is correctly updated
+     */
     @Test
     public void givenDeadlineExists_whenChangeInDeadlineNameIsRequested_thenDeadlineNameIsUpdated() {
         deadline1.setName("Test");
@@ -80,13 +97,19 @@ public class DeadlineTest {
         assertNotEquals("DeadlineTest 1", deadline1.getName());
     }
 
+    /**
+     * Asserts that when getDate() is called on an existing deadline then the correct date is returned
+     */
     @Test
     public void givenDeadlineExists_whenDeadlineDateIsRequested_thenDeadlineDateIsReturned() {
         assertEquals(new java.util.Date(2021 -1900, Calendar.FEBRUARY,1), deadline1.getDate());
         assertNotEquals(new java.util.Date(2021 -1900, Calendar.FEBRUARY,1), deadline2.getDate());
     }
 
-
+    /**
+     * Asserts that given some deadlines exist, when the overrided object equals method is called then the correct
+     * response is returned
+     */
     @Test
     public void givenDeadlinesExist_whenTestEqualsMethodIsCalled_AppropriateResultsAreReceived() {
         Deadline deadline3 = new Deadline.Builder()
@@ -111,6 +134,9 @@ public class DeadlineTest {
         assertNotEquals(deadline1, new Deadline());
     }
 
+    /**
+     * Asserts that when getTime() is called on an existing deadline then the correct time is returned
+     */
     @Test
     public void givenDeadlineExists_whenDeadlineTimeIsRequested_thenDeadlineTimeIsReturned() {
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
@@ -120,12 +146,18 @@ public class DeadlineTest {
         assertNotEquals("13:26:18", deadline1.getTime());
     }
 
+    /**
+     * Asserts that when getDateOnly() is called on an existing deadline then the correct date is returned
+     */
     @Test
     public void givenDeadlineExists_whenOnlyDeadlineDateIsRequested_thenOnlyDeadlineDateIsReturned() {
         assertEquals("01/02/2021", deadline1.getDateOnly());
         assertNotEquals("02/02/2021", deadline1.getDateOnly());
     }
 
+    /**
+     * Asserts that when setDate() is called on a deadline then the deadline's date is correctly updated
+     */
     @Test
     public void givenDeadlineExists_whenChangeInDeadlineDateIsRequested_thenDeadlineDateIsUpdated() {
         java.util.Date date = new java.util.Date(2023 - 1900, Calendar.FEBRUARY,1);
@@ -135,6 +167,9 @@ public class DeadlineTest {
         assertNotEquals(date, deadline1.getDate());
     }
 
+    /**
+     * Asserts that when setDeadlineId() is called on a deadline then the deadline's ID is correctly updated
+     */
     @Test
     public void givenDeadlineExists_whenChangeInDeadlineIdIsRequested_thenDeadlineIdIsUpdated() {
         deadline1.setDeadlineId(10);
@@ -142,6 +177,9 @@ public class DeadlineTest {
         assertNotEquals(1, deadline1.getDeadlineId());
     }
 
+    /**
+     * Asserts that when the toString() method is called on an existing deadline the correct string is returned.
+     */
     @Test
     public void givenDeadlineExists_whenToStringOfDeadlineIsRetested_thenStringRepresentationOfDeadlineIsReturned() {
         String expectedString ="Deadline{" +
@@ -156,6 +194,9 @@ public class DeadlineTest {
         assertNotEquals(deadline2.toString(), deadline1.toString());
     }
 
+    /**
+     * Asserts that given a deadline exists when hasCode() is called an integer is returned
+     */
     @Test
     public void givenDeadlineExists_whenHashCodeIsRequested_thenAnIntegerIsReturned() {
         assertInstanceOf(Integer.class, deadline1.hashCode());
