@@ -38,19 +38,19 @@
         <div class="row mt-3">
             <div id="group-list" class="col-4">
                 <th:block th:each="group : ${listGroups}">
-                    <div class="card project-card mb-3">
+                    <div class="card project-card mb-3" th:id="'group' + ${group.groupId} + 'Card'">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <div th:if="${group.groupId == 0} and ${group.shortName.contains('Teaching Staff')}">
-                                            <a role="button" class="project-name" href="javascript:void();" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
+                                            <a id="select-teachers" role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
                                         </div>
                                         <div th:if="${group.getGroupId() == 0} and ${group.shortName.contains('Members without a group')}">
-                                            <a role="button" class="project-name" href="javascript:void();" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
+                                            <a id="select-unassigned" role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
                                         </div>
                                         <div th:if="${group.getGroupId() != 0}">
-                                            <a role="button" class="project-name" href="javascript:void();" th:onclick="'getSelectedGroup(' + ${group.groupId} + ')'" th:text="${group.shortName}" ></a>
+                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="'getSelectedGroup(' + ${group.groupId} + ')'" th:text="${group.shortName}" ></a>
                                         </div>
                                     </h5>
                                     <p th:text="${group.longName}" class="mb-0"></p>
@@ -74,7 +74,7 @@
                                             <h3 class="card-text" th:text="${selectedGroup.longName}" />
                                         </div>
                                         <div th:if="${selectedGroup.groupId != 0}" class="container-fluid p-0 col-auto">
-                                            <button type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'">
+                                            <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'">
                                                 Remove selected users
                                             </button>
                                         </div>

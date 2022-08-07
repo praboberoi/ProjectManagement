@@ -119,10 +119,8 @@ function removeUsers(groupId) {
         userIds.push(row.querySelector('.userId').textContent)
     })
     params.append('listOfUserIds', userIds.join(','));
-    console.log(userIds)
 
     httpRequest.send(params);
-    httpRequest.send();
 }
 
 /**
@@ -153,5 +151,4 @@ function removeUsers(groupId) {
     console.log(userIds)
 
     httpRequest.send(params);
-    httpRequest.send();
 }
