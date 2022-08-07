@@ -80,6 +80,11 @@
               Users
             </a>
           </li>
+          <li class="nav-item"  >
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/groups') ? 'active':''}" th:href="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}">
+              Groups
+            </a>
+          </li>
         </ul>
       </div>
     </div>
@@ -129,10 +134,13 @@
             <a class="nav-link" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">Dashboard</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">Account Page</a>
+            <a class="nav-link" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">Users</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">Users</a>
+            <a class="nav-link" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">Groups</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" th:href="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}">Account Page</a>
           </li>
         </ul>
         <ul class="nav flex-column">
