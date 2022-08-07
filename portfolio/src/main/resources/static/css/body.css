@@ -62,7 +62,7 @@ a.project-name {
 }
 
 .img-color-primary{
-   filter: invert(8%) sepia(100%) saturate(7420%) hue-rotate(248deg) brightness(96%) contrast(143%);
+    filter: invert(8%) sepia(100%) saturate(7420%) hue-rotate(248deg) brightness(96%) contrast(143%);
 }
 
 .img-color-secondary{
@@ -97,6 +97,11 @@ a.project-name {
 }
 #create-btn {
     margin-left: 45px;
+}
+
+/* for invalid inputs in form*/
+input:invalid{
+    box-shadow: 0 0 5px 1px red;
 }
 
 .asterisk {
@@ -138,7 +143,7 @@ a.project-name {
     border-right-width: 5px;
     border-left-color: rgb(185, 182, 163);
     border-right-color: rgb(185, 182, 163);
-  }
+}
 
 #edit-del-buttons {
     margin-left: auto;
@@ -146,11 +151,106 @@ a.project-name {
 
 .card-header {
     display: flex;
+    /*width: 600px;*/
 }
+
+#projectCard {
+    display: flex;
+    height: 300px;
+}
+
+#myTab{
+    padding-left: 15px;
+}
+
+#detailsCard {
+    width: 800px;
+}
+
+#calendarOb {
+    margin-left: 80px;
+    width: 800px;
+    padding-top: 8px;
+
+
+}
+#myTabContent{
+    overflow-y: auto;
+}
+
+#eventCard, #deadlineCard, #milestoneCard {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 15px;
+    padding-left: 10px;
+}
+
+.calendarIcons{
+    padding-bottom: 3px;
+}
+
+.eventDates {
+    line-height: 0.6;
+    font-size: 12px;
+}
+
+#projectDuration {
+    font-size: 13px;
+}
+
+.hiddenRow {
+    padding: 0 !important;
+}
+
+#no{
+    background-color: #ffffff
+}
+
+#cce, #ccm,#cco {
+    width: 33.33%;
+    float: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    font-size: 14px;
+
+}
+
+td.hiddenRow {
+    background-color: #ececec; /* Assuming you want the hover color to be white */
+}
+
 
 td {
     word-wrap: break-word;
     max-width: 180px;
+}
+
+.addButton {
+    margin-left: 20px;
+}
+#info {
+    display: flex;
+}
+label.form-check-label {
+    color: #636363;
+}
+.upcomingEvents, #switch {
+    margin-left: 30px;
+    margin-top: 10px;
+    margin-bottom: 6px;
+    font-size: 13px;
+    width: 170px;
+}
+div.upcomingEvents  {
+    display: flex;
+    justify-content: space-between;
+}
+
+.createBtn {
+    margin-left: 20px;
+    margin-top: 7px;
+    margin-bottom: 7px;
 }
 
 .mobile-only{
@@ -167,26 +267,26 @@ td {
 }
 
 /* Sort button styles from https://codepen.io/xaprio/pen/NWPXwOj */
-th a.sort { 
-	padding-right: 18px;
-	position: relative;
+th a.sort {
+    padding-right: 18px;
+    position: relative;
 }
 a.sort:before,
 a.sort:after {
-	border: 4px solid transparent;
-	content: "";
-	display: block;
-	right: 5px;
-	top: 50%;
-	position: absolute;
+    border: 4px solid transparent;
+    content: "";
+    display: block;
+    right: 5px;
+    top: 50%;
+    position: absolute;
 }
 a.sort:before {
-	border-bottom-color: #666;
-	margin-top: -9px;
+    border-bottom-color: #666;
+    margin-top: -9px;
 }
 a.sort:after {
-	border-top-color: #666;
-	margin-top: 1px;
+    border-top-color: #666;
+    margin-top: 1px;
 }
 a.asc.sort:after {
     border-top-color: #333;

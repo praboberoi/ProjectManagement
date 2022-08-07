@@ -46,6 +46,9 @@ public class ProjectControllerTest {
     private ProjectService projectService;
 
     @MockBean
+    private EventService eventService;
+
+    @MockBean
     private DashboardService dashboardService;
 
     @MockBean

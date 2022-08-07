@@ -1,7 +1,12 @@
 const projectDescriptionNav = document.getElementById('projectDescriptionNav')
 const plannerNav = document.getElementById('plannerNav')
 const cal = document.getElementById('cal')
-const projectDescription = document.getElementById('projectDescription')
+const projectDescription = document.getElementById('projectCard')
+const sprintTable = document.getElementById('showSprints')
+const sprintLabels = document.getElementById('sprintLabel')
+const calendarElements = document.getElementById('calendarOb')
+const eventLabel = document.getElementById('showEventLabel')
+
 
 /**
  * Updates the conformation message to delete the sprint with appropriate sprint name
@@ -24,6 +29,10 @@ function navTOProjectDescription() {
         plannerNav.ariaSelected = "false"
         plannerNav.classList.remove('active')
         projectDescriptionNav.classList.add('active')
+        sprintTable.hidden = false
+        sprintLabels.hidden = false
+        calendarElements.hidden = false
+        eventLabel.hidden = false
 
     }
 }
@@ -39,6 +48,12 @@ function navToPlanner() {
         plannerNav.ariaSelected = "true"
         projectDescriptionNav.classList.remove('active')
         plannerNav.classList.add('active')
+        sprintTable.hidden = true
+        sprintLabels.hidden = true
+        calendarElements.hidden = true
+        eventLabel.hidden = true
+
+
     }
 
 }
