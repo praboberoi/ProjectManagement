@@ -127,7 +127,7 @@ class GroupServerServiceIntergrationTests {
     }
 
     /**
-     * Tests that all the groups are returned.
+     * Tests that all the groups currently stored in the idp database are returned when a paginated group request is made.
      */
     @Test
     void givenSampleData_whenGetPaginatedGroupsIsCalledWithNoParameters_thenAllGroupsAreReturned() {

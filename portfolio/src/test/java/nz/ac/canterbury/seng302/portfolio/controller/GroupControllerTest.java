@@ -72,7 +72,7 @@ public class GroupControllerTest {
 
     /**
      * Checks that the group delete functionality will be called correctly for non teacher/admin users
-     * @throws Exception Expection thrown during mockmvc runtime
+     * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
     void givenNonTeacherUserAndGroupExists_whenDeleteGroupCalled_thenPermissionDenied() throws Exception{
@@ -85,7 +85,7 @@ public class GroupControllerTest {
 
     /**
      * Checks that all the groups are returned when group page is requested
-     * @throws Exception Expection thrown during mockmvc runtime
+     * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
     void whenGroupPageRequested_thenAllGroupsReturned() throws Exception{
@@ -99,7 +99,7 @@ public class GroupControllerTest {
 
     /**
      * Checks that a group are returned when a specific group is requested
-     * @throws Exception Expection thrown during mockmvc runtime
+     * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
     void whenSelectedGroupFragmentRequested_thenGroupIsReturned() throws Exception{
@@ -113,7 +113,7 @@ public class GroupControllerTest {
 
     /**
      * Checks that a group are returned when the members without a group is requested
-     * @throws Exception Expection thrown during mockmvc runtime
+     * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
     void whenUnassignedFragmentRequested_thenGroupIsReturned() throws Exception{
@@ -127,7 +127,7 @@ public class GroupControllerTest {
 
     /**
      * Checks that a group are returned when the teacher group is requested
-     * @throws Exception Expection thrown during mockmvc runtime
+     * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
     void whenTeacherFragmentRequested_thenGroupIsReturned() throws Exception{
