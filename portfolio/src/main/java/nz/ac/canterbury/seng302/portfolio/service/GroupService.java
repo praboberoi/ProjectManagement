@@ -1,12 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
+import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.stereotype.Service;
+
+import com.google.protobuf.Empty;
 
 import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
-import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupRequest;
-import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
-import nz.ac.canterbury.seng302.shared.identityprovider.GroupsServiceGrpc;
+import nz.ac.canterbury.seng302.portfolio.model.Groups;
 
 /**
  * Client service used to communicate to the IDP application relating to group features
@@ -26,10 +27,35 @@ public class GroupService {
      * @throws StatusRuntimeException Failure status of the server call
      */
     public DeleteGroupResponse deleteGroup(int groupId) throws StatusRuntimeException {
-        DeleteGroupResponse response = groupsStub.deleteGroup(DeleteGroupRequest.newBuilder()
-                .setGroupId(groupId)
-                .build());
-        return response;
+        return groupsStub.deleteGroup(DeleteGroupRequest.newBuilder().setGroupId(groupId).build());
     }
-    
+
+    /**
+     * Request the No-Group group details from IDP.
+     * @return No-Group Group
+     */
+    public Groups getMembersWithoutAGroup() {
+        GroupDetailsResponse response = groupsStub.getMembersWithoutAGroup(Empty.newBuilder().build());
+        return new Groups(response);
+    }
+
+    /**
+     * Request the Teaching group details from IDP.
+     * @return Teacher Group
+     */
+    public Groups getTeachingStaffGroup() {
+        GroupDetailsResponse response = groupsStub.getTeachingStaffGroup(Empty.newBuilder().build());
+        return new Groups(response);
+    }
+
+    /**
+     * Request a selected group details from IDP.
+     * @param groupId id of the selected group
+     * @return Selected Group's details.
+     */
+    public Groups getGroupById(int groupId) {
+        GetGroupDetailsRequest groupDetailsRequest = GetGroupDetailsRequest.newBuilder().setGroupId(groupId).build();
+        GroupDetailsResponse groupDetailsResponse = groupsStub.getGroupDetails(groupDetailsRequest);
+        return new Groups(groupDetailsResponse);
+    }
 }
