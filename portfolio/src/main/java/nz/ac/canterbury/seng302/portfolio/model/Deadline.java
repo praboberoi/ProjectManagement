@@ -1,15 +1,20 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
-import java.sql.Date;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Objects;
 
 /**
  * The data class for Deadlines. Contains the id, name, and date of the deadline for storage in the db.
  */
 @Entity
 public class Deadline {
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
     @Column(nullable = false)
     private int deadlineId;
 
@@ -21,17 +26,17 @@ public class Deadline {
     private String name;
 
     @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
     private Date date;
-
 
     /**
      * No args Constructor for the Deadline.
      */
     public Deadline() {}
 
-
     /**
-     * Creates a Deadline with an manually generated ID
+     * Constructor for deadline with arguments
      * @param name The name of the deadline
      * @param project Project associated with the deadline
      * @param date Date of the deadline
@@ -43,12 +48,11 @@ public class Deadline {
         this.date = date;
     }
 
-
-    public int getDeadlineID() {
+    public int getDeadlineId() {
         return deadlineId;
     }
 
-    public void setDeadlineID(int deadlineId) {
+    public void setDeadlineId(int deadlineId) {
         this.deadlineId = deadlineId;
     }
 
@@ -68,23 +72,45 @@ public class Deadline {
         this.name = name;
     }
 
+
     public Date getDate() {
         return date;
+    }
+
+    public String getDateOnly() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(date);
     }
 
     public void setDate(Date date) {
         this.date = date;
     }
 
+    public String getTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        return formatter.format(date);
+    }
+
+    @Override
+    public String toString() {
+        return "Deadline{" +
+                "deadlineId=" + deadlineId +
+                ", projectId=" + project.getProjectId() +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                '}';
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-
         if (!(o instanceof Deadline deadline)) return false;
+        return deadlineId == deadline.deadlineId && project.equals(deadline.project) && name.equals(deadline.name) && date.equals(deadline.date);
+    }
 
-        return deadlineId == deadline.deadlineId
-                && name.equals(deadline.name)
-                && date.equals(deadline.date);
+    @Override
+    public int hashCode() {
+        return Objects.hash(deadlineId, project, name, date);
     }
 
     /**
@@ -135,7 +161,6 @@ public class Deadline {
             this.date = date;
             return this;
         }
-
 
         /**
          * Returns a new Deadline object with the all the parameters of the current builder

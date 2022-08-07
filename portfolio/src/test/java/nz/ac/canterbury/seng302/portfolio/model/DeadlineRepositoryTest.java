@@ -29,6 +29,9 @@ public class DeadlineRepositoryTest {
     private Deadline deadline3;
     private Project project;
 
+    /**
+     * Initializes a test project and two test deadlines before each test
+     */
     @BeforeEach
     public void setup() {
         project = new Project.Builder()
@@ -60,6 +63,9 @@ public class DeadlineRepositoryTest {
         deadline2 = deadlineRepository.save(deadline2);
     }
 
+    /**
+     * Removes the test project and deadlines after each test
+     */
     @AfterEach
     public void tearDown() {
         deadlineRepository.delete(deadline1);
@@ -67,6 +73,9 @@ public class DeadlineRepositoryTest {
         projectRepository.delete(project);
     }
 
+    /**
+     * Asserts that given a deadline exists when findByName() with the correct deadline name is called, the correct deadline is returned
+     */
     @Test
     public void givenDeadlineExists_FindByDeadlineName() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
@@ -78,27 +87,37 @@ public class DeadlineRepositoryTest {
         assertArrayEquals(emptyList.toArray(), deadlineRepository.findByName("No").toArray());
     }
 
-
+    /**
+     * Asserts that given a deadline exists, when findByDate() is called with the correct date, then the correct deadline is returned
+     */
     @Test
     public void givenDeadlineExists_FindByDate() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
         assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDate(new Date(2021,2,1)).toArray());
     }
 
+    /**
+     * Given the deadline exists, when findById() is called with a correct ID, then the correct deadline is returned
+     */
     @Test
     public void givenDeadlineExists_FindById() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
-        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDeadlineId(deadline2.getDeadlineID()).toArray());
+        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDeadlineId(deadline2.getDeadlineId()).toArray());
     }
 
+    /**
+     * Asserts that the correct number of deadlines is returned when countByProject() is called
+     */
     @Test
     public void givenDeadlineExists_CountByProject() {
         assertEquals(2, deadlineRepository.countByProject(project));
     }
 
+    /**
+     * Asserts that the correct deadlines are returned when findByProject() is called
+     */
     @Test
     public void givenDeadlineExists_FindByProject() {
-        System.out.println("DeadlineTest 1: " + deadline1.getDeadlineID());
         List<Deadline> deadlineList = Arrays.asList(deadline1, deadline2);
         assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByProject(project).toArray());
 
