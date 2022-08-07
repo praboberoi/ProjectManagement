@@ -109,7 +109,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
     /**
      * Gets the specified group and returns them to the gRPC client
-     * @param request           The filters for pagination
+     * @param request           The protobuf request containing the id of the group to get
      * @param responseObserver  Returns to previous method with data
      */
     @Override
@@ -117,6 +117,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
         Groups group = groupsRepository.findById(request.getGroupId()).orElse(null);
         if (group != null) {
+            reply.setGroupId(group.getGroupId());
             reply.setShortName(group.getShortName());
             reply.setLongName(group.getLongName());
             reply.addAllMembers(group.getUsers().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
