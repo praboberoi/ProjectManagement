@@ -69,6 +69,7 @@ function getSelectedGroup(selectedGroupId) {
  * @param event The click event on the group member
  */
 function selectUser(event) {
+    document.querySelector('#remove-users').disabled = false
     let userTable = document.querySelectorAll("#userListDataTable tr")
 
     if (event.shiftKey) {
