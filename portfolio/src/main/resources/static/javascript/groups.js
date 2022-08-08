@@ -23,7 +23,7 @@ function checkLongName() {
 }
 
 /**
- * Makes a call to the server and replaces the current user data table with the new one
+ * Makes a call to the server and replaces the current group with the new one
  */
 function getSelectedGroup(selectedGroupId) {
     let httpRequest = new XMLHttpRequest();
@@ -41,4 +41,55 @@ function getSelectedGroup(selectedGroupId) {
 
     httpRequest.open('GET', apiPrefix + `/groups/${selectedGroupId}`);
     httpRequest.send();
-};
+}
+
+/**
+ * Selects and highlights the group members selected. Functions with shift and control clicking.
+ * @param event The click event on the group member
+ */
+function selectUser(event) {
+    let userTable = document.querySelectorAll("#userListDataTable tr")
+
+    if (event.shiftKey) {
+        let selected = document.querySelector(".currently-selected")
+        let table_elements = [].slice.call(userTable);
+
+        let index_target = table_elements.indexOf(event.target.closest('tr'))
+        let index_selected = table_elements.indexOf(selected)
+
+        document.querySelectorAll('.selected').forEach(row => {
+            row.classList.remove('table-info');
+            row.classList.remove('selected');
+        })
+        table_elements.splice(Math.min(index_target, index_selected), Math.abs(index_target - index_selected) + 1).forEach(element => {
+            element.classList.add('table-info');
+            element.classList.add('selected')
+        });
+        
+
+    } else if (event.ctrlKey) {
+        document.querySelectorAll('.currently-selected').forEach(row => {
+            row.classList.remove('currently-selected');
+        })
+        if (event.target.closest('tr').classList.contains('selected')) {
+            event.target.closest('tr').classList.remove('table-info');
+            event.target.closest('tr').classList.remove('selected');
+            event.target.closest('tr').classList.add('currently-selected');
+        } else {
+
+            event.target.closest('tr').classList.add('currently-selected');
+            event.target.closest('tr').classList.add('selected');
+            event.target.closest('tr').classList.add('table-info');
+        }
+    } else {
+        document.querySelectorAll('.selected, .currently-selected').forEach(row => {
+            row.classList.remove('table-info');
+            row.classList.remove('selected');
+            row.classList.remove('currently-selected');
+        })
+        
+        event.target.closest('tr').classList.add('currently-selected');
+        event.target.closest('tr').classList.add('selected');
+        event.target.closest('tr').classList.add('table-info');
+    }
+}

@@ -144,4 +144,23 @@ class GroupServerServiceIntegrationTests {
         GroupDetailsResponse testGroup = response.getGroups(0);
         assertEquals(1, testGroup.getGroupId());
     }
+
+    /**
+     * Tests that all the correct group info is returned to the client.
+     */
+    @Test
+    void givenSampleData_whengetGroupDetailsIsCalled_thenCorrect() {
+        GetGroupDetailsRequest request = GetGroupDetailsRequest.newBuilder().setGroupId(1).build();
+        StreamRecorder<GroupDetailsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.getGroupDetails(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<GroupDetailsResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        GroupDetailsResponse response = results.get(0);
+        assertEquals(1, response.getGroupId());
+        assertEquals("Team 400", response.getShortName());
+        assertEquals("400: Bad Request", response.getLongName());
+    }
 }

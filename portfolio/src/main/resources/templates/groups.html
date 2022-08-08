@@ -43,21 +43,18 @@
                             <div class="row">
                                 <div class="card-body">
                                     <h5 class="card-title">
-                                    <div th:if="${group.groupId == 0} and ${group.shortName.contains('Teaching Staff')}">
-                                        <a role="button" class=project-name href="#" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" >
-                                        </a>
-                                    </div>
-                                    <div th:if="${group.getGroupId() == 0} and ${group.shortName.contains('Members without a group')}">
-                                        <a role="button" class=project-name href="#" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" >
-                                        </a>
-                                    </div>
-                                    <div th:if="${group.getGroupId() != 0}">
-                                        <a role="button" class=project-name href="#" th:onclick="getSelectedGroup(${group.groupId})" th:text="${group.shortName}" >
-                                        </a>
-                                    </div>
+                                        <div th:if="${group.groupId == 0} and ${group.shortName.contains('Teaching Staff')}">
+                                            <a role="button" class="project-name" href="javascript:void();" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
+                                        </div>
+                                        <div th:if="${group.getGroupId() == 0} and ${group.shortName.contains('Members without a group')}">
+                                            <a role="button" class="project-name" href="javascript:void();" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
+                                        </div>
+                                        <div th:if="${group.getGroupId() != 0}">
+                                            <a role="button" class="project-name" href="javascript:void();" th:onclick="'getSelectedGroup(' + ${group.groupId} + ')'" th:text="${group.shortName}" ></a>
+                                        </div>
                                     </h5>
-                                    <p th:text="${group.longName}"></p>
-                                    <p th:text="${#lists.size(group.members)} + ' member' + ${#lists.size(group.members) == 1 ?'':'s'}"></p>
+                                    <p th:text="${group.longName}" class="mb-0"></p>
+                                    <p th:text="${#lists.size(group.members)} + ' member' + ${#lists.size(group.members) == 1 ?'':'s'}" class="mb-0"></p>
                                 </div>
                             </div>
                         </div>
@@ -72,7 +69,28 @@
                             <div class="card-body">
                                 <h5 class="card-title" th:text="${selectedGroup.shortName}" />
                                 <h3 class="card-text" th:text="${selectedGroup.longName}" />
-                                <p th:text="${selectedGroup.members}" />
+                                <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
+                                    <table class="table table-bordered table-hover">
+                                      <thead class = "table-light">
+                                      <tr>
+                                        <th scope="col" style="width:auto">Username</th>
+                                        <th scope="col" style="width:auto">Name</th>
+                                      </tr>
+                                      </thead>
+                                      <tbody>
+                                        <th:block th:each="user : ${selectedGroup.members}">
+                                          <tr draggable="true" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" role="button" th:onclick="'selectUser(event)'">
+                                            <td th:id="'user' + ${user.userId} + 'username'">
+                                                <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
+                                                [[${user.username}]]
+                                            </td>
+                                            <td th:id="'user' + ${user.userId} + 'fullname'">
+                                                [[${user.firstName}]] [[${user.lastName}]]
+                                            </td>
+                                        </th:block>
+                                      </tbody>
+                                    </table>
+                                </div>
                             </div>
                         </div>
                     </div>
