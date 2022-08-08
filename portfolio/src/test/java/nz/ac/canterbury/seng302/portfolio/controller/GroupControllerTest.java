@@ -170,4 +170,18 @@ public class GroupControllerTest {
             .perform(post("/groups/1/addMembers?listOfUserIds=1"))
             .andExpect(status().isOk());
     }
+
+    /**
+     * Checks that member is rejected when AddMembers is requested if they are not an admin
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenStudentUser_whenAddMembersIsCalled_thenMemberIsAdded() throws Exception{
+        AddGroupMembersResponse reply = AddGroupMembersResponse.newBuilder().setIsSuccess(true).build();
+        when(groupService.addGroupMembers(any(), anyInt())).thenReturn(reply);
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        mockMvc
+            .perform(post("/groups/1/addMembers?listOfUserIds=1"))
+            .andExpect(status().isForbidden());
+    }
 }

@@ -198,7 +198,6 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
 
-        String additionalInfo = "";
         List<Integer> userIds;
         try {
             userIds = new ArrayList<>(Arrays.stream(listOfUserIds.split(",")).map(Integer::parseInt).toList());
@@ -207,10 +206,10 @@ public class GroupController {
         }
 
         AddGroupMembersResponse response = groupService.addGroupMembers(userIds, groupId);
-        if (response.getIsSuccess() && "".equals(additionalInfo)) {
+        if (response.getIsSuccess()) {
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage() + additionalInfo);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
         }
     }
 }
