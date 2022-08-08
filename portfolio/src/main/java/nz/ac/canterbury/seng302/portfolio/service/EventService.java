@@ -89,6 +89,12 @@ public class EventService {
         else if (event.getEndDate().equals(event.getStartDate()))
             throw new IncorrectDetailsException("The event end date and time cannot be the same as event start date and time");
 
+        else if (event.getStartDate().before(event.getProject().getStartDate()) || event.getEndDate().before(event.getProject().getStartDate()))
+            throw new IncorrectDetailsException("The event cannot start or end before the project");
+
+        else if(event.getStartDate().after(event.getProject().getEndDate()) || event.getEndDate().after(event.getProject().getEndDate()))
+            throw new IncorrectDetailsException("The event cannot start or end after the project");
+
         event.setEventName(event.getEventName().strip());
     }
 

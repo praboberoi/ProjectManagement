@@ -44,6 +44,7 @@ public class EventController {
      * Checks for teacher or admin privileges
      * @param projectId ID of the project
      * @param principal Current user
+     * @param ra Redirect Attribute frontend message object
      * @param model
      * @return link of the html page to display
      */

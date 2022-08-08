@@ -111,7 +111,6 @@ public class EventControllerTest {
 
     /**
      * Tests that the new event form is created with the required information
-     * @throws Exception Thrown during mockmvc run time 
      */
     @Test
     void givenServer_WhenNavigateToNewEventForm_ThenAppropriateFormIsReturned() {
@@ -151,7 +150,6 @@ public class EventControllerTest {
 
     /**
      * Test verification of event object and check that it redirect the user to the project page.
-     * @throws Exception Thrown during mockmvc run time
      */
     @Test
     void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() {
