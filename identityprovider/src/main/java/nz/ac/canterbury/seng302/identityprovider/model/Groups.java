@@ -1,10 +1,9 @@
 package nz.ac.canterbury.seng302.identityprovider.model;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.*;
 
 /**
  * The group entity stored in the database for the identity provider application

@@ -1,16 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.shared.identityprovider.*;
-
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.google.protobuf.Empty;
-
 import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Client service used to communicate to the IDP application relating to group features

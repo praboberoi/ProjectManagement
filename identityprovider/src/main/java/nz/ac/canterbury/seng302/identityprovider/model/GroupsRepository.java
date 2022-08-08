@@ -1,10 +1,10 @@
 package nz.ac.canterbury.seng302.identityprovider.model;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * JPA repository interface to get group information from the database

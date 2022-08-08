@@ -1,11 +1,11 @@
 package nz.ac.canterbury.seng302.identityprovider;
 
+import com.google.protobuf.Empty;
 import io.grpc.internal.testing.StreamRecorder;
 import nz.ac.canterbury.seng302.identityprovider.model.GroupsRepository;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.service.GroupServerService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +13,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ActiveProfiles;
 
-import com.google.protobuf.Empty;
-
+import javax.transaction.Transactional;
 import java.util.Arrays;
 import java.util.List;
-
-import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 /**

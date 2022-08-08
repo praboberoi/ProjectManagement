@@ -16,8 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.*;
-import java.util.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.stream.Stream;
 
 /**
@@ -65,9 +68,6 @@ public class GroupController {
 
     /**
      * Get message for empty registration page
-     * @param request HTTP request sent to this endpoint
-     * @param response HTTP response that will be returned by this endpoint
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Registration html page
      */
     @GetMapping(path="/groups/list")
@@ -158,12 +158,9 @@ public class GroupController {
         CreateGroupResponse response = groupService.createGroup(shortName, longName);
         model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
         model.addAttribute("user", userAccountClientService.getUser(principal));
-        ResponseEntity.BodyBuilder reply;
         if (response.getIsSuccess()) {
-            reply = ResponseEntity.status(HttpStatus.OK);
             ra.addFlashAttribute("messageSuccess", response.getMessage());
         } else {
-            reply = ResponseEntity.status(HttpStatus.NOT_FOUND);
             ra.addFlashAttribute("messageDanger", response.getMessage());
         }
         return "redirect:/groups";
