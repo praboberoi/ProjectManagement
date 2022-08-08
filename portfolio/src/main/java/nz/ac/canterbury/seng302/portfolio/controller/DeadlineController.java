@@ -116,7 +116,7 @@ public class DeadlineController {
             Model model,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return RedirectToProjectPage;
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Deadline deadline = deadlineService.getDeadline(deadlineId);

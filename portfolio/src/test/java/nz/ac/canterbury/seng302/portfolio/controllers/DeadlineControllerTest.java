@@ -172,7 +172,6 @@ public class DeadlineControllerTest {
         try {
             when(projectService.getProjectById(1)).thenReturn(project);
             when(deadlineService.getDeadline(1)).thenReturn(deadline);
-            when(projectService.getProjectById(2)).thenThrow(IncorrectDetailsException.class);
 
             MockedStatic<PrincipalUtils> utilities = Mockito.mockStatic(PrincipalUtils.class);
 
@@ -190,12 +189,25 @@ public class DeadlineControllerTest {
                     .andExpect(model().attribute("pageTitle", "Edit Deadline: " + deadline.getName()))
                     .andExpect(view().name("deadlineForm"));
 
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Test call to deadlineEditForm to assert exception redirects to the project page with the correct message
+     */
+    @Test
+    public void givenProjectDoesNotExist_whenDeadlineEditFormRequested_thenErrorIsHandledAppropriately() {
+        try {
+            when(projectService.getProjectById(1)).thenReturn(project);
+            when(deadlineService.getDeadline(1)).thenReturn(deadline);
+            when(projectService.getProjectById(2)).thenThrow(IncorrectDetailsException.class);
 
             this.mockMvc.perform(MockMvcRequestBuilders
                             .get("/project/1/editDeadline/2"))
                     .andExpect(flash().attribute("messageDanger", "Project not found"))
                     .andExpect(view().name("redirect:/project/{projectId}"));
-
         } catch (Exception e) {
             e.printStackTrace();
         }
