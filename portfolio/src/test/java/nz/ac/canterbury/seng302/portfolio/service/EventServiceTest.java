@@ -132,9 +132,17 @@ public class EventServiceTest {
      */
     @Test
     public void givenEventWithCorrectValues_WhenVerifyEvent_ThenNoExceptionIsThrown() {
+        project = new Project.Builder()
+                .description("This is a test project")
+                .startDate(new java.sql.Date(2020 - 1900, 11, 12))
+                .endDate(new java.sql.Date(2023 - 1900, 1, 10))
+                .projectName("Project 2020")
+                .projectId(1)
+                .build();
+
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
-                .project(new Project())
+                .project(project)
                 .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
                 .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
                 .build();
