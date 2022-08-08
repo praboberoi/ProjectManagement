@@ -368,4 +368,76 @@ class GroupServerServiceIntegrationTests {
         CreateGroupResponse response = results.get(0);
         assertFalse(response.getIsSuccess(), "Group long name validation was incorrect: " + response.getMessage());
     }
+
+    /**
+     * Tests that the group with a short name longer than 50 characters is not created.
+     */
+    @Test
+    @Transactional
+    void givenAGroupWithExists_whenCreateGroupCalledWithSameLongName_thenTheGroupDoesNotExist() {
+        CreateGroupRequest firstRequest = CreateGroupRequest.newBuilder().setLongName("Test Group").setShortName("short").build();
+
+        StreamRecorder<CreateGroupResponse> firstResponseObserver = StreamRecorder.create();
+        groupServerService.createGroup(firstRequest, firstResponseObserver);
+        firstResponseObserver.getValues();
+
+        CreateGroupRequest secondRequest = CreateGroupRequest.newBuilder().setLongName("Test Group").setShortName("short name").build();
+        StreamRecorder<CreateGroupResponse> secondResponseObserver = StreamRecorder.create();
+        groupServerService.createGroup(secondRequest, secondResponseObserver);
+
+        assertNull(secondResponseObserver.getError());
+        List<CreateGroupResponse> results = secondResponseObserver.getValues();
+        assertEquals(1, results.size());
+
+        CreateGroupResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Group long name validation was incorrect: " + response.getMessage());
+    }
+
+    /**
+     * Tests that the group with a short name longer than 50 characters is not created.
+     */
+    @Test
+    @Transactional
+    void givenAGroupWithExists_whenCreateGroupCalledWithSameShortName_thenTheGroupDoesNotExist() {
+        CreateGroupRequest firstRequest = CreateGroupRequest.newBuilder().setShortName("Test Group").setLongName("Long").build();
+
+        StreamRecorder<CreateGroupResponse> firstResponseObserver = StreamRecorder.create();
+        groupServerService.createGroup(firstRequest, firstResponseObserver);
+        firstResponseObserver.getValues();
+
+        CreateGroupRequest secondRequest = CreateGroupRequest.newBuilder().setShortName("Test Group").setLongName("Long Name").build();
+        StreamRecorder<CreateGroupResponse> secondResponseObserver = StreamRecorder.create();
+        groupServerService.createGroup(secondRequest, secondResponseObserver);
+
+        assertNull(secondResponseObserver.getError());
+        List<CreateGroupResponse> results = secondResponseObserver.getValues();
+        assertEquals(1, results.size());
+
+        CreateGroupResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Group short name validation was incorrect: " + response.getMessage());
+    }
+
+    /**
+     * Tests that the group with a short name longer than 50 characters is not created.
+     */
+    @Test
+    @Transactional
+    void givenAGroupWithExists_whenCreateGroupCalledWithSameLongAndShortName_thenTheGroupDoesNotExist() {
+        CreateGroupRequest firstRequest = CreateGroupRequest.newBuilder().setShortName("Test Group Short").setLongName("Test Group Long").build();
+
+        StreamRecorder<CreateGroupResponse> firstResponseObserver = StreamRecorder.create();
+        groupServerService.createGroup(firstRequest, firstResponseObserver);
+        firstResponseObserver.getValues();
+
+        CreateGroupRequest secondRequest = CreateGroupRequest.newBuilder().setShortName("Test Group Short").setLongName("Test Group Long").build();
+        StreamRecorder<CreateGroupResponse> secondResponseObserver = StreamRecorder.create();
+        groupServerService.createGroup(secondRequest, secondResponseObserver);
+
+        assertNull(secondResponseObserver.getError());
+        List<CreateGroupResponse> results = secondResponseObserver.getValues();
+        assertEquals(1, results.size());
+
+        CreateGroupResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Group short and long name validation was incorrect: " + response.getMessage());
+    }
 }

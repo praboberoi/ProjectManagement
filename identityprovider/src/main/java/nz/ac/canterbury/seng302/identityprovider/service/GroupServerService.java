@@ -61,7 +61,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     public void getTeachingStaffGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
         GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
         reply.setShortName("Teaching Staff");
-        reply.addAllMembers(groupsRepository.findTeacherGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
+        reply.addAllMembers(groupsRepository.findTeacherGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).toList());
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
