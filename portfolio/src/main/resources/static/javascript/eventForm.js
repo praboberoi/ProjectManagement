@@ -28,6 +28,9 @@ function checkEventName() {
     if (eventName.value.length < 1) {
         eventName.classList.add("formError");
         eventNameError.innerText = "Event Name must not be empty";
+    } else if (eventName.value.length > 50){
+        eventName.classList.add("formError");
+        eventNameError.innerText = "Event Name cannot exceed 50 characters";
     } else {
         eventName.classList.remove("formError");
         eventNameError.innerText = null;
