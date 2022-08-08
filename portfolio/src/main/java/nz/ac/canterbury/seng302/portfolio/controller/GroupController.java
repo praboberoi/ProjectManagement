@@ -16,8 +16,12 @@ import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -76,6 +80,21 @@ public class GroupController {
         return "groups";
     }
 
+    /**
+     * Get message for empty registration page
+     * @param request HTTP request sent to this endpoint
+     * @param response HTTP response that will be returned by this endpoint
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Registration html page
+     */
+    @GetMapping(path="/groups/list")
+    public ModelAndView groupsList() {
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
+        ModelAndView mv = new ModelAndView("groups::groupList");
+        mv.addObject("listGroups", groups);
+        return mv;
+}
 
     /**
      * Attempts to delete a group from the idp server
@@ -165,5 +184,42 @@ public class GroupController {
             ra.addFlashAttribute("messageDanger", response.getMessage());
         }
         return "redirect:/groups";
+    }
+
+    /**
+     * Removes the selected users from the selected group
+     * @param listOfUserIds List of users to remove in csv format
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param principal Authentication information containing user info
+     * @return Response with status code and message
+     */
+    @PostMapping("/groups/{groupId}/removeMembers")
+    public ResponseEntity<String> removeMembersFromGroup(
+            @PathVariable Integer groupId,
+            String listOfUserIds,
+            Model model,
+            @AuthenticationPrincipal AuthState principal){
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+
+        String additionalInfo = "";
+        List<Integer> userIds;
+        try {
+            userIds = new ArrayList<>(Arrays.stream(listOfUserIds.split(",")).map(Integer::parseInt).toList());
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User list must be a csv of integers");
+        }
+
+        if (groupId == -1 && !PrincipalUtils.getUserRole(principal).contains(UserRole.COURSE_ADMINISTRATOR.name()) && userIds.remove(Integer.valueOf(PrincipalUtils.getUserId(principal)))) {
+            additionalInfo += "\nUnable to remove own role";
+        }
+
+        RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
+        if (response.getIsSuccess() && "".equals(additionalInfo)) {
+            return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage() + additionalInfo);
+        }
     }
 }

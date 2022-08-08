@@ -45,9 +45,9 @@
 
     <div class="" id="group-container">
         <div class="row mt-3">
-            <div id="group-list" class="col-4">
+            <div id="group-list" class="col-4" th:fragment="groupList">
                 <th:block th:each="group : ${listGroups}">
-                    <div class="card project-card mb-3">
+                    <div class="card project-card mb-3" th:id="'group' + ${group.groupId} + 'Card'">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="card-body">
@@ -76,8 +76,25 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="card-body">
-                                <h3 class="card-title" th:text="${selectedGroup.shortName}" />
-                                <h5 class="card-title" th:text="${selectedGroup.longName}" />
+                                <div class="container">
+                                    <div class="row">
+                                        <div class="col-auto me-auto">
+                                            <h5 class="card-title" th:text="${selectedGroup.shortName}" />
+                                            <h3 class="card-title" th:text="${selectedGroup.longName}" />
+                                        </div>
+                                        <div th:if="${selectedGroup.groupId != 0}" class="container-fluid p-0 col-auto">
+                                            <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'" disabled>
+                                                Remove selected users
+                                            </button>
+                                        </div>
+                                        <div th:if="${selectedGroup.shortName.contains('Teaching Staff')}" class="container-fluid p-0 col-auto">
+                                            <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(-1)'" disabled>
+                                                Remove selected users
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
                                     <table class="table table-bordered table-hover">
                                       <thead class = "table-light">
@@ -89,6 +106,7 @@
                                       <tbody>
                                         <th:block th:each="user : ${selectedGroup.members}">
                                           <tr draggable="true" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" role="button" th:onclick="'selectUser(event)'">
+                                            <td hidden class="userId" th:text="${user.userId}"></td>
                                             <td th:id="'user' + ${user.userId} + 'username'">
                                                 <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
                                                 [[${user.username}]]
@@ -105,7 +123,6 @@
                     </div>
                 </div>
             </div>
-
         </div>
     </div>
 </div>
