@@ -22,14 +22,12 @@ const endTimeError = document.getElementById('endTimeError');
  * Display error message if input is invalid.
  */
 function checkEventName() {
-    let eventName = document.getElementById('event-name');
-    let eventNameError = document.getElementById('eventNameError');
+    const eventName = document.getElementById('event-name');
+
+    const eventNameError = document.getElementById('eventNameError');
     if (eventName.value.length < 1) {
         eventName.classList.add("formError");
         eventNameError.innerText = "Event Name must not be empty";
-    } else if (! eventNameSpacesRegex.test(eventName.value)) {
-        eventName.classList.add("formError");
-        eventNameError.innerText = "Event name must not start or end with space characters";
     } else {
         eventName.classList.remove("formError");
         eventNameError.innerText = null;
@@ -47,15 +45,28 @@ function checkEventDates() {
     endDateElement.setCustomValidity("");
 
     checkStartDate();
+
     checkEndDate();
-    // checkEventTimes()
-    if (startDate > endDate ) {
+
+    if(startDateElement.classList.contains("formError") || endDateElement.classList.contains("formError")) {
+        document.getElementById("formSubmitButton").disabled = true;
+        return;
+    } else {
+        document.getElementById("formSubmitButton").disabled = false;
+    }
+
+    if (startDate >= endDate ) {
         startDateError.innerText = "Start Date must be on or before the End Date.";
         endDateError.innerText = "End Date must be on or after the Start Date";
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
+        document.getElementById("formSubmitButton").disabled = true;
         return;
+
+    } else {
+        document.getElementById("formSubmitButton").disabled = false;
     }
+
 
 }
 

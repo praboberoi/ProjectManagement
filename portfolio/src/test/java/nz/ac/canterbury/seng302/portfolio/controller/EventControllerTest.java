@@ -77,8 +77,6 @@ public class EventControllerTest {
                 .eventName("New Event")
                 .startDate(java.sql.Date.valueOf(now))
                 .endDate(java.sql.Date.valueOf(now.plusDays(1)))
-                .startTime("00:00")
-                .endTime("00:00")
                 .build();
 
         user = new User.Builder()

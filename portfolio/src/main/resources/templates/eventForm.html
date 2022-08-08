@@ -60,29 +60,14 @@
             <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
       </div>
       <br>
-
-<!--      <div style="height:30px;" class="row">-->
-<!--        <div class="col-md-6 ms-auto">-->
-<!--          <label  for="endDate" class="form-label date-font required">End Date</label>-->
-<!--        </div>-->
-<!--        <div class="col-md-6 ms-auto">-->
-<!--          <label for="endtime" class="form-label required">End Time</label>-->
-<!--        </div>-->
       </div>
 
-      <!--End Date & Time-->
       <div class="row">
-
-<!--        <div class="col-md-6 ms-auto">-->
-<!--          &lt;!&ndash;Timepicker&ndash;&gt;-->
-<!--          <input type="time" class="form-control" id="endTime" name="endTime" th:field="*{endTime}" onchange="checkEventTimes()" required>-->
-<!--          <p id="endTimeError" th:text="${endTimeError}" class="error-msg"></p>-->
-<!--        </div>-->
       </div>
       <br>
 
       <div class="d-flex flex-row justify-content-end p-0">
-        <button type="submit" name="submit" class="btn btn-outline-primary me-3">
+        <button type="submit" name="submit" id="formSubmitButton" class="btn btn-outline-primary me-3">
           <img class="icon img-color-primary" th:src="${image}"/> [[${submissionName}]]</button>
         <a type="button" class="btn btn-outline-secondary" th:href="@{${apiPrefix} + '/project/' + ${project.projectId}}">
           <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</a>

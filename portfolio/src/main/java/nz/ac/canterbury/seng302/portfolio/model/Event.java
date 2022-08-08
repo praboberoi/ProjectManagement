@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import com.google.type.DateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
-//import java.sql.Date;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
@@ -42,7 +40,7 @@ public class Event {
      */
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startDate;
 
     /**
@@ -50,7 +48,7 @@ public class Event {
      */
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date endDate;
 
 
@@ -59,19 +57,6 @@ public class Event {
      */
     public Event() {}
 
-    /**
-     * Creates an Event with an auto-generated ID
-     * @param project The project the event is contained in
-     * @param eventName The name of the event
-     * @param startDate When the event starts
-     * @param endDate When the event ends
-     */
-    public Event(String eventName, Project project, Date startDate, Date endDate) {
-        this.project = project;
-        this.eventName = eventName;
-        this.startDate = startDate;
-        this.endDate = endDate;
-    }
 
     /**
      * Creates an Event with a manually specified ID
@@ -145,10 +130,24 @@ public class Event {
         if (this == o) return true;
         if (!(o instanceof Event)) return false;
         Event event = (Event) o;
-        return eventId == event.eventId 
-        && Objects.equals(eventName, event.eventName)
-        && Objects.equals(startDate, event.startDate)
-        && Objects.equals(endDate, event.endDate);
+        return eventId == event.eventId && Objects.equals(project, event.project) && Objects.equals(eventName, event.eventName) && Objects.equals(startDate, event.startDate) && Objects.equals(endDate, event.endDate);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eventId, project, eventName, startDate, endDate);
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "eventId=" + eventId +
+                ", project=" + project +
+                ", eventName='" + eventName + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                '}';
     }
 
     /**
