@@ -177,6 +177,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             responseObserver.onCompleted();
             return;
         }
+
         if (group.getUsers().stream().filter(user -> request.getUserIdsList().contains(user.getUserId())).toList().size() != request.getUserIdsCount()) {
             reply.setIsSuccess(false);
             reply.setMessage("Unable to find all members in group.");
@@ -185,11 +186,13 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             responseObserver.onCompleted();
             return;
         }
+
         List<User> newUserList = group.getUsers().stream().filter(user -> !request.getUserIdsList().contains(user.getUserId())).toList();
         group.setUsers(newUserList);
         logger.info("{} members removed from group {}", request.getUserIdsCount(), request.getGroupId());
         groupsRepository.save(group);
 
+        reply.setMessage(String.format("%d member%s removed from group %s", request.getUserIdsCount(), request.getUserIdsCount()==1?"":"s" , group.getShortName()));
         reply.setIsSuccess(true);
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
@@ -240,7 +243,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         logger.info("{} members added to group {}", request.getUserIdsCount(), request.getGroupId());
         groupsRepository.save(group);
 
-        reply.setMessage(String.format("%d members added to group %s", request.getUserIdsCount(), group.getShortName()));
+        reply.setMessage(String.format("%d member%s added to group %s", request.getUserIdsCount(), request.getUserIdsCount()==1?"":"s", group.getShortName()));
         reply.setIsSuccess(true);
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
