@@ -32,7 +32,8 @@ public class EventServiceTest {
     }
 
     /**
-     * Checks if event is null
+     * Tests to make sure an error is thrown and an appropriate error message is received when a null object is
+     * sent for verifying an event
      */
     @Test
     public void givenEventIsNull_WhenVerifyEvent_ThenExceptionIsThrown() {
@@ -43,7 +44,8 @@ public class EventServiceTest {
     }
 
     /**
-     * Checks if event form has null values
+     * Tests to make sure an error is thrown and an appropriate error message is received when event values are null
+     * for verifying an event
      */
     @Test
     public void givenEventWithNullValues_WhenVerifyEvent_ThenExceptionIsThrown() {
@@ -54,7 +56,7 @@ public class EventServiceTest {
     }
 
     /**
-     * Adds an event and checks if event dates are valid
+     * Tests to make sure an error is thrown and an appropriate error message is received the
      */
     @Test
     public void givenEventWithIncorrectDates_WhenVerifyEvent_ThenExceptionIsThrown() {
