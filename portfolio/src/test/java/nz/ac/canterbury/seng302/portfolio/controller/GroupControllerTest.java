@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.shared.identityprovider.CreateGroupResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
 
@@ -85,6 +86,18 @@ public class GroupControllerTest {
         mockMvc
             .perform(delete("/groups/1/delete"))
             .andExpect(status().isForbidden());
+    }
+
+    /**
+     * Checks that the group create functionality will be called correctly for non teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenNonTeacherUserAndGroupExists_whenCreateGroupCalled_thenPermissionDenied() throws Exception{
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        mockMvc
+                .perform(post("/groups?shortName=&longName="))
+                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to create group."));
     }
 
     /**
