@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 /**
@@ -53,7 +55,12 @@ public class EventService {
      */
     public List<Event> getEventByProjectId(int projectId) {
         Optional<Project> current = projectRepository.findById(projectId);
-        return current.map(project -> eventRepository.findByProject(project)).orElse(List.of());
+        return current.map(project -> eventRepository
+                    .findByProject(project)
+                    .stream()
+                    .sorted(Comparator.comparing(Event::getStartDate))
+                    .collect(Collectors.toList()))
+                .orElse(List.of());
     }
 
 
