@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -134,7 +135,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Gets the specified members from the group and returns the status to the gRPC client
+     * Removes the specified members from the group and returns the status to the gRPC client
      * @param request           The protobuf Remove members request containing the group id and member ids. Group id of -1 is teacher group.
      * @param responseObserver  Returns to previous method with data
      */
@@ -187,6 +188,55 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         List<User> newUserList = group.getUsers().stream().filter(user -> !request.getUserIdsList().contains(user.getUserId())).toList();
         group.setUsers(newUserList);
         logger.info("{} members removed from group {}", request.getUserIdsCount(), request.getGroupId());
+        groupsRepository.save(group);
+
+        reply.setIsSuccess(true);
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+
+    /**
+     * Adds the specified members from the group and returns the status to the gRPC client
+     * @param request           The protobuf Add members request containing the group id and member ids. Group id of -1 is teacher group.
+     * @param responseObserver  Returns to previous method with data
+     */
+    @Override
+    public void addGroupMembers(AddGroupMembersRequest request, StreamObserver<AddGroupMembersResponse> responseObserver) {
+        AddGroupMembersResponse.Builder reply = AddGroupMembersResponse.newBuilder();
+
+        if (request.getGroupId() == -1) {
+            List<User> users = StreamSupport.stream(userRepository.findAllById(request.getUserIdsList()).spliterator(), false)
+            .filter(user -> !user.getRoles().contains(UserRole.TEACHER)).toList();
+
+            for (User user: users) {
+                user.addRole(UserRole.TEACHER);
+                userRepository.save(user);
+                logger.info("Added Teacher role to user {}", user.getUserId());
+            }
+
+            reply.setMessage("Added Teacher role to selected users");
+            reply.setIsSuccess(true);
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        Groups group = groupsRepository.findById(request.getGroupId()).orElse(null);
+        if (group == null) {
+            reply.setIsSuccess(false);
+            reply.setMessage("Unable to find group.");
+
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        Set<User> newUserList = group.getUsers();
+        Iterable<User> users =  userRepository.findAllById(request.getUserIdsList());
+        users.forEach(newUserList::add);
+        group.setUsers(newUserList);
+
+        logger.info("{} members added to group {}", request.getUserIdsCount(), request.getGroupId());
         groupsRepository.save(group);
 
         reply.setIsSuccess(true);

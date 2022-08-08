@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.shared.identityprovider.AddGroupMembersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
@@ -173,6 +174,39 @@ public class GroupController {
         }
 
         RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
+        if (response.getIsSuccess() && "".equals(additionalInfo)) {
+            return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage() + additionalInfo);
+        }
+    }
+
+    /**
+     * Removes the selected users from the selected group
+     * @param listOfUserIds List of users to remove in csv format
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param principal Authentication information containing user info
+     * @return Response with status code and message
+     */
+    @PostMapping("/groups/{groupId}/addMembers")
+    public ResponseEntity<String> addMembersFromGroup(
+            @PathVariable Integer groupId,
+            String listOfUserIds,
+            Model model,
+            @AuthenticationPrincipal AuthState principal){
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+
+        String additionalInfo = "";
+        List<Integer> userIds;
+        try {
+            userIds = new ArrayList<>(Arrays.stream(listOfUserIds.split(",")).map(Integer::parseInt).toList());
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User list must be a csv of integers");
+        }
+
+        AddGroupMembersResponse response = groupService.addGroupMembers(userIds, groupId);
         if (response.getIsSuccess() && "".equals(additionalInfo)) {
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
