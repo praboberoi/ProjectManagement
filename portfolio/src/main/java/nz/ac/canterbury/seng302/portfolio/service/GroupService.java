@@ -50,11 +50,10 @@ public class GroupService {
      * @throws StatusRuntimeException Failure status of the server call
      */
     public CreateGroupResponse createGroup(String shortName, String longName) throws StatusRuntimeException {
-        CreateGroupResponse response = groupsStub.createGroup(CreateGroupRequest.newBuilder()
+        return groupsStub.createGroup(CreateGroupRequest.newBuilder()
                         .setLongName(longName)
                         .setShortName(shortName)
                 .build());
-        return response;
     }
 
 
