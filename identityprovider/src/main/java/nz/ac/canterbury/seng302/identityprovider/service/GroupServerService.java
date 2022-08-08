@@ -239,6 +239,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         logger.info("{} members added to group {}", request.getUserIdsCount(), request.getGroupId());
         groupsRepository.save(group);
 
+        reply.setMessage(String.format("%d members added to group %s", request.getUserIdsCount(), request.getGroupId()));
         reply.setIsSuccess(true);
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();

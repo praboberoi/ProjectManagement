@@ -38,7 +38,7 @@
         <div class="row mt-3">
             <div id="group-list" class="col-4" th:fragment="groupList">
                 <th:block th:each="group : ${listGroups}">
-                    <div class="card project-card mb-3" th:id="'group' + ${group.groupId} + 'Card'">
+                    <div class="card project-card mb-3" th:id="'group' + ${group.groupId} + 'Card'" th:ondrop="'dropUsers(event, ' + ${group.groupId} + ')'" ondragover="allowDrop(event)">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="card-body">
@@ -96,7 +96,7 @@
                                       </thead>
                                       <tbody>
                                         <th:block th:each="user : ${selectedGroup.members}">
-                                          <tr draggable="true" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" role="button" th:onclick="'selectUser(event)'">
+                                          <tr draggable="true" ondragstart="userDragStart(event)" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" role="button" th:onclick="'selectUser(event)'">
                                             <td hidden class="userId" th:text="${user.userId}"></td>
                                             <td th:id="'user' + ${user.userId} + 'username'">
                                                 <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">

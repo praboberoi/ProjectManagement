@@ -73,7 +73,10 @@ function getSelectedGroup(selectedGroupId) {
  * @param event The click event on the group member
  */
 function selectUser(event) {
-    document.querySelector('#remove-users').disabled = false
+    let removeUserButton = document.querySelector('#remove-users')
+    if (removeUserButton != null) {
+        removeUserButton.disabled = false
+    }
     let userTable = document.querySelectorAll("#userListDataTable tr")
 
     if (event.shiftKey) {
@@ -127,6 +130,7 @@ function selectUser(event) {
 function removeUsers(groupId) {
     let httpRequest = new XMLHttpRequest();
     let userIds = []
+    let errorCodes = [400, 403]
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
@@ -137,7 +141,7 @@ function removeUsers(groupId) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
                 messageDanger.innerText = "An error occured on the server, please try again later";
-            } else if ([400, 403].contains(httpRequest.status)) {
+            } else if (errorCodes.includes(httpRequest.status)) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
                 messageDanger.innerText = httpRequest.responseText;
@@ -157,6 +161,89 @@ function removeUsers(groupId) {
     }
     
     httpRequest.open('POST', apiPrefix + `/groups/${groupId}/removeMembers`);
+    let params = new FormData();
+    document.querySelectorAll('.selected').forEach(row => {
+        userIds.push(row.querySelector('.userId').textContent)
+    })
+    params.append('listOfUserIds', userIds.join(','));
+
+    httpRequest.send(params);
+}
+
+function addUsers(groupId) {
+    addUsersCall(groupId, groupId)
+}
+
+function dropUsers(event, groupId) {
+    event.preventDefault();
+    if (groupId == 0) {
+        if (event.target.closest(".card").querySelector("a").innerText == "Teaching Staff") {
+            groupId = -1
+        } else {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Cannot add users to Members without a group";
+            return;
+        }
+    }
+    let data = event.dataTransfer.getData("origin");
+    if (data == "Members without a group") {
+        addUsersCall(groupId, "unassigned")
+    } else {
+        addUsersCall(groupId, null)
+    }
+}
+
+function userDragStart(event) {
+    if (!event.target.closest("tr").classList.contains("selected")) {
+        selectUser(event)
+    }
+    event.dataTransfer.setData("origin", event.target.closest("#group-display").querySelector("h5").innerText);
+}
+
+function allowDrop(event) {
+    event.preventDefault();
+}
+
+/**
+ * Makes a call to the server and adds the selected members to the group
+ * @param groupId Id of the selected group
+ */
+ function addUsersCall(groupId, originGroupId) {
+    let httpRequest = new XMLHttpRequest();
+    let userIds = []
+    let errorCodes = [400, 403]
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                messageDanger.hidden = true;
+                messageSuccess.hidden = false;
+                messageSuccess.innerText = httpRequest.responseText;
+            } else if (httpRequest.status === 500) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "An error occurred on the server, please try again later";
+            } else if (errorCodes.includes(httpRequest.status)) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.responseText;
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Something went wrong.";
+            }
+            if (originGroupId != null) {
+                if (groupId == -1 && typeof originGroupId != 'string') {
+                    getSelectedGroup('teachers')
+                } else {
+                    getSelectedGroup(originGroupId)
+                }
+            }
+            updateGroupList()
+        }
+    }
+    
+    httpRequest.open('POST', apiPrefix + `/groups/${groupId}/addMembers`);
     let params = new FormData();
     document.querySelectorAll('.selected').forEach(row => {
         userIds.push(row.querySelector('.userId').textContent)
