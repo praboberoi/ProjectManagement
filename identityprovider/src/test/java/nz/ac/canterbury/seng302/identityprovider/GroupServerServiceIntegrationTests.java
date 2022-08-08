@@ -15,6 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 
 import com.google.protobuf.Empty;
 
+import java.util.Arrays;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -38,7 +39,7 @@ class GroupServerServiceIntegrationTests {
 
     @BeforeEach
     void initServerService() {
-        groupServerService = new GroupServerService(groupsRepository);
+        groupServerService = new GroupServerService(groupsRepository, userRepository);
     }
 
     /**
@@ -162,5 +163,80 @@ class GroupServerServiceIntegrationTests {
         assertEquals(1, response.getGroupId());
         assertEquals("Team 400", response.getShortName());
         assertEquals("400: Bad Request", response.getLongName());
+    }
+
+    /**
+     * Tests that all members are removed from the specified group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenRemoveGroupMembersIsCalledOnNormalGroup_thenMemberRemoved() {
+        RemoveGroupMembersRequest request = RemoveGroupMembersRequest.newBuilder().setGroupId(1).addAllUserIds(Arrays.asList(1)).build();
+        StreamRecorder<RemoveGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.removeGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<RemoveGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        RemoveGroupMembersResponse response = results.get(0);
+        assertTrue(response.getIsSuccess(), "Member failed to delete from the group: " + response.getMessage());
+        assertEquals(0, groupsRepository.findById(1).get().getUsers().stream().filter(user -> user.getUserId() == 1).count());
+    }
+
+    /**
+     * Tests that all members are removed from the teacher group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenRemoveGroupMembersIsCalledOnTeacherGroup_thenMemberIsNotTeacher() {
+        RemoveGroupMembersRequest request = RemoveGroupMembersRequest.newBuilder().setGroupId(-1).addAllUserIds(Arrays.asList(2)).build();
+        StreamRecorder<RemoveGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.removeGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<RemoveGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        RemoveGroupMembersResponse response = results.get(0);
+        assertTrue(response.getIsSuccess(), "Member failed to delete from the group: " + response.getMessage());
+        assertFalse(userRepository.findById(2).get().getRoles().contains(UserRole.TEACHER), "User is still a teacher");
+    }
+
+    /**
+     * Tests that all members are removed from the specified group
+     */
+    @Test
+    @Transactional
+    void givenUserWithSingleRole_whenRemoveGroupMembersIsCalledOnTeacherGroup_thenMemberIsNotAffected() {
+        RemoveGroupMembersRequest request = RemoveGroupMembersRequest.newBuilder().setGroupId(-1).addAllUserIds(Arrays.asList(1)).build();
+        StreamRecorder<RemoveGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.removeGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<RemoveGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        RemoveGroupMembersResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Teacher was removed: " + response.getMessage());
+        assertTrue(userRepository.findById(1).get().getRoles().contains(UserRole.TEACHER), "User is still a teacher");
+    }
+
+    /**
+     * Tests that all members are removed from the specified group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenRemoveGroupMembersIsCalledOnNoGroup_thenFails() {
+        RemoveGroupMembersRequest request = RemoveGroupMembersRequest.newBuilder().setGroupId(5826).addAllUserIds(Arrays.asList(1)).build();
+        StreamRecorder<RemoveGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.removeGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<RemoveGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        RemoveGroupMembersResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Non-existant group was found: " + response.getMessage());
     }
 }

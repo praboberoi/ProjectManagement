@@ -6,7 +6,6 @@ import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.google.protobuf.Empty;
@@ -28,7 +27,6 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
     private GroupsRepository groupsRepository;
 
-    @Autowired
     private UserRepository userRepository;
     
     @Value("${hostAddress}")
@@ -36,8 +34,9 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
     Logger logger = LoggerFactory.getLogger(GroupServerService.class);
 
-    public GroupServerService(GroupsRepository groupsRepository) {
+    public GroupServerService(GroupsRepository groupsRepository, UserRepository userRepository) {
         this.groupsRepository = groupsRepository;
+        this.userRepository = userRepository;
     }
 
     /**
