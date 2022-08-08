@@ -11,6 +11,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -66,16 +67,18 @@ public class ProjectControllerTest {
 
     private Sprint testSprint;
 
-    private static MockedStatic<PrincipalUtils> mockedStaticDigiGateway;
+    private static MockedStatic<PrincipalUtils> utilities;
 
     @BeforeAll
     private static void beforeAllInit() {
-        mockedStaticDigiGateway = mockStatic(PrincipalUtils.class);
+        utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
     }
+
 
     @BeforeEach
     public void beforeEachInit() {
-        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+
         testList = new ArrayList<String>();
         testSprintList = new ArrayList<Sprint>();
         testList.add("testRole");
@@ -112,7 +115,7 @@ public class ProjectControllerTest {
 
     @AfterAll
     public static void afterAll() {
-        mockedStaticDigiGateway.close();
+        utilities.close();
     }
 
     /**

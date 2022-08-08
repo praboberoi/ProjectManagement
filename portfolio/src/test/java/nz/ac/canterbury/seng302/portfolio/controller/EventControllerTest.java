@@ -10,6 +10,8 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
@@ -61,11 +63,16 @@ public class EventControllerTest {
 
     UserResponse.Builder userResponse;
 
+    private static MockedStatic<PrincipalUtils> utilities;
+
+    @BeforeAll
+    private static void beforeAllInit() {
+        utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+    }
 
     @BeforeEach
     public void init() {
-        MockedStatic<PrincipalUtils> utilities = Mockito.mockStatic(PrincipalUtils.class);
-        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         LocalDate now = LocalDate.now();
         project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
         event = new Event.Builder()
@@ -168,4 +175,10 @@ public class EventControllerTest {
             e.printStackTrace();
         }
     }
+
+    @AfterAll
+    public static void afterAll() {
+        utilities.close();
+    }
+
 }
