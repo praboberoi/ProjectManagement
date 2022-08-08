@@ -23,8 +23,11 @@ const endTimeError = document.getElementById('endTimeError');
  */
 function checkEventName() {
     const eventName = document.getElementById('event-name');
-
     const eventNameError = document.getElementById('eventNameError');
+    let charMessage = document.getElementById("charCount");
+    let charCount = eventName.value.length;
+    charMessage.innerText = charCount + ' '
+
     if (eventName.value.length < 1) {
         eventName.classList.add("formError");
         eventNameError.innerText = "Event Name must not be empty";
