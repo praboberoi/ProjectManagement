@@ -23,6 +23,12 @@ public class EventService {
     @Autowired private ProjectRepository projectRepository;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
 
+
+    public EventService(ProjectRepository projectRepository, EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
+        this.projectRepository = projectRepository;
+    }
+
     /**
      * Creates a new event with a name
      * @return of type Event
