@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.PersistenceException;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 
 /**

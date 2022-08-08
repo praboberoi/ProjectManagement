@@ -1,7 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import javax.persistence.*;
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.sql.Date;
+import java.util.Objects;
 
 /**
  * The data class for Milestones. Contains the id, name, and date of the milestone for storage in the db.
@@ -74,6 +78,22 @@ public class Milestone {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(milestoneId, project, name, date);
+    }
+
+    @Override
+    public String toString() {
+        return "Milestone{" +
+                "milestoneId=" + milestoneId +
+                ", project=" + project +
+                ", name='" + name + '\'' +
+                ", date=" + date +
+                '}';
     }
 
     /**

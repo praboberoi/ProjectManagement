@@ -13,7 +13,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.sql.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -138,7 +138,7 @@ public class MilestoneServiceTest {
     public void givenMilestoneCreated_whenSaveMilestoneCalled_returnsCreationMessage() {
         Milestone milestone1 = new Milestone.Builder()
                 .milestoneId(0)
-                .date(new Date())
+                .date(new Date(2022-1900, 10, 2))
                 .name("Milestone 2")
                 .project(project)
                 .build();
@@ -165,7 +165,7 @@ public class MilestoneServiceTest {
     public void givenMilestoneExistsWithoutName_whenVerifyMilestoneCalled_thenAnExceptionIsThrown() {
         Milestone milestone1 = new Milestone.Builder()
                 .milestoneId(0)
-                .date(new Date())
+                .date(new Date(2022-1900, 10, 2))
                 .project(project)
                 .build();
 
@@ -181,7 +181,7 @@ public class MilestoneServiceTest {
     public void givenMilestoneExistsWithIncorrectName_whenVerifyMilestoneCalled_thenAnExceptionIsThrown() {
         Milestone milestone1 = new Milestone.Builder()
                 .milestoneId(0)
-                .date(new Date())
+                .date(new Date(2022-1900, 10, 2))
                 .project(project)
                 .name(" incorrect name")
                 .build();
@@ -207,15 +207,15 @@ public class MilestoneServiceTest {
      */
     @Test
     public void givenMilestoneExistsWithIncorrectDate_whenVerifyMilestoneRequested_thenAnExceptionIsThrown() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = new Date(2024-1900, 10, 2);
         assertDoesNotThrow(() -> {
-            milestone.setDate(dateFormat.parse("10/01/2024"));
+            milestone.setDate(date);
             IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                     milestoneService.verifyMilestone(milestone)
             );
             assertEquals("The milestone's date cannot be after the project end date", exception.getMessage());
 
-            milestone.setDate(dateFormat.parse("10/01/1989"));
+            milestone.setDate( new Date(1989-1900, 10, 2));
             IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
                     milestoneService.verifyMilestone(milestone)
             );
