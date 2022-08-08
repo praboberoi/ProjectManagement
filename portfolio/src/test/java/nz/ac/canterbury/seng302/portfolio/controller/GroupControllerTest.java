@@ -184,4 +184,18 @@ public class GroupControllerTest {
             .perform(post("/groups/1/addMembers?listOfUserIds=1"))
             .andExpect(status().isForbidden());
     }
+
+    /**
+     * Checks that request is rejected when AddMembers is requested on bad data
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenBadData_whenAddMembersIsCalled_thenMemberIsAdded() throws Exception{
+        AddGroupMembersResponse reply = AddGroupMembersResponse.newBuilder().setIsSuccess(true).build();
+        when(groupService.addGroupMembers(any(), anyInt())).thenReturn(reply);
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+            .perform(post("/groups/1/addMembers?listOfUserIds=team400"))
+            .andExpect(status().isBadRequest());
+    }
 }
