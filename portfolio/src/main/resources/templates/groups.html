@@ -79,8 +79,8 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-auto me-auto">
-                                            <h5 class="card-title" th:text="${selectedGroup.shortName}" />
-                                            <h3 class="card-title" th:text="${selectedGroup.longName}" />
+                                            <h3 class="card-title" th:text="${selectedGroup.shortName}" />
+                                            <h5 class="card-title" th:text="${selectedGroup.longName}" />
                                         </div>
                                         <div th:if="${selectedGroup.groupId != 0}" class="container-fluid p-0 col-auto">
                                             <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'" disabled>
