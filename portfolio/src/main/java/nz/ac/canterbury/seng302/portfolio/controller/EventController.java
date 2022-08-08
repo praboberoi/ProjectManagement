@@ -51,6 +51,7 @@ public class EventController {
     public String newEvent(
             Model model,
             @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra,
             @PathVariable ("projectId") int projectId) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
         model.addAttribute("apiPrefix", apiPrefix);
@@ -59,21 +60,20 @@ public class EventController {
         try {
             currentProject = projectService.getProjectById(projectId);
             newEvent = eventService.getNewEvent(currentProject);
-            if (newEvent == null) return "redirect:/project/{projectId}";
-        } catch (Exception e) {
-            e.getMessage();
+            model.addAttribute("project", currentProject);
+            model.addAttribute("event", newEvent);
+            model.addAttribute("pageTitle", "Add New Event");
+            model.addAttribute("submissionName", "Create");
+            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
+            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectDateMin", currentProject.getStartDate());
+            model.addAttribute("projectDateMax", currentProject.getEndDate());
+            return "eventForm";
+
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         }
-
-        model.addAttribute("project", currentProject);
-        model.addAttribute("event", newEvent);
-        model.addAttribute("pageTitle", "Add New Event");
-        model.addAttribute("submissionName", "Create");
-        model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
-        model.addAttribute("user", userAccountClientService.getUser(principal));
-        model.addAttribute("projectDateMin", currentProject.getStartDate());
-        model.addAttribute("projectDateMax", currentProject.getEndDate());
-        return "eventForm";
     }
 
 

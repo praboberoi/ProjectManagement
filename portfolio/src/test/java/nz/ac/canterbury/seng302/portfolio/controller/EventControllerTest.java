@@ -4,20 +4,19 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
+import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
 
@@ -38,7 +37,7 @@ public class EventControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    @SpyBean
+    @MockBean
     private EventService eventService;
 
     @MockBean
@@ -60,16 +59,11 @@ public class EventControllerTest {
 
     UserResponse.Builder userResponse;
 
-    private static MockedStatic<PrincipalUtils> mockedStaticDigiGateway;
-
-    @BeforeAll
-    private static void initStaticMocks() {
-        mockedStaticDigiGateway = mockStatic(PrincipalUtils.class);
-    }
 
     @BeforeEach
     public void init() {
-        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        MockedStatic<PrincipalUtils> utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         LocalDate now = LocalDate.now();
         project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
         event = new Event.Builder()
@@ -88,19 +82,14 @@ public class EventControllerTest {
                 .creationDate(new Date())
                 .build();
 
-        userResponse = UserResponse.newBuilder();
-        userResponse.setUsername(user.getUsername());
-        userResponse.setFirstName(user.getFirstName());
-        userResponse.setLastName(user.getLastName());
-        userResponse.setEmail(user.getEmail());
-        userResponse.setCreated(Timestamp.newBuilder()
+        userResponse = UserResponse.newBuilder()
+                .setUsername(user.getUsername())
+                .setFirstName(user.getFirstName())
+                .setLastName(user.getLastName())
+                .setEmail(user.getEmail())
+                .setCreated(Timestamp.newBuilder()
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
-    }
-
-    @AfterAll
-    public static void after() {
-        mockedStaticDigiGateway.close();
     }
 
     /**
@@ -108,18 +97,39 @@ public class EventControllerTest {
      * @throws Exception Thrown during mockmvc run time 
      */
     @Test
-    void givenServer_WhenNavigateToNewEventForm_ThenEventFormReturned() throws Exception{
-        when(projectService.getProjectById(1)).thenReturn(project);
-        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-        this.mockMvc
-                .perform(get("/project/1/newEvent"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("project", project))
-                .andExpect(model().attribute("event", event))
-                .andExpect(model().attribute("pageTitle", "Add New Event"))
-                .andExpect(model().attribute("user", userResponse.build()))
-                .andExpect(model().attribute("projectDateMin", project.getStartDate()))
-                .andExpect(model().attribute("projectDateMax", project.getEndDate()));
+    void givenServer_WhenNavigateToNewEventForm_ThenAppropriateFormIsReturned() {
+        Event event = new Event.Builder()
+                .eventName("New Event")
+                        .startDate(java.sql.Date.valueOf(LocalDate.now()))
+                        .endDate(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
+                        .build();
+
+        try {
+            when(projectService.getProjectById(1)).thenReturn(project);
+
+            when(projectService.getProjectById(0)).thenThrow(new IncorrectDetailsException("Project not found"));
+            when(eventService.getNewEvent(project)).thenReturn(event);
+            when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
+            this.mockMvc
+                    .perform(get("/project/1/newEvent"))
+                    .andExpect(status().isOk())
+                    .andExpect(model().attribute("project", project))
+                    .andExpect(model().attribute("event", event))
+                    .andExpect(model().attribute("pageTitle", "Add New Event"))
+                    .andExpect(model().attribute("user", userResponse.build()))
+                    .andExpect(model().attribute("projectDateMin", project.getStartDate()))
+                    .andExpect(model().attribute("projectDateMax", project.getEndDate()))
+                    .andExpect(view().name("eventForm"));
+
+            this.mockMvc
+                    .perform(get("/project/0/newEvent"))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(flash().attribute("messageDanger", "Project not found"))
+                    .andExpect(view().name("redirect:/project/{projectId}"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
