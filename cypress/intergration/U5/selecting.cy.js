@@ -1,11 +1,12 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("I select group {int}", (groupId) => {
+Given("I select group {word}", (group) => {
     cy.intercept({
         method: 'GET',
         url: '/groups/*',
     }).as('groupCheck')
-    cy.get('#group' + groupId + 'Card').find('a').click()
+
+    cy.get('.project-card a').contains(group).click()
     cy.wait('@groupCheck')
 });
 
@@ -14,6 +15,7 @@ Given("I select the Teaching Staff group", () => {
         method: 'GET',
         url: '/groups/*',
     }).as('groupCheck')
+    
     cy.get('#select-teachers').click()    
     cy.wait('@groupCheck')
 });
@@ -41,4 +43,15 @@ When("I shift click on user {int}", (userIndex) => {
 
 Then("User {int} is highlighted", (userIndex) => {
     cy.get('tr.user-row').eq(userIndex).should('have.class', 'table-info')
+});
+
+Then("User {word} is in group {word}", (user, group) => {
+    cy.intercept({
+        method: 'GET',
+        url: '/groups/*',
+    }).as('groupCheck')
+
+    cy.get('.project-card a').contains(group).click()
+    cy.wait('@groupCheck')
+    cy.get('tr.user-row').contains(user).should('exist')
 });

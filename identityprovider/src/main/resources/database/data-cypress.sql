@@ -21,5 +21,6 @@ INSERT IGNORE INTO user (user_id, bio,date_created,email,first_name,last_name,ni
 INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285324,0,0);
 
 -- Create group and add member into it
-INSERT IGNORE INTO groups (group_id, short_name, long_name) VALUES (1285322, 'Cypress', 'Cypress test group');
+INSERT IGNORE INTO groups (group_id, short_name, long_name) VALUES (1285322, 'Cypress1', 'Cypress test group 1');
+INSERT IGNORE INTO groups (group_id, short_name, long_name) VALUES (1285323, 'Cypress2', 'Cypress test group 2');
 INSERT IGNORE INTO users_groups (user_id, group_id) VALUES (1285323, 1285322);

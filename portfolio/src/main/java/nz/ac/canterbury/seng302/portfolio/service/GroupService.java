@@ -89,7 +89,6 @@ public class GroupService {
      * @return Success status and message
      */
     public AddGroupMembersResponse addGroupMembers(List<Integer> userIds, Integer groupId) {
-        AddGroupMembersRequest request = AddGroupMembersRequest.newBuilder().setGroupId(groupId).addAllUserIds(userIds).build();
-        return groupsStub.addGroupMembers(request);
+        return groupsStub.addGroupMembers(AddGroupMembersRequest.newBuilder().setGroupId(groupId).addAllUserIds(userIds).build());
     }
 }
