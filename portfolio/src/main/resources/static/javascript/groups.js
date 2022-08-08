@@ -56,6 +56,10 @@ function getSelectedGroup(selectedGroupId) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
                 messageDanger.innerText = "Bad Request";
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Something went wrong.";
             }
         }
     }
@@ -133,10 +137,14 @@ function removeUsers(groupId) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
                 messageDanger.innerText = "An error occured on the server, please try again later";
-            } else {
+            } else if ([400, 403].contains(httpRequest.status)) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
                 messageDanger.innerText = httpRequest.responseText;
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Something went wrong.";
             }
 
             if (groupId == -1) {

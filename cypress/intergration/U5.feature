@@ -54,7 +54,3 @@ Feature: U5. Groups and group membership
     When I select user CypressGroupGuineaPig
     And I remove users from group
     Then User CypressGroupGuineaPig is not in group
-
-  # Scenario: AC1 I cannot remove myself from the teacher group from this page unless I have a higher role (e.g., admin).
-
-  # Scenario: AC1 Adding a user to this group automatically gives them the role “teacher”.
