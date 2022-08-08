@@ -37,7 +37,7 @@
     <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
 
     <div th:if="${adminOrTeacher}">
-        <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" data-target="#conformationModal" >
+        <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" data-target="#createModal" >
             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
             Create Group
         </a>
@@ -76,8 +76,8 @@
                     <div class="container-fluid">
                         <div class="row">
                             <div class="card-body">
-                                <h5 class="card-title" th:text="${selectedGroup.shortName}" />
-                                <h3 class="card-text" th:text="${selectedGroup.longName}" />
+                                <h3 class="card-title" th:text="${selectedGroup.shortName}" />
+                                <h5 class="card-title" th:text="${selectedGroup.longName}" />
                                 <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
                                     <table class="table table-bordered table-hover">
                                       <thead class = "table-light">
@@ -123,13 +123,13 @@
                     <form id="createGroupForm" method="post" th:object="${groups}" th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}" >
                         <div class="mb-3">
                             <label class="col-form-label required">Group Short Name</label>
-                            <input style="font-size:20px;" type="text" class="form-control required" name="shortName" th:value="${shortName}"id="shortName" placeholder="New Group" maxlength="50" onkeyup="checkShortName()" required>
+                            <input type="text" class="form-control required" name="shortName" onkeyup="checkShortName()" th:value="${shortName}"id="shortName" maxlength="50" placeholder="New Group" required>
                             <span id="charCount" th:value="${charCount}">0 </span> / 50 characters used.
                             <p id="shortNameError" th:text="${shortNameError}" class="error-msg"></p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Group Long Name</label>
-                            <input style="font-size:20px;" type="text" class="form-control mt-50" th:value="${longName}" name="longName" id="longName" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()" required/>
+                            <input type="text" class="form-control mt-50" th:value="${longName}" name="longName" id="longName" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()" required/>
                             <span id="charCountLong" th:value="${charCount}">0 </span> / 100 characters used.
                             <p id="longNameError" th:text="${longNameError}" class="error-msg"></p>
                         </div>

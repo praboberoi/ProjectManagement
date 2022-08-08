@@ -163,7 +163,7 @@ class GroupServerServiceIntegrationTests {
         assertEquals("Team 400", response.getShortName());
         assertEquals("400: Bad Request", response.getLongName());
     }
-}
+
 
     /**
      * Tests that the group is created successfully.

@@ -117,7 +117,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 reply.setMessage(String.format("Group with long name %s already exists", request.getLongName()));
         } else {
             try {
-                Groups newGroup = new Groups(request.getLongName(), request.getShortName());
+                Groups newGroup = new Groups(request.getShortName(), request.getLongName());
                 groupsRepository.save(newGroup);
                 reply.setIsSuccess(true);
                 reply.setMessage("Group created successfully");
@@ -145,7 +145,6 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         }
 
         response.setResultSetSize(groups.size());
-
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();
     }

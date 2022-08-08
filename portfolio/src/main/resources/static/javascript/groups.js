@@ -1,15 +1,16 @@
 /**
- * Count down the characters remaining in the Group Short name, and check the length is between 3 and 100 characters.
+ * Count down the characters remaining in the Group Short name, and check the length is between 3 and 50 characters.
  */
 function checkShortName() {
+
     let groupShortNameElement = document.getElementById("shortName");
     let groupShortNameErrorElement = document.getElementById("shortNameError")
     let charMessage = document.getElementById("charCount");
     let charCount = groupShortNameElement.value.length;
     charMessage.innerText = charCount + ' '
-    if (charCount < 3 || charCount > 100) {
+    if (charCount < 3 || charCount > 50) {
         groupShortNameElement.classList.add('formError');
-        groupShortNameErrorElement.innerText = "Group Long Name must be between 3 and 100 characters."
+        groupShortNameErrorElement.innerText = "Group short name must be between 3 and 50 characters."
         groupShortNameElement.setCustomValidity("Invalid Field")
     } else {
         groupShortNameElement.classList.remove("formError");
@@ -28,7 +29,7 @@ function checkLongName() {
     let charCount = groupLongNameElement.value.length;
     if (charCount < 3 || charCount > 100) {
         groupLongNameElement.classList.add('formError');
-        groupLongNameErrorElement.innerText = "Group Long Name must be between 3 and 100 characters."
+        groupLongNameErrorElement.innerText = "Group long name must be between 3 and 100 characters."
         groupLongNameElement.setCustomValidity("Invalid Field")
     } else {
         groupLongNameElement.classList.remove("formError");
