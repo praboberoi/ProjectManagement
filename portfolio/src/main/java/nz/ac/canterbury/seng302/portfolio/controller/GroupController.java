@@ -192,7 +192,7 @@ public class GroupController {
      * @return Response with status code and message
      */
     @PostMapping("/groups/{groupId}/addMembers")
-    public ResponseEntity<String> addMembersFromGroup(
+    public ResponseEntity<String> addMembersToGroup(
             @PathVariable Integer groupId,
             String listOfUserIds,
             Model model,
