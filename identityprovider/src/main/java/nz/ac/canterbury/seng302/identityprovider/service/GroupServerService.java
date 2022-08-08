@@ -28,8 +28,6 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
     private final GroupsRepository groupsRepository;
 
-    private GroupsRepository groupsRepository;
-
     private UserRepository userRepository;
 
     @Value("${hostAddress}")
