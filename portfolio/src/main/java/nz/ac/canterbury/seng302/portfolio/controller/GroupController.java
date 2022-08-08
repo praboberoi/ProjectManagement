@@ -171,6 +171,9 @@ public class GroupController {
 
         if (groupId == -1 && !PrincipalUtils.getUserRole(principal).contains(UserRole.COURSE_ADMINISTRATOR.name()) && userIds.remove(Integer.valueOf(PrincipalUtils.getUserId(principal)))) {
             additionalInfo += "\nUnable to remove own role";
+            if (listOfUserIds.length() == 1) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unable to remove own role");
+            }
         }
 
         RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
