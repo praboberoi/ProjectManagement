@@ -23,6 +23,27 @@ function checkLongName() {
 }
 
 /**
+ * Makes a call to the server and replaces the current group list with the new one
+ */
+ function updateGroupList() {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                document.getElementById("group-list").outerHTML = httpRequest.responseText;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            }
+        }
+    }
+
+    httpRequest.open('GET', apiPrefix + `/groups/list`);
+    httpRequest.send();
+}
+
+/**
  * Makes a call to the server and replaces the current group with the new one
  */
 function getSelectedGroup(selectedGroupId) {
@@ -35,6 +56,10 @@ function getSelectedGroup(selectedGroupId) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
                 messageDanger.innerText = "Bad Request";
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Something went wrong.";
             }
         }
     }
@@ -56,6 +81,7 @@ function deleteGroup(groupId) {
                 messageDanger.hidden = true;
                 messageSuccess.innerText = httpRequest.responseText;
                 getSelectedGroup("unassigned")
+                updateGroupList()
             } else {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
@@ -73,6 +99,7 @@ function deleteGroup(groupId) {
  * @param event The click event on the group member
  */
 function selectUser(event) {
+    document.querySelector('#remove-users').disabled = false
     let userTable = document.querySelectorAll("#userListDataTable tr")
 
     if (event.shiftKey) {
@@ -117,4 +144,50 @@ function selectUser(event) {
         event.target.closest('tr').classList.add('selected');
         event.target.closest('tr').classList.add('table-info');
     }
+}
+
+/**
+ * Makes a call to the server and removes the selected members from the group
+ * @param groupId Id of the selected group
+ */
+function removeUsers(groupId) {
+    let httpRequest = new XMLHttpRequest();
+    let userIds = []
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                messageDanger.hidden = true;
+                messageSuccess.hidden = false;
+                messageSuccess.innerText = httpRequest.responseText;
+            } else if (httpRequest.status === 500) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "An error occured on the server, please try again later";
+            } else if ([400, 403].contains(httpRequest.status)) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.responseText;
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Something went wrong.";
+            }
+
+            if (groupId == -1) {
+                getSelectedGroup('teachers')
+            } else {
+                getSelectedGroup(groupId)
+            }
+            updateGroupList()
+        }
+    }
+    
+    httpRequest.open('POST', apiPrefix + `/groups/${groupId}/removeMembers`);
+    let params = new FormData();
+    document.querySelectorAll('.selected').forEach(row => {
+        userIds.push(row.querySelector('.userId').textContent)
+    })
+    params.append('listOfUserIds', userIds.join(','));
+
+    httpRequest.send(params);
 }
