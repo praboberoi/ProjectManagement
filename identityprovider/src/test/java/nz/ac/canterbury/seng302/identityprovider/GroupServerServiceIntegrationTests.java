@@ -239,4 +239,60 @@ class GroupServerServiceIntegrationTests {
         RemoveGroupMembersResponse response = results.get(0);
         assertFalse(response.getIsSuccess(), "Non-existant group was found: " + response.getMessage());
     }
+
+    /**
+     * Tests that add groups fails when a group doesn't exist
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenAddGroupMembersIsCalledOnNoGroup_thenFails() {
+        AddGroupMembersRequest request = AddGroupMembersRequest.newBuilder().setGroupId(5826).addAllUserIds(Arrays.asList(1)).build();
+        StreamRecorder<AddGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.addGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<AddGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        AddGroupMembersResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Non-existant group was found: " + response.getMessage());
+    }
+
+    /**
+     * Tests that a user is added to the teacher group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenAddGroupMembersIsCalledOnTeacherGroup_thenMemberIsTeacher() {
+        AddGroupMembersRequest request = AddGroupMembersRequest.newBuilder().setGroupId(-1).addAllUserIds(Arrays.asList(8)).build();
+        StreamRecorder<AddGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.addGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<AddGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        AddGroupMembersResponse response = results.get(0);
+        assertTrue(response.getIsSuccess(), "Member failed to add to the group: " + response.getMessage());
+        assertTrue(userRepository.findById(8).get().getRoles().contains(UserRole.TEACHER), "User is not a teacher");
+    }
+
+    /**
+     * Tests that a member is added to the specified group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenAddGroupMembersIsCalledOnNormalGroup_thenMemberAdded() {
+        AddGroupMembersRequest request = AddGroupMembersRequest.newBuilder().setGroupId(1).addAllUserIds(Arrays.asList(15)).build();
+        StreamRecorder<AddGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.addGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<AddGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        AddGroupMembersResponse response = results.get(0);
+        assertTrue(response.getIsSuccess(), "Member failed to add to the group: " + response.getMessage());
+        assertEquals(1, groupsRepository.findById(1).get().getUsers().stream().filter(user -> user.getUserId() == 15).count(), "User not added to group");
+    }
 }

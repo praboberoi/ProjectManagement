@@ -224,8 +224,8 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
         Groups group = groupsRepository.findById(request.getGroupId()).orElse(null);
         if (group == null) {
-            reply.setIsSuccess(false);
             reply.setMessage("Unable to find group.");
+            reply.setIsSuccess(false);
 
             responseObserver.onNext(reply.build());
             responseObserver.onCompleted();

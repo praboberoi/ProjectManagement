@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.shared.identityprovider.AddGroupMembersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
 
@@ -153,6 +154,20 @@ public class GroupControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
             .perform(post("/groups/1/removeMembers?listOfUserIds=1"))
+            .andExpect(status().isOk());
+    }
+
+    /**
+     * Checks that member is added to a group when AddMembers is requested
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void whenAddMembersIsCalled_thenMemberIsAdded() throws Exception{
+        AddGroupMembersResponse reply = AddGroupMembersResponse.newBuilder().setIsSuccess(true).build();
+        when(groupService.addGroupMembers(any(), anyInt())).thenReturn(reply);
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+            .perform(post("/groups/1/addMembers?listOfUserIds=1"))
             .andExpect(status().isOk());
     }
 }
