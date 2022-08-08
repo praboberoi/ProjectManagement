@@ -94,6 +94,7 @@ public class EventController {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
         String message = "";
         try {
+            event.setProject(projectService.getProjectById(projectId));
             eventService.verifyEvent(event);
             message = eventService.saveEvent(event);
             ra.addFlashAttribute("messageSuccess", message);

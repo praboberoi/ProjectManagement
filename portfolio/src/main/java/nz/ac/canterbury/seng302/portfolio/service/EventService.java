@@ -118,6 +118,7 @@ public class EventService {
             throw new IncorrectDetailsException("Failure Saving Event");
         }
     }
+
 }
 
 
