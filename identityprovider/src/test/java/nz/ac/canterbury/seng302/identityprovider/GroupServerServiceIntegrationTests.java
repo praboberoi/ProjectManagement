@@ -352,7 +352,7 @@ class GroupServerServiceIntegrationTests {
     }
 
     /**
-     * Tests that the group with a short name longer than 50 characters is not created.
+     * Tests that the group with a long name longer than 100 characters is not created.
      */
     @Test
     @Transactional
@@ -370,7 +370,7 @@ class GroupServerServiceIntegrationTests {
     }
 
     /**
-     * Tests that the group with a short name longer than 50 characters is not created.
+     * Tests that a group is not created when one already exists with the same long name.
      */
     @Test
     @Transactional
@@ -394,7 +394,7 @@ class GroupServerServiceIntegrationTests {
     }
 
     /**
-     * Tests that the group with a short name longer than 50 characters is not created.
+     * Tests that a group is not created when one already exists with the same short name.
      */
     @Test
     @Transactional
@@ -418,7 +418,7 @@ class GroupServerServiceIntegrationTests {
     }
 
     /**
-     * Tests that the group with a short name longer than 50 characters is not created.
+     * Tests that a group is not created when one already exists with the same long and short name.
      */
     @Test
     @Transactional
