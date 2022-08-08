@@ -60,13 +60,8 @@ function checkEventDates() {
         endDateError.innerText = "End Date must be on or after the Start Date";
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
-        document.getElementById("formSubmitButton").disabled = true;
         return;
-
-    } else {
-        document.getElementById("formSubmitButton").disabled = false;
     }
-
 
 }
 
@@ -111,24 +106,3 @@ function checkEndDate() {
 }
 
 
-/**
- * Checks that the start and end times of the event are valid
- */
-function checkEventTimes() {
-    const startTime = startTimeElement.valueAsNumber;
-    const endTime = endTimeElement.valueAsNumber;
-
-    const startDate = new Date(startDateElement.value);
-    const endDate = new Date(endDateElement.value);
-    if ( (startDate.getTime() == endDate.getTime()) && (endTime <= startTime)) {
-        startTimeError.innerText = "Start Time must be before the End Time." ;
-        endTimeError.innerText = "End Time must be after the Start Time";
-        startTimeElement.classList.add("formError");
-        endTimeElement.classList.add("formError");
-        return;
-    }
-        startTimeElement.classList.remove("formError");
-        startTimeError.innerText = null;
-        endTimeElement.classList.remove("formError");
-        endTimeError.innerText = null;
-}

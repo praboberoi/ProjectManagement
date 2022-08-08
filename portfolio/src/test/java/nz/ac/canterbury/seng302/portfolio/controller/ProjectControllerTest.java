@@ -26,8 +26,8 @@ import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -136,4 +136,27 @@ public class ProjectControllerTest {
                 .andExpect(model().attribute("user", userResponse.build()));
     }
 
+    /**
+     * Test verification of project dates and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenVerifyProject_ThenProjectVerifiedSuccessfully() throws Exception{
+        this.mockMvc
+                .perform(post("/verifyProject/1?" + "startDate=" + project.getStartDate() + "&endDate=" + project.getEndDate()))
+                .andExpect(status().isOk())
+                .andExpect(content().string(""));
+    }
+
+    /**
+     * Test get all sprints and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetAllSprints_ThenSprintsReturnedSuccessfully() throws Exception{
+        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        this.mockMvc
+                .perform(get("/project/1/getAllSprints"))
+                .andExpect(status().isOk());
+    }
 }
