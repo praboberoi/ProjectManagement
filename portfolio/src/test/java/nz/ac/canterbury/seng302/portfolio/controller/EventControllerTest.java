@@ -53,6 +53,8 @@ public class EventControllerTest {
 
     Event event;
 
+    Event event1;
+
     User user;
 
     Project project;
@@ -73,6 +75,13 @@ public class EventControllerTest {
                 .endDate(java.sql.Date.valueOf(now.plusDays(1)))
                 .build();
 
+        event1 = new Event.Builder()
+                .project(project)
+                .eventName("New Event 1")
+                .startDate(java.sql.Date.valueOf(now))
+                .endDate(java.sql.Date.valueOf(now.plusDays(1)))
+                .build();
+
         user = new User.Builder()
                 .userId(0)
                 .username("TimeTester")
@@ -81,6 +90,7 @@ public class EventControllerTest {
                 .email("Test@tester.nz")
                 .creationDate(new Date())
                 .build();
+
 
         userResponse = UserResponse.newBuilder()
                 .setUsername(user.getUsername())
@@ -137,11 +147,25 @@ public class EventControllerTest {
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
-    void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() throws Exception{
-        this.mockMvc
-                .perform(post("/project/1/saveEvent").flashAttr("event", event))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", nullValue()))
-                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + event.getEventName()));
+    void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() {
+
+        try {
+            when(eventService.saveEvent(event)).thenReturn("Successfully Created " + event.getEventName());
+            when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
+
+            this.mockMvc
+                    .perform(post("/project/1/saveEvent").flashAttr("event", event))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(flash().attribute("messageDanger", nullValue()))
+                    .andExpect(flash().attribute("messageSuccess", "Successfully Created " + event.getEventName()));
+
+            this.mockMvc
+                    .perform(post("/project/1/saveEvent").flashAttr("event", event1))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(flash().attribute("messageDanger",("Failure Saving Event")))
+                    .andExpect(flash().attribute("messageSuccess",  nullValue()));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
