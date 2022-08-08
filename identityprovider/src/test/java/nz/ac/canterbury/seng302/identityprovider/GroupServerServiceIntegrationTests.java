@@ -204,7 +204,7 @@ class GroupServerServiceIntegrationTests {
     }
 
     /**
-     * Tests that all members are removed from the specified group
+     * Tests a teacher is not removed when they only have 1 role
      */
     @Test
     @Transactional
@@ -223,7 +223,7 @@ class GroupServerServiceIntegrationTests {
     }
 
     /**
-     * Tests that all members are removed from the specified group
+     * Tests that remove groups fails when a group doesn't exist
      */
     @Test
     @Transactional

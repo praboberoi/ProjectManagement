@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -139,5 +140,19 @@ public class GroupControllerTest {
             .perform(get("/groups/teachers"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("selectedGroup", teachingGroup));
+    }
+
+    /**
+     * Checks that member is removed from when RemoveMembers is requested
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void whenRemoveMembersIsCalled_thenMemberIsRemoved() throws Exception{
+        RemoveGroupMembersResponse reply = RemoveGroupMembersResponse.newBuilder().setIsSuccess(true).build();
+        when(groupService.removeGroupMembers(any(), anyInt())).thenReturn(reply);
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+            .perform(post("/groups/1/removeMembers?listOfUserIds=1"))
+            .andExpect(status().isOk());
     }
 }
