@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -13,6 +14,8 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.Groups;
 import nz.ac.canterbury.seng302.identityprovider.model.GroupsRepository;
+import nz.ac.canterbury.seng302.identityprovider.model.User;
+import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 
@@ -23,14 +26,17 @@ import nz.ac.canterbury.seng302.shared.identityprovider.*;
 public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase {
 
     private GroupsRepository groupsRepository;
+
+    private UserRepository userRepository;
     
     @Value("${hostAddress}")
     private String hostAddress;
 
     Logger logger = LoggerFactory.getLogger(GroupServerService.class);
 
-    public GroupServerService(GroupsRepository groupsRepository) {
+    public GroupServerService(GroupsRepository groupsRepository, UserRepository userRepository) {
         this.groupsRepository = groupsRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -123,6 +129,67 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             reply.addAllMembers(group.getUsers().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
         }
         
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+
+    /**
+     * Gets the specified members from the group and returns the status to the gRPC client
+     * @param request           The protobuf Remove members request containing the group id and member ids. Group id of -1 is teacher group.
+     * @param responseObserver  Returns to previous method with data
+     */
+    @Override
+    public void removeGroupMembers(RemoveGroupMembersRequest request, StreamObserver<RemoveGroupMembersResponse> responseObserver) {
+        RemoveGroupMembersResponse.Builder reply = RemoveGroupMembersResponse.newBuilder();
+        if (request.getGroupId() == -1) {
+            List<User> users = StreamSupport.stream(userRepository.findAllById(request.getUserIdsList()).spliterator(), false)
+            .filter(user -> user.getRoles().size() > 1).toList();
+            
+            // If the number of users is incorrect remove applicable user's roles, move below the if statment if it shouldn't remove any
+            for (User user: users) {
+                user.removeRole(UserRole.TEACHER);
+                userRepository.save(user);
+                logger.info("Removed Teacher role from user {}", user.getUserId());
+            }
+
+            if (users.size() != request.getUserIdsCount()) {
+                reply.setMessage("Unable to remove all users. Users must have 1 role at all times.");
+                reply.setIsSuccess(false);
+                responseObserver.onNext(reply.build());
+                responseObserver.onCompleted();
+                return;
+            }
+
+            reply.setMessage("Removed Teacher role from selected users");
+            reply.setIsSuccess(true);
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        Groups group = groupsRepository.findById(request.getGroupId()).orElse(null);
+        if (group == null) {
+            reply.setIsSuccess(false);
+            reply.setMessage("Unable to find group.");
+
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+        if (group.getUsers().stream().filter(user -> request.getUserIdsList().contains(user.getUserId())).toList().size() != request.getUserIdsCount()) {
+            reply.setIsSuccess(false);
+            reply.setMessage("Unable to find all members in group.");
+
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+        List<User> newUserList = group.getUsers().stream().filter(user -> !request.getUserIdsList().contains(user.getUserId())).toList();
+        group.setUsers(newUserList);
+        logger.info("{} members removed from group {}", request.getUserIdsCount(), request.getGroupId());
+        groupsRepository.save(group);
+
+        reply.setIsSuccess(true);
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }

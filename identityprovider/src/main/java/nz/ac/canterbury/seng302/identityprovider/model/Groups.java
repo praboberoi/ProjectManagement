@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.identityprovider.model;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -22,7 +24,7 @@ public class Groups {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_groups", joinColumns = @JoinColumn(name = "group_id", referencedColumnName = "GroupId"), inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "UserId"))
-    private List<User> users;
+    private Set<User> users;
 
     public int getGroupId() {
         return this.groupId;
@@ -48,12 +50,12 @@ public class Groups {
         this.longName = longName;
     }
 
-    public List<User> getUsers() {
+    public Set<User> getUsers() {
         return this.users;
     }
 
-    public void setUsers(List<User> users) {
-        this.users = users;
+    public void setUsers(List<User> userList) {
+        this.users = new HashSet<>(userList);
     }
 
     /**
