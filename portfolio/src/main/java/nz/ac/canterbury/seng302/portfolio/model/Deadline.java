@@ -27,7 +27,7 @@ public class Deadline {
 
     @Column(nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'hh:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date date;
 
     /**
