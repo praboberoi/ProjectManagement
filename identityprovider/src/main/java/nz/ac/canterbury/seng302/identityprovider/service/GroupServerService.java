@@ -1,16 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import nz.ac.canterbury.seng302.identityprovider.model.Groups;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
 import com.google.protobuf.Empty;
-
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.Groups;
@@ -19,6 +9,13 @@ import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Grpc service used to perform function relating to groups.
@@ -129,10 +126,9 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 reply.setIsSuccess(false);
                 reply.setMessage("An error occurred while creating group.");
             }
-
-            responseObserver.onNext(reply.build());
-            responseObserver.onCompleted();
         }
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
     }
     /**
      * Gets all groups from the database and returns them to the gRPC client
