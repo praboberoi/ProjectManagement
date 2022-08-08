@@ -34,10 +34,8 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         this.groupsRepository = groupsRepository;
     }
 
-
     /**
      * Gets a list of users that don't have a group and returns it to the gRPC client
-     *
      * @param request          Empty protobuf request
      * @param responseObserver Returns to previous method with data
      */
@@ -152,5 +150,23 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         responseObserver.onCompleted();
     }
 
-}
+    /**
+     * Gets the specified group and returns them to the gRPC client
+     * @param request           The protobuf request containing the id of the group to get
+     * @param responseObserver  Returns to previous method with data
+     */
+    @Override
+    public void getGroupDetails(GetGroupDetailsRequest request, StreamObserver<GroupDetailsResponse> responseObserver) {
+        GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
+        Groups group = groupsRepository.findById(request.getGroupId()).orElse(null);
+        if (group != null) {
+            reply.setGroupId(group.getGroupId());
+            reply.setShortName(group.getShortName());
+            reply.setLongName(group.getLongName());
+            reply.addAllMembers(group.getUsers().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
+        }
 
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+}
