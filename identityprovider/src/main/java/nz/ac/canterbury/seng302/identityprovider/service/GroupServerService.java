@@ -204,6 +204,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     public void addGroupMembers(AddGroupMembersRequest request, StreamObserver<AddGroupMembersResponse> responseObserver) {
         AddGroupMembersResponse.Builder reply = AddGroupMembersResponse.newBuilder();
 
+        // Logic if the group is the teacher's group
         if (request.getGroupId() == -1) {
             List<User> users = StreamSupport.stream(userRepository.findAllById(request.getUserIdsList()).spliterator(), false)
             .filter(user -> !user.getRoles().contains(UserRole.TEACHER)).toList();

@@ -170,10 +170,11 @@ function removeUsers(groupId) {
     httpRequest.send(params);
 }
 
-function addUsers(groupId) {
-    addUsersCall(groupId, groupId)
-}
-
+/**
+ * Reads the information from the event and sends the call to add the group to selected users
+ * @param event Drop event
+ * @param groupId Id of the group being dropped on
+ */
 function dropUsers(event, groupId) {
     event.preventDefault();
     if (groupId == 0) {
@@ -188,12 +189,16 @@ function dropUsers(event, groupId) {
     }
     let data = event.dataTransfer.getData("origin");
     if (data == "Members without a group") {
-        addUsersCall(groupId, "unassigned")
+        addUsers(groupId, "unassigned")
     } else {
-        addUsersCall(groupId, null)
+        addUsers(groupId, null)
     }
 }
 
+/**
+ * Prepares the selected users when they start to get dragged
+ * @param event Drag event
+ */
 function userDragStart(event) {
     if (!event.target.closest("tr").classList.contains("selected")) {
         selectUser(event)
@@ -201,6 +206,10 @@ function userDragStart(event) {
     event.dataTransfer.setData("origin", event.target.closest("#group-display").querySelector("h5").innerText);
 }
 
+/**
+ * Provides a visual indicator that the user is over a valid drop location
+ * @param event Drag event
+ */
 function allowDrop(event) {
     event.preventDefault();
 }
@@ -209,7 +218,7 @@ function allowDrop(event) {
  * Makes a call to the server and adds the selected members to the group
  * @param groupId Id of the selected group
  */
- function addUsersCall(groupId, originGroupId) {
+ function addUsers(groupId, originGroupId) {
     let httpRequest = new XMLHttpRequest();
     let userIds = []
     let errorCodes = [400, 403]

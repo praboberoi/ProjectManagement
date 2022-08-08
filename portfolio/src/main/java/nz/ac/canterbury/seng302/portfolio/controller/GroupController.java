@@ -182,8 +182,8 @@ public class GroupController {
     }
 
     /**
-     * Removes the selected users from the selected group
-     * @param listOfUserIds List of users to remove in csv format
+     * Adds the selected users to the selected group
+     * @param listOfUserIds List of users to add in csv format
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @param principal Authentication information containing user info
      * @return Response with status code and message
