@@ -53,7 +53,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <div th:if="${group.groupId == 0} and ${group.shortName.contains('Teaching Staff')}">
-                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
+                                            <a id="select-teachers" role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
                                         </div>
                                         <div th:if="${group.getGroupId() == 0} and ${group.shortName.contains('Members without a group')}">
                                             <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
