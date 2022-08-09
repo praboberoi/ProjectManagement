@@ -6,7 +6,6 @@ import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +27,7 @@ public class EventController {
     private EventService eventService;
     @Autowired
     private ProjectService projectService;
-    private Logger logger = LoggerFactory.getLogger(EventController.class);
+
     @Value("${apiPrefix}") private String apiPrefix;
 
     /**
@@ -45,6 +44,7 @@ public class EventController {
      * Checks for teacher or admin privileges
      * @param projectId ID of the project
      * @param principal Current user
+     * @param ra Redirect Attribute frontend message object
      * @param model
      * @return link of the html page to display
      */
@@ -52,6 +52,7 @@ public class EventController {
     public String newEvent(
             Model model,
             @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra,
             @PathVariable ("projectId") int projectId) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
         model.addAttribute("apiPrefix", apiPrefix);
@@ -60,21 +61,20 @@ public class EventController {
         try {
             currentProject = projectService.getProjectById(projectId);
             newEvent = eventService.getNewEvent(currentProject);
-            if (newEvent == null) return "redirect:/project/{projectId}";
-        } catch (Exception e) {
-            e.getMessage();
+            model.addAttribute("project", currentProject);
+            model.addAttribute("event", newEvent);
+            model.addAttribute("pageTitle", "Add New Event");
+            model.addAttribute("submissionName", "Create");
+            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
+            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectDateMin", currentProject.getStartDate());
+            model.addAttribute("projectDateMax", currentProject.getEndDate());
+            return "eventForm";
+
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         }
-
-        model.addAttribute("project", currentProject);
-        model.addAttribute("event", newEvent);
-        model.addAttribute("pageTitle", "Add New Event");
-        model.addAttribute("submissionName", "Create");
-        model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
-        model.addAttribute("user", userAccountClientService.getUser(principal));
-        model.addAttribute("projectDateMin", currentProject.getStartDate());
-        model.addAttribute("projectDateMax", currentProject.getEndDate());
-        return "eventForm";
     }
 
 
@@ -94,17 +94,13 @@ public class EventController {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
         String message = "";
         try {
-            message = eventService.verifyEvent(event);
-            if (message != "Event has been verified") {
-                ra.addFlashAttribute("messageDanger", message);
-            } else {
-                message = eventService.saveEvent(event);
-                logger.info("Event {} has been created by user {}", event.getEventId(), PrincipalUtils.getUserId(principal));
-                ra.addFlashAttribute("messageSuccess", message);
-            }
-        } catch (Exception e) {
-            logger.error("An error occured while creating an event.", e);
-            ra.addFlashAttribute("messageDanger", "Internal Server Error: The event could not be saved, please try again later.");
+            event.setProject(projectService.getProjectById(projectId));
+            eventService.verifyEvent(event);
+            message = eventService.saveEvent(event);
+            ra.addFlashAttribute("messageSuccess", message);
+
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
         }
         return "redirect:/project/{projectId}";
     }

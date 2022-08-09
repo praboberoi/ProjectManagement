@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import java.sql.Date;
+import org.springframework.format.annotation.DateTimeFormat;
+
+import java.util.Date;
+import java.text.SimpleDateFormat;
 import java.util.Objects;
 
 import javax.persistence.*;
@@ -33,69 +36,41 @@ public class Event {
     private String eventName;
 
     /**
-     * Start date for the event
+     * Start date and time for the event
      */
     @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startDate;
 
     /**
-     * End date for the event
+     * End date and time for the event
      */
     @Column(nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date endDate;
 
-    /**
-     * Start time for the event
-     */
-    @Column(nullable = false)
-    private String startTime;
-
-    /**
-     * End time for the event
-     */
-    @Column(nullable = false)
-    private String endTime;
 
     /**
      * No args Constructor of the Event.
      */
     public Event() {}
 
-    /**
-     * Creates an Event with an auto-generated ID
-     * @param project The project the event is contained in
-     * @param startTime The start time of the event
-     * @param endTime The end time of the event
-     * @param eventName The name of the event
-     * @param startDate When the event starts
-     * @param endDate When the event ends
-     */
-    public Event(String eventName, Project project, Date startDate, Date endDate, String startTime, String endTime) {
-        this.project = project;
-        this.eventName = eventName;
-        this.startDate = startDate;
-        this.endDate = endDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
-    }
 
     /**
      * Creates an Event with a manually specified ID
      * @param project The project the event is contained in
-     * @param startTime The start time of the event
-     * @param endTime The end time of the event
      * @param eventName The name of the event
      * @param startDate When the event starts
      * @param endDate When the event ends
      */
-    public Event(int eventId, Project project, String eventName, Date startDate, Date endDate, String startTime, String endTime) {
+    public Event(int eventId, Project project, String eventName, Date startDate, Date endDate) {
         this.eventId = eventId;
         this.project = project;
         this.eventName = eventName;
         this.startDate = startDate;
         this.endDate = endDate;
-        this.startTime = startTime;
-        this.endTime = endTime;
     }
 
     public Project getProject() {
@@ -134,21 +109,16 @@ public class Event {
         this.endDate = endDate;
     }
 
-    public String getStartTime() {
-        return this.startTime;
+    public String getDateOnly() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(startDate);
     }
 
-    public void setStartTime(String startTime) {
-        this.startTime = startTime;
+    public String getTime() {
+        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
+        return formatter.format(startDate);
     }
 
-    public String getEndTime() {
-        return this.endTime;
-    }
-
-    public void setEndTime(String endTime) {
-        this.endTime = endTime;
-    }
 
     /**
      * Overrides for comparing event objects
@@ -160,12 +130,24 @@ public class Event {
         if (this == o) return true;
         if (!(o instanceof Event)) return false;
         Event event = (Event) o;
-        return eventId == event.eventId 
-        && Objects.equals(eventName, event.eventName)
-        && Objects.equals(startDate, event.startDate)
-        && Objects.equals(endDate, event.endDate)
-        && Objects.equals(startTime, event.startTime)
-        && Objects.equals(endTime, event.endTime);
+        return eventId == event.eventId && Objects.equals(project, event.project) && Objects.equals(eventName, event.eventName) && Objects.equals(startDate, event.startDate) && Objects.equals(endDate, event.endDate);
+    }
+
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(eventId, project, eventName, startDate, endDate);
+    }
+
+    @Override
+    public String toString() {
+        return "Event{" +
+                "eventId=" + eventId +
+                ", project=" + project +
+                ", eventName='" + eventName + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                '}';
     }
 
     /**
@@ -177,8 +159,6 @@ public class Event {
         private String eventName;
         private Date startDate;
         private Date endDate;
-        private String startTime;
-        private String endTime;
 
         /**
          * Updates the event ID
@@ -229,32 +209,14 @@ public class Event {
             return this;
         }
 
-        /**
-         * Builds the current builder with the given start time
-         * @param startTime
-         * @return The current event builder
-         */
-        public Builder startTime(String startTime){
-            this.startTime = startTime;
-            return this;
-        }
 
-        /**
-         * Builds the current builder with the given end time
-         * @param endTime
-         * @return The current event builder
-         */
-        public Builder endTime(String endTime){
-            this.endTime = endTime;
-            return this;
-        }
 
         /**
          * Builds the Event.
          * @return The built event
          */
         public Event build() {
-            return new Event(eventId, project, eventName, startDate, endDate, startTime, endTime);
+            return new Event(eventId, project, eventName, startDate, endDate);
         }
     }
 }

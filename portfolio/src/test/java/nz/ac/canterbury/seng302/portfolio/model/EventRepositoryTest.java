@@ -48,9 +48,7 @@ public class EventRepositoryTest {
         .project(project)
         .eventName("testEvent")
         .startDate(new Date(2020, 4, 12))
-        .endDate(new Date(2020, 5, 12))
-                .startTime("20:00")
-                .endTime("21:00");
+        .endDate(new Date(2020, 5, 12));
     }
 
     /**

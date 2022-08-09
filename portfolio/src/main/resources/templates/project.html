@@ -106,7 +106,7 @@
 <!--          Shows each individual event-->
           <div class="card" id = "eventCard" th:each="event : ${listEvents}">
             <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
-            <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy')}]] [[${event.startTime}]] - End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy')}]] [[${event.endTime}]]</p>
+            <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]]  - End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]] </p>
           </div>
 
         </div>

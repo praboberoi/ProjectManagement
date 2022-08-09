@@ -1,17 +1,22 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
+import nz.ac.canterbury.seng302.portfolio.controller.EventController;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
 
+import javax.persistence.PersistenceException;
 import java.time.LocalDate;
-import java.util.Date;
-import java.text.SimpleDateFormat;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 
 /**
     Client service used to communicate to the database
@@ -20,27 +25,29 @@ import java.util.Optional;
 public class EventService {
     @Autowired EventRepository eventRepository;
     @Autowired private ProjectRepository projectRepository;
+    private Logger logger = LoggerFactory.getLogger(EventController.class);
+
+
+    public EventService(ProjectRepository projectRepository, EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
+        this.projectRepository = projectRepository;
+    }
 
     /**
      * Creates a new event with a name
      * @return of type Event
      */
     public Event getNewEvent(Project project) {
-        try {
-            LocalDate now = LocalDate.now();
-            Event newEvent = new Event.Builder()
-                    .project(project)
-                    .eventName("New Event")
-                    .startDate(java.sql.Date.valueOf(now))
-                    .endDate(java.sql.Date.valueOf(now.plusDays(1)))
-                    .startTime("00:00")
-                    .endTime("00:00")
-                    .build();
-            return newEvent;
-        } catch (Exception e) {
-            e.getMessage();
-        }
-        return null;
+        int currentNumber = eventRepository.findByProject(project).size() + 1;
+
+        LocalDate now = LocalDate.now();
+        Event newEvent = new Event.Builder()
+                .project(project)
+                .eventName("New Event " + currentNumber)
+                .startDate(java.sql.Date.valueOf(now))
+                .endDate(java.sql.Date.valueOf(now.plusDays(1)))
+                .build();
+        return newEvent;
     }
 
     /**
@@ -50,7 +57,12 @@ public class EventService {
      */
     public List<Event> getEventByProjectId(int projectId) {
         Optional<Project> current = projectRepository.findById(projectId);
-        return current.map(project -> eventRepository.findByProject(project)).orElse(List.of());
+        return current.map(project -> eventRepository
+                    .findByProject(project)
+                    .stream()
+                    .sorted(Comparator.comparing(Event::getStartDate))
+                    .collect(Collectors.toList()))
+                .orElse(List.of());
     }
 
 
@@ -59,37 +71,33 @@ public class EventService {
      * @param event The event object to verify
      * @return Message explaining the error
      * */
-    public String verifyEvent(Event event) {
-        if (event == null) {
-            return ("No Event");
-        } else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null || event.getStartTime() == null || event.getEndTime() == null) {
-            return ("Event values are null");
-        } else if (event.getEventName().length() < 1) {
-            return ("Event name must not be empty");
-        } else if (event.getEventName().length() > 50) {
-            return ("Event name cannot be more than 50 characters");
-        } else if (!event.getEventName().matches("^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$")) {
-            // checks if event name starts or ends with space.
-            return ("Event name must not start or end with space characters");
-        } else if (event.getEndDate().before(event.getStartDate())){
-            return ("The event end date cannot be before the event start date");
-        } else {
-            try {
-                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-                Date d1 = (Date) sdf.parse(event.getStartTime());
-                Date d2 = (Date) sdf.parse(event.getEndTime());
-                // Check if start date is same as end date
-                if (event.getStartDate().equals(event.getEndDate())) {
-                    // End time before start time or start and end time is the same
-                    if (d2.before(d1) || d2.equals(d1)) {
-                        return ("The start of the event must occur before the end of the event");
-                    }
-                }
-                return("Event has been verified");
-            } catch (Exception e) {
-                return ("Error with start and end time validation");
-            }
-        }
+    public void verifyEvent(Event event) throws IncorrectDetailsException {
+
+        if (event == null)
+            throw new IncorrectDetailsException ("No Event");
+
+        else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null)
+            throw new IncorrectDetailsException ("Event values are null");
+
+        else if (event.getEventName().length() < 1)
+            throw new IncorrectDetailsException ("Event name must not be empty");
+
+        else if (event.getEventName().length() > 50)
+             throw new IncorrectDetailsException ("Event name cannot be more than 50 characters");
+
+        else if (event.getEndDate().before(event.getStartDate()))
+            throw new IncorrectDetailsException ("The event end date and time cannot be before the event start date and time");
+
+        else if (event.getEndDate().equals(event.getStartDate()))
+            throw new IncorrectDetailsException("The event end date and time cannot be the same as event start date and time");
+
+        else if (event.getStartDate().before(event.getProject().getStartDate()))
+            throw new IncorrectDetailsException("The event cannot start before the project");
+
+        else if(event.getStartDate().after(event.getProject().getEndDate()) || event.getEndDate().after(event.getProject().getEndDate()))
+            throw new IncorrectDetailsException("The event cannot start or end after the project");
+
+        event.setEventName(event.getEventName().strip());
     }
 
     /**
@@ -97,7 +105,7 @@ public class EventService {
      * @param event The event object to be saved
      * @return Message based on saving edit or creating event
      */
-    public String saveEvent(Event event) throws Exception {
+    public String saveEvent(Event event) throws IncorrectDetailsException {
         String message;
         if (event.getEventId() == 0) {
             message = "Successfully Created " + event.getEventName();
@@ -107,10 +115,12 @@ public class EventService {
         try {
             event = eventRepository.save(event);
             return message;
-        } catch (Exception e) {
-            throw new Exception("Failure Saving Event");
+        } catch (PersistenceException e) {
+            logger.error("Failure Saving Event", e);
+            throw new IncorrectDetailsException("Failure Saving Event");
         }
     }
+
 }
 
 

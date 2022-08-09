@@ -22,9 +22,8 @@ const endTimeError = document.getElementById('endTimeError');
  * Display error message if input is invalid.
  */
 function checkEventName() {
-    let eventName = document.getElementById('event-name');
-    let eventNameError = document.getElementById('eventNameError');
-
+    const eventName = document.getElementById('event-name');
+    const eventNameError = document.getElementById('eventNameError');
     let charMessage = document.getElementById("charCount");
     let charCount = eventName.value.length;
     charMessage.innerText = charCount + ' '
@@ -32,12 +31,9 @@ function checkEventName() {
     if (eventName.value.length < 1) {
         eventName.classList.add("formError");
         eventNameError.innerText = "Event Name must not be empty";
-    } else if (! eventNameSpacesRegex.test(eventName.value)) {
+    } else if (eventName.value.length > 50){
         eventName.classList.add("formError");
-        eventNameError.innerText = "Event name must not start or end with space characters";
-    } else if (eventName.value.length > 50) {
-        eventName.classList.add("formError");
-        eventNameError.innerText = "Event name cannot be more than 50 characters."
+        eventNameError.innerText = "Event Name cannot exceed 50 characters";
     } else {
         eventName.classList.remove("formError");
         eventNameError.innerText = null;
@@ -55,9 +51,17 @@ function checkEventDates() {
     endDateElement.setCustomValidity("");
 
     checkStartDate();
+
     checkEndDate();
-    checkEventTimes()
-    if (startDate > endDate ) {
+
+    if(startDateElement.classList.contains("formError") || endDateElement.classList.contains("formError")) {
+        document.getElementById("formSubmitButton").disabled = true;
+        return;
+    } else {
+        document.getElementById("formSubmitButton").disabled = false;
+    }
+
+    if (startDate >= endDate ) {
         startDateError.innerText = "Start Date must be on or before the End Date.";
         endDateError.innerText = "End Date must be on or after the Start Date";
         startDateElement.classList.add("formError");
@@ -108,24 +112,3 @@ function checkEndDate() {
 }
 
 
-/**
- * Checks that the start and end times of the event are valid
- */
-function checkEventTimes() {
-    const startTime = startTimeElement.valueAsNumber;
-    const endTime = endTimeElement.valueAsNumber;
-
-    const startDate = new Date(startDateElement.value);
-    const endDate = new Date(endDateElement.value);
-    if ( (startDate.getTime() == endDate.getTime()) && (endTime <= startTime)) {
-        startTimeError.innerText = "Start Time must be before the End Time." ;
-        endTimeError.innerText = "End Time must be after the Start Time";
-        startTimeElement.classList.add("formError");
-        endTimeElement.classList.add("formError");
-        return;
-    }
-        startTimeElement.classList.remove("formError");
-        startTimeError.innerText = null;
-        endTimeElement.classList.remove("formError");
-        endTimeError.innerText = null;
-}

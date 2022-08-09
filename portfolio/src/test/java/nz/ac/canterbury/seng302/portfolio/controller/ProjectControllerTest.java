@@ -6,10 +6,12 @@ import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
+import org.junit.After;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,10 +24,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -67,22 +67,24 @@ public class ProjectControllerTest {
 
     private Sprint testSprint;
 
-    private static MockedStatic<PrincipalUtils> mockedPrincipalUtils;
+    private static MockedStatic<PrincipalUtils> utilities;
 
     @BeforeAll
     private static void beforeAllInit() {
-        mockedPrincipalUtils = mockStatic(PrincipalUtils.class);
+        utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
     }
+
 
     @BeforeEach
     public void beforeEachInit() {
-        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+
         testList = new ArrayList<String>();
         testSprintList = new ArrayList<Sprint>();
         testList.add("testRole");
         when(PrincipalUtils.getUserRole(any())).thenReturn(testList);
         LocalDate now = LocalDate.now();
-        project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusMonths(1)));
+        project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
         user = new User.Builder()
                 .userId(0)
                 .username("TimeTester")
@@ -113,7 +115,7 @@ public class ProjectControllerTest {
 
     @AfterAll
     public static void afterAll() {
-        mockedPrincipalUtils.close();
+        utilities.close();
     }
 
     /**
