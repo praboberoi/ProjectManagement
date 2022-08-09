@@ -5,9 +5,8 @@ import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
-import nz.ac.canterbury.seng302.shared.identityprovider.CreateGroupResponse;
-import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
-import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.*;
+
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -20,15 +19,19 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.*;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = GroupController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -193,5 +196,62 @@ public class GroupControllerTest {
         mockMvc
             .perform(post("/groups/1/removeMembers?listOfUserIds=1"))
             .andExpect(status().isOk());
+    }
+
+    /**
+     * Checks that member is added to a group when AddMembers is requested
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void whenAddMembersIsCalled_thenMemberIsAdded() throws Exception{
+        AddGroupMembersResponse reply = AddGroupMembersResponse.newBuilder().setIsSuccess(true).build();
+        when(groupService.addGroupMembers(any(), anyInt())).thenReturn(reply);
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+            .perform(post("/groups/1/addMembers?listOfUserIds=1"))
+            .andExpect(status().isOk());
+    }
+
+    /**
+     * Checks that member is rejected when AddMembers is requested if they are not an admin
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenStudentUser_whenAddMembersIsCalled_thenMemberIsAdded() throws Exception{
+        AddGroupMembersResponse reply = AddGroupMembersResponse.newBuilder().setIsSuccess(true).build();
+        when(groupService.addGroupMembers(any(), anyInt())).thenReturn(reply);
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        mockMvc
+            .perform(post("/groups/1/addMembers?listOfUserIds=1"))
+            .andExpect(status().isForbidden());
+    }
+
+    /**
+     * Checks that request is rejected when AddMembers is requested on bad data
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenBadData_whenAddMembersIsCalled_thenRejected() throws Exception{
+        AddGroupMembersResponse reply = AddGroupMembersResponse.newBuilder().setIsSuccess(true).build();
+        when(groupService.addGroupMembers(any(), anyInt())).thenReturn(reply);
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+            .perform(post("/groups/1/addMembers?listOfUserIds=team400"))
+            .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Checks that request is rejected when AddMembers is requested on own user with only teacher role
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenUserWithTeacherRole_whenRemoveMembersIsCalledOnUser_thenRejected() throws Exception{
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        when(PrincipalUtils.getUserRole(any())).thenReturn(Arrays.asList(UserRole.TEACHER.name()));
+        when(PrincipalUtils.getUserId(any())).thenReturn(1);
+        mockMvc
+            .perform(post("/groups/-1/removeMembers?listOfUserIds=1"))
+            .andExpect(status().isForbidden())
+            .andExpect(content().string("Unable to remove own role"));
     }
 }

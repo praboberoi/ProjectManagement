@@ -1,5 +1,14 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -38,7 +47,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Gets a list of users that don't have a group and returns it to the gRPC client
+     * Gets a list of users that don't have a group and returns it to the gRPC client in the StreamObserver
      * @param request          Empty protobuf request
      * @param responseObserver Returns to previous method with data
      */
@@ -53,7 +62,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
 
     /**
-     * Gets a list of users that are teachers and returns it to the gRPC client
+     * Gets a list of users that are teachers and returns it to the gRPC client in the StreamObserver
      * @param request          Empty protobuf request
      * @param responseObserver Returns to previous method with data
      */
@@ -67,7 +76,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Delete a group from the database and return if the deletion was successful to the gRPC client
+     * Delete a group from the database and return if the deletion was successful to the gRPC client in the StreamObserver
      * @param request          Delete group request containing the id of the group to delete
      * @param responseObserver Returns to previous method with data
      */
@@ -94,7 +103,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
 
     /**
-     * Create a group from the database and return if the creation was successful to the gRPC client
+     * Create a group from the database and return if the creation was successful to the gRPC client in the StreamObserver
      *
      * @param request          Create group request containing the id of the group to create
      * @param responseObserver Returns to previous method with data
@@ -130,8 +139,9 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
+
     /**
-     * Gets all groups from the database and returns them to the gRPC client
+     * Gets all groups from the database and returns them to the gRPC client in the StreamObserver
      * @param request           The filters for pagination
      * @param responseObserver  Returns to previous method with data
      */
@@ -149,7 +159,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Gets the specified group and returns them to the gRPC client
+     * Gets the specified group and returns them to the gRPC client in the StreamObserver
      * @param request           The protobuf request containing the id of the group to get
      * @param responseObserver  Returns to previous method with data
      */
@@ -169,7 +179,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Gets the specified members from the group and returns the status to the gRPC client
+     * Removes the specified members from the group and returns the status to the gRPC client in the StreamObserver
      * @param request           The protobuf Remove members request containing the group id and member ids. Group id of -1 is teacher group.
      * @param responseObserver  Returns to previous method with data
      */
@@ -211,6 +221,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             responseObserver.onCompleted();
             return;
         }
+
         if (group.getUsers().stream().filter(user -> request.getUserIdsList().contains(user.getUserId())).toList().size() != request.getUserIdsCount()) {
             reply.setIsSuccess(false);
             reply.setMessage("Unable to find all members in group.");
@@ -219,11 +230,64 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             responseObserver.onCompleted();
             return;
         }
+
         List<User> newUserList = group.getUsers().stream().filter(user -> !request.getUserIdsList().contains(user.getUserId())).toList();
         group.setUsers(newUserList);
         logger.info("{} members removed from group {}", request.getUserIdsCount(), request.getGroupId());
         groupsRepository.save(group);
 
+        reply.setMessage(String.format("%d member%s removed from group %s", request.getUserIdsCount(), request.getUserIdsCount()==1?"":"s" , group.getShortName()));
+        reply.setIsSuccess(true);
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+
+    /**
+     * Adds the specified members from the group and returns the status to the gRPC client in the StreamObserver
+     * @param request           The protobuf Add members request containing the group id and member ids. Group id of -1 is teacher group.
+     * @param responseObserver  Returns to previous method with data
+     */
+    @Override
+    public void addGroupMembers(AddGroupMembersRequest request, StreamObserver<AddGroupMembersResponse> responseObserver) {
+        AddGroupMembersResponse.Builder reply = AddGroupMembersResponse.newBuilder();
+
+        // Logic if the group is the teacher's group
+        if (request.getGroupId() == -1) {
+            List<User> users = StreamSupport.stream(userRepository.findAllById(request.getUserIdsList()).spliterator(), false)
+            .filter(user -> !user.getRoles().contains(UserRole.TEACHER)).toList();
+
+            for (User user: users) {
+                user.addRole(UserRole.TEACHER);
+                userRepository.save(user);
+                logger.info("Added Teacher role to user {}", user.getUserId());
+            }
+
+            reply.setMessage("Added Teacher role to selected users");
+            reply.setIsSuccess(true);
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        Groups group = groupsRepository.findById(request.getGroupId()).orElse(null);
+        if (group == null) {
+            reply.setMessage("Unable to find group.");
+            reply.setIsSuccess(false);
+
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        Set<User> newUserList = group.getUsers();
+        Iterable<User> users =  userRepository.findAllById(request.getUserIdsList());
+        users.forEach(newUserList::add);
+        group.setUsers(newUserList);
+
+        logger.info("{} members added to group {}", request.getUserIdsCount(), request.getGroupId());
+        groupsRepository.save(group);
+
+        reply.setMessage(String.format("%d member%s added to group %s", request.getUserIdsCount(), request.getUserIdsCount()==1?"":"s", group.getShortName()));
         reply.setIsSuccess(true);
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();

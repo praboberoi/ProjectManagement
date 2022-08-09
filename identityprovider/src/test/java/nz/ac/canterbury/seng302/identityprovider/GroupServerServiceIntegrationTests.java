@@ -391,27 +391,59 @@ class GroupServerServiceIntegrationTests {
     }
 
     /**
-     * Tests that a group is not created when one already exists with the same short name.
+     * Tests that add groups fails when a group doesn't exist
      */
     @Test
     @Transactional
-    void givenAGroupWithExists_whenCreateGroupCalledWithSameShortName_thenTheGroupDoesNotExist() {
-        CreateGroupRequest firstRequest = CreateGroupRequest.newBuilder().setShortName("Test Group").setLongName("Long").build();
+    void givenSampleData_whenAddGroupMembersIsCalledOnNoGroup_thenFails() {
+        AddGroupMembersRequest request = AddGroupMembersRequest.newBuilder().setGroupId(5826).addAllUserIds(Arrays.asList(1)).build();
+        StreamRecorder<AddGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.addGroupMembers(request, responseObserver);
 
-        StreamRecorder<CreateGroupResponse> firstResponseObserver = StreamRecorder.create();
-        groupServerService.createGroup(firstRequest, firstResponseObserver);
-        firstResponseObserver.getValues();
+        assertNull(responseObserver.getError());
+        List<AddGroupMembersResponse> results = responseObserver.getValues();
 
-        CreateGroupRequest secondRequest = CreateGroupRequest.newBuilder().setShortName("Test Group").setLongName("Long Name").build();
-        StreamRecorder<CreateGroupResponse> secondResponseObserver = StreamRecorder.create();
-        groupServerService.createGroup(secondRequest, secondResponseObserver);
-
-        assertNull(secondResponseObserver.getError());
-        List<CreateGroupResponse> results = secondResponseObserver.getValues();
         assertEquals(1, results.size());
+        AddGroupMembersResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Non-existant group was found: " + response.getMessage());
+    }
 
-        CreateGroupResponse response = results.get(0);
-        assertFalse(response.getIsSuccess(), "Group short name validation was incorrect: " + response.getMessage());
+    /**
+     * Tests that a user is added to the teacher group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenAddGroupMembersIsCalledOnTeacherGroup_thenMemberIsTeacher() {
+        AddGroupMembersRequest request = AddGroupMembersRequest.newBuilder().setGroupId(-1).addAllUserIds(Arrays.asList(8)).build();
+        StreamRecorder<AddGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.addGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<AddGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        AddGroupMembersResponse response = results.get(0);
+        assertTrue(response.getIsSuccess(), "Member failed to add to the group: " + response.getMessage());
+        assertTrue(userRepository.findById(8).get().getRoles().contains(UserRole.TEACHER), "User is not a teacher");
+    }
+
+    /**
+     * Tests that a member is added to the specified group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenAddGroupMembersIsCalledOnNormalGroup_thenMemberAdded() {
+        AddGroupMembersRequest request = AddGroupMembersRequest.newBuilder().setGroupId(1).addAllUserIds(Arrays.asList(15)).build();
+        StreamRecorder<AddGroupMembersResponse> responseObserver = StreamRecorder.create();
+        groupServerService.addGroupMembers(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<AddGroupMembersResponse> results = responseObserver.getValues();
+
+        assertEquals(1, results.size());
+        AddGroupMembersResponse response = results.get(0);
+        assertTrue(response.getIsSuccess(), "Member failed to add to the group: " + response.getMessage());
+        assertEquals(1, groupsRepository.findById(1).get().getUsers().stream().filter(user -> user.getUserId() == 15).count(), "User not added to group");
     }
 
     /**
@@ -436,5 +468,29 @@ class GroupServerServiceIntegrationTests {
 
         CreateGroupResponse response = results.get(0);
         assertFalse(response.getIsSuccess(), "Group short and long name validation was incorrect: " + response.getMessage());
+    }
+
+    /**
+     * Tests that a group is not created when one already exists with the same short name.
+     */
+    @Test
+    @Transactional
+    void givenAGroupWithExists_whenCreateGroupCalledWithSameShortName_thenTheGroupDoesNotExist() {
+        CreateGroupRequest firstRequest = CreateGroupRequest.newBuilder().setShortName("Test Group").setLongName("Long").build();
+
+        StreamRecorder<CreateGroupResponse> firstResponseObserver = StreamRecorder.create();
+        groupServerService.createGroup(firstRequest, firstResponseObserver);
+        firstResponseObserver.getValues();
+
+        CreateGroupRequest secondRequest = CreateGroupRequest.newBuilder().setShortName("Test Group").setLongName("Long Name").build();
+        StreamRecorder<CreateGroupResponse> secondResponseObserver = StreamRecorder.create();
+        groupServerService.createGroup(secondRequest, secondResponseObserver);
+
+        assertNull(secondResponseObserver.getError());
+        List<CreateGroupResponse> results = secondResponseObserver.getValues();
+        assertEquals(1, results.size());
+
+        CreateGroupResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Group short name validation was incorrect: " + response.getMessage());
     }
 }
