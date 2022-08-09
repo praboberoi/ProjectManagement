@@ -74,11 +74,17 @@ public class ProjectController {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             Project project = projectService.getProjectById(projectId);
+            Event newEvent = eventService.getNewEvent(project);
             model.addAttribute("listEvents", listEvents);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
+            model.addAttribute("event", newEvent);
+            model.addAttribute("eventFormTitle", "Add New Event");
+            model.addAttribute("submissionName", "Create");
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectDateMin", project.getStartDate());
+            model.addAttribute("projectDateMax", project.getEndDate());
             return "project";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -96,10 +102,10 @@ public class ProjectController {
      */
     @PostMapping("/verifyProject/{projectId}")
     public ResponseEntity<String> verifyProject(
-        @PathVariable int projectId,
-        String startDate,
-        String endDate,
-        @AuthenticationPrincipal AuthState principal) {
+            @PathVariable int projectId,
+            String startDate,
+            String endDate,
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = new Project.Builder()

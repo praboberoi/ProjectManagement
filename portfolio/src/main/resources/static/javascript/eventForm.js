@@ -2,14 +2,10 @@
 const eventNameRegex = /^\S/
 const eventNameSpacesRegex = /^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$/
 
-const projectId = document.getElementById("projectId").value;
-const startDateElement = document.getElementById('startDate');
-const endDateElement = document.getElementById('endDate');
-const startDateError = document.getElementById('startDateError');
-const endDateError = document.getElementById('endDateError');
-const projectStartDate = new Date(document.getElementById("projectStartDate").value);
-const projectEndDate = new Date(document.getElementById("projectEndDate").value);
-const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
+const startDateElement = document.getElementById('eventStartDate');
+const endDateElement = document.getElementById('eventEndDate');
+const startDateError = document.getElementById('eventStartDateError');
+const endDateError = document.getElementById('eventEndDateError');
 
 const startTimeElement = document.querySelector('#startTime');
 const endTimeElement = document.querySelector('#endTime');
@@ -55,10 +51,10 @@ function checkEventDates() {
     checkEndDate();
 
     if(startDateElement.classList.contains("formError") || endDateElement.classList.contains("formError")) {
-        document.getElementById("formSubmitButton").disabled = true;
+        document.getElementById("eventFormSubmitButton").disabled = true;
         return;
     } else {
-        document.getElementById("formSubmitButton").disabled = false;
+        document.getElementById("eventFormSubmitButton").disabled = false;
     }
 
     if (startDate >= endDate ) {
@@ -66,6 +62,7 @@ function checkEventDates() {
         endDateError.innerText = "End Date must be on or after the Start Date";
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
+        document.getElementById("eventFormSubmitButton").disabled = true;
         return;
     }
 
