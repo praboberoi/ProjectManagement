@@ -62,7 +62,7 @@ public class Groups {
     }
 
     public Groups () {}
-    
+
     /**
      * Constructor for a group object
      * @param response Response protobuf object from the idp

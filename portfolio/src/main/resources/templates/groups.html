@@ -23,12 +23,21 @@
     <div class="page-title">
         <h2 id="name">Groups</h2>
     </div>
+    <div id="toRefresh">
+        <br>
+        <div th:if="${messageSuccess}" class="alert alert-success text-center">
+            [[${messageSuccess}]]
+        </div>
+        <div th:if="${messageDanger}" class="alert alert-danger text-center">
+            [[${messageDanger}]]
+        </div>
+    </div>
     <br>
     <div class="alert alert-danger text-center" id="messageDanger" hidden></div>
     <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
 
     <div th:if="${adminOrTeacher}">
-        <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" data-target="#conformationModal" >
+        <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" data-target="#createModal" >
             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
             Create Group
         </a>
@@ -44,10 +53,10 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <div th:if="${group.groupId == 0} and ${group.shortName.contains('Teaching Staff')}">
-                                            <a id="select-teachers" role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
+                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
                                         </div>
                                         <div th:if="${group.getGroupId() == 0} and ${group.shortName.contains('Members without a group')}">
-                                            <a id="select-unassigned" role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
+                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
                                         </div>
                                         <div th:if="${group.getGroupId() != 0}">
                                             <a role="button" class="project-name" href="javascript:void(0);" th:onclick="'getSelectedGroup(' + ${group.groupId} + ')'" th:text="${group.shortName}" ></a>
@@ -61,7 +70,7 @@
                     </div>
                 </th:block>
             </div>
-            
+
             <div id="group-display" class="col-8">
                 <div class="card project-card" id="selectedGroup" th:fragment="selectedGroup">
                     <div class="container-fluid">
@@ -70,8 +79,8 @@
                                 <div class="container">
                                     <div class="row">
                                         <div class="col-auto me-auto">
-                                            <h5 class="card-title" th:text="${selectedGroup.shortName}" />
-                                            <h3 class="card-text" th:text="${selectedGroup.longName}" />
+                                            <h3 class="card-title" th:text="${selectedGroup.shortName}" />
+                                            <h5 class="card-title" th:text="${selectedGroup.longName}" />
                                         </div>
                                         <div th:if="${selectedGroup.groupId != 0}" class="container-fluid p-0 col-auto">
                                             <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'" disabled>
@@ -114,11 +123,10 @@
                     </div>
                 </div>
             </div>
-            
         </div>
     </div>
 </div>
-<div class="modal fade" id="conformationModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="createModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -129,23 +137,22 @@
             </div>
             <div class="modal-body">
                 <div class="groupForm">
-                    <form id="createGroupForm" method="post" th:object="${groups}" >
+                    <form id="createGroupForm" method="post" th:object="${groups}" th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}" >
                         <div class="mb-3">
-                            <label class="col-form-label">Group Short Name</label>
-                            <input style="font-size:20px;" type="text" class="form-control required" id="group-short-name" placeholder="New Group" maxlength="50" onkeyup="checkShortName()">
+                            <label class="col-form-label required">Group Short Name</label>
+                            <input type="text" class="form-control required" name="shortName" onkeyup="checkShortName()" th:value="${shortName}"id="shortName" maxlength="50" placeholder="New Group" required>
                             <span id="charCount" th:value="${charCount}">0 </span> / 50 characters used.
-                            <p class="error-msg"></p>
+                            <p id="shortNameError" th:text="${shortNameError}" class="error-msg"></p>
                         </div>
                         <div class="mb-3">
-                            <label class="form-label">Group Long Name</label>
-                            <input style="font-size:20px;" type="text" class="form-control mt-50" th:value="${groupLongName}" id="group-long-name" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()"/>
+                            <label class="form-label required">Group Long Name</label>
+                            <input type="text" class="form-control mt-50" th:value="${longName}" name="longName" id="longName" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()" required/>
                             <span id="charCountLong" th:value="${charCount}">0 </span> / 100 characters used.
+                            <p id="longNameError" th:text="${longNameError}" class="error-msg"></p>
                         </div>
                         <div class="modal-footer">
-                            <form action="" method="post" id="deleteProject">
                                 <button type= "submit" id="save-submit-button" class="btn btn-outline-primary me-3">
                                     <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create</button>
-                            </form>
                             <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
                                 <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                         </div>

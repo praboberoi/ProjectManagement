@@ -1,12 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.testingUtils;
 
-import java.util.List;
-
 import com.google.protobuf.Timestamp;
-
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+
+import java.util.List;
 
 /**
  * A collection of methods that package raw types into protobufs to be

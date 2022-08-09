@@ -1,16 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.shared.identityprovider.*;
-
-import java.util.List;
-
-import org.springframework.stereotype.Service;
-
 import com.google.protobuf.Empty;
-
 import io.grpc.StatusRuntimeException;
 import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 /**
  * Client service used to communicate to the IDP application relating to group features
@@ -41,6 +38,21 @@ public class GroupService {
         GroupDetailsResponse response = groupsStub.getMembersWithoutAGroup(Empty.newBuilder().build());
         return new Groups(response);
     }
+
+    /**
+     * Sends a create group request to the gRPC server
+     * @param shortName Short name of the group
+     * @param longName Long name of the group
+     * @return The result of the create operation
+     * @throws StatusRuntimeException Failure status of the server call
+     */
+    public CreateGroupResponse createGroup(String shortName, String longName) throws StatusRuntimeException {
+        return groupsStub.createGroup(CreateGroupRequest.newBuilder()
+                        .setLongName(longName)
+                        .setShortName(shortName)
+                .build());
+    }
+
 
     /**
      * Request the Teaching group details from IDP.

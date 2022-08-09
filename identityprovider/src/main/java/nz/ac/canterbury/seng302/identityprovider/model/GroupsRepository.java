@@ -1,10 +1,10 @@
 package nz.ac.canterbury.seng302.identityprovider.model;
 
-import java.util.List;
-
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * JPA repository interface to get group information from the database
@@ -31,4 +31,18 @@ public interface GroupsRepository extends PagingAndSortingRepository<Groups, Int
      * @return number of groups deleted (1=success, 0=failed)
      */
     long deleteGroupByGroupId(int groupId);
+
+    /**
+     * Get the group that has the short name selected.
+     * @param groupShortName group to get
+     * @return
+     */
+    Groups getAllByShortNameEquals(String groupShortName);
+
+    /**
+     * Get the group that has the long name selected.
+     * @param groupLongName group to get
+     * @return
+     */
+    Groups getAllByLongNameEquals(String groupLongName);
 }

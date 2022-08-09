@@ -6,9 +6,9 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
