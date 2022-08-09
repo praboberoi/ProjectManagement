@@ -13,6 +13,13 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import nz.ac.canterbury.seng302.shared.identityprovider.AddGroupMembersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -204,6 +211,9 @@ public class GroupController {
 
         if (groupId == -1 && !PrincipalUtils.getUserRole(principal).contains(UserRole.COURSE_ADMINISTRATOR.name()) && userIds.remove(Integer.valueOf(PrincipalUtils.getUserId(principal)))) {
             additionalInfo += "\nUnable to remove own role";
+            if (listOfUserIds.length() == 1) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unable to remove own role");
+            }
         }
 
         RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
@@ -211,6 +221,38 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage() + additionalInfo);
+        }
+    }
+
+    /**
+     * Adds the selected users to the selected group
+     * @param listOfUserIds List of users to add in csv format
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param principal Authentication information containing user info
+     * @return Response with status code and message
+     */
+    @PostMapping("/groups/{groupId}/addMembers")
+    public ResponseEntity<String> addMembersToGroup(
+            @PathVariable Integer groupId,
+            String listOfUserIds,
+            Model model,
+            @AuthenticationPrincipal AuthState principal){
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+
+        List<Integer> userIds;
+        try {
+            userIds = new ArrayList<>(Arrays.stream(listOfUserIds.split(",")).map(Integer::parseInt).toList());
+        } catch(Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User list must be a csv of integers");
+        }
+
+        AddGroupMembersResponse response = groupService.addGroupMembers(userIds, groupId);
+        if (response.getIsSuccess()) {
+            return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
         }
     }
 }
