@@ -114,7 +114,7 @@ function selectUser(event) {
         });
         
 
-    } else if (event.ctrlKey) {
+    } else if (event.ctrlKey || event.metaKey) {
         document.querySelectorAll('.currently-selected').forEach(row => {
             row.classList.remove('currently-selected');
         })
