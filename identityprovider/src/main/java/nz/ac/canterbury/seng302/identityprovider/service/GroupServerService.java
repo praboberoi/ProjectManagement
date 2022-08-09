@@ -1,15 +1,6 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
 import com.google.protobuf.Empty;
-
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import nz.ac.canterbury.seng302.identityprovider.model.Groups;
@@ -18,6 +9,13 @@ import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * Grpc service used to perform function relating to groups.
@@ -25,10 +23,10 @@ import nz.ac.canterbury.seng302.shared.identityprovider.*;
 @GrpcService
 public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase {
 
-    private GroupsRepository groupsRepository;
+    private final GroupsRepository groupsRepository;
 
     private UserRepository userRepository;
-    
+
     @Value("${hostAddress}")
     private String hostAddress;
 
@@ -53,6 +51,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         responseObserver.onCompleted();
     }
 
+
     /**
      * Gets a list of users that are teachers and returns it to the gRPC client
      * @param request          Empty protobuf request
@@ -62,7 +61,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     public void getTeachingStaffGroup(Empty request, StreamObserver<GroupDetailsResponse> responseObserver) {
         GroupDetailsResponse.Builder reply = GroupDetailsResponse.newBuilder();
         reply.setShortName("Teaching Staff");
-        reply.addAllMembers(groupsRepository.findTeacherGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
+        reply.addAllMembers(groupsRepository.findTeacherGroup().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).toList());
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
@@ -85,15 +84,52 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 reply.setMessage(String.format("Unable to delete group %d", request.getGroupId()));
             }
         } catch (Exception e) {
-            logger.error("An error occured while deleting group {}", request.getGroupId(), e);
+            logger.error("An error occurred while deleting group {}", request.getGroupId(), e);
             reply.setIsSuccess(false);
-            reply.setMessage(String.format("An error occured while deleting group %d", request.getGroupId()));
+            reply.setMessage(String.format("An error occurred while deleting group %d", request.getGroupId()));
         }
-
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
 
+
+    /**
+     * Create a group from the database and return if the creation was successful to the gRPC client
+     *
+     * @param request          Create group request containing the id of the group to create
+     * @param responseObserver Returns to previous method with data
+     */
+    @Override
+    public void createGroup(CreateGroupRequest request, StreamObserver<CreateGroupResponse> responseObserver) {
+        CreateGroupResponse.Builder reply = CreateGroupResponse.newBuilder();
+        if (request.getShortName().length() < 3 || request.getShortName().length() > 50 || request.getLongName().length() < 3 || request.getLongName().length() > 100) {
+            reply.setIsSuccess(false);
+            reply.setMessage("Incorrect group details entered");
+        } else if (groupsRepository.getAllByShortNameEquals(request.getShortName()) != null) {
+            reply.setIsSuccess(false);
+            if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null) {
+                reply.setMessage(String.format("Group with short name %s and long name %s already exists", request.getShortName(), request.getLongName()));
+            } else {
+                reply.setMessage(String.format("Group with short name %s already exists", request.getShortName()));
+            }
+        } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null) {
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("Group with long name %s already exists", request.getLongName()));
+        } else {
+            try {
+                Groups newGroup = new Groups(request.getShortName(), request.getLongName());
+                groupsRepository.save(newGroup);
+                reply.setIsSuccess(true);
+                reply.setMessage("Group created successfully");
+            } catch (Exception e) {
+                logger.error("An error occurred while creating group", e);
+                reply.setIsSuccess(false);
+                reply.setMessage("An error occurred while creating group.");
+            }
+        }
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
     /**
      * Gets all groups from the database and returns them to the gRPC client
      * @param request           The filters for pagination
@@ -108,7 +144,6 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         }
 
         response.setResultSetSize(groups.size());
-
         responseObserver.onNext(response.build());
         responseObserver.onCompleted();
     }
@@ -128,7 +163,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             reply.setLongName(group.getLongName());
             reply.addAllMembers(group.getUsers().stream().map(user -> ResponseUtils.prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
         }
-        
+
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }
@@ -144,7 +179,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         if (request.getGroupId() == -1) {
             List<User> users = StreamSupport.stream(userRepository.findAllById(request.getUserIdsList()).spliterator(), false)
             .filter(user -> user.getRoles().size() > 1).toList();
-            
+
             // If the number of users is incorrect remove applicable user's roles, move below the if statment if it shouldn't remove any
             for (User user: users) {
                 user.removeRole(UserRole.TEACHER);

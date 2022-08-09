@@ -107,7 +107,4 @@ public class checkFileTypeTest {
             assertFalse(false);
         }
     }
-
-
-
 }
