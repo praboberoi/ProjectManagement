@@ -35,32 +35,27 @@
                 <input type="hidden" id = "projectEndDate" name= "projectEndDate" th:value="${project.endDate}">
             </div>
             <div class="mb-3">
-                <label for="event-name" class="col-form-label required">Deadline Name</label>
-                <input style="font-size:20px;" type="text"  class="form-control required" id="event-name" maxlength="50" th:field="*{name}" onkeyup="checkEventName()" required>
+                <label for="deadline-name" class="col-form-label required">Deadline Name</label>
+                <input style="font-size:20px;" type="text"  class="form-control required" id="deadline-name" maxlength="50" th:field="*{name}" onkeyup="checkDeadlineName()" required>
                 <div>
                     <span id="charCount" th:value="${charCount}">[[*{name.length}]] </span> / 50 characters used.
                 </div>
-                <p id="eventNameError" th:text="${deadlineNameError}" class="error-msg"></p>
+                <p id="deadlineNameError" th:text="${deadlineNameError}" class="error-msg"></p>
             </div>
 
             <div style="height:30px;" class="row">
-
                 <div class="col-md-6 ms-auto">
                     <label  for="date" class="form-label date-font required">Date</label>
                     <input type="datetime-local" class="form-control date-font" id="date" th:field="*{date}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDeadlineDates()" required>
-                    <p id="deadlineDateError" th:text="${deadlineDateError}" class="error-msg"></p>`
-
+                    <p id="deadlineDateError" th:text="${deadlineDateError}" class="error-msg"></p>
                 </div>
                 <div class="col-md-6 ms-auto">
 <!--                    <label for="endDate" class="form-label required">End Date</label>-->
                 </div>
-
-
             </div>
             <!-- Start Date & Time-->
             <div class="row">
                 <div class="col-md-6 ms-auto">
-
                 </div>
 <!--                <div class="col-md-6 ms-auto">-->
 <!--                    <input type="datetime-local" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkEventDates()" required>-->
@@ -71,6 +66,7 @@
 
             <div class="row">
             </div>
+            <br>
             <br>
 
             <div class="d-flex flex-row justify-content-end p-0">

@@ -120,30 +120,80 @@ function checkEndDate() {
 /**
  * Checks that the date of the deadline is valid
  */
-function checkDeadlineDates() {
-    const date = deadlineDateElement.value;
-    // const date = new Date(deadlineDateElement.value);
-    date.setCustomValidity("")
+// function checkDeadlineDates() {
+//     const date = deadlineDateElement.value;
+//     console.log("adskgfj")
+//     console.log(date)
+//     console.log(projectStartDate)
+//
+//     if(date < projectStartDate) {
+//         console.log("less")
+//     } else{
+//         console.log("more")
+//         deadlineDateError.innerText = "Deadline must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+//         deadlineDateElement.classList.add("formError");
+//
+//     }
+//
+//     // const date = new Date(deadlineDateElement.value);
+//     // date.setCustomValidity("")
+//
+//     // if(deadlineDateElement.classList.contains("formError")) {
+//     //     document.getElementById("formSubmitButton").disabled = true;
+//     //     return;
+//     // } else {
+//     //     document.getElementById("formSubmitButton").disabled = false;
+//     // }
+//     deadlineDateError.innerText="asjfd;adsjf"
+//     if (date < projectStartDate) {
+//         deadlineDateError.innerText = "Deadline must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+//         deadlineDateElement.classList.add("formError");
+//         return;
+//     } else if (date > projectEndDate) {
+//         deadlineDateError.innerText = "Deadline must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+//         deadlineDateElement.classList.add("formError");
+//         return;
+//     }
+//
+//     deadlineDateError.innerText = "";
+//     deadlineDateElement.classList.remove("formError")
+//
+// }
 
-    // if(deadlineDateElement.classList.contains("formError")) {
-    //     document.getElementById("formSubmitButton").disabled = true;
-    //     return;
-    // } else {
-    //     document.getElementById("formSubmitButton").disabled = false;
-    // }
+
+/**
+ * Function for error validation of Deadline Name field.
+ * Display error message if input is invalid.
+ */
+function checkDeadlineName() {
+    const deadlineName = document.getElementById('deadline-name');
+    const deadlineNameError = document.getElementById('deadlineNameError');
+    let charMessage = document.getElementById("charCount");
+    let charCount = deadlineName.value.length;
+    charMessage.innerText = charCount + ' '
+
+    if (deadlineName.value.length < 1) {
+        deadlineName.classList.add("formError");
+        deadlineNameError.innerText = "Deadline Name must not be empty";
+    } else if (deadlineName.value.length < 3){
+        deadlineName.classList.add("formError");
+        deadlineNameError.innerText = "Deadline name must be at least 3 characters";
+    } else if (deadlineName.value.length > 50){
+        deadlineName.classList.add("formError");
+        deadlineNameError.innerText = "Deadline Name cannot exceed 50 characters";
+    } else {
+        deadlineName.classList.remove("formError");
+        deadlineNameError.innerText = null;
+    }
+}
+
+function checkDeadlineDates(){
+    const date = document.getElementById('date').value;
+    const dateError = document.getElementById('deadlineDateError');
 
     if (date < projectStartDate) {
-        deadlineDateError.innerText = "Deadline must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
-        deadlineDateElement.classList.add("formError");
-        return;
-    } else if (date > projectEndDate) {
-        deadlineDateError.innerText = "Deadline must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
-        deadlineDateElement.classList.add("formError");
-        return;
+        date.classList.add('formError');
+        dateError.innerText = "hood"
     }
-
-    deadlineDateError.innerText = "";
-    deadlineDateElement.classList.remove("formError")
-
 }
 
