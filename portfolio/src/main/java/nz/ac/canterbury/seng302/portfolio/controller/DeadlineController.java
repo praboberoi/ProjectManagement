@@ -84,8 +84,8 @@ public class DeadlineController {
             model.addAttribute("submissionName", "Create");
             model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("projectDateMin", currentProject.getStartDate());
-            model.addAttribute("projectDateMax", currentProject.getEndDate());
+            model.addAttribute("projectDateMin", currentProject.getStartDate().toString() + "T00:00");
+            model.addAttribute("projectDateMax", currentProject.getEndDate().toString() + "T00:00");
             return "deadlineForm";
 
         } catch (IncorrectDetailsException e) {
