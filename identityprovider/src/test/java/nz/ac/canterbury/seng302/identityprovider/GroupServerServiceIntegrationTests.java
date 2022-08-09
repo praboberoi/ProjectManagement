@@ -445,7 +445,6 @@ class GroupServerServiceIntegrationTests {
         assertTrue(response.getIsSuccess(), "Member failed to add to the group: " + response.getMessage());
         assertEquals(1, groupsRepository.findById(1).get().getUsers().stream().filter(user -> user.getUserId() == 15).count(), "User not added to group");
     }
-}
 
     /**
      * Tests that a group is not created when one already exists with the same long and short name.

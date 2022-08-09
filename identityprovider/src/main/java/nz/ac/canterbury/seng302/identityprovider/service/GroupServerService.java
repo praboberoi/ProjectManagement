@@ -136,6 +136,8 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 reply.setMessage("An error occurred while creating group.");
             }
         }
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
     }
 
     /**
