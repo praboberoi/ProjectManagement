@@ -82,7 +82,8 @@
                                             <h3 id="selectedGroupName" class="card-title" th:text="${selectedGroup.shortName}" />
                                             
                                             <div id="selectedGroupDropdown" class="dropdown">
-                                                <a class="btn btn-secondary dropdown-toggle" href="javascript:void(0);" th:text="${selectedGroup.shortName}" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <a class="btn btn-secondary" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <h5 class="dropdown-toggle" th:text="${selectedGroup.shortName}" role="button" ></h5>
                                                 </a>
 
                                                 <ul class="dropdown-menu">
@@ -101,7 +102,7 @@
                                                 </ul>
                                             </div>
 
-                                            <h5 class="card-title" th:text="${selectedGroup.longName}" />
+                                            <h5 class="card-title d-none d-md-block" th:text="${selectedGroup.longName}" />
                                         </div>
                                         <div th:if="${selectedGroup.groupId != 0}" class="container-fluid p-0 col-auto">
                                             <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'" disabled>
