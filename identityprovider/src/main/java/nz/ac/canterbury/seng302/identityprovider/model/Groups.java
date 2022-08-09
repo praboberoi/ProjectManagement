@@ -57,6 +57,10 @@ public class Groups {
         this.users = new HashSet<>(userList);
     }
 
+    public void setUsers(Set<User> userList) {
+        this.users = userList;
+    }
+
     /**
      * Blank constructor required by JPA
      */

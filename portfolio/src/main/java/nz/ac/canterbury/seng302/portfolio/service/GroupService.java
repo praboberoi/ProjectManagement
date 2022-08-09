@@ -93,4 +93,14 @@ public class GroupService {
         RemoveGroupMembersRequest request = RemoveGroupMembersRequest.newBuilder().setGroupId(groupId).addAllUserIds(userIds).build();
         return groupsStub.removeGroupMembers(request);
     }
+
+    /**
+     * Request the addition of users to the group on the IDP.
+     * @param userIds List of users to be added
+     * @param groupId Group users are to be added to
+     * @return Success status and message
+     */
+    public AddGroupMembersResponse addGroupMembers(List<Integer> userIds, Integer groupId) {
+        return groupsStub.addGroupMembers(AddGroupMembersRequest.newBuilder().setGroupId(groupId).addAllUserIds(userIds).build());
+    }
 }
