@@ -44,10 +44,10 @@
             </div>
 
             <div style="height:30px;" class="row">
-                <div class="col-md-6 ms-auto">
-                    <label  for="date" class="form-label date-font required">Date</label>
-                    <input type="datetime-local" class="form-control date-font" id="date" th:field="*{date}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDeadlineDates()" required>
-                    <p id="deadlineDateError" th:text="${deadlineDateError}" class="error-msg"></p>
+                <div class="mb-3">
+                    <label  for="deadlineDate" class="form-label date-font required">Date</label>
+                    <input type="datetime-local" class="form-control date-font" id="deadlineDate" th:field="*{date}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDeadlineDates()" required>
+                    <p id="deadlineDateError" class="error-msg"></p>
                 </div>
                 <div class="col-md-6 ms-auto">
 <!--                    <label for="endDate" class="form-label required">End Date</label>-->
@@ -79,7 +79,7 @@
     </div>
 
 </div>
-<script th:src="@{{apiPrefix}/javascript/eventForm.js(apiPrefix=${apiPrefix})}"></script>
+<script th:src="@{{apiPrefix}/javascript/deadlineForm.js(apiPrefix=${apiPrefix})}"></script>
 <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
 </body>
 </html>
