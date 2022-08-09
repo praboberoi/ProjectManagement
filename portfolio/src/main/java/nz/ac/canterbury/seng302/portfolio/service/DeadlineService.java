@@ -30,6 +30,7 @@ public class DeadlineService {
     }
     /**
      * Creates a new deadline
+     * @param project Project of the deadline
      * @return of type Deadline
      */
     public Deadline getNewDeadline(Project project) {

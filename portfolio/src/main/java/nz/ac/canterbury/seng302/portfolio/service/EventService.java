@@ -35,6 +35,7 @@ public class EventService {
 
     /**
      * Creates a new event with a name
+     * @param project Project of the event
      * @return of type Event
      */
     public Event getNewEvent(Project project) {

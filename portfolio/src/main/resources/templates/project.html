@@ -114,7 +114,7 @@
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newDeadline'}">
+              <a class="btn btn-outline-primary" id = "deadline-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newDeadline'}">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</a>
             </div>
           </div>
@@ -129,7 +129,7 @@
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' milestone button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+              <a class="btn btn-outline-primary" id = "milestone-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Milestone</a>
             </div>
           </div>

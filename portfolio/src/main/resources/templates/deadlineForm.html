@@ -42,7 +42,7 @@
                 </div>
                 <p id="deadlineNameError" th:text="${deadlineNameError}" class="error-msg"></p>
             </div>
-
+            <!-- Date & Time-->
             <div style="height:30px;" class="row">
                 <div class="mb-3">
                     <label  for="deadlineDate" class="form-label date-font required">Date</label>
@@ -50,18 +50,12 @@
                     <p id="deadlineDateError" class="error-msg"></p>
                 </div>
                 <div class="col-md-6 ms-auto">
-<!--                    <label for="endDate" class="form-label required">End Date</label>-->
                 </div>
             </div>
-            <!-- Start Date & Time-->
+
             <div class="row">
                 <div class="col-md-6 ms-auto">
                 </div>
-<!--                <div class="col-md-6 ms-auto">-->
-<!--                    <input type="datetime-local" class="form-control date-font" id="endDate" th:field="*{endDate}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkEventDates()" required>-->
-<!--                    <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>-->
-<!--                </div>-->
-<!--                <br>-->
             </div>
 
             <div class="row">

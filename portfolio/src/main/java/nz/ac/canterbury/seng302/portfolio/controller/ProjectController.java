@@ -46,7 +46,7 @@ public class ProjectController {
     }
 
     /**
-     * Gets all of the sprints and returns it in a ResponseEntity
+     * Gets all the sprints and returns it in a ResponseEntity
      * @param projectId The Id of the project to get sprints from
      * @return A ResponseEntity containing a list of sprints
      */
