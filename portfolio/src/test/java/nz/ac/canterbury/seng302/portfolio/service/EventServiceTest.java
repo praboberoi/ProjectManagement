@@ -324,10 +324,18 @@ public class EventServiceTest {
                 .startDate(new java.sql.Date(2022, 12, 12))
                 .endDate(new java.sql.Date(2023, 3, 12))
                 .build();
+        Event newEvent2 = eventBuilder.eventId(1)
+                .eventName("Event name")
+                .project(project)
+                .startDate(new java.sql.Date(2023, 4, 12))
+                .endDate(new java.sql.Date(2023, 5, 12))
+                .build();
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
                 eventService.verifyEvent(newEvent) );
-
         assertEquals("The event cannot start or end after the project", exception.getMessage());
+        IncorrectDetailsException exception2 = assertThrows(IncorrectDetailsException.class,() ->
+                eventService.verifyEvent(newEvent2) );
+        assertEquals("The event cannot start or end after the project", exception2.getMessage());
 
     }
 
@@ -338,8 +346,6 @@ public class EventServiceTest {
     @Test
     public void givenEventWithEmptyValues_WhenVerifyEvent_ThenExceptionIsThrown() {
         Event newEvent = eventBuilder.eventId(1)
-                .eventName("")
-                .project(new Project())
                 .build();
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
                 eventService.verifyEvent(newEvent) );
