@@ -282,7 +282,7 @@ public class EventServiceTest {
      * or ends before the project start date
      */
     @Test
-    public void givenProject_whenEventStartsOrEndsBeforeProject_ThenExceptionIsThrown() {
+    public void givenProject_whenEventStartsBeforeProject_ThenExceptionIsThrown() {
         project = new Project.Builder()
                 .description("This is a test project")
                 .startDate(new java.sql.Date(2022, 11, 12))
@@ -300,7 +300,7 @@ public class EventServiceTest {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
                 eventService.verifyEvent(newEvent) );
 
-        assertEquals("The event cannot start or end before the project", exception.getMessage());
+        assertEquals("The event cannot start before the project", exception.getMessage());
 
     }
 
@@ -346,11 +346,20 @@ public class EventServiceTest {
     @Test
     public void givenEventWithEmptyValues_WhenVerifyEvent_ThenExceptionIsThrown() {
         Event newEvent = eventBuilder.eventId(1)
+                .eventName("Event name")
+                .project(project)
+                .build();
+        Event newEvent2 = eventBuilder.eventId(1)
+                .eventName("Event name")
+                .startDate(new java.sql.Date(2023, 4, 12))
+                .endDate(new java.sql.Date(2023, 5, 12))
                 .build();
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
                 eventService.verifyEvent(newEvent) );
-
         assertEquals("Event values are null", exception.getMessage());
+        IncorrectDetailsException exception2 = assertThrows(IncorrectDetailsException.class,() ->
+                eventService.verifyEvent(newEvent2) );
+        assertEquals("Event values are null", exception2.getMessage());
     }
 
     /**
