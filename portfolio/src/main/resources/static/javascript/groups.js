@@ -206,8 +206,10 @@ function dropUsers(event, groupId) {
         }
     }
     let data = event.dataTransfer.getData("origin");
+    console.log(data)
     if (data == "Members without a group") {
         addUsers(groupId, "unassigned")
+        console.log("test")
     } else {
         addUsers(groupId, null)
     }
@@ -221,7 +223,7 @@ function userDragStart(event) {
     if (!event.target.closest("tr").classList.contains("selected")) {
         selectUser(event)
     }
-    event.dataTransfer.setData("origin", event.target.closest("#group-display").querySelector("h5").innerText);
+    event.dataTransfer.setData("origin", event.target.closest("#group-display").querySelector("h3").innerText);
 }
 
 /**

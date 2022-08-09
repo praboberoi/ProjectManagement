@@ -47,7 +47,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Gets a list of users that don't have a group and returns it to the gRPC client
+     * Gets a list of users that don't have a group and returns it to the gRPC client in the StreamObserver
      * @param request          Empty protobuf request
      * @param responseObserver Returns to previous method with data
      */
@@ -62,7 +62,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
 
     /**
-     * Gets a list of users that are teachers and returns it to the gRPC client
+     * Gets a list of users that are teachers and returns it to the gRPC client in the StreamObserver
      * @param request          Empty protobuf request
      * @param responseObserver Returns to previous method with data
      */
@@ -76,7 +76,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Delete a group from the database and return if the deletion was successful to the gRPC client
+     * Delete a group from the database and return if the deletion was successful to the gRPC client in the StreamObserver
      * @param request          Delete group request containing the id of the group to delete
      * @param responseObserver Returns to previous method with data
      */
@@ -103,7 +103,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
 
 
     /**
-     * Create a group from the database and return if the creation was successful to the gRPC client
+     * Create a group from the database and return if the creation was successful to the gRPC client in the StreamObserver
      *
      * @param request          Create group request containing the id of the group to create
      * @param responseObserver Returns to previous method with data
@@ -141,7 +141,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Gets all groups from the database and returns them to the gRPC client
+     * Gets all groups from the database and returns them to the gRPC client in the StreamObserver
      * @param request           The filters for pagination
      * @param responseObserver  Returns to previous method with data
      */
@@ -159,7 +159,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Gets the specified group and returns them to the gRPC client
+     * Gets the specified group and returns them to the gRPC client in the StreamObserver
      * @param request           The protobuf request containing the id of the group to get
      * @param responseObserver  Returns to previous method with data
      */
@@ -179,7 +179,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Removes the specified members from the group and returns the status to the gRPC client
+     * Removes the specified members from the group and returns the status to the gRPC client in the StreamObserver
      * @param request           The protobuf Remove members request containing the group id and member ids. Group id of -1 is teacher group.
      * @param responseObserver  Returns to previous method with data
      */
@@ -243,7 +243,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     }
 
     /**
-     * Adds the specified members from the group and returns the status to the gRPC client
+     * Adds the specified members from the group and returns the status to the gRPC client in the StreamObserver
      * @param request           The protobuf Add members request containing the group id and member ids. Group id of -1 is teacher group.
      * @param responseObserver  Returns to previous method with data
      */
