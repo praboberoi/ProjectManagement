@@ -1,10 +1,12 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
+import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +36,9 @@ public class DeadlineController {
     @Autowired
     private ProjectService projectService;
 
+    @Autowired
+    private UserAccountClientService userAccountClientService;
+
 
     private final static String RedirectToProjectPage = "redirect:/project/{projectId}";
 
@@ -52,6 +57,45 @@ public class DeadlineController {
 
 
     /**
+     * Opens eventForm.html and populates it with a new Event object
+     * Checks for teacher or admin privileges
+     * @param projectId ID of the project
+     * @param principal Current user
+     * @param ra Redirect Attribute frontend message object
+     * @param model
+     * @return link of the html page to display
+     */
+    @RequestMapping(path = "/project/{projectId}/newDeadline", method = RequestMethod.GET)
+    public String newDeadline(
+            Model model,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra,
+            @PathVariable ("projectId") int projectId) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
+        model.addAttribute("apiPrefix", apiPrefix);
+        Deadline newDeadline;
+        Project currentProject;
+        try {
+            currentProject = projectService.getProjectById(projectId);
+            newDeadline = deadlineService.getNewDeadline(currentProject);
+            model.addAttribute("project", currentProject);
+            model.addAttribute("deadline", newDeadline);
+            model.addAttribute("pageTitle", "Add New Deadline");
+            model.addAttribute("submissionName", "Create");
+            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
+            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectDateMin", currentProject.getStartDate());
+            model.addAttribute("projectDateMax", currentProject.getEndDate());
+            return "deadlineForm";
+
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
+        }
+    }
+
+
+    /**
      * Checks if deadline dates are valid and if it is saves the deadline
      * @param deadline Deadline object
      * @return the project page
@@ -59,10 +103,15 @@ public class DeadlineController {
     @PostMapping(path = "/project/{projectId}/saveDeadline")
     public String saveDeadline(
             @ModelAttribute Deadline deadline,
-            RedirectAttributes ra, @PathVariable String projectId) {
+            @AuthenticationPrincipal AuthState principal,
+            @PathVariable ("projectId") int projectId,
+            RedirectAttributes ra) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
+        String message = "";
         try {
+            deadline.setProject(projectService.getProjectById(projectId));
             deadlineService.verifyDeadline(deadline);
-            String message = deadlineService.saveDeadline(deadline);
+           message = deadlineService.saveDeadline(deadline);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (IncorrectDetailsException ex) {
             ra.addFlashAttribute("messageDanger", ex.getMessage());

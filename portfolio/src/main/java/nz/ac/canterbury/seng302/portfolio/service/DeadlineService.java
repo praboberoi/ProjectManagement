@@ -6,8 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 
 /**
@@ -28,7 +32,15 @@ public class DeadlineService {
      * Creates a new deadline
      * @return of type Deadline
      */
-    public Deadline getNewDeadline() {return new Deadline();}
+    public Deadline getNewDeadline(Project project) {
+        LocalDate now = LocalDate.now();
+        Deadline newDeadline = new Deadline.Builder()
+                .project(project)
+                .name("New Deadline")
+                .date(java.sql.Date.valueOf(now))
+                .build();
+        return newDeadline;
+    }
 
     /**
      * Gets deadline object from the database
@@ -51,7 +63,12 @@ public class DeadlineService {
      */
     public List<Deadline> getDeadlineByProject(int projectId) {
         Optional<Project> current = projectRepository.findById(projectId);
-        return current.map(project -> deadlineRepository.findByProject(project)).orElse(List.of());
+        return current.map(project -> deadlineRepository
+                .findByProject(project)
+                .stream()
+                .sorted(Comparator.comparing(Deadline::getDate))
+                .collect(Collectors.toList()))
+            .orElse(List.of());
     }
 
     /**
@@ -110,8 +127,8 @@ public class DeadlineService {
             throw new IncorrectDetailsException("Deadline values cannot be null");
         } else if (deadline.getName().startsWith(" ") || deadline.getName().endsWith(" ")) {
             throw new IncorrectDetailsException("Deadline name must not start or end with space characters");
-        } else if (deadline.getName().length() > 20) {
-            throw new IncorrectDetailsException("Deadline name cannot exceed 20 characters");
+        } else if (deadline.getName().length() > 50) {
+            throw new IncorrectDetailsException("Deadline name cannot exceed 50 characters");
         } else if (deadline.getName().length() < 3) {
             throw new IncorrectDetailsException("Deadline name must be at least 3 characters");
         } else if (deadline.getDate().after(deadline.getProject().getEndDate())) {

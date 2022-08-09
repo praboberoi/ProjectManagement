@@ -94,6 +94,7 @@
       </ul>
 
       <div class="tab-content" id="myTabContent">
+<!--        For events -->
         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' event button !-->
@@ -102,27 +103,28 @@
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Event</a>
             </div>
           </div>
-
 <!--          Shows each individual event-->
           <div class="card" id = "eventCard" th:each="event : ${listEvents}">
             <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
             <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]]  - End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]] </p>
           </div>
-
         </div>
+<!--        For deadlines -->
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newDeadline'}">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</a>
             </div>
           </div>
-          <div class="card" id = "deadlineCard">
-            <h6 class="card-title">End of Sprint 5: </h6>
-            <p class="eventDates">End Date: 21 July 2022 5pm</p>
+<!--          Show each deadline-->
+          <div class="card" id = "deadlineCard" th:each="deadline : ${listDeadlines}">
+            <h6 class="card-title" th:id="'deadline' + ${deadline.deadlineId} + 'Name'">[[${deadline.name}]]</h6>
+            <p class="eventDates" th:id="'deadline' + ${deadline.deadlineId} + 'StartDate'">Date: [[${#dates.format(deadline.date, 'dd MMM yyyy hh:mm a')}]] </p>
           </div>
         </div>
+<!--        For Milestones-->
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' milestone button !-->

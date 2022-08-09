@@ -17,6 +17,8 @@ const endTimeElement = document.querySelector('#endTime');
 const startTimeError = document.getElementById('startTimeError');
 const endTimeError = document.getElementById('endTimeError');
 
+const deadlineDateElement = document.getElementById('date');
+const deadlineDateError = document.getElementById('deadlineDateError');
 /**
  * Function for error validation of Event Name field.
  * Display error message if input is invalid.
@@ -109,6 +111,39 @@ function checkEndDate() {
 
     endDateError.innerText = "";
     endDateElement.classList.remove("formError")
+
+
+
 }
 
+
+/**
+ * Checks that the date of the deadline is valid
+ */
+function checkDeadlineDates() {
+    const date = deadlineDateElement.value;
+    // const date = new Date(deadlineDateElement.value);
+    date.setCustomValidity("")
+
+    // if(deadlineDateElement.classList.contains("formError")) {
+    //     document.getElementById("formSubmitButton").disabled = true;
+    //     return;
+    // } else {
+    //     document.getElementById("formSubmitButton").disabled = false;
+    // }
+
+    if (date < projectStartDate) {
+        deadlineDateError.innerText = "Deadline must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+        deadlineDateElement.classList.add("formError");
+        return;
+    } else if (date > projectEndDate) {
+        deadlineDateError.innerText = "Deadline must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+        deadlineDateElement.classList.add("formError");
+        return;
+    }
+
+    deadlineDateError.innerText = "";
+    deadlineDateElement.classList.remove("formError")
+
+}
 

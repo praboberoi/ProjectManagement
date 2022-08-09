@@ -278,7 +278,7 @@ public class DeadlineServiceTest {
      */
     @Test
     public void givenDeadlineServiceExist_whenGetDeadlineRequested_thenANewDeadlineIsReturned() {
-        Deadline newDeadline = deadlineService.getNewDeadline();
+        Deadline newDeadline = deadlineService.getNewDeadline(new Project());
         assertInstanceOf(Deadline.class, newDeadline);
         assertEquals(0, newDeadline.getDeadlineId());
         assertNull(newDeadline.getDate());
