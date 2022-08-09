@@ -141,6 +141,8 @@ public class GroupController {
 
     /**
      * Attempts to create a group from in the idp server
+     * @param shortName short name of the group being created
+     * @param longName long name of the group being created
      * @param principal Authentication information containing user info
      * @return Status of the request and corresponding message
      */
