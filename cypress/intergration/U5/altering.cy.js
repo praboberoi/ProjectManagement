@@ -30,10 +30,10 @@ When("I drag user {word} to group {word}", (user, group) => {
 });
 
 When("I delete the group", () => {
-    cy.get('#edit-group-tag').click()
+    cy.get('#edit-group-tab').click()
     cy.get('#delete-group-btn').click()
-    cy.get('#deleteModal').contains("Delete").click()
-    cy.get('#messageSuccess').should('contain', 'deleted successfully')
+    cy.get('#deleteModal button').contains("Delete").should('be.visible').click()
+    cy.get('#messageSuccess').should('contain', 'Group deleted successfully')
 })
 
 Then("User {word} is not in group", (user) => {

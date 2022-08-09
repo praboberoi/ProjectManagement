@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -82,7 +83,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 groupsRepository.deleteById(request.getGroupId());
                 logger.info("Group {} has been deleted", request.getGroupId());
                 reply.setIsSuccess(true);
-                reply.setMessage(String.format("Group %d deleted successfully", request.getGroupId()));
+                reply.setMessage("Group deleted successfully");
             } else {
                 reply.setIsSuccess(false);
                 reply.setMessage(String.format("Unable to delete group %d", request.getGroupId()));
