@@ -53,6 +53,9 @@ public class ProjectControllerTest {
     private DashboardService dashboardService;
 
     @MockBean
+    private DeadlineService deadlineService;
+
+    @MockBean
     private UserAccountClientService userAccountClientService;
 
     private List<Sprint> testSprintList;
