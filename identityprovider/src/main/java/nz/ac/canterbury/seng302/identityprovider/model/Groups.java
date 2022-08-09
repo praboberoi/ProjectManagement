@@ -1,10 +1,9 @@
 package nz.ac.canterbury.seng302.identityprovider.model;
 
+import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import javax.persistence.*;
 
 /**
  * The group entity stored in the database for the identity provider application
@@ -16,10 +15,10 @@ public class Groups {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int groupId;
 
-    @Column(unique = true, nullable = false, length = 15)
+    @Column(unique = true, nullable = false, length = 50)
     private String shortName;
 
-    @Column(unique = true, nullable = false, length = 25)
+    @Column(unique = true, nullable = false, length = 100)
     private String longName;
 
     @ManyToMany(fetch = FetchType.EAGER)

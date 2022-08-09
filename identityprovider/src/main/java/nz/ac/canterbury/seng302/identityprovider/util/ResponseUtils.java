@@ -1,15 +1,14 @@
 package nz.ac.canterbury.seng302.identityprovider.util;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import com.google.protobuf.Timestamp;
-
 import nz.ac.canterbury.seng302.identityprovider.model.Groups;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A collection of methods that package raw types into protobufs to be

@@ -5,9 +5,10 @@ import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.shared.identityprovider.CreateGroupResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.RemoveGroupMembersResponse;
-
+import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -19,19 +20,15 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.hamcrest.Matchers.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
 import java.util.Collection;
 import java.util.List;
 
-import org.hamcrest.Matchers;
-
+import static org.hamcrest.Matchers.hasSize;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = GroupController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -84,6 +81,48 @@ public class GroupControllerTest {
         mockMvc
             .perform(delete("/groups/1"))
             .andExpect(status().isForbidden());
+    }
+
+    /**
+     * Checks that the group create functionality will be called correctly for non teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenTeacherUser_whenCreateGroupCalled_thenRedirectToGroupPage() throws Exception{
+        when(groupService.createGroup(anyString(), anyString())).thenReturn(CreateGroupResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+                .perform(post("/groups?shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageSuccess", "success"));
+    }
+
+    /**
+     * Checks that the group create functionality will be called correctly for non teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenTeacherUser_whenCreateGroupCalledIncorrectly_thenRedirectToGroupPage() throws Exception{
+        when(groupService.createGroup(anyString(), anyString())).thenReturn(CreateGroupResponse.newBuilder().setIsSuccess(false).setMessage("unsuccessful").build());
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+                .perform(post("/groups?shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", "unsuccessful"));
+    }
+
+
+    /**
+     * Checks that the group create functionality will be called correctly for non teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenNonTeacherUserAndGroupExists_whenCreateGroupCalled_thenPermissionDenied() throws Exception{
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        mockMvc
+                .perform(post("/groups?shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to create group."));
     }
 
     /**

@@ -1,7 +1,5 @@
 package nz.ac.canterbury.seng302.identityprovider.authentication;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import io.grpc.*;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
@@ -9,6 +7,7 @@ import net.devh.boot.grpc.server.interceptor.GrpcGlobalServerInterceptor;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @GrpcGlobalServerInterceptor
 public class AuthenticationServerInterceptor implements ServerInterceptor {
