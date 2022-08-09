@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -43,6 +44,9 @@ public class DeadlineControllerTest {
 
     @MockBean
     private ControllerAdvisor controllerAdvisor;
+
+    @MockBean
+    private UserAccountClientService userAccountClientService;
 
     @Value("${apiPrefix}")
     private String apiPrefix;
