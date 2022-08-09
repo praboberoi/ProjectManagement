@@ -42,3 +42,8 @@ When("I shift click on user {int}", (userIndex) => {
 Then("User {int} is highlighted", (userIndex) => {
     cy.get('tr.user-row').eq(userIndex).should('have.class', 'table-info')
 });
+
+Then("Group {word} doesn't exist", (group) => {
+    cy.get('.project-card a').contains(group).should('not.exist')
+});
+

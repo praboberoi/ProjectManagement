@@ -10,6 +10,13 @@ When("I remove users from group", () => {
     cy.wait("@deleteCheck")
 });
 
+When("I delete the group", () => {
+    cy.get('#edit-group-tag').click()
+    cy.get('#delete-group-btn').click()
+    cy.get('#deleteModal').contains("Delete").click()
+    cy.get('#messageSuccess').should('contain', 'deleted successfully')
+})
+
 Then("User {word} is not in group", (user) => {
     cy.get('tr.user-row').contains(user).should('not.exist')
 });
