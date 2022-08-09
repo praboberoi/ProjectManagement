@@ -5,16 +5,20 @@ import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -35,6 +39,7 @@ public class EventServiceTest {
     private EventService eventService;
     private Event.Builder eventBuilder;
     private Project project;
+
     /**
      * Creates an event builder
      */
@@ -192,7 +197,7 @@ public class EventServiceTest {
      * is after the end date
      */
     @Test
-    public void givenEventWithStartDateAfterEndDate_WhenVerifyEvent_ThenExceptionIsThrown() throws Exception {
+    public void givenEventWithStartDateAfterEndDate_WhenVerifyEvent_ThenExceptionIsThrown(){
         Event newEvent = eventBuilder.eventId(1)
                 .eventName(" Event name with whitespace start")
                 .project(new Project())
@@ -272,5 +277,93 @@ public class EventServiceTest {
     }
 
 
+    /**
+     * Tests to make sure an error is thrown and an appropriate error message is received the event starts
+     * or ends before the project start date
+     */
+    @Test
+    public void givenProject_whenEventStartsOrEndsBeforeProject_ThenExceptionIsThrown() {
+        project = new Project.Builder()
+                .description("This is a test project")
+                .startDate(new java.sql.Date(2022, 11, 12))
+                .endDate(new java.sql.Date(2023, 1, 10))
+                .projectName("Project 2020")
+                .projectId(1)
+                .build();
+
+        Event newEvent = eventBuilder.eventId(1)
+                .eventName("Event name")
+                .project(project)
+                .startDate(Date.valueOf(LocalDate.now().plusDays(2)))
+                .endDate(Date.valueOf(LocalDate.now().plusDays(5)))
+                .build();
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
+                eventService.verifyEvent(newEvent) );
+
+        assertEquals("The event cannot start or end before the project", exception.getMessage());
+
+    }
+
+    /**
+     * Tests to make sure an error is thrown and an appropriate error message is received the event starts
+     * or ends after the project end date
+     */
+    @Test
+    public void givenProject_whenEventStartsOrEndsAfterProject_ThenExceptionIsThrown() {
+        project = new Project.Builder()
+                .description("This is a test project")
+                .startDate(new java.sql.Date(2022, 11, 12))
+                .endDate(new java.sql.Date(2023, 1, 10))
+                .projectName("Project 2020")
+                .projectId(1)
+                .build();
+
+        Event newEvent = eventBuilder.eventId(1)
+                .eventName("Event name")
+                .project(project)
+                .startDate(new java.sql.Date(2022, 12, 12))
+                .endDate(new java.sql.Date(2023, 3, 12))
+                .build();
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
+                eventService.verifyEvent(newEvent) );
+
+        assertEquals("The event cannot start or end after the project", exception.getMessage());
+
+    }
+
+    /**
+     * Tests to make sure an error is thrown and an appropriate error message is received when event
+     * values are null
+     */
+    @Test
+    public void givenEventWithEmptyValues_WhenVerifyEvent_ThenExceptionIsThrown() {
+        Event newEvent = eventBuilder.eventId(1)
+                .eventName("")
+                .project(new Project())
+                .build();
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
+                eventService.verifyEvent(newEvent) );
+
+        assertEquals("Event values are null", exception.getMessage());
+    }
+
+    /**
+     * Tests to make sure an error is thrown and an appropriate error message is received failure to
+     * save event
+     */
+    @Test
+    public void givenExistingEvent_whenFailureToSaveEvent_thenExceptionThrown() {
+        Event newEvent = eventBuilder.eventId(1)
+                .eventName("New Event")
+                .project(new Project())
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
+                .build();
+
+        when(eventRepository.save(newEvent)).thenThrow(PersistenceException.class);
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                eventService.saveEvent(newEvent));
+        assertEquals("Failure Saving Event", exception.getMessage());
+    }
 
 }

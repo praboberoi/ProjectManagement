@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
+
+import javax.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
@@ -113,7 +115,7 @@ public class EventService {
         try {
             event = eventRepository.save(event);
             return message;
-        } catch (Exception e) {
+        } catch (PersistenceException e) {
             logger.error("Failure Saving Event", e);
             throw new IncorrectDetailsException("Failure Saving Event");
         }
