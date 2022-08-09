@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.PersistentSort;
 import nz.ac.canterbury.seng302.portfolio.model.PersistentSortRepository;
-import ch.qos.logback.core.net.SyslogOutputStream;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -10,7 +9,6 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 
@@ -23,14 +21,11 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.ui.Model;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 import static java.lang.Integer.parseInt;
 
@@ -48,12 +43,6 @@ public class UserController {
 
     public UserController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
-    }
-
-    @ModelAttribute
-    public void addAttributes(@AuthenticationPrincipal AuthState principal, Model model) {
-        model.addAttribute("adminOrTeacher", userAccountClientService.checkUserIsTeacherOrAdmin(principal));
-        model.addAttribute("apiPrefix", apiPrefix);
     }
 
     /**
@@ -153,46 +142,39 @@ public class UserController {
      * @return Ok (200) response if successful, 500 response if failure.
      */
     @DeleteMapping(value = "/usersList/removeRole")
-    public ResponseEntity<String> removeRole(String userId, String role, @AuthenticationPrincipal AuthState principal) {
-        UserRole userRole = Enum.valueOf(UserRole.class, role);
-
+    public ResponseEntity<String> removeRole(String userId, @RequestParam("role") UserRole role, @AuthenticationPrincipal AuthState principal) {
         UserResponse loggedInUser = userAccountClientService.getUser(principal);
         UserResponse user = userAccountClientService.getUser(parseInt(userId));
         AtomicInteger highestUserRole = new AtomicInteger(0);
         loggedInUser.getRolesList().forEach(usersRole ->  {
-            if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());});
+            if(usersRole.getNumber() > highestUserRole.get())  highestUserRole.set(usersRole.getNumber());
+        });
 
         if (user == null) {
-            return new ResponseEntity("User cannot be found in database", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("User cannot be found in database", HttpStatus.NOT_FOUND);
         }
         if (highestUserRole.get() == 0) {
-            return new ResponseEntity("You do not have these permissions", HttpStatus.FORBIDDEN);
-
-        }
-        if (Integer.parseInt(userId) == loggedInUser.getId()){
-            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("You do not have these permissions", HttpStatus.FORBIDDEN);
         }
 
-        if (!user.getRolesList().contains(UserRole.valueOf(role))) {
-            return new ResponseEntity("User does not have this role.", HttpStatus.BAD_REQUEST);
-
+        if (!user.getRolesList().contains(role)) {
+            return new ResponseEntity<>("User does not have this role.", HttpStatus.NOT_FOUND);
         }
 
         if (user.getRolesList().size() == 1) {
-            return new ResponseEntity("User must have a role.", HttpStatus.BAD_REQUEST);
-
+            return new ResponseEntity<>("User must have a role.", HttpStatus.METHOD_NOT_ALLOWED);
         }
 
-        if (highestUserRole.get() < UserRole.valueOf(role).getNumber()) {
-            return new ResponseEntity("User cannot delete this " + role + " role", HttpStatus.BAD_REQUEST);
-
+        if (highestUserRole.get() < role.ordinal()) {
+            return new ResponseEntity<>("User cannot delete this " + role + " role", HttpStatus.FORBIDDEN);
         }
 
-        UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), userRole);
+        UserRoleChangeResponse response = userAccountClientService.removeUserRole(parseInt(userId), role);
         if (!response.getIsSuccess()) {
-            return new ResponseEntity("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
-        return new ResponseEntity("Role deleted successfully", HttpStatus.OK);
+
+        return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
     }
 
     /**
@@ -211,26 +193,21 @@ public class UserController {
             .toList();
 
         if (!(userAccountClientService.checkUserIsTeacherOrAdmin(principal) && roleList.contains(newRole))) {
-            return new ResponseEntity("Insufficient Permissions", HttpStatus.FORBIDDEN);
-
+            return new ResponseEntity<>("Insufficient Permissions", HttpStatus.FORBIDDEN);
         }
-
-        if (userId == user.getUserId()){
-            return new ResponseEntity("You cannot edit your own permissions", HttpStatus.BAD_REQUEST);
-        }
-
+        
         UserRoleChangeResponse response = userAccountClientService.addRoleToUser(userId, newRole);
         if (!response.getIsSuccess()) {
             switch(response.getMessage()) {
             case "User already has this role.":
-                return new ResponseEntity(response.getMessage(), HttpStatus.CONFLICT);
+                return new ResponseEntity<>(response.getMessage(), HttpStatus.CONFLICT);
             case "User could not be found.":
-                return new ResponseEntity(response.getMessage(), HttpStatus.NOT_FOUND);
+                return new ResponseEntity<>(response.getMessage(), HttpStatus.NOT_FOUND);
             default:
-                return new ResponseEntity("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
+                return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity("Successfully added " + newRole, HttpStatus.OK);
+        return new ResponseEntity<>("Successfully added " + newRole, HttpStatus.OK);
     }
 }

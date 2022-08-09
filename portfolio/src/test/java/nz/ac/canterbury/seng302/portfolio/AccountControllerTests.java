@@ -4,12 +4,14 @@ import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.controller.AccountController;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -41,6 +43,9 @@ public class AccountControllerTests {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+
+    @InjectMocks
+    private ControllerAdvisor controllerAdvisor;
 
     User user;
 

@@ -1,3 +1,10 @@
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS
+      when: never
+    - if: $CI_COMMIT_BRANCH
+
 stages:
   - tagChecking
   - publishProtosToLocalMavenRepo
@@ -18,12 +25,30 @@ junit-porfolio:
   script:
     - cd portfolio
     - ./gradlew test
+  artifacts:
+    paths:
+      - portfolio/build/jacoco/test-report.xml
 
 junit-identityprovider:
   stage: test
   script:
     - cd identityprovider
     - ./gradlew test
+  artifacts:
+    paths:
+      - identityprovider/build/jacoco/test-report.xml
+
+sonarqube-analysis:
+  stage: sonarqube
+  variables:
+    GIT_FETCH_EXTRA_FLAGS: --unshallow
+    GIT_DEPTH: 0
+  script:     
+    - cd identityprovider
+    - ./gradlew sonarqube -P SONARQUBE=${SONARQUBE}
+    - cd ../portfolio
+    - ./gradlew sonarqube -P SONARQUBE=${SONARQUBE}
+  allow_failure: true
 
 publish-protos-to-maven-local:
   stage: publishProtosToLocalMavenRepo
@@ -122,12 +147,3 @@ deploy-production-portfolio:
       - portfolio/build/libs
   only:
     - tags
-
-# Runs the SonarQube evaluation. Commented out due to incorrect routing of csse sonarqube server.
-# sonarqube-report:
-#   stage: sonarqube
-#   script:
-#     - cd identityprovider
-#     - ./gradlew sonarqube
-#     - cd ../portfolio
-#     - ./gradlew sonarqube

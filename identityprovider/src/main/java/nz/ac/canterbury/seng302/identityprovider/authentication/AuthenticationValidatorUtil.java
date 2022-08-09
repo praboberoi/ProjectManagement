@@ -1,11 +1,9 @@
 package nz.ac.canterbury.seng302.identityprovider.authentication;
 
-import java.util.List;
-
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.security.SignatureException;
+import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 
 public class AuthenticationValidatorUtil {
 
@@ -20,16 +18,19 @@ public class AuthenticationValidatorUtil {
      * for configuring JWT validation and parsing - just leave them intact and forget about them :)
      *
      * @param sessionToken The provided session token to validate
-     * @param userRoles The users current roles
+     * @param user The user that is currently logged in
      * @return An AuthState derived from validating the token
      */
-    public static AuthState validateTokenForAuthState(String sessionToken, List<UserRole> userRoles) {
+    public static AuthState validateTokenForAuthState(String sessionToken, User user) {
         AuthState.Builder reply = AuthState.newBuilder();
         JwtTokenUtil jwtTokenUtil = JwtTokenUtil.getInstance();
 
         boolean tokenIsValid;
         try {
-            tokenIsValid = jwtTokenUtil.validateToken(sessionToken) && jwtTokenUtil.validateTokenRoles(sessionToken, userRoles);
+            tokenIsValid = jwtTokenUtil.validateToken(sessionToken);
+            if(user != null && !jwtTokenUtil.validateTokenRoles(sessionToken, user.getRoles())) {
+                sessionToken = jwtTokenUtil.generateTokenForUser(user.getUsername(), user.getUserId(), user.getFirstName() + user.getLastName(), user.getRoles());
+            }
         } catch (SignatureException | MalformedJwtException e) {
             // A token is given, that was not valid jwt, has been tampered with, or was not signed with they key we are using.
             // Currently, we generate a new signing key every time the IdP is started, so this exception can be expected if a browser
