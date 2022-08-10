@@ -71,23 +71,45 @@
                 </th:block>
             </div>
 
-            <div id="group-display" class="col-8">
+            <div id="group-display" class="col-sm-12 col-md-8">
                 <div class="card project-card" id="selectedGroup" th:fragment="selectedGroup">
                     <div class="container-fluid">
                         <div class="row">
                             <div class="card-body">
-                                <div class="container">
+                                <div class="container mb-2">
                                     <div class="row">
                                         <div class="col-auto me-auto">
-                                            <h3 class="card-title" th:text="${selectedGroup.shortName}" />
-                                            <h5 class="card-title" th:text="${selectedGroup.longName}" />
+                                            <h3 id="selectedGroupName" class="card-title" th:text="${selectedGroup.shortName}" />
+                                            
+                                            <div id="selectedGroupDropdown" class="dropdown">
+                                                <button class="btn btn-secondary" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <h5 class="dropdown-toggle" th:text="${selectedGroup.shortName}" role="button"></h5>
+                                                </button>
+
+                                                <ul class="dropdown-menu">
+                                                    <th:block th:each="group : ${listGroups}">
+
+                                                        <li class="dropdown-item" th:if="${group.groupId == 0} and ${group.shortName.contains('Teaching Staff')}">
+                                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
+                                                        </li>
+                                                        <li class="dropdown-item" th:if="${group.getGroupId() == 0} and ${group.shortName.contains('Members without a group')}">
+                                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
+                                                        </li>
+                                                        <li class="dropdown-item" th:if="${group.getGroupId() != 0}">
+                                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="'getSelectedGroup(' + ${group.groupId} + ')'" th:text="${group.shortName}" ></a>
+                                                        </li>
+                                                    </th:block>
+                                                </ul>
+                                            </div>
+
+                                            <h5 class="card-title d-none d-md-block" th:text="${selectedGroup.longName}" />
                                         </div>
-                                        <div th:if="${selectedGroup.groupId != 0}" class="container-fluid p-0 col-auto">
+                                        <div th:if="${selectedGroup.groupId != 0}" class="container-fluid my-2 p-0 d-none d-md-block">
                                             <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'" disabled>
                                                 Remove selected users
                                             </button>
                                         </div>
-                                        <div th:if="${selectedGroup.shortName.contains('Teaching Staff')}" class="container-fluid p-0 col-auto">
+                                        <div th:if="${selectedGroup.shortName.contains('Teaching Staff')}" class="container-fluid p-0 my-2">
                                             <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(-1)'" disabled>
                                                 Remove selected users
                                             </button>

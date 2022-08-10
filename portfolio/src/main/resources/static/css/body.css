@@ -209,6 +209,25 @@ a.desc.sort:after {
     border: unset;
 }
 
+#selectedGroupDropdown {
+    display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    #selectedGroupDropdown {
+        display: initial;
+    }
+
+    #selectedGroupName {
+        display: none;
+    }
+
+    #group-list {
+        display: none;
+    }
+    
+}
+
 /* for screen sizes less than 415 */
 @media screen and (max-width: 415px) {
 

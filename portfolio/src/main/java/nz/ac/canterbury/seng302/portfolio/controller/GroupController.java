@@ -117,7 +117,10 @@ public class GroupController {
             @PathVariable int groupId
     ) {
         Groups selectedGroup = groupService.getGroupById(groupId);
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("listGroups", groups);
         mv.addObject("selectedGroup", selectedGroup);
         return mv;
     }
@@ -129,7 +132,10 @@ public class GroupController {
     @GetMapping("/groups/unassigned")
     public ModelAndView unassignedGroup() {
         Groups selectedGroup = groupService.getMembersWithoutAGroup();
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("listGroups", groups);
         mv.addObject("selectedGroup", selectedGroup);
         return mv;
     }
@@ -141,7 +147,10 @@ public class GroupController {
     @GetMapping("/groups/teachers")
     public ModelAndView teachersGroup() {
         Groups selectedGroup = groupService.getTeachingStaffGroup();
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        mv.addObject("listGroups", groups);
         mv.addObject("selectedGroup", selectedGroup);
         return mv;
     }
