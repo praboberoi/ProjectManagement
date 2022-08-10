@@ -44,6 +44,9 @@ public class ProjectControllerTest {
     private SprintService sprintService;
 
     @MockBean
+    private MilestoneService milestoneService;
+
+    @MockBean
     private ProjectService projectService;
 
     @MockBean
