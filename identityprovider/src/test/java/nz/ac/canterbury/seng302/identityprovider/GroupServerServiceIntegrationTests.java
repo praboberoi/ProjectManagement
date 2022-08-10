@@ -583,4 +583,22 @@ class GroupServerServiceIntegrationTests {
         ModifyGroupDetailsResponse response = results.get(0);
         assertFalse(response.getIsSuccess(), "Duplicate group names created: " + response.getMessage());
     }
+
+    /**
+     * Tests that a group that doesn't exist can't be edited
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenEditGroupWithIdenticalLongName_thenModificationRefused() {
+        ModifyGroupDetailsRequest request = ModifyGroupDetailsRequest.newBuilder().setGroupId(1).setShortName("Team 400").setLongName("Cows Cows Cows").build();
+        StreamRecorder<ModifyGroupDetailsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.modifyGroupDetails(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<ModifyGroupDetailsResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        ModifyGroupDetailsResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Duplicate group names created: " + response.getMessage());
+    }
 }
