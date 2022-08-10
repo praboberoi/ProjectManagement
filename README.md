@@ -32,6 +32,16 @@ Endpoints implemented <br />
 - "/usersList" GET - Get the current table page of users. 
 - "/usersList/removeRole" DELETE - Remove the selected role from a user.
 - "/user/{userId}/addRole" POST - Add the selected role to a user.
+- "/groups" GET - Get the groups page.
+- "/groups/list" GET - Get the list of groups.
+- "/groups/{groupId}" DELETE - Delete the selected group but not the members within the group.
+- "/groups/{groupId}" GET - Get the details of the selected group.
+- "/groups/unassigned" GET - Get the members and details of the group of users with no assigned group.
+- "/groups/teachers" GET - Get the members and details of the group of users with a Teacher role.
+- "/groups" POST - Create a new group.
+- "/groups/{groupId}/removeMembers" POST - Remove selected members from a group but not as users of LENSFolio.
+- "/groups/{groupId}/addMembers" POST - Add selected members to a group.
+- 
 
 Basic project template using `gradle`, `Spring Boot`, `Thymeleaf` and `Gitlab CI`.
 
@@ -117,6 +127,16 @@ By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 |TDD 2022| This is a project to focus on test driven development|21/07/2022|20/03/2021|
 |Retail Management 2022| This is to manage retail jobs|21/07/2022|20/03/2021|
 |Project 2022||10/08/2022|10/04/2023|
+
+### 6 - Example Groups 
+|Group Short Name|Group Long Name|
+|----|----|
+|Team 400|400 Bad Request|
+|Team 300|Bolt Development|
+|Team 100| Lens Development|
+|Team 200|200 Cats|
+|Team 700|Cows Cows Cows|
+|Team 800|The Spartans|
 
 ## Contributors
 
