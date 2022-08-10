@@ -206,6 +206,10 @@ a.desc.sort:after {
     border: unset;
 }
 
+#userListDataTable .dropdown-toggle::after {
+    content: none;
+  }
+
 /* for screen sizes less than 415 */
 @media screen and (max-width: 415px) {
 
