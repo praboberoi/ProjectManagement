@@ -52,7 +52,7 @@ public class RegisterController {
     }
 
     /**
-     * Attempts to register a user and redirects to login if successful
+     * Attempts to register a user, creates a cookie and redirects to dashboard if successful
      * @param response HTTP response that will be returned by this endpoint
      * @param username New user's username (required)
      * @param firstName New user's first name (required)
