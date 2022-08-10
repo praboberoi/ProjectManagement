@@ -9,12 +9,12 @@ When("I register a new user", () => {
     cy.get('#email').type('automated@cypress.com')
     cy.get('#password').type('CypressUser1')
     cy.get('#confirmPassword').type('CypressUser1')
-    cy.get("#submit").click()
-
-    cy.url().should('eq', Cypress.config().baseUrl + '/login')
-    
+    cy.get("#submit").click()    
 });
 
+Then("I am logged in", () => {
+    cy.url().should('eq', Cypress.config().baseUrl + '/dashboard')
+});
 Then("I can login", () => {
     cy.login("CypressRegister", "CypressUser1")
     cy.url().should('eq', Cypress.config().baseUrl + '/dashboard')

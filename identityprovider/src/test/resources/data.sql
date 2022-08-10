@@ -44,7 +44,7 @@ MERGE INTO user (user_id, bio,date_created,email,first_name,last_name,nickname,p
 MERGE INTO user (user_id, bio,date_created,email,first_name,last_name,nickname,password,profile_image_path,pronouns,salt,username) VALUES (44,'','2022-07-21 08:45:16.945000000','mario.russo@xtra.co.nz','Mario','Russo','','v86TaJPuaDW8Td0F4JYX51coW62/8CKU5ciLA4+DzdQ=',null,'','AyXr+VxVEMtEAYI+eyiHtQ==','Mario');
 
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (1,1,0);
-MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (2,1,0);
+MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (2,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (2,1,1);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (3,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (3,1,1);
@@ -91,3 +91,28 @@ MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (41,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (42,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (43,0,0);
 MERGE INTO user_roles (user_user_id,roles,order_column) VALUES (44,0,0);
+
+MERGE INTO groups (group_id,short_name,long_name) VALUES (1, 'Team 400', '400: Bad Request');
+MERGE INTO groups (group_id,short_name,long_name) VALUES (2, 'Team 300', 'Bolt Development');
+MERGE INTO groups (group_id,short_name,long_name) VALUES (3, 'Team 100', 'Lens Development');
+MERGE INTO groups (group_id,short_name,long_name) VALUES (4, 'Team 200', '200 Cats');
+MERGE INTO groups (group_id,short_name,long_name) VALUES (5, 'Team 700', 'Cows Cows Cows');
+MERGE INTO groups (group_id,short_name,long_name) VALUES (6, 'Team 800', 'The Spartans');
+
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (1, 1);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (1, 2);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (2, 1);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (4, 1);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (16, 2);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (18, 2);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (20, 1);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (21, 3);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (22, 5);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (22, 2);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (22, 6);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (25, 5);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (26, 5);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (28, 6);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (30, 3);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (32, 1);
+MERGE INTO users_groups (user_id, group_id) KEY(user_id, group_id) VALUES (35, 5);

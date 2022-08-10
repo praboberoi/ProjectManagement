@@ -9,7 +9,7 @@ var space = /^[A-Za-z0-9\-]+( [A-Za-z0-9\-]+)*$/;
 
 
 /**
- * Validates the users username in input field
+ * Validates the user's username in input field
  */
 function checkUsername() {
     let usernameElement = document.getElementById("username");
@@ -26,7 +26,7 @@ function checkUsername() {
         usernameErrorElement.innerText = null;
         usernameElement.setCustomValidity("");
     }
-};
+}
 
 /**
  * Validates the users first name in input field

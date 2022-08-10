@@ -1,12 +1,14 @@
 package nz.ac.canterbury.seng302.identityprovider.util;
 
-import java.util.List;
-
 import com.google.protobuf.Timestamp;
-
+import nz.ac.canterbury.seng302.identityprovider.model.Groups;
 import nz.ac.canterbury.seng302.identityprovider.model.User;
+import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A collection of methods that package raw types into protobufs to be
@@ -14,9 +16,12 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
  */
 public class ResponseUtils {
 
+    private ResponseUtils() {}
+
     /**
      * Packages a user object into a userResponse protobuf object
-     * @param user User to be packaged
+     * @param user User to be packaged     
+     * @param hostAddress Address of the server (i.e. localhost:9000, /test/identity)
      * @return userResponse as a protobuf object
      */
     public static UserResponse prepareUserResponse(User user, String hostAddress) {
@@ -46,5 +51,21 @@ public class ResponseUtils {
         PaginatedUsersResponse.Builder response = PaginatedUsersResponse.newBuilder();
         response.addAllUsers(users).setResultSetSize((int)resultSetSize);
        return response.build();
+    }
+
+    /**
+     * Packages a group into a GroupDetailsResponse protobuf object 
+     * @param group Group to be packaged
+     * @param hostAddress Address of the server (i.e. localhost:9000, /test/identity)
+     * @return GroupDetailsResponse protobuf object
+     */
+    public static GroupDetailsResponse prepareGroupDetailResponse(Groups group, String hostAddress) {
+        GroupDetailsResponse.Builder response = GroupDetailsResponse.newBuilder();
+        response.addAllMembers(group.getUsers().stream().map(user -> prepareUserResponse(user, hostAddress)).collect(Collectors.toList()));
+        response.setGroupId(group.getGroupId());
+        response.setLongName(group.getLongName());
+        response.setShortName(group.getShortName());
+
+        return response.build();
     }
 }

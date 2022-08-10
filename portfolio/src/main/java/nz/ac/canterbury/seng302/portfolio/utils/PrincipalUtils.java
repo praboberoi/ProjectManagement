@@ -1,11 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.utils;
 
-import java.util.Arrays;
-import java.util.List;
-
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A collection of methods that retrieve data from a users principal

@@ -88,6 +88,10 @@ a.project-name {
 
 }
 
+.required:after {
+    content:"*";
+    color: red;
+}
 
 #back-btn{
     margin-top: 8px;
@@ -99,13 +103,12 @@ a.project-name {
     margin-left: 45px;
 }
 
-/* for invalid inputs in form*/
-input:invalid{
-    box-shadow: 0 0 5px 1px red;
-}
 
 .asterisk {
     color: red;
+}
+.form-control{
+    border-color: #07173B;
 }
 
 .formError {
@@ -204,6 +207,25 @@ a.asc.sort:before {
 }
 a.desc.sort:after {
     border: unset;
+}
+
+#selectedGroupDropdown {
+    display: none;
+}
+
+@media only screen and (max-width: 768px) {
+    #selectedGroupDropdown {
+        display: initial;
+    }
+
+    #selectedGroupName {
+        display: none;
+    }
+
+    #group-list {
+        display: none;
+    }
+
 }
 
 #userListDataTable .dropdown-toggle::after {

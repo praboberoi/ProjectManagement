@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,12 +9,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
-import nz.ac.canterbury.seng302.portfolio.service.SprintService;
-
-import static org.junit.jupiter.api.Assertions.*;
-
 import java.sql.Date;
 import java.util.Calendar;
+
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Unit tests for methods in the sprintService class
