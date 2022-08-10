@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.Milestone;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.*;
@@ -31,6 +32,7 @@ public class ProjectController {
     @Autowired private DashboardService dashboardService;
     @Autowired private ProjectService projectService;
     @Autowired private EventService eventService;
+    @Autowired private MilestoneService milestoneService;
     @Autowired private UserAccountClientService userAccountClientService;
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
     @Value("${apiPrefix}") private String apiPrefix;
@@ -74,6 +76,8 @@ public class ProjectController {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             Project project = projectService.getProjectById(projectId);
+            List<Milestone> listMilestones = milestoneService.getMilestoneByProject(projectId);
+            model.addAttribute("listMilestones", listMilestones);
             model.addAttribute("listEvents", listEvents);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);

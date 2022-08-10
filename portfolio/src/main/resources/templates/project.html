@@ -83,12 +83,12 @@
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
-            <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
+            <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Deadlines" height=16 width=16 class="calendarIcons">
             Deadlines</button>
         </li>
         <li class="nav-item" role="presentation">
           <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="Milestones" aria-selected="false">
-            <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
+            <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Milestones" height=16 width=16 class="calendarIcons">
             Milestones</button>
         </li>
       </ul>
@@ -127,13 +127,13 @@
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' milestone button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newMilestone'}">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Milestone</a>
             </div>
           </div>
-          <div class="card" id = "milestoneCard">
-            <h6 class="card-title">Seng 302: </h6>
-            <p class="eventDates">End Date: 21 July 2022 5pm</p>
+          <div class="card" id = "milestoneCard" th:each="milestone : ${listMilestones}">
+            <h6 class="card-title" th:id="'Milestone' + ${milestone.milestoneId} + 'Name'">[[${milestone.name}]]</h6>
+            <p class="eventDates" th:id="'Milestone' + ${milestone.milestoneId} + 'Date'">Milestone Date: [[${#dates.format(milestone.date, 'dd MMM yyyy')}]] </p>
           </div>
         </div>
       </div>

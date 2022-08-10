@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Milestone;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.MilestoneService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
@@ -40,6 +41,44 @@ public class MilestoneController {
     @ModelAttribute
     public void addAttributes(Model model) {
         model.addAttribute("apiPrefix", apiPrefix);
+    }
+
+    /**
+     * Opens milestoneForm.html and populates it with a new Milestone object
+     * Checks for teacher or admin privileges
+     * @param projectId ID of the project
+     * @param principal Current user
+     * @param ra Redirect Attribute frontend message object
+     * @param model
+     * @return link of the html page to display
+     */
+    @RequestMapping(path = "/project/{projectId}/newMilestone", method = RequestMethod.GET)
+    public String newMilestone(
+            Model model,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra,
+            @PathVariable ("projectId") int projectId) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
+        model.addAttribute("apiPrefix", apiPrefix);
+        Milestone newMilestone;
+        Project currentProject;
+        try {
+            currentProject = projectService.getProjectById(projectId);
+            newMilestone = milestoneService.getNewMilestone();
+            model.addAttribute("project", currentProject);
+            model.addAttribute("milestone", newMilestone);
+            model.addAttribute("pageTitle", "Add New Milestone");
+            model.addAttribute("submissionName", "Create");
+            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
+            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectDateMin", currentProject.getStartDate());
+            model.addAttribute("projectDateMax", currentProject.getEndDate());
+            return "milestoneForm";
+
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
+        }
     }
 
     /**
