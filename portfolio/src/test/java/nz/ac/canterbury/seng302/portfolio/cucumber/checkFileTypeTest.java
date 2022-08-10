@@ -79,7 +79,7 @@ public class checkFileTypeTest {
 
         try {
             String testString = "";
-            assertEquals("redirect:account", controller.editUser(principal, testFile, testString,
+            assertEquals("editAccount", controller.editUser(principal, testFile, testString,
                     testString, testString, testString, testString, testString, false, mockModel, ra));
         } catch (IOException e) {
             assertFalse(false);
@@ -101,13 +101,10 @@ public class checkFileTypeTest {
 
         try {
             String testString = "";
-            assertEquals("redirect:editAccount", controller.editUser(principal, testFile, testString,
+            assertEquals("editAccount", controller.editUser(principal, testFile, testString,
                     testString, testString, testString, testString, testString, false, mockModel, ra));
         } catch (IOException e) {
             assertFalse(false);
         }
     }
-
-
-
 }

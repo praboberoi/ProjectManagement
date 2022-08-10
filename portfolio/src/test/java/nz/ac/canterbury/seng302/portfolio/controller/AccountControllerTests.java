@@ -1,14 +1,12 @@
-package nz.ac.canterbury.seng302.portfolio;
+package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
-import nz.ac.canterbury.seng302.portfolio.controller.AccountController;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
-
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -31,8 +29,9 @@ import java.util.GregorianCalendar;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @WebMvcTest(controllers = AccountController.class)
@@ -213,10 +212,13 @@ public class AccountControllerTests {
     public void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws IOException {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
+
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
+
         AccountController accountController = new AccountController(mockUserAccountClientService);
         AuthState principal = AuthState.newBuilder().build();
+
         String testString = "";
         MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "image/png", "some image".getBytes());
         Model mockModel = Mockito.mock(Model.class);

@@ -11,7 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -65,7 +68,7 @@ public class RegisterController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return HTML page corresponding to correct handling
      */
-    @RequestMapping(path="/register", method = RequestMethod.POST)
+    @PostMapping(path="/register")
     public String createUser(
         HttpServletRequest request,
         HttpServletResponse response,
