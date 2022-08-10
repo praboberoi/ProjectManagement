@@ -545,6 +545,42 @@ class GroupServerServiceIntegrationTests {
         assertEquals(1, results.size());
 
         ModifyGroupDetailsResponse response = results.get(0);
-        assertFalse(response.getIsSuccess(), "Group with short name created created: " + response.getMessage());
+        assertFalse(response.getIsSuccess(), "Group with short name modified: " + response.getMessage());
+    }
+
+    /**
+     * Tests that a group that doesn't exist can't be edited
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenEditGroupCalledOnNoGroup_thenModificationRefused() {
+        ModifyGroupDetailsRequest request = ModifyGroupDetailsRequest.newBuilder().setGroupId(123123).setShortName("test").setLongName("pi").build();
+        StreamRecorder<ModifyGroupDetailsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.modifyGroupDetails(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<ModifyGroupDetailsResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        ModifyGroupDetailsResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Non-existent group modified: " + response.getMessage());
+    }
+
+    /**
+     * Tests that a group that doesn't exist can't be edited
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenEditGroupWithIdenticalLongAndShortNames_thenModificationRefused() {
+        ModifyGroupDetailsRequest request = ModifyGroupDetailsRequest.newBuilder().setGroupId(1).setShortName("Team 300").setLongName("Cows Cows Cows").build();
+        StreamRecorder<ModifyGroupDetailsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.modifyGroupDetails(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<ModifyGroupDetailsResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        ModifyGroupDetailsResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Duplicate group names created: " + response.getMessage());
     }
 }

@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -146,8 +147,10 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     public void modifyGroupDetails(ModifyGroupDetailsRequest request, StreamObserver<ModifyGroupDetailsResponse> responseObserver) {
         ModifyGroupDetailsResponse.Builder reply = ModifyGroupDetailsResponse.newBuilder();
         Groups group;
-        if (groupsRepository.existsById(request.getGroupId())) {
-            group = groupsRepository.findById(request.getGroupId()).get();
+
+        Optional<Groups> groupCheck = groupsRepository.findById(request.getGroupId());
+        if (groupCheck.isPresent()) {
+            group = groupCheck.get();
         } else {
             reply.setIsSuccess(false);
             reply.setMessage("Could not find group");

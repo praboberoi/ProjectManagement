@@ -62,11 +62,8 @@ public class GroupService {
      * @throws StatusRuntimeException Failure status of the server call
      */
     public ModifyGroupDetailsResponse modifyGroup(Integer groupId, String shortName, String longName) throws StatusRuntimeException {
-        return groupsStub.modifyGroupDetails(ModifyGroupDetailsRequest.newBuilder()
-            .setGroupId(groupId)
-            .setLongName(longName)
-            .setShortName(shortName)
-            .build());
+        return groupsStub.modifyGroupDetails(ModifyGroupDetailsRequest.newBuilder().setGroupId(groupId).setLongName(longName)
+            .setShortName(shortName).build());
     }
 
 
