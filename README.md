@@ -13,7 +13,7 @@ Endpoints implemented <br />
 - "dashboard/saveProject" POST – Saves or creates a new project with the provided details.<br/>
 
 - "dashboard/editProject/{projectId}" GET – Returns a form to modify a projects information.
-- "dashboard/deleteProject/{projectId}" GET - Deletes the project with the specified id from the database.<br/>
+- "dashboard/deleteProject/{projectId}" POST - Deletes the project with the specified id from the database.<br/>
 
 - "/register" GET – Returns the registration page.
 - "/register" POST – Creates a new user with the provided information. <br/>
@@ -22,8 +22,16 @@ Endpoints implemented <br />
 - "/project/{projectId}/newSprint" GET - Returns a page with a form used to create a new sprint under the specified project.
 - "/project/{projectId}/saveSprint" POST - Saves or creates a new sprint with the provided details.
 - "/project/{projectId}/editSprint/{sprintId}" GET – Returns a form to modify a sprints information.
-- "/project/{projectId}/deleteSprint/{sprintId}" GET - Deletes the sprint with the specified id from the database. <br/>
-
+- "/project/{projectId}/deleteSprint/{sprintId}" GET - Deletes the sprint with the specified id from the database.
+- "/project/{projectId}/getAllSprints" GET - Retrieves all the sprints for a specific project.
+- "/project/{projectId}/verifySprint" POST - Verifies the sprint details from user input.
+- "/sprint/{sprintId}/editSprint" 
+- "/verifyProject/{projectId}" POST - Validates the projects details from user input.
+- "/error" GET - Returns the Error page.
+- "/users" GET - Get the list of users page.
+- "/usersList" GET - Get the current table page of users. 
+- "/usersList/removeRole" DELETE - Remove the selected role from a user.
+- "/user/{userId}/addRole" POST - Add the selected role to a user.
 
 Basic project template using `gradle`, `Spring Boot`, `Thymeleaf` and `Gitlab CI`.
 
