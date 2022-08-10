@@ -178,11 +178,11 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 group.setLongName(request.getLongName());
                 groupsRepository.save(group);
                 reply.setIsSuccess(true);
-                reply.setMessage("Group modified successfully");
+                reply.setMessage("Group updated successfully");
             } catch (Exception e) {
-                logger.error("An error occurred while modifying group {}", request.getGroupId(), e);
+                logger.error("An error occurred while updating group {}", request.getGroupId(), e);
                 reply.setIsSuccess(false);
-                reply.setMessage(String.format("An error occurred while modifying group %s", group.getShortName()));
+                reply.setMessage(String.format("An error occurred while updating group %s", group.getShortName()));
             }
         }
         responseObserver.onNext(reply.build());
