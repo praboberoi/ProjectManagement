@@ -1,5 +1,4 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
-
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
@@ -18,35 +17,25 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-
 import java.util.List;
-
 /**
  * Controller for the deadlines
  */
 @Controller
 public class DeadlineController {
-
     @Value("${apiPrefix}")
     private String apiPrefix;
-
     @Autowired
     private DeadlineService deadlineService;
-
     @Autowired
     private ProjectService projectService;
-
     @Autowired
     private UserAccountClientService userAccountClientService;
-
-
     private final static String RedirectToProjectPage = "redirect:/project/{projectId}";
-
     public DeadlineController(DeadlineService deadlineService, ProjectService projectService) {
         this.deadlineService = deadlineService;
         this.projectService = projectService;
     }
-
     /**
      * Adds common model elements used by all controller methods.
      */
@@ -54,8 +43,42 @@ public class DeadlineController {
     public void addAttributes(Model model) {
         model.addAttribute("apiPrefix", apiPrefix);
     }
-
-
+    /**
+     * Opens eventForm.html and populates it with a new Event object
+     * Checks for teacher or admin privileges
+     * @param projectId ID of the project
+     * @param principal Current user
+     * @param ra Redirect Attribute frontend message object
+     * @param model
+     * @return link of the html page to display
+     */
+    @RequestMapping(path = "/project/{projectId}/newDeadline", method = RequestMethod.GET)
+    public String newDeadline(
+            Model model,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra,
+            @PathVariable ("projectId") int projectId) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
+        model.addAttribute("apiPrefix", apiPrefix);
+        Deadline newDeadline;
+        Project currentProject;
+        try {
+            currentProject = projectService.getProjectById(projectId);
+            newDeadline = deadlineService.getNewDeadline(currentProject);
+            model.addAttribute("project", currentProject);
+            model.addAttribute("deadline", newDeadline);
+            model.addAttribute("pageTitle", "Add New Deadline");
+            model.addAttribute("submissionName", "Create");
+            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
+            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectDateMin", currentProject.getStartDate().toString() + "T00:00");
+            model.addAttribute("projectDateMax", currentProject.getEndDate().toString() + "T00:00");
+            return "deadlineForm";
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return "redirect:/project/{projectId}";
+        }
+    }
     /**
      * Checks if deadline dates are valid and if it is saves the deadline
      * @param deadline Deadline object
@@ -75,15 +98,13 @@ public class DeadlineController {
         try {
             deadline.setProject(projectService.getProjectById(projectId));
             deadlineService.verifyDeadline(deadline);
-           message = deadlineService.saveDeadline(deadline);
+            message = deadlineService.saveDeadline(deadline);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (IncorrectDetailsException ex) {
             ra.addFlashAttribute("messageDanger", ex.getMessage());
         }
         return RedirectToProjectPage;
     }
-
-
     /**
      * Deletes the deadline and redirects back to project page
      * @param model Of type {@link Model}
@@ -112,7 +133,6 @@ public class DeadlineController {
             return RedirectToProjectPage;
         }
     }
-
     /**
      * Maps an existing deadline, current user, user's role and button info to the deadline form
      * @param deadlineId Of type int

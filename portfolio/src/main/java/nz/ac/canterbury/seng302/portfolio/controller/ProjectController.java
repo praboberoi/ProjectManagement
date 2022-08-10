@@ -1,5 +1,4 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
-
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
@@ -7,7 +6,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +17,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
 import java.sql.Date;
 import java.util.List;
-
 /**
  * A controller which accepts api calls and directs it to the correct service
  */
@@ -36,7 +32,6 @@ public class ProjectController {
     @Autowired private UserAccountClientService userAccountClientService;
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
     @Value("${apiPrefix}") private String apiPrefix;
-
     /**
      * Adds common model elements used by all controller methods.
      */
@@ -44,7 +39,6 @@ public class ProjectController {
     public void addAttributes(Model model) {
         model.addAttribute("apiPrefix", apiPrefix);
     }
-
     /**
      * Gets all the sprints and returns it in a ResponseEntity
      * @param projectId The Id of the project to get sprints from
@@ -56,7 +50,6 @@ public class ProjectController {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         return ResponseEntity.status(HttpStatus.OK).body(listSprints);
     }
-
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
      * to the individual project pages.
@@ -83,17 +76,12 @@ public class ProjectController {
             model.addAttribute("project", project);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("deadline", deadlineService.getNewDeadline(project));
-            model.addAttribute("deadlineFormTitle", "Add New Deadline");
-
-
             return "project";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
         }
     }
-
     /**
      * Checks if a sprints dates are valid and returns a Response containing a message
      * @param projectId ID of the project to check
@@ -104,10 +92,10 @@ public class ProjectController {
      */
     @PostMapping("/verifyProject/{projectId}")
     public ResponseEntity<String> verifyProject(
-        @PathVariable int projectId,
-        String startDate,
-        String endDate,
-        @AuthenticationPrincipal AuthState principal) {
+            @PathVariable int projectId,
+            String startDate,
+            String endDate,
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = new Project.Builder()
