@@ -1,9 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.authentication.CookieUtil;
+import nz.ac.canterbury.seng302.portfolio.service.AuthenticateClientService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
-
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthenticateResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterResponse;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +25,10 @@ import java.util.List;
 public class RegisterController {
 
     private final UserAccountClientService userAccountClientService;
+
+    @Autowired
+    private AuthenticateClientService authenticateClientService;
+
     @Value("${apiPrefix}") private String apiPrefix;
 
     public RegisterController(UserAccountClientService userAccountClientService) {
@@ -44,7 +52,7 @@ public class RegisterController {
     }
 
     /**
-     * Attempts to register a user and redirects to login if successful
+     * Attempts to register a user, creates a cookie and redirects to dashboard if successful
      * @param response HTTP response that will be returned by this endpoint
      * @param username New user's username (required)
      * @param firstName New user's first name (required)
@@ -59,24 +67,37 @@ public class RegisterController {
      */
     @RequestMapping(path="/register", method = RequestMethod.POST)
     public String createUser(
-            HttpServletResponse response,
-            @RequestParam String username,
-            @RequestParam String firstName,
-            @RequestParam String lastName,
-            @RequestParam String nickname,
-            @RequestParam String bio,
-            @RequestParam String pronouns,
-            @RequestParam String email,
-            @RequestParam String password,
-            @RequestParam String confirmPassword,
-            Model model
+        HttpServletRequest request,
+        HttpServletResponse response,
+        @RequestParam String username,
+        @RequestParam String firstName,
+        @RequestParam String lastName,
+        @RequestParam String nickname,
+        @RequestParam String bio,
+        @RequestParam String pronouns,
+        @RequestParam String email,
+        @RequestParam String password,
+        @RequestParam String confirmPassword,
+        Model model
     ) {
         UserRegisterResponse idpResponse = null;
         List<ValidationError> validationErrors = new ArrayList<>();
         if (password.equals(confirmPassword)) {
             idpResponse = userAccountClientService.register(username, firstName, lastName, nickname, bio, pronouns, email, password);
             if (idpResponse.getIsSuccess()) {
-                        return "redirect:/login";
+                AuthenticateResponse loginReply = authenticateClientService.authenticate(username, password);
+                if (loginReply.getSuccess()) {
+                    var domain = request.getHeader("host");
+                    CookieUtil.create(
+                        response,
+                        "lens-session-token",
+                            loginReply.getToken(),
+                        true,
+                        5 * 60 * 60, // Expires in 5 hours
+                        domain.startsWith("localhost") ? null : domain
+                    );
+                    return "redirect:/dashboard";
+                }
             } else {
                 validationErrors = idpResponse.getValidationErrorsList();
             }
