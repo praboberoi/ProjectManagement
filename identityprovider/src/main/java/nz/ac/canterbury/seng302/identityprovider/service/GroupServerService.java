@@ -8,6 +8,7 @@ import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
@@ -18,13 +19,6 @@ import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Grpc service used to perform function relating to groups.
@@ -81,13 +75,15 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
      * @param responseObserver Returns to previous method with data
      */
     @Override
+    @Transactional
     public void deleteGroup(DeleteGroupRequest request, StreamObserver<DeleteGroupResponse> responseObserver) {
         DeleteGroupResponse.Builder reply = DeleteGroupResponse.newBuilder();
         try {
-            if (groupsRepository.deleteGroupByGroupId(request.getGroupId()) == 1) {
+            if (groupsRepository.existsById(request.getGroupId())) {
+                groupsRepository.deleteById(request.getGroupId());
                 logger.info("Group {} has been deleted", request.getGroupId());
                 reply.setIsSuccess(true);
-                reply.setMessage(String.format("Group %d deleted successfully", request.getGroupId()));
+                reply.setMessage("Group deleted successfully");
             } else {
                 reply.setIsSuccess(false);
                 reply.setMessage(String.format("Unable to delete group %d", request.getGroupId()));

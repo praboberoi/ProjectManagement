@@ -95,28 +95,72 @@
                                     </div>
                                 </div>
 
-                                <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
-                                    <table class="table table-bordered table-hover">
-                                      <thead class = "table-light">
-                                      <tr>
-                                        <th scope="col" style="width:auto">Username</th>
-                                        <th scope="col" style="width:auto">Name</th>
-                                      </tr>
-                                      </thead>
-                                      <tbody>
-                                        <th:block th:each="user : ${selectedGroup.members}">
-                                          <tr th:draggable="${adminOrTeacher?true:false}" ondragstart="userDragStart(event)" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" th:role="${adminOrTeacher?'button':''}" th:onclick="'selectUser(event)'">
-                                            <td hidden class="userId" th:text="${user.userId}"></td>
-                                            <td th:id="'user' + ${user.userId} + 'username'">
-                                                <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
-                                                [[${user.username}]]
-                                            </td>
-                                            <td th:id="'user' + ${user.userId} + 'fullname'">
-                                                [[${user.firstName}]] [[${user.lastName}]]
-                                            </td>
-                                        </th:block>
-                                      </tbody>
-                                    </table>
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                      <button class="nav-link active" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab" aria-controls="members" aria-selected="true">Members</button>
+                                    </li>
+                                    
+                                    <li th:if="${adminOrTeacher && selectedGroup.groupId != 0}" class="nav-item" role="presentation">
+                                      <button class="nav-link" id="edit-group-tab" data-bs-toggle="tab" data-bs-target="#edit-group" type="button" role="tab" aria-controls="edit-group" aria-selected="false">Edit Group</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane show active" id="members" role="tabpanel" aria-labelledby="members-tab">
+                                        <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
+                                            <table class="table table-bordered table-hover">
+                                                <thead class = "table-light">
+                                                    <tr>
+                                                        <th scope="col" style="width:auto">Username</th>
+                                                        <th scope="col" style="width:auto">Name</th>
+                                                    </tr>
+                                                </thead>
+                                                <tbody>
+                                                    <th:block th:each="user : ${selectedGroup.members}">
+                                                        <tr th:draggable="${adminOrTeacher?true:false}" ondragstart="userDragStart(event)" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" th:role="${adminOrTeacher?'button':''}" th:onclick="'selectUser(event)'">
+                                                            <td hidden class="userId" th:text="${user.userId}"></td>
+                                                            <td th:id="'user' + ${user.userId} + 'username'">
+                                                                <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
+                                                                [[${user.username}]]
+                                                            </td>
+                                                            <td th:id="'user' + ${user.userId} + 'fullname'">
+                                                                [[${user.firstName}]] [[${user.lastName}]]
+                                                            </td>
+                                                    </th:block>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="edit-group" role="tabpanel" aria-labelledby="edit-group-tab">
+                                        <div class="container-fluid pt-2">
+                                            <button type="button" class="btn btn-outline-primary me-2">
+                                            <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+                                            
+                                            <button id="delete-group-btn" type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#deleteModal" >
+                                            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"> Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="conformationModalLongTitle">Delete Group</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <p id="delete-message" th:utext="'Are you sure you want to delete this group? <br/>It will remove ' + ${#lists.size(selectedGroup.members)} + ' members from the group.<br/>This action cannot be undone.'"> </p>
+                                </div>
+                                <div class="modal-footer">
+                                    <button id="delete-group-btn" class="btn btn-outline-primary" th:onclick="'deleteGroup(' + ${selectedGroup.groupId} + ')'" data-dismiss="modal">
+                                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                                 </div>
                             </div>
                         </div>
@@ -165,6 +209,7 @@
 <script th:inline="javascript">
     let apiPrefix = [[${apiPrefix}]];
 </script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 <script th:src="@{{apiPrefix}/javascript/groups.js(apiPrefix=${apiPrefix})}"></script>
 </body>
 </html>

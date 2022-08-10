@@ -92,7 +92,7 @@ public class GroupController {
      * @param principal Authentication information containing user info
      * @return Status of the request and corresponding message
      */
-    @DeleteMapping(value = "/groups/{groupId}/delete")
+    @DeleteMapping(value = "/groups/{groupId}")
     public ResponseEntity<String> deleteGroup(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");

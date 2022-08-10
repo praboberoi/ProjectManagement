@@ -69,7 +69,7 @@ public class GroupControllerTest {
         when(groupService.deleteGroup(anyInt())).thenReturn(DeleteGroupResponse.newBuilder().setIsSuccess(true).setMessage("Group 1 has been deleted").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
-            .perform(delete("/groups/1/delete"))
+            .perform(delete("/groups/1"))
             .andExpect(status().isOk());
     }
 
@@ -82,7 +82,7 @@ public class GroupControllerTest {
         when(groupService.deleteGroup(anyInt())).thenReturn(DeleteGroupResponse.newBuilder().setIsSuccess(true).setMessage("Group 1 has been deleted").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         mockMvc
-            .perform(delete("/groups/1/delete"))
+            .perform(delete("/groups/1"))
             .andExpect(status().isForbidden());
     }
 
@@ -148,7 +148,7 @@ public class GroupControllerTest {
      */
     @Test
     void whenSelectedGroupFragmentRequested_thenGroupIsReturned() throws Exception{
-        Groups selectedGroup = new Groups("Team: 400", "Bad Request", 1, null);
+        Groups selectedGroup = new Groups("Team: 400", "Bad Request", 1, List.of());
         when(groupService.getGroupById(1)).thenReturn(selectedGroup);
         mockMvc
             .perform(get("/groups/1"))
@@ -162,7 +162,7 @@ public class GroupControllerTest {
      */
     @Test
     void whenUnassignedFragmentRequested_thenGroupIsReturned() throws Exception{
-        Groups unassignedGroup = new Groups("Members without a group", null, 0, null);
+        Groups unassignedGroup = new Groups("Members without a group", null, 0, List.of());
         when(groupService.getMembersWithoutAGroup()).thenReturn(unassignedGroup);
         mockMvc
             .perform(get("/groups/unassigned"))
@@ -176,7 +176,7 @@ public class GroupControllerTest {
      */
     @Test
     void whenTeacherFragmentRequested_thenGroupIsReturned() throws Exception{
-        Groups teachingGroup = new Groups("Teaching Staff", null, 0, null);
+        Groups teachingGroup = new Groups("Teaching Staff", null, 0, List.of());
         when(groupService.getTeachingStaffGroup()).thenReturn(teachingGroup);
         mockMvc
             .perform(get("/groups/teachers"))
