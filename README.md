@@ -132,6 +132,52 @@ By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 ## License
 Apache 2.0
 
+## Dependencies
+### Shared
+- `io.grpc:grpc-netty-shaded:1.40.1`
+- `io.grpc:grpc-protobuf:1.40.1`
+- `io.grpc:grpc-stub:1.40.1`
+- `org.jetbrains:annotations:20.1.0`
+- `com.h2database:h2:1.4.200`
+- `org.springframework.boot:spring-boot-starter-data-jpa`
+- `jakarta.annotation:jakarta.annotation-api:1.3.5`
+
+### Portfolio
+- `org.springframework.boot:spring-boot-starter-web`
+- `org.springframework.boot:spring-boot-starter-thymeleaf`
+- `org.springframework.boot:spring-boot-starter-security`
+- `org.springframework.boot:spring-boot-starter-data-jpa`
+- `com.h2database:h2:1.4.200`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `net.devh:grpc-client-spring-boot-starter:2.13.1.RELEASE`
+- `io.jsonwebtoken:jjwt-api:0.11.0`
+- `group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.6.4'`
+- `group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.0.4'`
+- `org.springframework.boot:spring-boot-devtools`
+- `org.springframework.boot:spring-boot-starter-test`
+- `io.cucumber:cucumber-java:6.10.4`
+- `io.cucumber:cucumber-junit:6.10.4`
+
+### Identity Provider
+- `org.springframework:spring-web`
+- `org.springframework:spring-web`
+- `'org.springframework.boot:spring-boot-starter-web'`
+- `'org.springframework.boot:spring-boot-starter'`
+- `'org.springframework.boot:spring-boot-starter-data-jpa'`
+- `'com.h2database:h2:1.4.200'`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `net.devh:grpc-spring-boot-starter:2.13.1.RELEASE`
+- `io.jsonwebtoken:jjwt-api:0.11.0`
+- `io.jsonwebtoken:jjwt-impl:0.11.0`
+- `io.jsonwebtoken:jjwt-jackson:0.11.0`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `org.mariadb.jdbc:mariadb-java-client:2.1.2`
+- `org.springframework.boot:spring-boot-devtools`
+- `org.springframework.boot:spring-boot-starter-test`
+- `io.grpc:grpc-testing:1.45.0`
+- `io.cucumber:cucumber-java:6.10.4`
+- `io.cucumber:cucumber-junit:6.10.4`
+
 ## References
 
 - [Spring Boot Docs](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/)
