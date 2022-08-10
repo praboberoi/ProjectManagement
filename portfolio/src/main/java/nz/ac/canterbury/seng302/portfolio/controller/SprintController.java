@@ -35,7 +35,7 @@ public class SprintController {
      * @param model Of type {@link Model}
      * @return - name of the html page to display
      */
-    @RequestMapping(path="/project/{projectId}", method = RequestMethod.GET)
+    @GetMapping(path="/project/{projectId}")
     public String showSprintList(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -62,7 +62,7 @@ public class SprintController {
      * @param ra Of type {@link RedirectAttributes}
      * @return sprintForm.html or project.html
      */
-    @RequestMapping(path="/project/{projectId}/newSprint", method = RequestMethod.GET)
+    @GetMapping(path="/project/{projectId}/newSprint")
     public String newSprint(
             Model model,
             @PathVariable ("projectId") int projectId,
@@ -165,7 +165,7 @@ public class SprintController {
      * @return sprintForm.html or project.html
      */
     /*make sure to update project.html for path*/
-    @RequestMapping(path="/project/{projectId}/editSprint/{sprintId}", method = RequestMethod.GET)
+    @GetMapping(path="/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
             @PathVariable("projectId") int projectId,
@@ -198,7 +198,7 @@ public class SprintController {
      * @param ra Of type {@link RedirectAttributes}
      * @return project.html or error.html
      */
-    @RequestMapping(path="/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
+    @PostMapping(path="/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,

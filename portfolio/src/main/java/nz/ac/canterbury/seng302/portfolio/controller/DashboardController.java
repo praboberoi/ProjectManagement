@@ -99,7 +99,7 @@ public class DashboardController {
      * @param principal Of type {@link AuthState}
      * @return projectForm.html file or dashboard.html file
      */
-    @RequestMapping(path="/dashboard/editProject/{projectId}", method = RequestMethod.GET)
+    @GetMapping(path="/dashboard/editProject/{projectId}")
     public String showEditForm(
         @PathVariable(
         value = "projectId") int projectId,
@@ -133,7 +133,7 @@ public class DashboardController {
      * @param principal of type {@link AuthState}
      * @return dashboard.html file or error.html file
      */
-    @RequestMapping(path="/dashboard/deleteProject/{projectId}", method = RequestMethod.POST)
+    @PostMapping(path="/dashboard/deleteProject/{projectId}")
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,

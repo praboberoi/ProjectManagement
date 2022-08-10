@@ -23,8 +23,8 @@ function checkShortName(event) {
  */
 function checkLongName(event) {
     let groupLongNameElement = event.target;
-    let groupLongNameErrorElement = groupShortNameElement.parentNode.querySelector("#longNameError")
-    let charMessage = groupShortNameElement.parentNode.querySelector("#charCountLong");
+    let groupLongNameErrorElement = groupLongNameElement.parentNode.querySelector("#longNameError")
+    let charMessage = groupLongNameElement.parentNode.querySelector("#charCountLong");
     let charCount = groupLongNameElement.value.length;
     if (charCount < 3 || charCount > 100) {
         groupLongNameElement.classList.add('formError');
