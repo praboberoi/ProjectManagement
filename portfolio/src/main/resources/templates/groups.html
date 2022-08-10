@@ -166,7 +166,7 @@
                                             <div class="mb-3">
                                                 <label class="form-label required">Group Long Name</label>
                                                 <input type="text" class="form-control mt-50" th:value="${selectedGroup.longName}" name="longName" id="longName" placeholder="Long Group Name" maxlength="100" rows="6" onkeyup="checkLongName(event)" required/>
-                                                <span id="charCountLong" th:value="${charCount}" th:text="${#strings.length(selectedGroup.longName)}"> </span> / 100 characters used.
+                                                <span id="charCountLong" th:value="${charCount}" th:text="${selectedGroup.longName!=null?#strings.length(selectedGroup.longName):0}"> </span> / 100 characters used.
                                                 <p id="longNameError" th:text="${longNameError}" class="error-msg"></p>
                                             </div>
                                             <div class="modal-footer">
