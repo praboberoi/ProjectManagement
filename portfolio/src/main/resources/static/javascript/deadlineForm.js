@@ -1,9 +1,5 @@
 const deadlineDateElement = document.getElementById('deadlineDate');
 const deadlineDateError = document.getElementById('deadlineDateError');
-const projectStartDate = new Date(document.getElementById("projectStartDate").value);
-const projectEndDate = new Date(document.getElementById("projectEndDate").value);
-const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
-
 
 /**
  * Function for error validation of Deadline Name field.
@@ -12,7 +8,7 @@ const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
 function checkDeadlineName() {
     const deadlineName = document.getElementById('deadline-name');
     const deadlineNameError = document.getElementById('deadlineNameError');
-    let charMessage = document.getElementById("charCount");
+    let charMessage = document.getElementById("deadlineCharCount");
     let charCount = deadlineName.value.length;
     charMessage.innerText = charCount + ' '
 
@@ -38,12 +34,12 @@ function checkDeadlineDates(){
     const checkDeadlineDate = new Date(deadlineDateElement.value);
     deadlineDateElement.setCustomValidity("");
 
-    if (checkDeadlineDate < projectStartDate) {
-        deadlineDateError.innerText = "Deadline must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+    if (checkDeadlineDate < new Date(projectStartDate)) {
+        deadlineDateError.innerText = "Deadline must start after " + new Date(projectStartDate).toLocaleDateString('en-NZ', DATE_OPTIONS);
         deadlineDateElement.classList.add("formError");
         return;
-    } else if (checkDeadlineDate > projectEndDate) {
-        deadlineDateError.innerText = "Deadline must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+    } else if (checkDeadlineDate > new Date(projectEndDate)) {
+        deadlineDateError.innerText = "Deadline must end before " + new Date(projectEndDate).toLocaleDateString('en-NZ', DATE_OPTIONS);
         deadlineDateElement.classList.add("formError");
         return;
     }

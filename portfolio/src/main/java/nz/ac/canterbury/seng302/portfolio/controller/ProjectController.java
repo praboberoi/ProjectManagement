@@ -83,6 +83,10 @@ public class ProjectController {
             model.addAttribute("project", project);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("deadline", deadlineService.getNewDeadline(project));
+            model.addAttribute("deadlineFormTitle", "Add New Deadline");
+
+
             return "project";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());

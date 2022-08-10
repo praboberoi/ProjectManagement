@@ -57,45 +57,6 @@ public class DeadlineController {
 
 
     /**
-     * Opens eventForm.html and populates it with a new Event object
-     * Checks for teacher or admin privileges
-     * @param projectId ID of the project
-     * @param principal Current user
-     * @param ra Redirect Attribute frontend message object
-     * @param model
-     * @return link of the html page to display
-     */
-    @RequestMapping(path = "/project/{projectId}/newDeadline", method = RequestMethod.GET)
-    public String newDeadline(
-            Model model,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra,
-            @PathVariable ("projectId") int projectId) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
-        model.addAttribute("apiPrefix", apiPrefix);
-        Deadline newDeadline;
-        Project currentProject;
-        try {
-            currentProject = projectService.getProjectById(projectId);
-            newDeadline = deadlineService.getNewDeadline(currentProject);
-            model.addAttribute("project", currentProject);
-            model.addAttribute("deadline", newDeadline);
-            model.addAttribute("pageTitle", "Add New Deadline");
-            model.addAttribute("submissionName", "Create");
-            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
-            model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("projectDateMin", currentProject.getStartDate().toString() + "T00:00");
-            model.addAttribute("projectDateMax", currentProject.getEndDate().toString() + "T00:00");
-            return "deadlineForm";
-
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/{projectId}";
-        }
-    }
-
-
-    /**
      * Checks if deadline dates are valid and if it is saves the deadline
      * @param deadline Deadline object
      * @param principal Current user

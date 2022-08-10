@@ -193,6 +193,8 @@ public class DeadlineControllerTest {
                     .andExpect(model().attribute("pageTitle", "Edit Deadline: " + deadline.getName()))
                     .andExpect(view().name("deadlineForm"));
 
+            utilities.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
