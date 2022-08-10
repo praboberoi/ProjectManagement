@@ -69,7 +69,7 @@ public class GroupControllerTest {
         when(groupService.deleteGroup(anyInt())).thenReturn(DeleteGroupResponse.newBuilder().setIsSuccess(true).setMessage("Group 1 has been deleted").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
-            .perform(delete("/groups/1/delete"))
+            .perform(delete("/groups/1"))
             .andExpect(status().isOk());
     }
 
@@ -82,7 +82,7 @@ public class GroupControllerTest {
         when(groupService.deleteGroup(anyInt())).thenReturn(DeleteGroupResponse.newBuilder().setIsSuccess(true).setMessage("Group 1 has been deleted").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         mockMvc
-            .perform(delete("/groups/1/delete"))
+            .perform(delete("/groups/1"))
             .andExpect(status().isForbidden());
     }
 
@@ -148,7 +148,7 @@ public class GroupControllerTest {
      */
     @Test
     void whenSelectedGroupFragmentRequested_thenGroupIsReturned() throws Exception{
-        Groups selectedGroup = new Groups("Team: 400", "Bad Request", 1, null);
+        Groups selectedGroup = new Groups("Team: 400", "Bad Request", 1, List.of());
         when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, List.of()));
         when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, List.of()));
         when(groupService.getGroupById(1)).thenReturn(selectedGroup);
@@ -164,7 +164,7 @@ public class GroupControllerTest {
      */
     @Test
     void whenUnassignedFragmentRequested_thenGroupIsReturned() throws Exception{
-        Groups unassignedGroup = new Groups("Members without a group", null, 0, null);
+        Groups unassignedGroup = new Groups("Members without a group", null, 0, List.of());
         when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, List.of()));
         when(groupService.getMembersWithoutAGroup()).thenReturn(unassignedGroup);
         mockMvc
@@ -179,7 +179,7 @@ public class GroupControllerTest {
      */
     @Test
     void whenTeacherFragmentRequested_thenGroupIsReturned() throws Exception{
-        Groups teachingGroup = new Groups("Teaching Staff", null, 0, null);
+        Groups teachingGroup = new Groups("Teaching Staff", null, 0, List.of());
         when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, List.of()));
         when(groupService.getTeachingStaffGroup()).thenReturn(teachingGroup);
         mockMvc
@@ -257,5 +257,47 @@ public class GroupControllerTest {
             .perform(post("/groups/-1/removeMembers?listOfUserIds=1"))
             .andExpect(status().isForbidden())
             .andExpect(content().string("Unable to remove own role"));
+    }
+
+    /**
+     * Checks that the group modification functionality will be called correctly for non teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenStudentUser_whenModifyGroupCalled_thenRedirectToGroupPage() throws Exception{
+        when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        mockMvc
+                .perform(post("/groups?groupId=1&shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to create group."));
+    }
+
+    /**
+     * Checks that the group modification functionality will be called correctly for teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenTeacherUser_whenModifyGroupCalled_thenSuccess() throws Exception{
+        when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+                .perform(post("/groups?groupId=1&shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageSuccess", "success"));
+    }
+
+    /**
+     * Checks that the group modification functionality will be called correctly for non teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenTeacherUser_whenModifyGroupCalledWithInvalidData_thenFail() throws Exception{
+        when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(false).setMessage("Fail").build());
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+                .perform(post("/groups?groupId=1&shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", "Fail"));
     }
 }

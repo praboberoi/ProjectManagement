@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -8,6 +9,7 @@ import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
@@ -18,13 +20,6 @@ import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
 import nz.ac.canterbury.seng302.identityprovider.util.ResponseUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-
-import java.util.List;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 /**
  * Grpc service used to perform function relating to groups.
@@ -81,13 +76,15 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
      * @param responseObserver Returns to previous method with data
      */
     @Override
+    @Transactional
     public void deleteGroup(DeleteGroupRequest request, StreamObserver<DeleteGroupResponse> responseObserver) {
         DeleteGroupResponse.Builder reply = DeleteGroupResponse.newBuilder();
         try {
-            if (groupsRepository.deleteGroupByGroupId(request.getGroupId()) == 1) {
+            if (groupsRepository.existsById(request.getGroupId())) {
+                groupsRepository.deleteById(request.getGroupId());
                 logger.info("Group {} has been deleted", request.getGroupId());
                 reply.setIsSuccess(true);
-                reply.setMessage(String.format("Group %d deleted successfully", request.getGroupId()));
+                reply.setMessage("Group deleted successfully");
             } else {
                 reply.setIsSuccess(false);
                 reply.setMessage(String.format("Unable to delete group %d", request.getGroupId()));
@@ -105,7 +102,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
     /**
      * Create a group from the database and return if the creation was successful to the gRPC client in the StreamObserver
      *
-     * @param request          Create group request containing the id of the group to create
+     * @param request          Create group request containing the short and long name of the new group
      * @param responseObserver Returns to previous method with data
      */
     @Override
@@ -134,6 +131,58 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 logger.error("An error occurred while creating group", e);
                 reply.setIsSuccess(false);
                 reply.setMessage("An error occurred while creating group.");
+            }
+        }
+        responseObserver.onNext(reply.build());
+        responseObserver.onCompleted();
+    }
+
+    /**
+     * Edits a group in the database and return if the modification was successful to the gRPC client in the StreamObserver
+     *
+     * @param request          Modify group request containing the group details
+     * @param responseObserver Returns to previous method with data
+     */
+    @Override
+    public void modifyGroupDetails(ModifyGroupDetailsRequest request, StreamObserver<ModifyGroupDetailsResponse> responseObserver) {
+        ModifyGroupDetailsResponse.Builder reply = ModifyGroupDetailsResponse.newBuilder();
+        Groups group;
+
+        Optional<Groups> groupCheck = groupsRepository.findById(request.getGroupId());
+        if (groupCheck.isPresent()) {
+            group = groupCheck.get();
+        } else {
+            reply.setIsSuccess(false);
+            reply.setMessage("Could not find group");
+            responseObserver.onNext(reply.build());
+            responseObserver.onCompleted();
+            return;
+        }
+
+        if (request.getShortName().length() < 3 || request.getShortName().length() > 50 || request.getLongName().length() < 3 || request.getLongName().length() > 100) {
+            reply.setIsSuccess(false);
+            reply.setMessage("Incorrect group details entered");
+        } else if (groupsRepository.getAllByShortNameEquals(request.getShortName()) != null && !request.getShortName().equals(group.getShortName())) {
+            reply.setIsSuccess(false);
+            if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null && request.getLongName().equals(group.getLongName())) {
+                reply.setMessage(String.format("Group with short name %s and long name %s already exists", request.getShortName(), request.getLongName()));
+            } else {
+                reply.setMessage(String.format("Group with short name %s already exists", request.getShortName()));
+            }
+        } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null && !request.getLongName().equals(group.getLongName())) {
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("Group with long name %s already exists", request.getLongName()));
+        } else {
+            try {
+                group.setShortName(request.getShortName());
+                group.setLongName(request.getLongName());
+                groupsRepository.save(group);
+                reply.setIsSuccess(true);
+                reply.setMessage("Group updated successfully");
+            } catch (Exception e) {
+                logger.error("An error occurred while updating group {}", request.getGroupId(), e);
+                reply.setIsSuccess(false);
+                reply.setMessage(String.format("An error occurred while updating group %s", group.getShortName()));
             }
         }
         responseObserver.onNext(reply.build());

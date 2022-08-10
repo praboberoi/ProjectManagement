@@ -29,6 +29,21 @@ When("I drag user {word} to group {word}", (user, group) => {
     cy.wait("@listCheck")
 });
 
+When("I delete the group", () => {
+    cy.get('#edit-group-tab').click()
+    cy.get('#delete-group-btn').click()
+    cy.get('#deleteModal button').contains("Delete").should('be.visible').click()
+    cy.get('#messageSuccess').should('contain', 'Group deleted successfully')
+})
+
+When("I change the group name to {word}", (newName) => {
+    cy.get('#edit-group-tab').click()
+    cy.get('#edit-group-btn').click()
+    cy.get('#editGroupForm #shortName').clear().type(newName)
+    cy.get('#editGroupForm #shortName').should('have.value', newName)
+    cy.get('#editModal button').contains("Save").should('be.visible').click()
+})
+
 Then("User {word} is not in group", (user) => {
     cy.get('tr.user-row').contains(user).should('not.exist')
 });

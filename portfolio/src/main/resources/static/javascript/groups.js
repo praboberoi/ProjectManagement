@@ -1,11 +1,10 @@
 /**
  * Count down the characters remaining in the Group Short name, and check the length is between 3 and 50 characters.
  */
-function checkShortName() {
-
-    let groupShortNameElement = document.getElementById("shortName");
-    let groupShortNameErrorElement = document.getElementById("shortNameError")
-    let charMessage = document.getElementById("charCount");
+function checkShortName(event) {
+    let groupShortNameElement = event.target;
+    let groupShortNameErrorElement = groupShortNameElement.parentNode.querySelector('#shortNameError')
+    let charMessage = groupShortNameElement.parentNode.querySelector("#charCount");
     let charCount = groupShortNameElement.value.length;
     charMessage.innerText = charCount + ' '
     if (charCount < 3 || charCount > 50) {
@@ -22,10 +21,10 @@ function checkShortName() {
 /**
  * Count down the characters remaining in the Group Long name, and check the length is between 3 and 100 characters.
  */
-function checkLongName() {
-    let groupLongNameElement = document.getElementById("longName");
-    let groupLongNameErrorElement = document.getElementById("longNameError")
-    let charMessage = document.getElementById("charCountLong");
+function checkLongName(event) {
+    let groupLongNameElement = event.target;
+    let groupLongNameErrorElement = groupShortNameElement.parentNode.querySelector("#longNameError")
+    let charMessage = groupShortNameElement.parentNode.querySelector("#charCountLong");
     let charCount = groupLongNameElement.value.length;
     if (charCount < 3 || charCount > 100) {
         groupLongNameElement.classList.add('formError');
@@ -83,6 +82,32 @@ function getSelectedGroup(selectedGroupId) {
     }
 
     httpRequest.open('GET', apiPrefix + `/groups/${selectedGroupId}`);
+    httpRequest.send();
+}
+
+/**
+ * Calls the server to delete the selected group and show the unassgned members group on success
+ * @param groupId Id of the group to delete
+ */
+function deleteGroup(groupId) {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                messageSuccess.hidden = false
+                messageDanger.hidden = true;
+                messageSuccess.innerText = httpRequest.responseText;
+                getSelectedGroup("unassigned")
+                updateGroupList()
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.responseText;
+            }
+        }
+    }
+
+    httpRequest.open('DELETE', apiPrefix + `/groups/${groupId}`);
     httpRequest.send();
 }
 

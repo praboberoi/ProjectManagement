@@ -35,6 +35,7 @@ public class ControllerAdvisor {
             model.addAttribute("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
         } else {
             model.addAttribute("user", guestUser);
+            model.addAttribute("adminOrTeacher", false);
         }
     }
 }

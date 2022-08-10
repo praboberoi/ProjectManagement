@@ -53,6 +53,19 @@ public class GroupService {
                 .build());
     }
 
+    /**
+     * Sends a modify group request to the gRPC server
+     * @param groupId Id of the group to edit
+     * @param shortName Short name of the group
+     * @param longName Long name of the group
+     * @return The result of the create operation
+     * @throws StatusRuntimeException Failure status of the server call
+     */
+    public ModifyGroupDetailsResponse modifyGroup(Integer groupId, String shortName, String longName) throws StatusRuntimeException {
+        return groupsStub.modifyGroupDetails(ModifyGroupDetailsRequest.newBuilder().setGroupId(groupId).setLongName(longName)
+            .setShortName(shortName).build());
+    }
+
 
     /**
      * Request the Teaching group details from IDP.

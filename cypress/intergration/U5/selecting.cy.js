@@ -55,3 +55,11 @@ Then("User {word} is in group {word}", (user, group) => {
     cy.wait('@groupCheck')
     cy.get('tr.user-row').contains(user).should('exist')
 });
+
+Then("Group {word} doesn't exist", (group) => {
+    cy.get('.project-card a').contains(group).should('not.exist')
+});
+
+Then("Group {word} exists", (group) => {
+    cy.get('.project-card a').contains(group).should('exist')
+});

@@ -69,3 +69,18 @@ Feature: U5. Groups and group membership
     When I drag user CypressGroupGuineaPig to group Cypress1
     Then User CypressGroupGuineaPig is in group
     And User CypressGroupGuineaPig is in group Cypress1
+
+  Scenario: AC8 I can delete groups. I am asked to confirm that I want to remove the x group members (users will not be deleted) and delete the group and that deleting a group cannot be undone. On confirmation, the group is deleted permanently, and group members removed.
+    Given I login as an admin
+    And I navigate to Groups
+    And I select group Cypress2
+    When I delete the group
+    Then Group Cypress2 doesn't exist
+
+  Scenario: Editing a group
+    Given I login as an admin
+    And I navigate to Groups
+    And I select group Cypress1
+    When I change the group name to Cypress3
+    Then Group Cypress1 doesn't exist
+    And Group Cypress3 exists
