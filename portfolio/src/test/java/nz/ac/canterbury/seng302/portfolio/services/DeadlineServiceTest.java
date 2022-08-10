@@ -15,6 +15,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import javax.persistence.PersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -237,7 +238,7 @@ public class DeadlineServiceTest {
 
         IncorrectDetailsException exception3 = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(deadline1));
-        Assertions.assertEquals("Deadline name cannot exceed 20 characters", exception3.getMessage());
+        Assertions.assertEquals("Deadline name cannot exceed 50 characters", exception3.getMessage());
 
     }
 
@@ -278,12 +279,14 @@ public class DeadlineServiceTest {
      */
     @Test
     public void givenDeadlineServiceExist_whenGetDeadlineRequested_thenANewDeadlineIsReturned() {
-        Deadline newDeadline = deadlineService.getNewDeadline();
+        Deadline newDeadline = deadlineService.getNewDeadline(project);
+        LocalDate now = LocalDate.now();
+
         assertInstanceOf(Deadline.class, newDeadline);
         assertEquals(0, newDeadline.getDeadlineId());
-        assertNull(newDeadline.getDate());
-        assertNull(newDeadline.getName());
-        assertNull(newDeadline.getProject());
+        assertEquals(java.sql.Date.valueOf(now), newDeadline.getDate());
+        assertEquals("New Deadline", newDeadline.getName());
+        assertEquals(project,newDeadline.getProject());
     }
 
     /**

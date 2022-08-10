@@ -39,87 +39,171 @@
     <div class="nav nav-tabs" id="nav-tab" role="tablist">
       <button class="nav-link active" type="button" id="plannerNav" role="tab" aria-selected="true" onclick="navToPlanner()">Planner</button>
       <button class="nav-link" id="projectDescriptionNav" type="button" role="tab" aria-selected="false" onclick="navTOProjectDescription()">Project Details</button>
-    </div>
-  </nav>
-    <div class="card">
-      <div class="card-header">
-      <input type="hidden" id="startDate" th:value="*{project.startDate}" />
-      <input type="hidden" id="endDate" th:value="*{project.endDate}" />
+      <button class="nav-link disabled" id="projectDuration" type="button" role="tab" aria-selected="false" aria-disabled="true">
         Duration: [[${#dates.format(project.startDate,'dd MMM yyyy')}]] to [[${#dates.format(project.endDate,'dd MMM yyyy')}]]
+      </button>
 
-      <div id ="edit-del-buttons">
-        <div class="container-fluid p-0" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-          <a type="button" class="btn btn-outline-primary me-2"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
-            <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
-          <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModalProject" th:data-id = "${project.projectId}"
-                  th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
-            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+    </div>
+    <br>
+  </nav>
+  <div id ="projectCard" hidden>
+    <div class="card" id ="detailsCard">
+
+      <div class="card-header">
+        <input type="hidden" id="startDate" th:value="*{project.startDate}" />
+        <input type="hidden" id="endDate" th:value="*{project.endDate}" />
+        <h5>Project Description</h5>
+        <div id ="edit-del-buttons">
+          <div class="container-fluid p-0" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+            <a type="button" class="btn btn-outline-primary me-2"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
+              <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModalProject" th:data-id = "${project.projectId}"
+                    th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
+              <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+          </div>
         </div>
+
+
+      </div>
+      <div class="card-body" id="projectDescription" >
+        <p class="card-text">[[${project.Description}]]</p>
       </div>
 
+
     </div>
-    <div class="card-body" id="projectDescription" hidden>
-      <h5 class="card-title">Project Description:</h5>
-      <p class="card-text">[[${project.Description}]]</p>
+
+    <!--    Tabs for events/deadlines/milestones-->
+    <div class="card" id="calendarOb" hidden>
+      <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <li class="nav-item" role="presentation"  href="#home">
+
+          <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
+            <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
+            Events</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+            <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
+            Deadlines</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="Milestones" aria-selected="false">
+            <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
+            Milestones</button>
+        </li>
+      </ul>
+
+      <div class="tab-content" id="myTabContent">
+        <!--        For events -->
+        <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
+          <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+            <!-- If a user is a STUDENT do not show the 'create' event button !-->
+            <div class = "createBtn">
+              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Event</a>
+            </div>
+          </div>
+          <!--          Shows each individual event-->
+          <div class="card" id = "eventCard" th:each="event : ${listEvents}">
+            <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
+            <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]]  - End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]] </p>
+          </div>
+        </div>
+        <!--        For deadlines -->
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+          <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+            <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
+            <div class = "createBtn">
+              <a class="btn btn-outline-primary" id = "deadline-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newDeadline'}">
+                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</a>
+            </div>
+          </div>
+          <!--          Show each deadline-->
+          <div class="card" id = "deadlineCard" th:each="deadline : ${listDeadlines}">
+            <h6 class="card-title" th:id="'deadline' + ${deadline.deadlineId} + 'Name'">[[${deadline.name}]]</h6>
+            <p class="eventDates" th:id="'deadline' + ${deadline.deadlineId} + 'StartDate'">Date: [[${#dates.format(deadline.date, 'dd MMM yyyy hh:mm a')}]] </p>
+          </div>
+        </div>
+        <!--        For Milestones-->
+        <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
+          <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+            <!-- If a user is a STUDENT do not show the 'create' milestone button !-->
+            <div class = "createBtn">
+              <a class="btn btn-outline-primary" id = "milestone-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Milestone</a>
+            </div>
+          </div>
+          <div class="card" id = "milestoneCard">
+            <h6 class="card-title">Seng 302: </h6>
+            <p class="eventDates">End Date: 21 July 2022 5pm</p>
+          </div>
+        </div>
+      </div>
     </div>
+
+
   </div>
 
-  <br>
-  <br>
-  <div class="container-fluid d-flex p-0">
-    <h3 class="pe-3">Sprints</h3>
+  <div id="sprintLabel" hidden>
+    <br>
+    <br>
+
+    <div class="container-fluid d-flex p-0">
+      <h3 class="pe-3">Sprints</h3>
       <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-    <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+      <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
         <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newSprint'}">
           <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
       </div>
+    </div>
   </div>
   <br>
-  <div class="desktop-only">
-  <!-- Table for sprints -->
-  <div class="table-border table-responsive bdr">
-    <table class="table table-bordered table-hover">
-      <thead class = "table-light">
-      <tr>
-        <th scope="col" style="width:auto">Sprint Label</th>
-        <th scope="col" style="width:auto">Sprint Name</th>
-        <th scope="col" style="width:auto">Description</th>
-        <th scope="col" style="width:auto">Start Date</th>
-        <th scope="col" style="width:auto">End Date</th>
-        <th style="width:auto"></th>
-      </tr>
-      </thead>
-      <tbody>
+  <div class="desktop-only" id="showSprints" hidden>
+    <!-- Table for sprints -->
+    <div class="table-border table-responsive bdr">
+      <table class="table accordion">
+        <thead class = "table-light">
+        <tr>
+          <th scope="col" style="width:auto">Sprint Label</th>
+          <th scope="col" style="width:auto">Sprint Name</th>
+          <th scope="col" style="width:auto">Description</th>
+          <th scope="col" style="width:auto">Start Date</th>
+          <th scope="col" style="width:auto">End Date</th>
+          <th style="width:auto"></th>
+        </tr>
+        </thead>
+        <tbody>
 
-      <th:block th:each="sprint : ${listSprints}">
-        <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'">
-          <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">[[${sprint.sprintLabel}]]</td>
-          <td th:id="'sprint' + ${sprint.sprintId} + 'Name'">[[${sprint.sprintName}]]</td>
-          <td th:id="'sprint' + ${sprint.sprintId} + 'Description'">[[${sprint.description}]]</td>
-          <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
-          <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
-          <td>
+        <th:block th:each="sprint : ${listSprints}">
+          <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'" data-bs-toggle="collapse" th:data-bs-target="'#R' + ${sprint.sprintId}" class="clickable">
+            <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">[[${sprint.sprintLabel}]]</td>
+            <td th:id="'sprint' + ${sprint.sprintId} + 'Name'">[[${sprint.sprintName}]]</td>
+            <td th:id="'sprint' + ${sprint.sprintId} + 'Description'">[[${sprint.description}]]</td>
+            <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
+            <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
+            <td>
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
-            <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+              <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
                 <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                   <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
                 <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
-                       th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'))" >
+                        th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'))" >
                   <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
               </div>
-          </td>
-        </tr>
-      </th:block>
-      </tbody>
-    </table>
-  </div>
+            </td>
+          </tr>
+
+        </th:block>
+        </tbody>
+      </table>
+    </div>
   </div>
 
 
   <div class="mobile-only">
     <!-- Table for sprints -->
     <div class="table-border table-responsive bdr">
-      <table class="table table-bordered table-hover">
+      <table class="table table-hover">
         <thead class = "table-light">
         <tr>
           <th scope="col" style="width:auto">Sprint Label</th>
@@ -153,12 +237,16 @@
       </table>
     </div>
   </div>
-  <br>
+
+  <div  id="showEventLabel" hidden>
+
+  </div>
   <div id="cal">
     <div id="calendarMessage" class="alert text-center"></div>
-      <div id='calendar'/>
+    <div id='calendar'/>
   </div>
-  <br>
+</div>
+
 </div>
 
 <div class="modal fade" id="conformationModalProject" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
@@ -219,3 +307,4 @@
 <script th:src='@{{apiPrefix}/javascript/calendar.js(apiPrefix=${apiPrefix})}'></script>
 </body>
 </html>
+

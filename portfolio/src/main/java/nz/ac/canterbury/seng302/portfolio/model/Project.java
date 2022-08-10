@@ -16,6 +16,7 @@ public class Project {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private int projectId;
 
     /**
