@@ -1,11 +1,10 @@
 /**
  * Count down the characters remaining in the Group Short name, and check the length is between 3 and 50 characters.
  */
-function checkShortName() {
-
-    let groupShortNameElement = document.getElementById("shortName");
-    let groupShortNameErrorElement = document.getElementById("shortNameError")
-    let charMessage = document.getElementById("charCount");
+function checkShortName(event) {
+    let groupShortNameElement = event.target;
+    let groupShortNameErrorElement = groupShortNameElement.parentNode.querySelector('#shortNameError')
+    let charMessage = groupShortNameElement.parentNode.querySelector("#charCount");
     let charCount = groupShortNameElement.value.length;
     charMessage.innerText = charCount + ' '
     if (charCount < 3 || charCount > 50) {
@@ -22,10 +21,10 @@ function checkShortName() {
 /**
  * Count down the characters remaining in the Group Long name, and check the length is between 3 and 100 characters.
  */
-function checkLongName() {
-    let groupLongNameElement = document.getElementById("longName");
-    let groupLongNameErrorElement = document.getElementById("longNameError")
-    let charMessage = document.getElementById("charCountLong");
+function checkLongName(event) {
+    let groupLongNameElement = event.target;
+    let groupLongNameErrorElement = groupShortNameElement.parentNode.querySelector("#longNameError")
+    let charMessage = groupShortNameElement.parentNode.querySelector("#charCountLong");
     let charCount = groupLongNameElement.value.length;
     if (charCount < 3 || charCount > 100) {
         groupLongNameElement.classList.add('formError');
