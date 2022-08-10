@@ -254,4 +254,46 @@ public class GroupControllerTest {
             .andExpect(status().isForbidden())
             .andExpect(content().string("Unable to remove own role"));
     }
+
+    /**
+     * Checks that the group modification functionality will be called correctly for non teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenStudentUser_whenModifyGroupCalled_thenRedirectToGroupPage() throws Exception{
+        when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        mockMvc
+                .perform(post("/groups?groupId=1&shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to create group."));
+    }
+
+    /**
+     * Checks that the group modification functionality will be called correctly for teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenTeacherUser_whenModifyGroupCalled_thenSuccess() throws Exception{
+        when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+                .perform(post("/groups?groupId=1&shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageSuccess", "success"));
+    }
+
+    /**
+     * Checks that the group modification functionality will be called correctly for non teacher/admin users
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenTeacherUser_whenModifyGroupCalledWithInvalidData_thenFail() throws Exception{
+        when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(false).setMessage("Fail").build());
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+                .perform(post("/groups?groupId=1&shortName=&longName="))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", "Fail"));
+    }
 }

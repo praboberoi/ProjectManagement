@@ -493,4 +493,58 @@ class GroupServerServiceIntegrationTests {
         CreateGroupResponse response = results.get(0);
         assertFalse(response.getIsSuccess(), "Group short name validation was incorrect: " + response.getMessage());
     }
+
+    /**
+     * Tests that the group is edited successfully.
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenEditGroupCalled_thenTheGroupIsModified() {
+        ModifyGroupDetailsRequest request = ModifyGroupDetailsRequest.newBuilder().setGroupId(1).setShortName("Test").setLongName("Test Group").build();
+        StreamRecorder<ModifyGroupDetailsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.modifyGroupDetails(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<ModifyGroupDetailsResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        ModifyGroupDetailsResponse response = results.get(0);
+        assertTrue(response.getIsSuccess(), "Group was incorrectly edited: " + response.getMessage());
+    }
+
+    /**
+     * Tests that the group cannot be renamed to the same as another group
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenEditGroupCalledWithSameName_thenModificationRefused() {
+        ModifyGroupDetailsRequest request = ModifyGroupDetailsRequest.newBuilder().setGroupId(1).setShortName("Team 300").setLongName("Test Group").build();
+        StreamRecorder<ModifyGroupDetailsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.modifyGroupDetails(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<ModifyGroupDetailsResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        ModifyGroupDetailsResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Duplicate group created: " + response.getMessage());
+    }
+
+    /**
+     * Tests that the group cannot be created with a short name
+     */
+    @Test
+    @Transactional
+    void givenSampleData_whenEditGroupCalledWithShort_thenModificationRefused() {
+        ModifyGroupDetailsRequest request = ModifyGroupDetailsRequest.newBuilder().setGroupId(1).setShortName("31").setLongName("pi").build();
+        StreamRecorder<ModifyGroupDetailsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.modifyGroupDetails(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<ModifyGroupDetailsResponse> results = responseObserver.getValues();
+        assertEquals(1, results.size());
+
+        ModifyGroupDetailsResponse response = results.get(0);
+        assertFalse(response.getIsSuccess(), "Group with short name created created: " + response.getMessage());
+    }
 }

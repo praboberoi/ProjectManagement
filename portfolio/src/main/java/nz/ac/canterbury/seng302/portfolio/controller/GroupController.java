@@ -148,29 +148,42 @@ public class GroupController {
 
     /**
      * Attempts to create a group from in the idp server
+     * @param groupId Id of the new group, null if it is new
      * @param shortName short name of the group being created
      * @param longName long name of the group being created
      * @param principal Authentication information containing user info
      * @return Status of the request and corresponding message
      */
     @PostMapping(value = "/groups")
-    public String createGroup(@AuthenticationPrincipal AuthState principal,
-                              @RequestParam String shortName,
-                              @RequestParam String longName,
-                              Model model,
-                              RedirectAttributes ra
+    public String createGroup(
+        @AuthenticationPrincipal AuthState principal,
+        @RequestParam(required = false) Integer groupId,
+        @RequestParam String shortName,
+        @RequestParam String longName,
+        Model model,
+        RedirectAttributes ra
     ) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
             ra.addFlashAttribute("messageDanger", "Insufficient permissions to create group.");
             return "redirect:/groups";
         }
-        CreateGroupResponse response = groupService.createGroup(shortName, longName);
+        boolean status;
+        String message;
+        if (groupId == null) {
+            CreateGroupResponse response = groupService.createGroup(shortName, longName);
+            status = response.getIsSuccess();
+            message = response.getMessage();
+        } else {
+            ModifyGroupDetailsResponse response = groupService.modifyGroup(groupId, shortName, longName);
+            status = response.getIsSuccess();
+            message = response.getMessage();
+        }
         model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
         model.addAttribute("user", userAccountClientService.getUser(principal));
-        if (response.getIsSuccess()) {
-            ra.addFlashAttribute("messageSuccess", response.getMessage());
+        if (status) {
+            ra.addFlashAttribute("messageSuccess", message);
         } else {
-            ra.addFlashAttribute("messageDanger", response.getMessage());
+            ra.addFlashAttribute("messageDanger", message);
         }
         return "redirect:/groups";
     }

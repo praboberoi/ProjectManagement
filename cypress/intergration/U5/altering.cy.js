@@ -36,6 +36,14 @@ When("I delete the group", () => {
     cy.get('#messageSuccess').should('contain', 'Group deleted successfully')
 })
 
+When("I change the group name to {word}", (newName) => {
+    cy.get('#edit-group-tab').click()
+    cy.get('#edit-group-btn').click()
+    cy.get('#editGroupForm #shortName').clear().type(newName)
+    cy.get('#editGroupForm #shortName').should('have.value', newName)
+    cy.get('#editModal button').contains("Edit").should('be.visible').click()
+})
+
 Then("User {word} is not in group", (user) => {
     cy.get('tr.user-row').contains(user).should('not.exist')
 });

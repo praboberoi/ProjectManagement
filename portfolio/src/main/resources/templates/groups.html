@@ -132,7 +132,7 @@
                                     </div>
                                     <div class="tab-pane" id="edit-group" role="tabpanel" aria-labelledby="edit-group-tab">
                                         <div class="container-fluid pt-2">
-                                            <button type="button" class="btn btn-outline-primary me-2">
+                                            <button id="edit-group-btn" type="button" class="btn btn-outline-primary me-2" data-toggle="modal" data-target="#editModal">
                                             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
                                             
                                             <button id="delete-group-btn" type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#deleteModal" >
@@ -143,6 +143,45 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="conformationModalLongTitle" th:text="'Edit Group' + ${selectedGroup.shortName}">Edit Group</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="groupForm">
+                                        <form id="editGroupForm" method="post" th:object="${selectedGroup}" th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}" >
+                                            <div class="mb-3">
+                                                <input hidden type="number" name="groupId" th:value="${selectedGroup.groupId}" required>
+                                                <label class="col-form-label required">Group Short Name</label>
+                                                <input type="text" class="form-control required" name="shortName" onkeyup="checkShortName(event)" th:value="${selectedGroup.shortName}" id="shortName" maxlength="50" placeholder="Short Group Name" required>
+                                                <span id="charCount" th:value="${charCount}" th:text="${#strings.length(selectedGroup.shortName)}"> </span> / 50 characters used.
+                                                <p id="shortNameError" th:text="${shortNameError}" class="error-msg"></p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label required">Group Long Name</label>
+                                                <input type="text" class="form-control mt-50" th:value="${selectedGroup.longName}" name="longName" id="longName" placeholder="Long Group Name" maxlength="100" rows="6" onkeyup="checkLongName(event)" required/>
+                                                <span id="charCountLong" th:value="${charCount}" th:text="${#strings.length(selectedGroup.longName)}"> </span> / 100 characters used.
+                                                <p id="longNameError" th:text="${longNameError}" class="error-msg"></p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type= "submit" id="save-submit-button" class="btn btn-outline-primary me-3">
+                                                    <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</button>
+                                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalCenterTitle" aria-hidden="true">
                         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
                             <div class="modal-content">
@@ -184,13 +223,13 @@
                     <form id="createGroupForm" method="post" th:object="${groups}" th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}" >
                         <div class="mb-3">
                             <label class="col-form-label required">Group Short Name</label>
-                            <input type="text" class="form-control required" name="shortName" onkeyup="checkShortName()" th:value="${shortName}"id="shortName" maxlength="50" placeholder="New Group" required>
+                            <input type="text" class="form-control required" name="shortName" onkeyup="checkShortName(event)" th:value="${shortName}"id="shortName" maxlength="50" placeholder="New Group" required>
                             <span id="charCount" th:value="${charCount}">0 </span> / 50 characters used.
                             <p id="shortNameError" th:text="${shortNameError}" class="error-msg"></p>
                         </div>
                         <div class="mb-3">
                             <label class="form-label required">Group Long Name</label>
-                            <input type="text" class="form-control mt-50" th:value="${longName}" name="longName" id="longName" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName()" required/>
+                            <input type="text" class="form-control mt-50" th:value="${longName}" name="longName" id="longName" placeholder="New Group Long Name" maxlength="100" rows="6" onkeyup="checkLongName(event)" required/>
                             <span id="charCountLong" th:value="${charCount}">0 </span> / 100 characters used.
                             <p id="longNameError" th:text="${longNameError}" class="error-msg"></p>
                         </div>
