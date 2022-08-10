@@ -31,13 +31,13 @@
             <label for="password-field">Password:</label><br>
             <input class="form-control" type="password" id="password-field" name="password" required><br><br>
             <div class="container-fluid row m-0 p-0">
-            <button class="col btn btn-outline-primary" type="submit">
+            <button class="col btn btn-outline-primary" id="submit" type="submit">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/login-icon.svg(apiPrefix=${apiPrefix})}"/> Log In</button>
             </div>
         </form>
         <div class="container-fluid d-flex align-items-baseline no-account-warning">
             <h3 class="no-account-question pe-2">Don't have an account yet?</h3>
-            <a type="button" class="btn btn-outline-secondary" th:href="@{{apiPrefix}/register(apiPrefix=${apiPrefix})}">
+            <a type="button" id="register" class="btn btn-outline-secondary" th:href="@{{apiPrefix}/register(apiPrefix=${apiPrefix})}">
                 <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/create-user-icon.svg(apiPrefix=${apiPrefix})}"> Sign Up</a>
         </div>
         <br>
