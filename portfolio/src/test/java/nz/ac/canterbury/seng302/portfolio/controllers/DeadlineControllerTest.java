@@ -1,14 +1,19 @@
 package nz.ac.canterbury.seng302.portfolio.controllers;
 
+import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.controller.DeadlineController;
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
@@ -59,6 +64,19 @@ public class DeadlineControllerTest {
 
     private Deadline deadline3;
 
+    private static MockedStatic<PrincipalUtils> utilities;
+
+    private User user;
+
+    private UserResponse.Builder userResponse;
+
+
+    @BeforeAll
+    private static void initialise() {
+        utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+    }
+
     /**
      * Initialises project and three deadlines before running each test
      */
@@ -91,6 +109,24 @@ public class DeadlineControllerTest {
                 .name("Deadline 3")
                 .project(project)
                 .build();
+
+        user = new User.Builder()
+                .userId(0)
+                .username("TimeTester")
+                .firstName("Time")
+                .lastName("Tester")
+                .email("Test@tester.nz")
+                .creationDate(new Date())
+                .build();
+
+        userResponse = UserResponse.newBuilder();
+        userResponse.setUsername(user.getUsername());
+        userResponse.setFirstName(user.getFirstName());
+        userResponse.setLastName(user.getLastName());
+        userResponse.setEmail(user.getEmail());
+        userResponse.setCreated(Timestamp.newBuilder()
+                .setSeconds(user.getDateCreated().getTime())
+                .build());
     }
 
     /**
@@ -144,10 +180,6 @@ public class DeadlineControllerTest {
             when(deadlineService.deleteDeadline(3))
                     .thenThrow(new IncorrectDetailsException("Failure deleting Deadline"));
 
-            MockedStatic<PrincipalUtils> utilities = Mockito.mockStatic(PrincipalUtils.class);
-
-            utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
-
                 this.mockMvc.perform(MockMvcRequestBuilders
                                 .post("/1/deleteDeadline/1")
                                 .flashAttr("deadlineId", 1))
@@ -177,9 +209,6 @@ public class DeadlineControllerTest {
             when(projectService.getProjectById(1)).thenReturn(project);
             when(deadlineService.getDeadline(1)).thenReturn(deadline);
 
-            MockedStatic<PrincipalUtils> utilities = Mockito.mockStatic(PrincipalUtils.class);
-
-            utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
 
             this.mockMvc.perform(MockMvcRequestBuilders
                     .get("/project/1/editDeadline/1"))
@@ -193,7 +222,7 @@ public class DeadlineControllerTest {
                     .andExpect(model().attribute("pageTitle", "Edit Deadline: " + deadline.getName()))
                     .andExpect(view().name("deadlineForm"));
 
-            utilities.close();
+
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -217,5 +246,40 @@ public class DeadlineControllerTest {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Test call to newDeadline redirects to the new deadline form with the correct data
+     */
+    @Test
+    public void givenDeadlineDoesNotExist_whenNewDeadlineFormRequested_thenAppropriateFormAndFormDataIsReturned() {
+        try {
+            when(projectService.getProjectById(1)).thenReturn(project);
+            when(deadlineService.getNewDeadline(project)).thenReturn(deadline);
+            when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
+            this.mockMvc.perform(MockMvcRequestBuilders
+                    .get("/project/1/newDeadline"))
+                    .andExpect(model().attribute("project", project))
+                    .andExpect(model().attribute("deadline", deadline))
+                    .andExpect(model().attribute("pageTitle", "Add New Deadline"))
+                    .andExpect(model().attribute("submissionName", "Create"))
+                    .andExpect(model().attribute("image",  "/icons/create-icon.svg"))
+                    .andExpect(model().attribute("user", userResponse.build()))
+                    .andExpect(model().attribute("projectDateMin", project.getStartDate().toString() + "T00:00"))
+                    .andExpect(model().attribute("projectDateMax", project.getEndDate().toString() + "T00:00"))
+                    .andExpect(view().name("deadlineForm"));
+
+            when(projectService.getProjectById(2)).thenThrow(new IncorrectDetailsException("Project not found"));
+            this.mockMvc.perform(MockMvcRequestBuilders
+                    .get("/project/2/newDeadline"))
+                    .andExpect(view().name("redirect:/project/{projectId}"));
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    @AfterAll
+    private static void tearDown() {
+        utilities.close();
     }
 }
