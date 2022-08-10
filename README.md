@@ -93,7 +93,23 @@ gradlew bootRun
 
 By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 
-``Note - Please replace line 139 with claims.put(ROLE_CLAIM_TYPE, "TEACHER"); to obtain teachers access to add/update/delete sprints.``
+### 4 - Example User Logins
+|Username|Password|Roles|
+|----|----|----|
+|MattyBacon|Pig2Bacon|Course Administrator|
+|FurretFive|5Furrets|Teacher|
+|HeadTutor|Knees&2s|Student, Teacher, Course Administrator|
+|Alex|2000Fish|Student|
+
+### 5 - Example Project details
+|Project Name|Description|Start Date|End Date|
+|----|----|----|----|
+|SENG 303| This is a third year software engineering project|21/07/2022|21/03/2021|
+|Electric car project| This is a mechanical third year project|21/07/2022|21/03/2021|
+|TDD 2022| This is a project to focus on test driven development|21/07/2022|20/03/2021|
+|Retail Management 2022| This is to manage retail jobs|21/07/2022|20/03/2021|
+|Project 2022||10/08/2022|10/04/2023|
+
 ## Contributors
 
 - SENG302 teaching team
