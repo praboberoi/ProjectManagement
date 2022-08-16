@@ -36,7 +36,7 @@ When("I enter invalid details", () => {
 
 });
 
-Then("Error messages is displayed", () => {
+Then("Register error messages is displayed", () => {
     cy.get("#usernameError").should('have.text', "Username must be between 3 and 16 characters with no special characters.")
     cy.get("#firstNameError").should('have.text', "First name must be between 2 and 32 characters with no special characters or digits.")
     cy.get("#lastNameError").should('have.text', "Last name must be between 2 and 32 characters with no special characters or digits.")
@@ -50,6 +50,6 @@ When("I enter an invalid password", () => {
 
 });
 
-Then("An appropriate error message is displayed", () => {
+Then("An appropriate password error message is displayed", () => {
     cy.get("#passwordError").should('have.text', "Password must contain 8-16 characters, a digit and uppercase character.")
 });
