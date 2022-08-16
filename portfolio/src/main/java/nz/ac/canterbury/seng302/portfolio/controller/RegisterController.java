@@ -42,7 +42,7 @@ public class RegisterController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return Registration html page
      */
-    @RequestMapping(path="/register", method = RequestMethod.GET)
+    @GetMapping(path="/register")
     public String register(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -65,7 +65,7 @@ public class RegisterController {
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return HTML page corresponding to correct handling
      */
-    @RequestMapping(path="/register", method = RequestMethod.POST)
+    @PostMapping(path="/register")
     public String createUser(
         HttpServletRequest request,
         HttpServletResponse response,

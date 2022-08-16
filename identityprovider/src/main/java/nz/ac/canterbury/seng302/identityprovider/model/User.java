@@ -6,9 +6,9 @@ import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.sql.Timestamp;
-import java.util.Date;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -56,6 +56,9 @@ public class User implements Serializable {
 
     @Temporal(TemporalType.TIMESTAMP)
     public Date dateCreated;
+
+    @ManyToMany(mappedBy = "users")
+    List<Groups> groups;
 
     public int getUserId() {
         return userId;
@@ -203,6 +206,7 @@ public class User implements Serializable {
         this.password = password;
         this.salt = salt;
         this.roles.add(UserRole.STUDENT);
+
         this.dateCreated = new Timestamp(new Date().getTime());
     }
 }
