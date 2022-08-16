@@ -29,6 +29,7 @@ public class SprintService {
         this.projectRepo = projectRepository;
         this.sprintRepository = sprintRepository;
     }
+
     /**
      * To get a new sprint with the appropriate default values.
      * @param project Of type Project
