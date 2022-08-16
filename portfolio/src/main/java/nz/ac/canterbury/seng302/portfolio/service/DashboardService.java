@@ -45,14 +45,18 @@ public class DashboardService {
      * @throws PersistenceException That has been passed by {@link ProjectRepository#save(Object) save}
      */
     public String saveProject(Project project) throws PersistenceException {
-            String message;
-            if (project.getProjectId() == 0)
-                message = "Successfully Created " + project.getProjectName();
-            else
-                message = "Successfully Updated " + project.getProjectName();
-
-            projectRepo.save(project);
+        String message;
+        if (project.getProjectId() == 0) {
+            message = "Successfully Created " + project.getProjectName();
+        } else {
+            message = "Successfully Updated " + project.getProjectName();
+        }
+        try {
+            project = projectRepo.save(project);
             return message;
+        } catch (PersistenceException e) {
+            throw new PersistenceException("Failure Saving Project");
+        }
     }
 
     /**
