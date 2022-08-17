@@ -10,6 +10,10 @@ INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285321,
 INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285321,1,1);
 INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285321,2,2);
 
+-- Create student user
+INSERT IGNORE INTO user (user_id, bio,date_created,email,first_name,last_name,nickname,password,profile_image_path,pronouns,salt,username) VALUES (1285315, 'Automated test student','2022-07-15 21:45:57.287000000','automated@cypress.com','Cypress','Student','','JRqHHIu2hllQo8uswun8chNpkSnX2ERuhyhToKmSdYc=',null,'','aNAKNt2LHIfchQoLQ0Aryg==','CypressStudent');
+INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285315,0,0);
+
 INSERT IGNORE INTO user (user_id, bio,date_created,email,first_name,last_name,nickname,password,profile_image_path,pronouns,salt,username) VALUES (1285322, 'Automated test guinea pig','2022-07-15 21:45:57.287000000','automated@cypress.com','Guinea','pig','','JRqHHIu2hllQo8uswun8chNpkSnX2ERuhyhToKmSdYc=',null,'','aNAKNt2LHIfchQoLQ0Aryg==','CypressGuineaPig');
 INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285322,0,0);
 INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285322,2,1);
