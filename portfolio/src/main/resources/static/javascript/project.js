@@ -79,3 +79,47 @@ document.addEventListener('DOMContentLoaded', function() {
     calendarElements.hidden = false
     eventLabel.hidden = false
 });
+
+// brokerURL: 'ws://localhost:9000/project',
+let stompClient = null;
+
+function connect() {
+    stompClient = new StompJs.Client({
+        brokerURL: 'ws://localhost:9000/gs-guide-websocket',
+        debug: function(str) {
+            console.log(str);
+        },
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+    });
+    
+    stompClient.onConnect = function (frame) {
+        console.log('Connected: ' + frame);
+        subscribe()
+    };
+
+    stompClient.activate();
+}
+
+function subscribe() {
+    stompClient.subscribe('/topic/greetings', function (greeting) {
+        console.log(greeting.body);
+    });
+}
+
+function disconnect() {
+    if (stompClient !== null) {
+        stompClient.disconnect();
+    }
+    setConnected(false);
+    console.log("Disconnected");
+}
+
+function sendName() {
+    stompClient.publish({ destination:"/app/hello", body: "test message" });
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    connect();
+})
