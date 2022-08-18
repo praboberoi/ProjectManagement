@@ -202,6 +202,9 @@ public class SprintService {
      * @return
      */
     public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
+        if (sprint.getSprintName().length() > 50)
+            throw new IncorrectDetailsException("Sprint name must be less than 50 characters");
+
         if (sprint.getStartDate().after(sprint.getEndDate()))
             throw new IncorrectDetailsException("Sprint start date can not be after sprint end date");
 
@@ -215,7 +218,7 @@ public class SprintService {
             throw new IncorrectDetailsException("Sprint end date can not be after project end date");
 
         if(sprint.getDescription().length() > 250)
-            throw new IncorrectDetailsException("Project description too long");
+            throw new IncorrectDetailsException("Sprint description must be less than 250 characters");
 
         List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
         try {
