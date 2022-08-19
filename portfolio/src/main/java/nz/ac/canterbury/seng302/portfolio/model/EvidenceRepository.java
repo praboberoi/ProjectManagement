@@ -9,7 +9,7 @@ import java.util.List;
 public interface EvidenceRepository extends PagingAndSortingRepository<Evidence, Integer> {
 
     /**
-     * Get the piece of evidence which is owned by a user with the specified id.
+     * Get the list of evidence which is owned by a user with the specified id.
      * @param ownerId user id of the owner of the evidence
      * @return List of all the evidence owned by the specified user.
      */

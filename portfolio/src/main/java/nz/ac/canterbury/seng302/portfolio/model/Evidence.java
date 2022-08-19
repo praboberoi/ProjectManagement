@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Date;
 
 /**
- * The evidence entity stored in the database for the identity provider application
+ * The evidence entity stored in the database for the portfolio application
  */
 public class Evidence {
 
@@ -71,6 +71,7 @@ public class Evidence {
 
     /**
      * Creates a new evidence object with the provided details
+     * @param evidenceId id of the evidence object.
      * @param dateOccurred The date the evidence occurred.
      * @param title The title of the evidence (max 50).
      * @param description the description of the evidence.
@@ -137,7 +138,7 @@ public class Evidence {
 
 
         /**
-         * Builds the current Builder with the given Evidence
+         * Builds the current Builder with the given ownerId.
          * @param ownerId user id of the owner of the evidence.
          * @return the current Builder
          */
@@ -148,7 +149,7 @@ public class Evidence {
 
         /**
          * Returns a new Evidence with all the parameters of the current Builder
-         * @return of type Evidence
+         * @return Evidence object
          */
         public Evidence build() {
             return new Evidence(evidenceId, dateOccurred, title, description, ownerId);
