@@ -111,4 +111,9 @@ function checkEndDate() {
     endDateElement.classList.remove("eventFormError")
 }
 
+function populateEventModal(eventId, eventName) {
+    document.getElementById('eventId').value =  eventId;
+    document.getElementById('event-name').value =  eventName;
+}
+
 

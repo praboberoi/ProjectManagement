@@ -98,7 +98,8 @@
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' event button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false">
+              <a class="btn btn-outline-primary" id = "event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false" th:data-id =
+                      "${event.eventId}" th:data-name = "${event.eventName}" th:onclick="populateEventModal(this.getAttribute('data-id'), this.getAttribute('data-name'))">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Event</a>
             </div>
           </div>
@@ -116,8 +117,11 @@
                 <!--If a user is a STUDENT do not show the 'edit', 'delete' calendar object buttons !-->
                 <div class="col-7" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
                   <br>
-                  <a type="button" class="btn btn-outline-primary mr-2 my-2" id = "event-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editEvent/' + ${event.eventId}}">
+
+                  <a class="btn btn-outline-primary mr-2 my-2" id = "event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false" th:data-id =
+                          "${event.eventId}" th:data-name = "${event.eventName}" th:onclick="populateEventModal(this.getAttribute('data-id'), this.getAttribute('data-name'))">
                     <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+
                   <button type="button" class="btn btn-outline-secondary my-2" id = "event-delete-btn"  data-toggle="modal" data-target="#conformationModalEvent" th:data-id =
                           "${event.eventId}" th:data-name = "${event.eventName}" th:data-prefix = "${apiPrefix}" th:data-projectId = "${projectId}" th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'), this.getAttribute('data-projectId'))">
                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
@@ -198,7 +202,7 @@
             <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
             <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
             <td>
-              <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+              <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
               <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
                 <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                   <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
@@ -238,7 +242,7 @@
             <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
             <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
             <td>
-              <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
+              <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
               <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
                 <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn-mobile" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                   <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/></a>
@@ -345,5 +349,6 @@
 <script th:src="@{{apiPrefix}/javascript/project.js(apiPrefix=${apiPrefix})}"></script>
 <script th:src="@{{apiPrefix}/javascript/dashboard.js(apiPrefix=${apiPrefix})}"></script>
 <script th:src='@{{apiPrefix}/javascript/calendar.js(apiPrefix=${apiPrefix})}'></script>
+<script th:src='@{{apiPrefix}/javascript/eventForm.js(apiPrefix=${apiPrefix})}'></script>
 </body>
 </html>
