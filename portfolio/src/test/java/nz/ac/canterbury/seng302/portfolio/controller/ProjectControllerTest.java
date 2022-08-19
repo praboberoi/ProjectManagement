@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.*;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
@@ -124,16 +125,37 @@ public class ProjectControllerTest {
      */
     @Test
     public void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
+        Event newEvent = new Event.Builder().eventName("Test").build();
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
         when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
+        when(eventService.getNewEvent(any())).thenReturn(newEvent);
+
         this.mockMvc
                 .perform(get("/project/1"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("project", project))
                 .andExpect(model().attribute("listSprints", testSprintList))
+                .andExpect(model().attribute("listEvents", List.of()))
+                .andExpect(model().attribute("project", project))
+                .andExpect(model().attribute("event", newEvent))
                 .andExpect(model().attribute("roles", testList))
-                .andExpect(model().attribute("user", userResponse.build()));
+                .andExpect(model().attribute("user", userResponse.build()))
+                .andExpect(model().attribute("projectDateMin", project.getStartDate()))
+                .andExpect(model().attribute("projectDateMax", project.getEndDate()))
+                .andExpect(view().name("project"));
+    }
+
+    /**
+     * Tests that the user is redirected to the dashboard if trying to view a non-existing project
+     * @throws Exception Thrown during mockmvc runtime
+     */
+    @Test
+    public void givenIncorrectDetails_whenNavigateToProjectPage_thenDashboardReturned() throws Exception {
+        when(projectService.getProjectById(anyInt())).thenThrow(new IncorrectDetailsException("Project not found"));
+        this.mockMvc
+                .perform(get("/project/9999"))
+                .andExpect(flash().attribute("messageDanger", "Project not found"))
+                .andExpect(view().name("redirect:/dashboard"));
     }
 
     /**

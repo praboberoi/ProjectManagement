@@ -200,6 +200,60 @@ a.project-name {
 }
 
 .eventDates {
+    line-height: 0.6;
+    font-size: 12px;
+}
+
+#projectDuration {
+    font-size: 13px;
+}
+
+.hiddenRow {
+    padding: 0 !important;
+}
+
+#no{
+    background-color: #ffffff
+}
+
+#cce, #ccm,#cco {
+    width: 33.33%;
+    float: left;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    text-align: center;
+    font-size: 14px;
+
+}
+
+td.hiddenRow {
+    background-color: #ececec; /* Assuming you want the hover color to be white */
+}
+
+
+#calendarOb {
+    margin-left: 80px;
+    width: 800px;
+    padding-top: 8px;
+
+
+}
+#myTabContent{
+    overflow-y: auto;
+}
+
+#eventCard, #deadlineCard, #milestoneCard {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 15px;
+    padding-left: 10px;
+}
+
+.calendarIcons{
+    padding-bottom: 3px;
+}
+
+.eventDates {
     line-height: 1;
     font-size: 12px;
 }

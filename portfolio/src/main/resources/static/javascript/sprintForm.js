@@ -26,6 +26,9 @@ function checkSprintName() {
     if (sprintName.value.length < 1) {
         sprintName.classList.add("formError");
         sprintNameError.innerText = "Sprint Name must not be empty";
+    } else if (sprintName.value.length > 50) {
+        sprintName.classList.add("formError");
+        sprintNameError.innerText = "Sprint Name must be less than 50 characters";
     } else if (! sprintNameRegex.test(sprintName.value)) {
         sprintName.classList.add("formError");
         sprintNameError.innerText = "Sprint Name must not start with empty space";

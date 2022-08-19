@@ -12,6 +12,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import org.springframework.test.context.ActiveProfiles;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
@@ -88,13 +91,23 @@ class SprintServiceTest {
      * Tests that a sprint with the maximum character count will be valid
      */
     @Test
-    public void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
+    public void givenValidLargeSprintDescription_whenSprintValidated_thenPassesValidation() {
         Sprint sprint = sprintBuilder
             .description("0123456789".repeat(25)) //250 characters
             .build();
             assertDoesNotThrow(() -> {
                 assertTrue(sprintService.verifySprint(sprint));
             });
+    }
+
+    /**
+     * Asserts that an exception is thrown when a sprint has too long of a name
+     */
+    @Test
+    public void givenInvalidLargeSprintName_whenSprintValidated_thenFailsValidation() {
+        Sprint sprint = sprintBuilder.sprintName("this is going to be more than 50 characters so an error message should be thrown")
+                .build();
+        assertThrows(IncorrectDetailsException.class, () -> sprintService.verifySprint(sprint));
     }
 
 }

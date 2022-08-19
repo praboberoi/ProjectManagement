@@ -95,7 +95,10 @@ public class EventService {
         else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null)
             throw new IncorrectDetailsException ("Event values are null");
 
-        else if (event.getEventName().length() < 1)
+        // Removes leading and trailing white spaces from the name
+        event.setEventName(event.getEventName().strip());
+
+        if (event.getEventName().length() < 1)
             throw new IncorrectDetailsException ("Event name must not be empty");
 
         else if (event.getEventName().length() > 50)

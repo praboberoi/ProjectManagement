@@ -54,7 +54,6 @@ function navToPlanner() {
         eventLabel.hidden = true
         loadCalendar()
     }
-
 }
 
 function deletingEvent(eventId, eventName, apiPrefix, projectId) {
