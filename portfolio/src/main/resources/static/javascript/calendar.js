@@ -2,7 +2,6 @@ const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'medium
 const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
 const adminRoles = ['TEACHER', 'COURSE_ADMINISTRATOR'];
-const DATE_OPTIONS = {year: 'numeric', month: 'short', day: 'numeric'};
 let calendar;
 let clicked = true;
 

@@ -55,9 +55,9 @@
         <h5>Project Description</h5>
         <div id ="edit-del-buttons">
           <div class="container-fluid p-0" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-            <a type="button" class="btn btn-outline-primary me-2"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
+            <a type="button" class="btn btn-outline-primary me-2"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${projectId}}">
               <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
-            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModalProject" th:data-id = "${project.projectId}"
+            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModalProject" th:data-id = "${projectId}"
                     th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
               <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
           </div>
@@ -98,11 +98,11 @@
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' event button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+              <a class="btn btn-outline-primary" id = "event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Event</a>
             </div>
           </div>
-          <br>
+
 <!--          Shows each individual event-->
           <div class="card" id = "eventCard" th:each="event : ${listEvents}">
             <div class="container">
@@ -119,8 +119,8 @@
                   <a type="button" class="btn btn-outline-primary mr-2 my-2" id = "event-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editEvent/' + ${event.eventId}}">
                     <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
                   <button type="button" class="btn btn-outline-secondary my-2" id = "event-delete-btn"  data-toggle="modal" data-target="#conformationModalEvent" th:data-id =
-                          "${event.eventId}" th:data-name = "${event.eventName}" th:data-prefix = "${apiPrefix}" th:data-projectId = "${project.projectId}" th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'), this.getAttribute('data-projectId'))">
-                  <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+                          "${event.eventId}" th:data-name = "${event.eventName}" th:data-prefix = "${apiPrefix}" th:data-projectId = "${projectId}" th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'), this.getAttribute('data-projectId'))">
+                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
                   <br>
                 </div>
               </div>
@@ -132,7 +132,7 @@
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+              <a class="btn btn-outline-primary" id = "deadline-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newDeadline'}">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</a>
             </div>
           </div>
@@ -145,7 +145,7 @@
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' milestone button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newEvent'}">
+              <a class="btn btn-outline-primary" id = "milestone-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newMilestone'}">
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Milestone</a>
             </div>
           </div>
@@ -202,7 +202,7 @@
               <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
                 <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                   <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
-                <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
+                <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${projectId}"
                         th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'))" >
                   <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
               </div>
@@ -240,10 +240,10 @@
             <td>
               <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' project buttons !-->
               <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-                <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
+                <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn-mobile" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                   <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/></a>
-                <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
-                        th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'))" >
+                <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn-mobile" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
+                        th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'));" >
                   <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/></button>
               </div>
             </td>
@@ -261,8 +261,6 @@
         <div id="calendarMessage" class="alert text-center"></div>
     <div id='calendar'/>
   </div>
-</div>
-
 </div>
 
 <div class="modal fade" id="conformationModalProject" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
@@ -333,12 +331,15 @@
     </div>
   </div>
 </div>
+
+<div th:replace="forms :: eventsForm"></div>
 <script th:inline="javascript">
-  var userRoles = [[${roles}]];
-  var projectId = [[${project.projectId}]];
-  var projectStartDate = [[${project.startDate}]];
-  var projectEndDate = [[${project.endDate}]];
-  var apiPrefix = [[${apiPrefix}]];
+  let userRoles = [[${roles}]];
+  const projectId = [[${project.projectId}]];
+  let projectStartDate = [[${project.startDate}]];
+  let projectEndDate = [[${project.endDate}]];
+  const apiPrefix = [[${apiPrefix}]];
+  const DATE_OPTIONS = {year: 'numeric', month: 'short', day: 'numeric'};
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p" crossorigin="anonymous"></script>
 <script th:src="@{{apiPrefix}/javascript/project.js(apiPrefix=${apiPrefix})}"></script>
