@@ -78,3 +78,66 @@ document.addEventListener('DOMContentLoaded', function() {
     calendarElements.hidden = false
     eventLabel.hidden = false
 });
+
+let stompClient = null;
+
+/**
+ * Connects to the websocket server
+ */
+function connect() {
+    stompClient = new StompJs.Client({
+        brokerURL: 'ws://' + window.location.host + apiPrefix + '/gs-guide-websocket',
+        debug: function(str) {
+            console.log(str);
+        },
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+    });
+    
+    stompClient.onConnect = function (frame) {
+        console.log('Connected: ' + frame);
+        subscribe()
+    };
+
+    stompClient.onStompError = function (frame) {
+        console.log('Broker reported error: ' + frame.headers['message']);
+        console.log('Additional details: ' + frame.body);
+    }
+
+    stompClient.activate();
+}
+
+/**
+ * Subscribes to the required websocket notification channels
+ */
+function subscribe() {
+    stompClient.subscribe('/topic/greetings', function (greeting) {
+        console.log(greeting.body);
+    });
+}
+
+/**
+ * Disconnects from the websocket
+ */
+function disconnect() {
+    if (stompClient !== null) {
+        stompClient.disconnect();
+    }
+    setConnected(false);
+    console.log("Disconnected");
+}
+
+/**
+ * Sends a message to the hello message receiver
+ */
+function sendName() {
+    stompClient.publish({ destination:"/app/hello", body: "test message" });
+}
+
+/**
+ * Runs the connect function when the document is loaded
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    connect();
+})
