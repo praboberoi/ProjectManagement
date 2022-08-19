@@ -1,10 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
 import io.grpc.Deadline;
-import nz.ac.canterbury.seng302.portfolio.model.Event;
-import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,6 +33,10 @@ public class EventServiceTest {
 
     @MockBean
     private EventRepository eventRepository;
+
+    @MockBean
+    private EvidenceRepository evidenceRepository;
+
 
     @MockBean
     private ProjectRepository projectRepository;
