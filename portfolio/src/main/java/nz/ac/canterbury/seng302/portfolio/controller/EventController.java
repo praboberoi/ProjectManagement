@@ -42,6 +42,7 @@ public class EventController {
         model.addAttribute("apiPrefix", apiPrefix);
     }
 
+
     /**
      * Opens eventForm.html and populates it with a new Event object
      * Checks for teacher or admin privileges

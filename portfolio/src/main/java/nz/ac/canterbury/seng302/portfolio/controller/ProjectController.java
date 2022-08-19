@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
@@ -77,11 +78,15 @@ public class ProjectController {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             Project project = projectService.getProjectById(projectId);
+            Event newEvent = eventService.getNewEvent(project);
             model.addAttribute("listEvents", listEvents);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
+            model.addAttribute("event", newEvent);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectDateMin", project.getStartDate());
+            model.addAttribute("projectDateMax", project.getEndDate());
             return "project";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -99,10 +104,10 @@ public class ProjectController {
      */
     @PostMapping("/verifyProject/{projectId}")
     public ResponseEntity<String> verifyProject(
-        @PathVariable int projectId,
-        String startDate,
-        String endDate,
-        @AuthenticationPrincipal AuthState principal) {
+            @PathVariable int projectId,
+            String startDate,
+            String endDate,
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = new Project.Builder()
