@@ -6,6 +6,7 @@ import java.util.Date;
 /**
  * The evidence entity stored in the database for the portfolio application
  */
+@Entity
 public class Evidence {
 
     @Id
