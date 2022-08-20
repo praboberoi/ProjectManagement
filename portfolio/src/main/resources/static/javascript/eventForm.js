@@ -101,6 +101,14 @@ function checkEndDate() {
     endDateElement.classList.remove("eventFormError")
 }
 
+/**
+ * Populate event creation or editing modal with proper values
+ * @param isEdit Bool for if create or edit selected
+ * @param eventId ID of event
+ * @param eventName Name of event
+ * @param startDate Event start date and time
+ * @param endDate Event end date and time
+ */
 function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
     if (isEdit) {
         document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
