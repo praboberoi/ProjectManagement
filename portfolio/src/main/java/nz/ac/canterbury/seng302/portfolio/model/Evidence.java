@@ -6,6 +6,7 @@ import java.util.Date;
 /**
  * The evidence entity stored in the database for the portfolio application
  */
+@Entity
 public class Evidence {
 
     @Id
@@ -93,7 +94,6 @@ public class Evidence {
         private Date dateOccurred;
         private String title;
         private String description = "";
-        private Evidence evidence;
         private Integer ownerId;
 
         /**
