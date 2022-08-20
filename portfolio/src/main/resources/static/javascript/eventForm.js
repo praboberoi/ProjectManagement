@@ -52,7 +52,7 @@ function checkEventDates() {
     }
 
     if (startDate >= endDate ) {
-        startDateError.innerText = "Start Date must be before the End Date.";
+        startDateError.innerText = "Start Date must be before the End Date";
         endDateError.innerText = "End Date must be after the Start Date";
         startDateElement.classList.add("eventFormError");
         endDateElement.classList.add("eventFormError");
@@ -113,6 +113,8 @@ function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
     }
     document.getElementById('eventId').value =  eventId;
     document.getElementById('event-name').value =  eventName;
+    checkEventName()
+    checkEventDates()
 }
 
 
