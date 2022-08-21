@@ -24,6 +24,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private AuthenticateClientService authenticateClientService;
+    private String COOKIE_NAME = "lens-session-token";
 
     private AuthenticateClientService getAuthenticateClientService(HttpServletRequest request) {
         if(authenticateClientService == null){
@@ -44,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 var domain = req.getHeader("host");
                 Cookie newCookie = CookieUtil.create(
                     res,
-                    "lens-session-token",
+                    COOKIE_NAME,
                     reply.getToken(),
                     true,
                     5 * 60 * 60, // Expires in 5 hours
@@ -52,7 +53,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 );
                 authentication = getAuthentication(req, newCookie.getValue());
             } else {
-                CookieUtil.clear(res, "lens-session-token");
+                CookieUtil.clear(res, COOKIE_NAME);
             }
         }
             
@@ -75,7 +76,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         authToken.setAuthenticated(false);
 
         if (lensSessionCookieJwtString == null) {
-            lensSessionCookieJwtString = CookieUtil.getValue(request, "lens-session-token");
+            lensSessionCookieJwtString = CookieUtil.getValue(request, COOKIE_NAME);
         }
         if (!StringUtils.hasText(lensSessionCookieJwtString)) {
             // No cookie with jwt session token found, return unauthenticated token

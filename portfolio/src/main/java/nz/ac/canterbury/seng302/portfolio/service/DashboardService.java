@@ -4,6 +4,9 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,11 +16,12 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-
 @Service
 public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintService sprintService;
+
+    private Logger logger = LoggerFactory.getLogger(DashboardService.class);
 
 
     public DashboardService(ProjectRepository projectRepo, SprintService sprintService) {
@@ -32,7 +36,7 @@ public class DashboardService {
     public List<Project> getAllProjects() {
         List<Project> listProjects = (List<Project>) projectRepo.findAll();
         if (listProjects.isEmpty()) {
-            saveProject(getNewProject());
+            projectRepo.save(getNewProject());
             listProjects = (List<Project>) projectRepo.findAll();
         }
         return listProjects;
@@ -42,9 +46,9 @@ public class DashboardService {
      * Saves a project object to the database and returns an appropriate message depending upon if the project is created
      * or updated
      * @param project of type Project
-     * @throws PersistenceException That has been passed by {@link ProjectRepository#save(Object) save}
+     * @throws IncorrectDetailsException That has been passed by {@link ProjectRepository#save(Object) save}
      */
-    public String saveProject(Project project) throws PersistenceException {
+    public String saveProject(Project project) throws IncorrectDetailsException {
         String message;
         if (project.getProjectId() == 0) {
             message = "Successfully Created " + project.getProjectName();
@@ -52,10 +56,11 @@ public class DashboardService {
             message = "Successfully Updated " + project.getProjectName();
         }
         try {
-            project = projectRepo.save(project);
+            projectRepo.save(project);
             return message;
         } catch (PersistenceException e) {
-            throw new PersistenceException("Failure Saving Project");
+            logger.error("Failure Saving Project {}", project.getProjectId(), e);
+            throw new IncorrectDetailsException("Failure Saving Project");
         }
     }
 
@@ -101,19 +106,7 @@ public class DashboardService {
      * @throws IncorrectDetailsException indicating page values of the HTML page are manually changed.
      */
     public void verifyProject(Project project) throws IncorrectDetailsException {
-        Date projectMinDate;
-        Date projectMaxDate;
         List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
-
-        if(project.getProjectId() == 0) {
-            LocalDate now = LocalDate.now();
-            projectMinDate = Date.valueOf(now.minusYears(1));
-            projectMaxDate = Date.valueOf(now.plusYears(10));
-        } else {
-            List<Date> dateRange = getProjectDateRange(getProject(project.getProjectId()));
-            projectMinDate = dateRange.get(0);
-            projectMaxDate = dateRange.get(1);
-        }
 
         if (sprints.stream().anyMatch(sprint -> sprint.getStartDate().before(project.getStartDate()))) {
             throw new IncorrectDetailsException("You are trying to start the project after you have started a sprint.");

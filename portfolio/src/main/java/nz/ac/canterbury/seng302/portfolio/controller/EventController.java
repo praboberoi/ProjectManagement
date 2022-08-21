@@ -34,6 +34,10 @@ public class EventController {
     @Value("${apiPrefix}") private String apiPrefix;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
 
+    private static final String PROJECT_REDIRECT = "redirect:/project/{projectId}";
+    private static final String SUCCESS_MESSAGE = "messageSuccess";
+    private static final String FAILURE_MESSAGE = "messageDanger";
+
     /**
      * Adds common model elements used by all controller methods.
      */
@@ -52,7 +56,7 @@ public class EventController {
      * @param model
      * @return link of the html page to display
      */
-    @RequestMapping(path = "/project/{projectId}/newEvent", method = RequestMethod.GET)
+    @GetMapping("/project/{projectId}/newEvent")
     public String newEvent(
             Model model,
             @AuthenticationPrincipal AuthState principal,
@@ -76,8 +80,8 @@ public class EventController {
             return "eventForm";
 
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/{projectId}";
+            ra.addFlashAttribute(FAILURE_MESSAGE, e.getMessage());
+            return PROJECT_REDIRECT;
         }
     }
 
@@ -101,12 +105,12 @@ public class EventController {
             event.setProject(projectService.getProjectById(projectId));
             eventService.verifyEvent(event);
             message = eventService.saveEvent(event);
-            ra.addFlashAttribute("messageSuccess", message);
+            ra.addFlashAttribute(SUCCESS_MESSAGE, message);
 
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute(FAILURE_MESSAGE, e.getMessage());
         }
-        return "redirect:/project/{projectId}";
+        return PROJECT_REDIRECT;
     }
 
     /**
@@ -128,14 +132,14 @@ public class EventController {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
         try {
             String message = eventService.deleteEvent(eventId);
-            ra.addFlashAttribute("messageSuccess", message);
+            ra.addFlashAttribute(SUCCESS_MESSAGE, message);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             model.addAttribute("listEvents", listEvents);
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute(FAILURE_MESSAGE, e.getMessage());
         }
 
-        return "redirect:/project/{projectId}";
+        return PROJECT_REDIRECT;
     }
 
     /**
@@ -147,7 +151,7 @@ public class EventController {
      * @param ra Redirect Attribute frontend message object
      * @return Event form page with selected event or redirect to project page on error
      */
-    @RequestMapping(path="/project/{projectId}/editEvent/{eventId}", method = RequestMethod.GET)
+    @GetMapping("/project/{projectId}/editEvent/{eventId}")
     public String eventEditForm(
             @PathVariable("eventId") int eventId,
             @PathVariable("projectId") int projectId,
@@ -168,8 +172,8 @@ public class EventController {
             model.addAttribute("projectDateMax", currentProject.getEndDate());
             return "eventForm";
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/{projectId}";
+            ra.addFlashAttribute(FAILURE_MESSAGE, e.getMessage());
+            return PROJECT_REDIRECT;
         }
     }
 }
