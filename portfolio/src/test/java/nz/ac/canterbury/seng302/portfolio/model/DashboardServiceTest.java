@@ -55,7 +55,7 @@ class DashboardServiceTest {
      * Tests that a sprint with normal inputs will be valid
      */
     @Test
-    public void givenValidProject_whenProjectValidated_thenSucceedsValidation() {
+    void givenValidProject_whenProjectValidated_thenSucceedsValidation() {
         Project project = projectBuilder.build();
         assertDoesNotThrow(() -> {
             dashboardService.verifyProject(project);
@@ -66,7 +66,7 @@ class DashboardServiceTest {
      * Tests that a sprint with too long a description will not be valid
      */
     @Test
-    public void givenInvalidSprintDescription_whenSprintValidated_thenFailsValidation() {
+    void givenInvalidSprintDescription_whenSprintValidated_thenFailsValidation() {
         Project project = projectBuilder
             .description("0123456789".repeat(26)) //260 characters
             .build();
@@ -77,7 +77,7 @@ class DashboardServiceTest {
      * Tests that a sprint with the maximum character count will be valid
      */
     @Test
-    public void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
+    void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
         Project project = projectBuilder
             .description("0123456789".repeat(25)) //250 characters
             .build();
@@ -90,7 +90,7 @@ class DashboardServiceTest {
      * Checks that all sample data projects are returned
      */
     @Test
-    public void givenProjectDatabaseWithProjects_whenGetAllProjectsCalled_thenAllProjectReturned() {
+    void givenProjectDatabaseWithProjects_whenGetAllProjectsCalled_thenAllProjectReturned() {
         List<Project> returnList = dashboardService.getAllProjects();
         assertEquals(1, returnList.size());
     }

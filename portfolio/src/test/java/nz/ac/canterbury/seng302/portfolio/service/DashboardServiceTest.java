@@ -1,10 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
-import org.junit.Rule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.rules.ExpectedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -65,7 +63,7 @@ class DashboardServiceTest {
      * Tests that a sprint with normal inputs will be valid
      */
     @Test
-    public void givenValidProject_whenProjectValidated_thenSucceedsValidation() {
+    void givenValidProject_whenProjectValidated_thenSucceedsValidation() {
         Project project = projectBuilder.build();
         assertDoesNotThrow(() -> {
             dashboardService.verifyProject(project);
@@ -76,7 +74,7 @@ class DashboardServiceTest {
      * Tests that a sprint with too long a description will not be valid
      */
     @Test
-    public void givenInvalidSprintDescription_whenSprintValidated_thenFailsValidation() {
+    void givenInvalidSprintDescription_whenSprintValidated_thenFailsValidation() {
         Project project = projectBuilder
             .description("0123456789".repeat(26)) //260 characters
             .build();
@@ -87,7 +85,7 @@ class DashboardServiceTest {
      * Tests that a sprint with the maximum character count will be valid
      */
     @Test
-    public void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
+    void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
         Project project = projectBuilder
             .description("0123456789".repeat(25)) //250 characters
             .build();
@@ -100,7 +98,7 @@ class DashboardServiceTest {
      * Checks that all sample data projects are returned
      */
     @Test
-    public void givenProjectDatabaseWithProjects_whenGetAllProjectsCalled_thenAllProjectReturned() {
+    void givenProjectDatabaseWithProjects_whenGetAllProjectsCalled_thenAllProjectReturned() {
         List<Project> list = new ArrayList<Project>();
         list.add(defaultProject);
         Iterable<Project> iterable = list;
@@ -113,7 +111,7 @@ class DashboardServiceTest {
      * Checks that correct message is returned when new project successfully saved
      */
     @Test
-    public void givenNewProject_whenSaveProject_thenProjectSaved() {
+    void givenNewProject_whenSaveProject_thenProjectSaved() {
         Project testProject = projectBuilder.build();
         when(projectRepository.save(any())).thenReturn(testProject);
         String returnMessage = dashboardService.saveProject(testProject);
@@ -124,7 +122,7 @@ class DashboardServiceTest {
      * Checks that correct message is returned when edited project successfully saved
      */
     @Test
-    public void givenEditedProject_whenSaveProject_thenProjectSaved() {
+    void givenEditedProject_whenSaveProject_thenProjectSaved() {
         Project testProject = projectBuilder.projectId(1).build();
         when(projectRepository.save(any())).thenReturn(testProject);
         String returnMessage = dashboardService.saveProject(testProject);
@@ -135,7 +133,7 @@ class DashboardServiceTest {
      * Checks that error is thrown when edited project unsuccessfully saved
      */
     @Test
-    public void givenIncorrectProject_whenSaveProject_thenErrorThrown() {
+    void givenIncorrectProject_whenSaveProject_thenErrorThrown() {
         Project testProject = projectBuilder.projectId(1).build();
         when(projectRepository.save(any())).thenThrow(PersistenceException.class);
         PersistenceException exception = assertThrows(PersistenceException.class, () -> {dashboardService.saveProject(testProject);});

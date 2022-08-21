@@ -1,14 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import io.grpc.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.Assert;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -60,7 +55,7 @@ public class EventServiceTest {
      * sent for verifying an event
      */
     @Test
-    public void givenEventIsNull_WhenVerifyEvent_ThenExceptionIsThrown() {
+    void givenEventIsNull_WhenVerifyEvent_ThenExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
                 eventService.verifyEvent(null) );
 
@@ -72,7 +67,7 @@ public class EventServiceTest {
      * for verifying an event
      */
     @Test
-    public void givenEventWithNullValues_WhenVerifyEvent_ThenExceptionIsThrown() {
+    void givenEventWithNullValues_WhenVerifyEvent_ThenExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class,() ->
                 eventService.verifyEvent(new Event()) );
 
@@ -84,7 +79,7 @@ public class EventServiceTest {
      * is before the start date
      */
     @Test
-    public void givenEventWithIncorrectDates_WhenVerifyEvent_ThenExceptionIsThrown() {
+    void givenEventWithIncorrectDates_WhenVerifyEvent_ThenExceptionIsThrown() {
         //Event with end date before start date
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
@@ -103,7 +98,7 @@ public class EventServiceTest {
      * is the same as the end date
      */
     @Test
-    public void givenEventWithSameDateAndSameTime_WhenVerifyEvent_ThenShowErrorMessage() {
+    void givenEventWithSameDateAndSameTime_WhenVerifyEvent_ThenShowErrorMessage() {
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
@@ -123,7 +118,7 @@ public class EventServiceTest {
      * date and time is the same as the end date and time
      */
     @Test
-    public void givenEventWithSameDateAndEndTimeBeforeStartTime_WhenVerifyEvent_ThenShowErrorMessage() {
+    void givenEventWithSameDateAndEndTimeBeforeStartTime_WhenVerifyEvent_ThenShowErrorMessage() {
         Date currentDate = new Date(Calendar.getInstance().getTimeInMillis());
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("newEvent")
@@ -141,7 +136,7 @@ public class EventServiceTest {
      * Tests to make sure no error is thrown when the event is verified with correct values
      */
     @Test
-    public void givenEventWithCorrectValues_WhenVerifyEvent_ThenNoExceptionIsThrown() {
+    void givenEventWithCorrectValues_WhenVerifyEvent_ThenNoExceptionIsThrown() {
         project = new Project.Builder()
                 .description("This is a test project")
                 .startDate(new java.sql.Date(2020 - 1900, 11, 12))
@@ -165,7 +160,7 @@ public class EventServiceTest {
      * has no name
      */
     @Test
-    public void givenEventWithEmptyName_WhenVerifyEvent_ThenExceptionIsThrown() {
+    void givenEventWithEmptyName_WhenVerifyEvent_ThenExceptionIsThrown() {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("")
                 .project(new Project())
@@ -183,7 +178,7 @@ public class EventServiceTest {
      * is over the character limit
      */
     @Test
-    public void givenEventWithNameOverLimit_WhenVerifyEvent_ThenExceptionIsThrown() {
+    void givenEventWithNameOverLimit_WhenVerifyEvent_ThenExceptionIsThrown() {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("This is a event name thats more than 50 characters long")
                 .project(new Project())
@@ -202,7 +197,7 @@ public class EventServiceTest {
      * is after the end date
      */
     @Test
-    public void givenEventWithStartDateAfterEndDate_WhenVerifyEvent_ThenExceptionIsThrown(){
+    void givenEventWithStartDateAfterEndDate_WhenVerifyEvent_ThenExceptionIsThrown(){
         Event newEvent = eventBuilder.eventId(1)
                 .eventName(" Event name with whitespace start")
                 .project(new Project())
@@ -220,7 +215,7 @@ public class EventServiceTest {
      * Tests to make an event is successfully created
      */
     @Test
-    public void givenNewEventCreated_whenSaveEvent_thenSuccessfullyCreatedMsgDisplayed() {
+    void givenNewEventCreated_whenSaveEvent_thenSuccessfullyCreatedMsgDisplayed() {
         Event newEvent = eventBuilder.eventId(0)
                 .eventName("New Event")
                 .project(new Project())
@@ -238,7 +233,7 @@ public class EventServiceTest {
      * Tests to make an event is successfully updated
      */
     @Test
-    public void givenExistingEvent_whenSaveEvent_thenSuccessfullyUpdatedMsgDisplayed() {
+    void givenExistingEvent_whenSaveEvent_thenSuccessfullyUpdatedMsgDisplayed() {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("New Event")
                 .project(new Project())
@@ -258,7 +253,7 @@ public class EventServiceTest {
      * is requested
      */
     @Test
-    public void givenEventServiceExist_whenGetNewEventRequested_thenNewEventFormDisplayed(){
+    void givenEventServiceExist_whenGetNewEventRequested_thenNewEventFormDisplayed(){
         when(eventRepository.findByProject(project)).thenReturn(List.of());
         LocalDate now = LocalDate.now();
 
@@ -287,7 +282,7 @@ public class EventServiceTest {
      * or ends before the project start date
      */
     @Test
-    public void givenProject_whenEventStartsBeforeProject_ThenExceptionIsThrown() {
+    void givenProject_whenEventStartsBeforeProject_ThenExceptionIsThrown() {
         project = new Project.Builder()
                 .description("This is a test project")
                 .startDate(new java.sql.Date(2022, 11, 12))
@@ -314,7 +309,7 @@ public class EventServiceTest {
      * or ends after the project end date
      */
     @Test
-    public void givenProject_whenEventStartsOrEndsAfterProject_ThenExceptionIsThrown() {
+    void givenProject_whenEventStartsOrEndsAfterProject_ThenExceptionIsThrown() {
         project = new Project.Builder()
                 .description("This is a test project")
                 .startDate(new java.sql.Date(2022, 11, 12))
@@ -349,7 +344,7 @@ public class EventServiceTest {
      * values are null
      */
     @Test
-    public void givenEventWithEmptyValues_WhenVerifyEvent_ThenExceptionIsThrown() {
+    void givenEventWithEmptyValues_WhenVerifyEvent_ThenExceptionIsThrown() {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("Event name")
                 .project(project)
@@ -372,7 +367,7 @@ public class EventServiceTest {
      * save event
      */
     @Test
-    public void givenExistingEvent_whenFailureToSaveEvent_thenExceptionThrown() {
+    void givenExistingEvent_whenFailureToSaveEvent_thenExceptionThrown() {
         Event newEvent = eventBuilder.eventId(1)
                 .eventName("New Event")
                 .project(new Project())
@@ -390,7 +385,7 @@ public class EventServiceTest {
      * Tests to make sure event is returned when get valid event.
      */
     @Test
-    public void givenExistingEvent_whenGetEventWithId_thenReturnEvent() throws IncorrectDetailsException {
+    void givenExistingEvent_whenGetEventWithId_thenReturnEvent() throws IncorrectDetailsException {
         Event event = eventBuilder.eventId(1)
                 .eventName("New Event")
                 .project(new Project())
@@ -400,14 +395,14 @@ public class EventServiceTest {
 
         when(eventRepository.findById(1)).thenReturn(event);
         Event returnedEvent = eventService.getEvent(1);
-        assertTrue(event.equals(returnedEvent));
+        assertEquals(event, returnedEvent);
     }
 
     /**
      * Tests to make sure an error is thrown when calling getEvent on a non-existent event.
      */
     @Test
-    public void givenNotExistingEvent_whenGetEvent_thenExceptionThrown() {
+    void givenNotExistingEvent_whenGetEvent_thenExceptionThrown() {
         when(eventRepository.findById(0)).thenReturn(null);
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 eventService.getEvent(0));
@@ -418,7 +413,7 @@ public class EventServiceTest {
      * Tests to make sure a list of sorted events is returned when calling getEventByProjectId.
      */
     @Test
-    public void givenProjectWithEvents_whenGetEventByProjectId_thenSortedEventsReturned() {
+    void givenProjectWithEvents_whenGetEventByProjectId_thenSortedEventsReturned() {
 
         List<Event> listEvents = new ArrayList<Event>();
         Event event1 = eventBuilder.eventId(1)
@@ -457,16 +452,16 @@ public class EventServiceTest {
         when(projectRepository.findById(anyInt())).thenReturn(projectOptional);
         when(eventRepository.findByProject(project)).thenReturn(listEvents);
         List<Event> returnedList = eventService.getEventByProjectId(1);
-        assertTrue(returnedList.get(0).equals(event1));
-        assertTrue(returnedList.get(1).equals(event2));
-        assertTrue(returnedList.get(2).equals(event3));
+        assertEquals(event1, returnedList.get(0));
+        assertEquals(event2, returnedList.get(1));
+        assertEquals(event3, returnedList.get(2));
     }
     /**
      * Asserts that an event is properly deleted when deleteEvent is called
      * @throws IncorrectDetailsException
      */
     @Test
-    public void givenEventExists_whenDeleteEventCalled_thenEventSuccessfullyDeleted() throws IncorrectDetailsException {
+    void givenEventExists_whenDeleteEventCalled_thenEventSuccessfullyDeleted() throws IncorrectDetailsException {
         Event newEvent = eventBuilder.eventId(99)
                 .eventName("New Event")
                 .project(new Project())
@@ -483,20 +478,10 @@ public class EventServiceTest {
      * Asserts that the correct error message is thrown when attempting to delete a non-existent event
      */
     @Test
-    public void givenEventDoesntExists_whenDeleteEventCalled_thenEventErrorIsThrown(){
-        Event newEvent = eventBuilder.eventId(99)
-                .eventName("New Event")
-                .project(new Project())
-                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
-                .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
-                .build();
-
+    void givenEventDoesntExists_whenDeleteEventCalled_thenEventErrorIsThrown(){
         when(eventRepository.findById(99)).thenThrow(IllegalArgumentException.class);
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 eventService.deleteEvent(99));
         assertEquals("Could not find an existing event", exception.getMessage() );
-
     }
-
-
 }

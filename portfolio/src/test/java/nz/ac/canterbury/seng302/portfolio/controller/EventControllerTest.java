@@ -5,7 +5,6 @@ import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
-import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -180,7 +179,7 @@ public class EventControllerTest {
      * Tests to make sure an appropriate success message is displayed when a post request is made to delete the given event
      */
     @Test
-    public void givenEventExists_whenDeleteEventIsRequested_thenEventDeletedSuccessfully() {
+    void givenEventExists_whenDeleteEventIsRequested_thenEventDeletedSuccessfully() {
         try {
             when(eventService.deleteEvent(event.getEventId()))
                     .thenReturn("Successfully deleted " + event.getEventName());
@@ -207,7 +206,7 @@ public class EventControllerTest {
      * Asserts that the correct error message is returned when deleteEvent is called on a non-existent event
      */
     @Test
-    public void givenEventDoesNotExist_whenDeleteEventCalled_thenExceptionIsThrown() {
+    void givenEventDoesNotExist_whenDeleteEventCalled_thenExceptionIsThrown() {
         try {
             when(eventService.deleteEvent(99))
                     .thenThrow(new IncorrectDetailsException("Failure deleting Event"));
