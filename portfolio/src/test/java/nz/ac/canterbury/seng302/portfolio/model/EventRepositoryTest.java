@@ -63,7 +63,7 @@ public class EventRepositoryTest {
     void givenEventExists_FindByEventId() {
         Event testEvent = basicEventBuilder.build();
         testEvent = eventRepo.save(testEvent);
-        assertEquals(testEvent, eventRepo.findById(1));
+        assertEquals(testEvent, eventRepo.findById(testEvent.getEventId()));
     }
 
     /**
