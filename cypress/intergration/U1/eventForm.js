@@ -15,7 +15,7 @@ Then("A new event is created with a success message", () => {
     cy.get('.alert-success').should('contain.text', 'Successfully Created New Event')
 })
 
-When("I type in an event name thats really long", ()=> {
+When("I type in an event name that is very long", ()=> {
     cy.get('#event-name').type('Shared lunch will all of the seng302 students to celebrate the end of the year')
 })
 
