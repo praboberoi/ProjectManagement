@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
  */
 
 @SpringBootTest
-public class EventServiceTest {
+class EventServiceTest {
 
     @MockBean
     private EventRepository eventRepository;

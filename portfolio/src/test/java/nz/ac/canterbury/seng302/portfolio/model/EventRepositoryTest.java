@@ -20,7 +20,7 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 @ActiveProfiles("test")
 @DirtiesContext
-public class EventRepositoryTest {
+class EventRepositoryTest {
 
     @Autowired 
     private EventRepository eventRepo;
