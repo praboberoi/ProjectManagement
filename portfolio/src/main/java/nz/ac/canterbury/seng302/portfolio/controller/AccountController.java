@@ -109,7 +109,6 @@ public class AccountController {
         return EDIT_ACCOUNT_PAGE;
     }
 
-
     /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
@@ -194,7 +193,7 @@ public class AccountController {
         StringBuilder roles = new StringBuilder();
         user.getRoles().forEach(role -> roles.append(capitaliseFirstLetter(role.toString() + ", ")));
         model.addAttribute("roles",
-                user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
+                !user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()

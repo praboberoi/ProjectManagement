@@ -10,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
@@ -46,22 +45,16 @@ public class DashboardService {
      * Saves a project object to the database and returns an appropriate message depending upon if the project is created
      * or updated
      * @param project of type Project
-     * @throws IncorrectDetailsException That has been passed by {@link ProjectRepository#save(Object) save}
      */
-    public String saveProject(Project project) throws IncorrectDetailsException {
+    public String saveProject(Project project) {
         String message;
         if (project.getProjectId() == 0) {
             message = "Successfully Created " + project.getProjectName();
         } else {
             message = "Successfully Updated " + project.getProjectName();
         }
-        try {
-            projectRepo.save(project);
-            return message;
-        } catch (PersistenceException e) {
-            logger.error("Failure Saving Project {}", project.getProjectId(), e);
-            throw new IncorrectDetailsException("Failure Saving Project");
-        }
+        projectRepo.save(project);
+        return message;
     }
 
     /**

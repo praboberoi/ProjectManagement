@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,8 +10,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
-
-import javax.persistence.PersistenceException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -109,9 +109,10 @@ class DashboardServiceTest {
 
     /**
      * Checks that correct message is returned when new project successfully saved
+     * @throws IncorrectDetailsException
      */
     @Test
-    void givenNewProject_whenSaveProject_thenProjectSaved() {
+    void givenNewProject_whenSaveProject_thenProjectSaved() throws IncorrectDetailsException {
         Project testProject = projectBuilder.build();
         when(projectRepository.save(any())).thenReturn(testProject);
         String returnMessage = dashboardService.saveProject(testProject);
@@ -120,23 +121,13 @@ class DashboardServiceTest {
 
     /**
      * Checks that correct message is returned when edited project successfully saved
+     * @throws IncorrectDetailsException
      */
     @Test
-    void givenEditedProject_whenSaveProject_thenProjectSaved() {
+    void givenEditedProject_whenSaveProject_thenProjectSaved() throws IncorrectDetailsException {
         Project testProject = projectBuilder.projectId(1).build();
         when(projectRepository.save(any())).thenReturn(testProject);
         String returnMessage = dashboardService.saveProject(testProject);
         assertEquals("Successfully Updated " + testProject.getProjectName(), returnMessage);
-    }
-
-    /**
-     * Checks that error is thrown when edited project unsuccessfully saved
-     */
-    @Test
-    void givenIncorrectProject_whenSaveProject_thenErrorThrown() {
-        Project testProject = projectBuilder.projectId(1).build();
-        when(projectRepository.save(any())).thenThrow(PersistenceException.class);
-        PersistenceException exception = assertThrows(PersistenceException.class, () -> {dashboardService.saveProject(testProject);});
-        assertEquals("Failure Saving Project", exception.getMessage());
     }
 }
