@@ -49,6 +49,7 @@ public class EvidenceService {
      */
     public Evidence getNewEvidence(User user) {
         return new Evidence.Builder()
+                .evidenceId(999)
                 .dateOccurred(new Date())
                 .title("New evidence")
                 .description("A new piece of evidence")
@@ -71,11 +72,11 @@ public class EvidenceService {
      * @throws IncorrectDetailsException Message explaining any incorrect values
      */
     public void verifyEvidence(Evidence evidence) throws IncorrectDetailsException {
-
-        if (evidence == null) 
+        if (evidence == null)
             throw new IncorrectDetailsException ("No evidence to verify");
 
-        else if (evidence.getDateOccurred() == null || evidence.getDescription() == null || evidence.getOwnerId() == null || evidence.getTitle() == null)
+        else if (evidence.getDateOccurred() == null || evidence.getDescription() == null || evidence.getOwnerId() == null ||
+                evidence.getTitle() == null || evidence.getProject() == null)
             throw new IncorrectDetailsException ("Evidence values are null");
 
         // Removes leading and trailing white spaces from the title
@@ -109,4 +110,6 @@ public class EvidenceService {
             throw new IncorrectDetailsException("Failure saving evidence");
         }
     }
+
+
 }

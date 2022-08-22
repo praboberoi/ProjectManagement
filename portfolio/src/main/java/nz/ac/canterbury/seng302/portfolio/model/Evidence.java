@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.Objects;
 
 /**
  * The evidence entity stored in the database for the portfolio application
@@ -91,6 +92,14 @@ public class Evidence {
         this.title = title;
         this.description = description;
         this.ownerId = ownerId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Evidence)) return false;
+        Evidence evidence = (Evidence) o;
+        return evidenceId == evidence.evidenceId && Objects.equals(project, evidence.project) && Objects.equals(title, evidence.title) && Objects.equals(dateOccurred, evidence.dateOccurred);
     }
 
     /**
