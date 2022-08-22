@@ -20,7 +20,7 @@ When("I type in an event name that is very long", ()=> {
 })
 
 Then('Event name validation is carried out', ()=> {
-    cy.get('#eventNameError').should('have.text', 'Event name must be less than 50 characters')
+    cy.get('#eventNameError').should('have.text', 'Event Name cannot exceed 50 characters')
 })
 
 When("The start date is after the end date", () => {
@@ -31,8 +31,8 @@ When("The start date is after the end date", () => {
 })
 
 Then("Date validation is carried out", ()=> {
-    cy.get('#startDateError').should('have.text', 'Start date must be before the end date')
-    cy.get('#endDateError').should('have.text', 'End date must be after the start date')
+    cy.get('#eventStartDateError').should('have.text', 'Start Date must be on or before the End Date.')
+    cy.get('#eventEndDateError').should('have.text', 'End Date must be on or after the Start Date')
 })
 
 // cypress
