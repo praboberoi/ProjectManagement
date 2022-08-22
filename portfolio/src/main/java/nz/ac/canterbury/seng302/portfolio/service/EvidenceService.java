@@ -99,11 +99,11 @@ public class EvidenceService {
     /**
      * Saves evidence into the database
      * @param evidence The evidence object to be saved
-     * @return Success message
-     * @throws IncorrectDetailsException
+     * @throws IncorrectDetailsException If the evidence has incorrect
      */
     public void saveEvidence(Evidence evidence) throws IncorrectDetailsException {
         try {
+            verifyEvidence(evidence);
             evidence = evidenceRepository.save(evidence);
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);

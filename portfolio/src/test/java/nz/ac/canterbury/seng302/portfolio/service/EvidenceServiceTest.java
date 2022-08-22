@@ -11,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.persistence.PersistenceException;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,8 +26,7 @@ public class EvidenceServiceTest {
     @MockBean
     private EvidenceRepository evidenceRepository;
     private EvidenceService evidenceService;
-    private Evidence.Builder evidenceBuilder = new Evidence.Builder();
-    private Project project;
+    private final Evidence.Builder evidenceBuilder = new Evidence.Builder();
     private Evidence evidence1;
 
     /**
@@ -38,7 +36,7 @@ public class EvidenceServiceTest {
     public void setup() {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 1);
-        project = new Project.Builder()
+        Project project = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()))
@@ -128,7 +126,7 @@ public class EvidenceServiceTest {
      */
     @Test
     public void givenEvidenceDateTooLate_whenVerifyEvent_thenCorrectExceptionIsThrown() {
-        evidence1.setDateOccurred(new Date(3025, 12, 2));
+        evidence1.setDateOccurred(new Date(3025, Calendar.MARCH, 2));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
 
@@ -189,7 +187,7 @@ public class EvidenceServiceTest {
      */
     @Test
     public void givenEvidenceWithUser_whenGetEvidenceByUserIdCalled_thenCorrectEvidenceReturned() {
-        List<Evidence> expectedEvidence = Arrays.asList(evidence1);
+        List<Evidence> expectedEvidence = List.of(evidence1);
         when(evidenceRepository.getAllByOwnerIdEquals(999)).thenReturn(expectedEvidence);
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(999);
         assertArrayEquals(listEvidence.toArray(), expectedEvidence.toArray());
