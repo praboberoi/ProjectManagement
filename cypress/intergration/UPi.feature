@@ -9,6 +9,24 @@ Feature: UPi Project Details
     When I select the CypressProject project
     Then I am on the CypressProject project page
 
+  Scenario: AC2: As a teacher, I can create and add all the details for a project.
+                Appropriate validation is always applied. All changes are persistent.
+
+    Given I login as an admin
+    When I select Create Project
+    Then I am directed to "/dashboard/newProject" URL
+
+    Given I login as an admin
+    When I select Create Project
+    And I enter CypressTest as a Project Name
+    And I enter '2022-07-15' as the project start date
+    And I enter '2023-07-15' as the project end date
+    And I enter "This is a test" as the project description
+    And I click on Create button
+    Then I am redirected to "/dashboard" URL
+    And A new Project with CypressTest is created
+
+
   Scenario: AC 8: As a teacher, I can edit any of the details except for sprint labels.  All changes are persistent.
     Given I login as an admin
     And I select the CypressProject project
@@ -24,7 +42,7 @@ Feature: UPi Project Details
     And The sprint start date is '2022-07-15'
     And The sprint end date is '2022-08-05'
 
-  Scenario: AC2: As a teacher, I can create a sprint easily (e.g., a “+” button to add another).
+  Scenario: AC6: As a teacher, I can create a sprint easily (e.g., a “+” button to add another).
     Given I login as an admin
     When I select the CypressProject project
     Then Create sprint button exists
