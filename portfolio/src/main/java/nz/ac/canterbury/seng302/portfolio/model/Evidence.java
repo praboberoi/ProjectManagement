@@ -102,6 +102,11 @@ public class Evidence {
         return evidenceId == evidence.evidenceId && Objects.equals(project, evidence.project) && Objects.equals(title, evidence.title) && Objects.equals(dateOccurred, evidence.dateOccurred);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(evidenceId, project, title, description, dateOccurred);
+    }
+
     /**
      * Builder class to construct an evidence object.
      */
