@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Deadline 2</title>
+</head>
+<body>
+  <p th:text="'id : '+ ${deadline.deadlineId}"></p>
+  <p th:text="'name : ' + ${deadline.name}"></p>
+  <p th:text="'date and time : ' + ${deadline.date}"></p>
+  <p th:text="'date ony : ' + ${deadline.getDateOnly()}"></p>
+  <p th:text="'time: ' + ${deadline.getTime()}"></p>
+</body>
+</html>
