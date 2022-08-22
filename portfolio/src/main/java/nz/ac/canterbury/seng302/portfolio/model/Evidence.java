@@ -13,6 +13,10 @@ public class Evidence {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int evidenceId;
 
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "projectId", nullable = false)
+    private Project project;
+
     @Column(nullable = false, length=50)
     private String title;
 
@@ -24,6 +28,7 @@ public class Evidence {
 
     @Column(nullable = false)
     private Integer ownerId;
+
 
     public int getEvidenceId() {
         return this.evidenceId;
@@ -44,7 +49,8 @@ public class Evidence {
     public String getTitle() {
         return this.title;
     }
-
+    public Project getProject() {return project;}
+    public void setProject(Project project) {this.project = project;}
     public void setDateOccurred(Date dateOccurred) {
         this.dateOccurred = dateOccurred;
     }
@@ -78,8 +84,9 @@ public class Evidence {
      * @param description the description of the evidence.
      * @param ownerId the user id of the creator and owner of the evidence.
      */
-    public Evidence(Integer evidenceId, Date dateOccurred, String title, String description, Integer ownerId)  {
+    public Evidence(Integer evidenceId, Project project, Date dateOccurred, String title, String description, Integer ownerId)  {
         this.evidenceId = evidenceId;
+        this.project = project;
         this.dateOccurred = dateOccurred;
         this.title = title;
         this.description = description;
@@ -95,6 +102,7 @@ public class Evidence {
         private String title;
         private String description = "";
         private Integer ownerId;
+        private Project project;
 
         /**
          * Builds the current Builder with the given evidence id
@@ -126,6 +134,11 @@ public class Evidence {
             return this;
         }
 
+        public Evidence.Builder project(Project project) {
+            this.project = project;
+            return this;
+        }
+
         /**
          * Builds the current Builder with the given description
          * @param description of type String.
@@ -152,7 +165,7 @@ public class Evidence {
          * @return Evidence object
          */
         public Evidence build() {
-            return new Evidence(evidenceId, dateOccurred, title, description, ownerId);
+            return new Evidence(evidenceId, project, dateOccurred, title, description, ownerId);
         }
     }
 }
