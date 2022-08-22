@@ -1,19 +1,17 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 
-import org.junit.jupiter.api.*;
-
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
+import javax.transaction.Transactional;
 import java.sql.Date;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import javax.transaction.Transactional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +19,9 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 class ProjectRepositoryTest {
     @Autowired private ProjectRepository projectRepo;
+
+    @MockBean
+    private EvidenceRepository evidenceRepository;
 
     @Test
     @Transactional

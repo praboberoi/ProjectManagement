@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.portfolio.service;
+package nz.ac.canterbury.seng302.portfolio.utils;
 
 /**
  * An exception class used for error handling when incorrect details have been passed.

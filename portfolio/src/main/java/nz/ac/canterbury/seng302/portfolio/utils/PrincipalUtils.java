@@ -1,11 +1,11 @@
 package nz.ac.canterbury.seng302.portfolio.utils;
 
-import java.util.Arrays;
-import java.util.List;
-
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.ClaimDTO;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * A collection of methods that retrieve data from a users principal
@@ -44,10 +44,20 @@ public class PrincipalUtils {
      */
     public static boolean checkUserIsTeacherOrAdmin(AuthState principal) {
         List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if ((userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return true;
-        }
-        return false;
+        return (userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()));
+    }
+
+    /**
+     * Get the current user's username.
+     * @param principal - current user detail.
+     * @return Current user's username.
+     */
+    public static String getUserName(AuthState principal) {
+        return principal.getClaimsList().stream()
+            .filter(claim -> claim.getType().equals("unique_name"))
+            .findFirst()
+            .map(ClaimDTO::getValue)
+            .orElse("guest");
     }
    
 }

@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,7 +24,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class EventService {
-    @Autowired EventRepository eventRepository;
+    @Autowired private EventRepository eventRepository;
     @Autowired private ProjectRepository projectRepository;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
 
@@ -34,8 +35,22 @@ public class EventService {
     }
 
     /**
+     * Returns an event object from the database. If the event is not present then it throws an exception.
+     * @param eventId The unique id (integer) of the requested event.
+     * @return Event The event requested with the associated id.
+     * @throws IncorrectDetailsException If null value is returned by {@link EventRepository#findById(Object) findById}
+     */
+    public Event getEvent(int eventId) throws IncorrectDetailsException {
+        Event result = eventRepository.findById(eventId);
+        if(result != null)
+            return result;
+        else
+            throw new IncorrectDetailsException("Failed to locate the event in the database");
+
+    }
+
+    /**
      * Creates a new event with a name
-     * @param project Project of the event
      * @return of type Event
      */
     public Event getNewEvent(Project project) {
@@ -80,7 +95,10 @@ public class EventService {
         else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null)
             throw new IncorrectDetailsException ("Event values are null");
 
-        else if (event.getEventName().length() < 1)
+        // Removes leading and trailing white spaces from the name
+        event.setEventName(event.getEventName().strip());
+
+        if (event.getEventName().length() < 1)
             throw new IncorrectDetailsException ("Event name must not be empty");
 
         else if (event.getEventName().length() > 50)
@@ -122,6 +140,22 @@ public class EventService {
         }
     }
 
+    /**
+     * Deletes event object from the database
+     * @param eventId of type int
+     * @return Message of type String
+     * @throws IncorrectDetailsException if unable to delete the event
+     */
+    public String deleteEvent(int eventId) throws IncorrectDetailsException {
+        try {
+            Event event = eventRepository.findById(eventId);
+            eventRepository.deleteById(eventId);
+            return "Successfully deleted " + event.getEventName();
+        } catch (IllegalArgumentException ex) {
+            logger.error("Failure deleting event, id was null", ex);
+            throw new IncorrectDetailsException("Could not find an existing event");
+        }
+    }
 }
 
 

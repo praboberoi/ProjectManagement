@@ -13,7 +13,7 @@ public interface PersistentSortRepository extends CrudRepository<PersistentSort,
 
     /**
      * Obtains a list of projects with the given name.
-     * @param projectName of type String.
+     * @param userId of type String.
      * @return a list of type Project.
      */
     public List<PersistentSort> findByUserId(int userId);

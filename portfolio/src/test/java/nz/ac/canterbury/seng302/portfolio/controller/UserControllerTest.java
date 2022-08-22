@@ -7,8 +7,13 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.testingUtils.ResponseTestUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.UserField;
-import nz.ac.canterbury.seng302.shared.identityprovider.*;
+import nz.ac.canterbury.seng302.shared.identityprovider.PaginatedUsersResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRoleChangeResponse;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
@@ -18,6 +23,10 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.Date;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mockStatic;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -27,9 +36,7 @@ import java.util.stream.Collectors;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -48,7 +55,19 @@ public class UserControllerTest {
     @Mock
     User user;
 
+    private static MockedStatic<PrincipalUtils> mockedUtil;
+
     UserResponse.Builder reply;
+
+    @BeforeAll
+    private static void initStaticMocks() {
+        mockedUtil = mockStatic(PrincipalUtils.class);
+    }
+
+    @AfterAll
+    public static void close() {
+        mockedUtil.close();
+    }
 
 	/**
      * Helper function which creates a new user for testing with
@@ -104,17 +123,14 @@ public class UserControllerTest {
 		List<UserResponse> preparedUsers = users.stream().map(user -> ResponseTestUtils.prepareUserResponse(user)).collect(Collectors.toList());
 
         PaginatedUsersResponse reply = ResponseTestUtils.preparePaginatedUsersResponse(preparedUsers, 10);
-		try (MockedStatic<PrincipalUtils> mocked = mockStatic(PrincipalUtils.class)) {
-			when(PrincipalUtils.getUserId(any())).thenReturn(0);
-			mocked.when(() -> PrincipalUtils.getUserId(any(AuthState.class))).thenReturn(1);
-            when(userAccountClientService.getUser(any())).thenReturn(ResponseTestUtils.prepareUserResponse(createTestUser(0)));
-			when(persistentSortRepository.findById(anyInt())).thenReturn(Optional.of(sort));
-			when(userAccountClientService.getUsers(anyInt(), anyInt(), any(UserField.class), anyBoolean())).thenReturn(reply);
-			this.mockMvc
-				.perform(get("/users"))
-				.andExpect(status().isOk())
-               .andExpect(model().attribute("usersList", users));
-		}
+        when(PrincipalUtils.getUserId(any())).thenReturn(0);
+        when(userAccountClientService.getUser(any())).thenReturn(ResponseTestUtils.prepareUserResponse(createTestUser(0)));
+        when(persistentSortRepository.findById(anyInt())).thenReturn(Optional.of(sort));
+        when(userAccountClientService.getUsers(anyInt(), anyInt(), any(UserField.class), anyBoolean())).thenReturn(reply);
+        this.mockMvc
+            .perform(get("/users"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("usersList", users));
    }
 
    /**

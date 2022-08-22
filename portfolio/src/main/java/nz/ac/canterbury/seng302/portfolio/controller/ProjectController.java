@@ -1,24 +1,33 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
-import nz.ac.canterbury.seng302.portfolio.model.Deadline;
+
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.service.*;
+import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
+import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
 import java.sql.Date;
 import java.util.List;
+
 /**
  * A controller which accepts api calls and directs it to the correct service
  */
@@ -28,10 +37,10 @@ public class ProjectController {
     @Autowired private DashboardService dashboardService;
     @Autowired private ProjectService projectService;
     @Autowired private EventService eventService;
-    @Autowired private DeadlineService deadlineService;
     @Autowired private UserAccountClientService userAccountClientService;
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
     @Value("${apiPrefix}") private String apiPrefix;
+
     /**
      * Adds common model elements used by all controller methods.
      */
@@ -39,17 +48,19 @@ public class ProjectController {
     public void addAttributes(Model model) {
         model.addAttribute("apiPrefix", apiPrefix);
     }
+
     /**
-     * Gets all the sprints and returns it in a ResponseEntity
+     * Gets all of the sprints and returns it in a ResponseEntity
      * @param projectId The Id of the project to get sprints from
      * @return A ResponseEntity containing a list of sprints
      */
-    @RequestMapping(path="/project/{projectId}/getAllSprints", method = RequestMethod.GET)
+    @GetMapping(path="/project/{projectId}/getAllSprints")
     public ResponseEntity<List<Sprint>> getAllSprints(
             @PathVariable("projectId") int projectId) {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         return ResponseEntity.status(HttpStatus.OK).body(listSprints);
     }
+
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
      * to the individual project pages.
@@ -59,7 +70,7 @@ public class ProjectController {
      * @param ra Redirect Attribute frontend message object
      * @return - name of the html page to display
      */
-    @RequestMapping(path="/project/{projectId}", method = RequestMethod.GET)
+    @GetMapping(path="/project/{projectId}")
     public String showProject(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -68,20 +79,23 @@ public class ProjectController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
-            List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             Project project = projectService.getProjectById(projectId);
+            Event newEvent = eventService.getNewEvent(project);
             model.addAttribute("listEvents", listEvents);
             model.addAttribute("listSprints", listSprints);
-            model.addAttribute("listDeadlines", listDeadlines);
             model.addAttribute("project", project);
+            model.addAttribute("event", newEvent);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("projectDateMin", project.getStartDate());
+            model.addAttribute("projectDateMax", project.getEndDate());
             return "project";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
         }
     }
+
     /**
      * Checks if a sprints dates are valid and returns a Response containing a message
      * @param projectId ID of the project to check
@@ -108,5 +122,16 @@ public class ProjectController {
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
+    }
+
+    /**
+     * Basic message to test the functionality of the websocket
+     * @param message Message to send to all subscribe clients
+     * @return Message for subscribed clients
+     */
+    @MessageMapping("/hello")
+    @SendTo("/topic/greetings")
+    public String greeting(String message) {
+        return message;
     }
 }

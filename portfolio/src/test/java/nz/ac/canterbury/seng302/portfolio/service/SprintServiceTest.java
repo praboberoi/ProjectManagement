@@ -1,10 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
-import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +24,9 @@ import java.util.Calendar;
 @ActiveProfiles("test")
 class SprintServiceTest {
     Project project;
-    
+
+    @MockBean
+    private EvidenceRepository evidenceRepository;
     @MockBean
     private SprintRepository sprintRepository;
 
@@ -91,13 +90,23 @@ class SprintServiceTest {
      * Tests that a sprint with the maximum character count will be valid
      */
     @Test
-    public void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
+    public void givenValidLargeSprintDescription_whenSprintValidated_thenPassesValidation() {
         Sprint sprint = sprintBuilder
             .description("0123456789".repeat(25)) //250 characters
             .build();
             assertDoesNotThrow(() -> {
                 assertTrue(sprintService.verifySprint(sprint));
             });
+    }
+
+    /**
+     * Asserts that an exception is thrown when a sprint has too long of a name
+     */
+    @Test
+    public void givenInvalidLargeSprintName_whenSprintValidated_thenFailsValidation() {
+        Sprint sprint = sprintBuilder.sprintName("this is going to be more than 50 characters so an error message should be thrown")
+                .build();
+        assertThrows(IncorrectDetailsException.class, () -> sprintService.verifySprint(sprint));
     }
 
 }

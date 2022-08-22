@@ -1,10 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
 import io.grpc.Deadline;
-import nz.ac.canterbury.seng302.portfolio.model.Event;
-import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 
 /**
@@ -32,6 +33,10 @@ public class EventServiceTest {
 
     @MockBean
     private EventRepository eventRepository;
+
+    @MockBean
+    private EvidenceRepository evidenceRepository;
+
 
     @MockBean
     private ProjectRepository projectRepository;
@@ -380,5 +385,118 @@ public class EventServiceTest {
                 eventService.saveEvent(newEvent));
         assertEquals("Failure Saving Event", exception.getMessage());
     }
+
+    /**
+     * Tests to make sure event is returned when get valid event.
+     */
+    @Test
+    public void givenExistingEvent_whenGetEventWithId_thenReturnEvent() throws IncorrectDetailsException {
+        Event event = eventBuilder.eventId(1)
+                .eventName("New Event")
+                .project(new Project())
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
+                .build();
+
+        when(eventRepository.findById(1)).thenReturn(event);
+        Event returnedEvent = eventService.getEvent(1);
+        assertTrue(event.equals(returnedEvent));
+    }
+
+    /**
+     * Tests to make sure an error is thrown when calling getEvent on a non-existent event.
+     */
+    @Test
+    public void givenNotExistingEvent_whenGetEvent_thenExceptionThrown() {
+        when(eventRepository.findById(0)).thenReturn(null);
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                eventService.getEvent(0));
+        assertEquals("Failed to locate the event in the database", exception.getMessage());
+    }
+
+    /**
+     * Tests to make sure a list of sorted events is returned when calling getEventByProjectId.
+     */
+    @Test
+    public void givenProjectWithEvents_whenGetEventByProjectId_thenSortedEventsReturned() {
+
+        List<Event> listEvents = new ArrayList<Event>();
+        Event event1 = eventBuilder.eventId(1)
+                .eventName("New Event 1")
+                .project(new Project())
+                .startDate(Date.valueOf(LocalDate.now().plusDays(1)))
+                .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
+                .build();
+        Event event2 = eventBuilder.eventId(1)
+                .eventName("New Event 2")
+                .project(new Project())
+                .startDate(Date.valueOf(LocalDate.now().plusDays(2)))
+                .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
+                .build();
+        Event event3 = eventBuilder.eventId(1)
+                .eventName("New Event 3")
+                .project(new Project())
+                .startDate(Date.valueOf(LocalDate.now().plusDays(3)))
+                .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
+                .build();
+
+        listEvents.add(event2);
+        listEvents.add(event3);
+        listEvents.add(event1);
+
+        project = new Project.Builder()
+                .description("This is a test project")
+                .startDate(new java.sql.Date(2020 - 1900, 11, 12))
+                .endDate(new java.sql.Date(2023 - 1900, 1, 10))
+                .projectName("Project 2020")
+                .projectId(1)
+                .build();
+
+        Optional<Project> projectOptional = Optional.of(project);
+
+        when(projectRepository.findById(anyInt())).thenReturn(projectOptional);
+        when(eventRepository.findByProject(project)).thenReturn(listEvents);
+        List<Event> returnedList = eventService.getEventByProjectId(1);
+        assertTrue(returnedList.get(0).equals(event1));
+        assertTrue(returnedList.get(1).equals(event2));
+        assertTrue(returnedList.get(2).equals(event3));
+    }
+    /**
+     * Asserts that an event is properly deleted when deleteEvent is called
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    public void givenEventExists_whenDeleteEventCalled_thenEventSuccessfullyDeleted() throws IncorrectDetailsException {
+        Event newEvent = eventBuilder.eventId(99)
+                .eventName("New Event")
+                .project(new Project())
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
+                .build();
+
+        when(eventRepository.findById(99)).thenReturn(newEvent);
+        assertEquals("Successfully deleted " + newEvent.getEventName(), eventService.deleteEvent(99));
+
+    }
+
+    /**
+     * Asserts that the correct error message is thrown when attempting to delete a non-existent event
+     */
+    @Test
+    public void givenEventDoesntExists_whenDeleteEventCalled_thenEventErrorIsThrown(){
+        Event newEvent = eventBuilder.eventId(99)
+                .eventName("New Event")
+                .project(new Project())
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(Date.valueOf(LocalDate.now().plusDays(7)))
+                .build();
+
+        when(eventRepository.findById(99)).thenThrow(IllegalArgumentException.class);
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                eventService.deleteEvent(99));
+        assertEquals("Could not find an existing event", exception.getMessage() );
+
+    }
+
 
 }

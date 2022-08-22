@@ -16,14 +16,14 @@ public interface EventRepository extends CrudRepository<Event, Integer>{
     List<Event> findByEventName(String eventName);
 
     /**
-     * Get a list of events that are stored with the given ID
+     * Get the event with the given ID
      * @param eventId Event's ID
-     * @return A list of events found
+     * @return The corrosponding event
      */
     Event findById(int eventId);
 
     /**
-     * Obtains a list of events containing the given project.
+     * Obtains a list of events within the given project.
      * @param project of type Project.
      * @return list of type Event.
      */

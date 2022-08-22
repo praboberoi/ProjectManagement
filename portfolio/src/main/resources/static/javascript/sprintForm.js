@@ -5,8 +5,8 @@
 // Regular expression for Sprint Name field. No leading white spaces or empty field.
 const sprintNameRegex = /^\S/;
 const projectId = document.getElementById("projectId").value;
-const startDateElement = document.getElementById('startDate');
-const endDateElement = document.getElementById('endDate');
+const startDateElement = document.getElementById("sprint-start-date");
+const endDateElement = document.getElementById("sprint-end-date");
 const labelElement = document.getElementById('sprint-label');
 const sprintId = document.getElementById('sprintId').value;
 const dateError = document.getElementById('dateError');
@@ -26,6 +26,9 @@ function checkSprintName() {
     if (sprintName.value.length < 1) {
         sprintName.classList.add("formError");
         sprintNameError.innerText = "Sprint Name must not be empty";
+    } else if (sprintName.value.length > 50) {
+        sprintName.classList.add("formError");
+        sprintNameError.innerText = "Sprint Name must be less than 50 characters";
     } else if (! sprintNameRegex.test(sprintName.value)) {
         sprintName.classList.add("formError");
         sprintNameError.innerText = "Sprint Name must not start with empty space";
@@ -106,7 +109,7 @@ function checkEndDate() {
  * Updates the characters remaining in the description.
  */
 function checkSprintDescription () {
-    let descriptionElement = document.getElementById("sprintDescription");
+    let descriptionElement = document.getElementById("sprint-description");
     let descErrorElement = document.getElementById("descriptionError");
 
     let charMessage = document.getElementById("charCount");

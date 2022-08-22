@@ -85,6 +85,8 @@ public class Event {
         return this.eventId;
     }
 
+    public void setEventId(int eventId) { this.eventId = eventId; }
+
     public String getEventName() {
         return this.eventName;
     }

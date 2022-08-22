@@ -2,25 +2,24 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.sql.Date;
 import javax.persistence.PersistenceException;
+import java.sql.Date;
 import java.util.List;
 
 @Controller
@@ -46,7 +45,7 @@ public class SprintController {
      * @param ra Redirect Attribute frontend message object
      * @return New sprint form page or redirect to project if an error occurs
      */
-    @RequestMapping(path="/project/{projectId}/newSprint", method = RequestMethod.GET)
+    @GetMapping(path="/project/{projectId}/newSprint")
     public String newSprint(
             @PathVariable ("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -143,17 +142,16 @@ public class SprintController {
         }
     }
 
-        /**
-         * Directs to page for editing a sprint
-         * @param sprintId ID for sprint being edited
-         * @param projectId ID of the project
-         * @param model
-         * @param principal Current user
-         * @param ra Redirect Attribute frontend message object
-         * @return Sprint form page with selected sprint or redirect to project page on error
-         */
-    /*make sure to update project.html for path*/
-    @RequestMapping(path="/project/{projectId}/editSprint/{sprintId}", method = RequestMethod.GET)
+    /**
+     * Directs to page for editing a sprint
+     * @param sprintId ID for sprint being edited
+     * @param projectId ID of the project
+     * @param model
+     * @param principal Current user
+     * @param ra Redirect Attribute frontend message object
+     * @return Sprint form page with selected sprint or redirect to project page on error
+     */
+    @GetMapping(path="/project/{projectId}/editSprint/{sprintId}")
     public String sprintEditForm(
             @PathVariable("sprintId") int sprintId,
             @PathVariable("projectId") int projectId,
@@ -188,7 +186,7 @@ public class SprintController {
      * @param ra Redirect Attribute frontend message object
      * @return
      */
-    @RequestMapping(path="/{projectId}/deleteSprint/{sprintId}", method = RequestMethod.POST)
+    @PostMapping(path="/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(
         @PathVariable("sprintId") int sprintId,
         Model model,

@@ -2,10 +2,12 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
-import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +43,7 @@ public class DashboardController {
      * @param principal Current user of type {@link AuthState}
      * @return dashboard.html file
      */
-    @RequestMapping(path = "/dashboard",method = RequestMethod.GET)
+    @GetMapping(path = "/dashboard")
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
@@ -63,10 +65,10 @@ public class DashboardController {
      * @param principal Of type{@link AuthState}
      * @return projectForm.html file
      */
-    @RequestMapping(path="/dashboard/newProject", method = RequestMethod.GET)
+    @GetMapping(path="/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-//        model.addAttribute("apiPrefix", apiPrefix);
+        model.addAttribute("apiPrefix", apiPrefix);
         Project newProject = dashboardService.getNewProject();
         List<Date> dateRange = dashboardService.getProjectDateRange(newProject);
         model.addAttribute("project", newProject);
@@ -89,7 +91,7 @@ public class DashboardController {
      * @param principal Of type {@link AuthState}
      * @return Either the dashboard.html file or error.html file
      */
-    @RequestMapping(path="/dashboard/saveProject", method = RequestMethod.POST)
+    @PostMapping(path="/dashboard/saveProject")
     public String saveProject(
             Project project,
             Model model,
@@ -104,7 +106,6 @@ public class DashboardController {
             return "redirect:/dashboard";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-//            model.addAttribute("apiPrefix", apiPrefix);
             return "redirect:/dashboard";
         } catch (Exception e) {
             model.addAttribute("user", userAccountClientService.getUser(principal));
@@ -121,7 +122,7 @@ public class DashboardController {
      * @param principal Of type {@link AuthState}
      * @return projectForm.html file or dashboard.html file
      */
-    @RequestMapping(path="/dashboard/editProject/{projectId}", method = RequestMethod.GET)
+    @GetMapping(path="/dashboard/editProject/{projectId}")
     public String showEditForm(
         @PathVariable(
         value = "projectId") int projectId,
@@ -156,7 +157,7 @@ public class DashboardController {
      * @param principal of type {@link AuthState}
      * @return dashboard.html file or error.html file
      */
-    @RequestMapping(path="/dashboard/deleteProject/{projectId}", method = RequestMethod.POST)
+    @PostMapping(path="/dashboard/deleteProject/{projectId}")
     public String deleteProject(
         @PathVariable("projectId") int projectId,
         RedirectAttributes ra,
