@@ -14,40 +14,13 @@ When("I enter {word} as a Project Name", (word) => {
 })
 
 When("I enter {string} as the project start date", (date) => {
-    const currentDate = new Date()
-    // const longerThanYear = new Date(currentDate.getFullYear() - 10, currentDate.getMonth(), currentDate.getDate())
-    // cy.get('#startDate').type(`${longerThanYear.toISOString().substring(0,10)}`)
-    // cy.get('#startDateError').should('have.text','Project must have started in the last year.' )
     cy.get('#startDate').type(date)
     cy.get('#startDateError').should('have.text','' )
-
-    // const afterEndDate = new Date(currentDate.getFullYear() + 2, currentDate.getMonth(), currentDate.getDate())
-    // cy.get('#startDate').type(`${afterEndDate.toISOString().substring(0,10)}`)
-    // cy.get('#startDateError').should('have.text','Start date must be before the end date.' )
-    // cy.get('#endDateError').should('have.text','End date must be after the start date' )
-    // cy.get('#startDate').type(date)
-    // cy.get('#endDateError').should('have.text','' )
-    // cy.get('#startDateError').should('have.text','' )
-
 })
 
 When("I enter {string} as the project end date", (date) => {
-    // const currentDate = new Date()
-    // const longerThanTenYears = new Date(currentDate.getFullYear() + 12, currentDate.getMonth(), currentDate.getDate())
-    // cy.get('#endDate').type(`${longerThanTenYears.toISOString().substring(0,10)}`)
-    // cy.get('#endDateError').should('have.text','Project must end in the next 10 years.' )
     cy.get('#endDate').type(date)
     cy.get('#endDateError').should('have.text','' )
-
-    // const beforeStartDate = new Date(currentDate.getFullYear() - 4, currentDate.getMonth(), currentDate.getDate())
-    // cy.get('#endDate').type(`${beforeStartDate.toISOString().substring(0,10)}`)
-    // cy.get('#startDateError').should('have.text','Start date must be before the end date.' )
-    // cy.get('#endDateError').should('have.text','End date must be after the start date' )
-    // cy.get('#EndDate').type(date)
-    // cy.get('#endDateError').should('have.text','' )
-    // cy.get('#startDateError').should('have.text','' )
-
-
 })
 
 When("I enter {string} as the project description", (description) => {
@@ -73,5 +46,19 @@ Then("A new Project with {word} is created", (word) => {
     cy.get('#deleteProject').children().contains(' Delete').click()
     cy.visit("/logout")
 })
+
+Then("I am unable to create the project", () => {
+    cy.url().should('include', "/dashboard/newProject")
+})
+
+Then("{string} error message is displayed under the start date", (errorMessage) => {
+    cy.get('#startDateError').should('have.text',errorMessage )
+})
+
+Then("{string} error message is displayed under the end date", (errorMessage) => {
+    cy.get('#endDateError').should('have.text',errorMessage )
+    cy.visit("/logout")
+})
+
 
 
