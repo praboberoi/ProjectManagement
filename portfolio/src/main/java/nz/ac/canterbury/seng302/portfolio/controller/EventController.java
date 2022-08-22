@@ -42,46 +42,6 @@ public class EventController {
         model.addAttribute("apiPrefix", apiPrefix);
     }
 
-
-    /**
-     * Opens eventForm.html and populates it with a new Event object
-     * Checks for teacher or admin privileges
-     * @param projectId ID of the project
-     * @param principal Current user
-     * @param ra Redirect Attribute frontend message object
-     * @param model
-     * @return link of the html page to display
-     */
-    @RequestMapping(path = "/project/{projectId}/newEvent", method = RequestMethod.GET)
-    public String newEvent(
-            Model model,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra,
-            @PathVariable ("projectId") int projectId) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
-        model.addAttribute("apiPrefix", apiPrefix);
-        Event newEvent;
-        Project currentProject;
-        try {
-            currentProject = projectService.getProjectById(projectId);
-            newEvent = eventService.getNewEvent(currentProject);
-            model.addAttribute("project", currentProject);
-            model.addAttribute("event", newEvent);
-            model.addAttribute("pageTitle", "Add New Event");
-            model.addAttribute("submissionName", "Create");
-            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
-            model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("projectDateMin", currentProject.getStartDate());
-            model.addAttribute("projectDateMax", currentProject.getEndDate());
-            return "eventForm";
-
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/{projectId}";
-        }
-    }
-
-
     /**
      * Checks if event dates are valid and if it is saves the event
      * @param event Event object
@@ -136,41 +96,6 @@ public class EventController {
         }
 
         return "redirect:/project/{projectId}";
-    }
-
-    /**
-     * Directs to page for editing an event
-     * @param eventId ID for event being edited
-     * @param projectId ID of the project
-     * @param model
-     * @param principal Current user
-     * @param ra Redirect Attribute frontend message object
-     * @return Event form page with selected event or redirect to project page on error
-     */
-    @RequestMapping(path="/project/{projectId}/editEvent/{eventId}", method = RequestMethod.GET)
-    public String eventEditForm(
-            @PathVariable("eventId") int eventId,
-            @PathVariable("projectId") int projectId,
-            Model model,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
-        try {
-            Project currentProject = projectService.getProjectById(projectId);
-            Event event = eventService.getEvent(eventId);
-            model.addAttribute("project", currentProject);
-            model.addAttribute("event", event);
-            model.addAttribute("pageTitle", "Edit Event: " + event.getEventName());
-            model.addAttribute("submissionName", "Save");
-            model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
-            model.addAttribute("user", userAccountClientService.getUser(principal));
-            model.addAttribute("projectDateMin", currentProject.getStartDate());
-            model.addAttribute("projectDateMax", currentProject.getEndDate());
-            return "eventForm";
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/{projectId}";
-        }
     }
 }
 

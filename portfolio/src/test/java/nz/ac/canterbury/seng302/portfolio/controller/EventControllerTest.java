@@ -5,7 +5,6 @@ import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
-import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -113,44 +112,6 @@ public class EventControllerTest {
     }
 
     /**
-     * Tests that the new event form is created with the required information
-     */
-    @Test
-    void givenServer_WhenNavigateToNewEventForm_ThenAppropriateFormIsReturned() {
-        Event event = new Event.Builder()
-                .eventName("New Event")
-                        .startDate(java.sql.Date.valueOf(LocalDate.now()))
-                        .endDate(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-                        .build();
-
-        try {
-            when(projectService.getProjectById(1)).thenReturn(project);
-            when(projectService.getProjectById(0)).thenThrow(new IncorrectDetailsException("Project not found"));
-            when(eventService.getNewEvent(project)).thenReturn(event);
-            when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-            this.mockMvc
-                    .perform(get("/project/1/newEvent"))
-                    .andExpect(status().isOk())
-                    .andExpect(model().attribute("project", project))
-                    .andExpect(model().attribute("event", event))
-                    .andExpect(model().attribute("pageTitle", "Add New Event"))
-                    .andExpect(model().attribute("user", userResponse.build()))
-                    .andExpect(model().attribute("projectDateMin", project.getStartDate()))
-                    .andExpect(model().attribute("projectDateMax", project.getEndDate()))
-                    .andExpect(view().name("eventForm"));
-
-            this.mockMvc
-                    .perform(get("/project/0/newEvent"))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", "Project not found"))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * Test verification of event object and check that it redirect the user to the project page.
      */
     @Test
@@ -218,94 +179,6 @@ public class EventControllerTest {
                     .andExpect(status().is3xxRedirection())
                     .andExpect(flash().attribute("messageDanger", "Failure deleting Event"))
                     .andExpect(view().name("redirect:/project/{projectId}"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Tests that when an attempt is made to edit an event that doesn't exist then the appropriate error is returned.
-      */
-    @Test
-    void givenProjectDetails_WhenNavigateToEditEventFormForNonExistentEvent_ThenAppropriateErrorReturned() {
-        Event event = new Event.Builder()
-                .eventName("New Event")
-                .startDate(java.sql.Date.valueOf(LocalDate.now()))
-                .endDate(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-                .build();
-        try {
-            when(projectService.getProjectById(1)).thenReturn(project);
-            when(projectService.getProjectById(0)).thenThrow(new IncorrectDetailsException("Project not found"));
-            when(eventService.getEvent(1)).thenReturn(event);
-            when(eventService.getEvent(0)).thenThrow(new IncorrectDetailsException("Failed to locate the event in the database"));
-            when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-            this.mockMvc
-                    .perform(get("/project/1/editEvent/0"))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", "Failed to locate the event in the database"))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Tests that when an attempt is made to edit an event for a project that doesn't exist then the appropriate error
-     * is returned.
-     */
-    @Test
-    void givenProjectDetails_WhenNavigateToEditEventFormForNonExistentProject_ThenAppropriateErrorReturned() {
-        Event event = new Event.Builder()
-                .eventName("New Event")
-                .startDate(java.sql.Date.valueOf(LocalDate.now()))
-                .endDate(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-                .build();
-        try {
-            when(projectService.getProjectById(1)).thenReturn(project);
-            when(projectService.getProjectById(0)).thenThrow(new IncorrectDetailsException("Project not found"));
-            when(eventService.getEvent(1)).thenReturn(event);
-            when(eventService.getEvent(0)).thenThrow(new IncorrectDetailsException("Failed to locate the event in the database"));
-            when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-            this.mockMvc
-                    .perform(get("/project/0/editEvent/1"))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", "Project not found"))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Tests that the edit event form is created with the required information
-     */
-    @Test
-    void givenServer_WhenNavigateToEditEventForm_ThenAppropriateFormIsReturned() {
-        Event event = new Event.Builder()
-                .eventName("New Event")
-                .startDate(java.sql.Date.valueOf(LocalDate.now()))
-                .endDate(java.sql.Date.valueOf(LocalDate.now().plusDays(1)))
-                .build();
-
-        try {
-            when(projectService.getProjectById(1)).thenReturn(project);
-            when(projectService.getProjectById(0)).thenThrow(new IncorrectDetailsException("Project not found"));
-            when(eventService.getEvent(1)).thenReturn(event);
-            when(eventService.getEvent(0)).thenThrow(new IncorrectDetailsException("Failed to locate the event in the database"));
-            when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-            this.mockMvc
-                    .perform(get("/project/1/editEvent/1"))
-                    .andExpect(status().isOk())
-                    .andExpect(model().attribute("project", project))
-                    .andExpect(model().attribute("event", event))
-                    .andExpect(model().attribute("pageTitle", "Edit Event: " + event.getEventName()))
-                    .andExpect(model().attribute("submissionName", "Save"))
-                    .andExpect(model().attribute("user", userResponse.build()))
-                    .andExpect(model().attribute("projectDateMin", project.getStartDate()))
-                    .andExpect(model().attribute("projectDateMax", project.getEndDate()))
-                    .andExpect(view().name("eventForm"));
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
