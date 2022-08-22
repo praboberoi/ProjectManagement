@@ -1,19 +1,30 @@
 package nz.ac.canterbury.seng302.portfolio;
 
 import nz.ac.canterbury.seng302.portfolio.authentication.JwtAuthenticationFilter;
+
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
+/**
+ * Configures the security elements of the application to ensure only verified users can use it
+ */
 @Configuration
 @EnableWebSecurity
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
-    @Override
-    protected void configure(HttpSecurity security) throws Exception
+    /**
+     * Defines the login and logout pages, as well as setting the basic security options
+     * @param security Http security object containing settings required for spring security
+     * @return Completed security object
+     * @throws Exception
+     */
+    @Bean
+    protected SecurityFilterChain filterChain(HttpSecurity security) throws Exception
     {
         // Force authentication for all endpoints except /login
         security
@@ -37,12 +48,17 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         security.cors();
         security.csrf().disable();
-
+        security.httpBasic().disable();
+        return security.build();
     }
 
-    @Override
-    public void configure(WebSecurity web) throws Exception
+    /**
+     * Adds the bypasses to pages allowing the user to access the register and login page
+     * @return
+     */
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer()
     {
-        web.ignoring().antMatchers("/login", "/register", "/css/**", "/icons/**", "/javascript/**");
+        return web -> web.ignoring().antMatchers("/login", "/register", "/css/**", "/icons/**", "/javascript/**");
     }
 }
