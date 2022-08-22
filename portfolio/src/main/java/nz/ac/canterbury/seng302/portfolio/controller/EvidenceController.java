@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
@@ -46,11 +47,11 @@ public class EvidenceController {
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal
             ) {
-        String message ="";
+//        String message ="";
         try {
             evidenceService.verifyEvidence(evidence);
-            message = evidenceService.saveEvidence(evidence);
-            ra.addFlashAttribute("messageSuccess", message);
+            evidenceService.saveEvidence(evidence);
+            ra.addFlashAttribute("messageSuccess", "Successfully Created " + evidence.getTitle());
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
