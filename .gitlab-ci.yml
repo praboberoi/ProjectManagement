@@ -1,3 +1,9 @@
+workflow:
+  rules:
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"
+      when: never
+    - when: always
+
 stages:
   - tagChecking
   - publishProtosToLocalMavenRepo
@@ -31,17 +37,33 @@ junit-identityprovider:
     paths:
       - identityprovider/build/jacoco/test-report.xml
 
-sonarqube-analysis:
+sonarqube2-identityprovider:
   stage: sonarqube
   variables:
-    GIT_FETCH_EXTRA_FLAGS: --unshallow
     GIT_DEPTH: 0
   script:     
     - cd identityprovider
     - ./gradlew sonarqube -P SONARQUBE=${SONARQUBE}
-    - cd ../portfolio
+  allow_failure: true
+  only:
+    - merge_requests
+    - tags
+    - master
+    - develop
+
+sonarqube1-portfolio:
+  stage: sonarqube
+  variables:
+    GIT_DEPTH: 0
+  script:     
+    - cd portfolio
     - ./gradlew sonarqube -P SONARQUBE=${SONARQUBE}
   allow_failure: true
+  only:
+    - merge_requests
+    - tags
+    - master
+    - develop
 
 publish-protos-to-maven-local:
   stage: publishProtosToLocalMavenRepo

@@ -1,4 +1,5 @@
 DELETE FROM sprint WHERE project_id IN (SELECT project_id FROM project WHERE project_name LIKE '%Cypress%');
+DELETE FROM event WHERE project_id IN (SELECT project_id FROM project WHERE project_name LIKE '%Cypress%');
 DELETE FROM project WHERE project_name LIKE '%Cypress%';
 
 -- Create the cypress test project
