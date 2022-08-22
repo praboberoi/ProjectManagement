@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Deadline Test</title>
+</head>
+<body>
+<form id="createDeadlineForm" th:action="@{/postDeadline}" method="post" th:object="${deadline}">
+    <input type="hidden" th:field="*{deadlineId}">
+    <input type="hidden" th:field="*{project}">
+    <label for="name">Deadline Name</label>
+        <input id="name" type="text" th:field="*{name}">
+    <label for="dateTime">Deadline DateTime</label>
+        <input id="dateTime" type="datetime-local" th:field="*{date}">
+
+    <button type= "submit" name="Submit">Submit</button>
+</form>
+</body>
+</html>

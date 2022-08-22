@@ -128,7 +128,7 @@ public class DashboardService {
             throw new IncorrectDetailsException("A project cannot end more than ten years from now.");
         }
         if (project.getDescription().length() > 250) {
-            throw new IncorrectDetailsException("Start date of the project cannot be after the end date of the project");
+            throw new IncorrectDetailsException("Project description cannot exceed 250 characters");
         }
     }
 
