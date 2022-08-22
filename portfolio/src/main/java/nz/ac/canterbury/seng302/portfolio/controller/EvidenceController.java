@@ -37,9 +37,9 @@ public class EvidenceController {
     /** Checks if evidence variables are valid and if it is then saves the evidence
      * @param evidence Evidence object
      * @param ra Redirect Attribute frontend message object
-     * @return link of html pgae to display
+     * @return link of html page to display
      */
-    @PostMapping(path="/account/saveEvidence")
+    @PostMapping(path="/evidence/saveEvidence")
     public String saveEvidence(
             @ModelAttribute Evidence evidence,
             Model model,
@@ -54,7 +54,7 @@ public class EvidenceController {
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        return "redirect:/account";
+        return "redirect:/evidence";
     }
 
 //    NOTE: delete not part of this story
@@ -64,7 +64,7 @@ public class EvidenceController {
      * @param model
      * @return
      */
-    @PostMapping(path="/account/deleteEvidence/{evidenceId")
+    @PostMapping(path="/evidence/{evidenceId}/deleteEvidence")
     public String deleteEvidence(
             @PathVariable("evidenceId") int evidenceId,
             RedirectAttributes ra,
@@ -78,7 +78,7 @@ public class EvidenceController {
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        return "redirect:/account/evidence";
+        return "redirect:/evidence";
     }
 
 

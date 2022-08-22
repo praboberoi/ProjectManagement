@@ -30,6 +30,7 @@ public class EvidenceControllerTest {
 
     @BeforeEach
     public void init() {
+    evidence = new Evidence.Builder()
 
     }
 
