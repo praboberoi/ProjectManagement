@@ -5,7 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.DeadlineRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
-import nz.ac.canterbury.seng302.portfolio.service.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
