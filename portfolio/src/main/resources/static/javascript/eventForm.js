@@ -112,10 +112,12 @@ function checkEndDate() {
 function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
     if (isEdit) {
         document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
-        document.getElementById('eventStartDate').value =  startDate;
+        document.getElementById('eventFormSubmitButton').innerText =  'Save';
+        document.getElementById('eventStartDate').value = startDate;
         document.getElementById('eventEndDate').value =  endDate;
     } else {
         document.getElementById('eventFormTitle').innerText =  'Create New Event';
+        document.getElementById('eventFormSubmitButton').innerText =  'Create';
         document.getElementById('eventStartDate').value =  startDate + 'T00:00';
         document.getElementById('eventEndDate').value =  endDate + 'T00:00';
     }
