@@ -37,8 +37,8 @@ public class EvidenceService {
         if (result != null)
             return result;
         else {
-            logger.error("Failure locating evidence with ID:" + evidenceId);
-            throw new IncorrectDetailsException("Failed to locate the piece of evidence with ID: " + evidenceId);
+            logger.error(String.format("Failure locating evidence with ID: %d",evidenceId));
+            throw new IncorrectDetailsException(String.format("Failed to locate the piece of evidence with ID: %d", evidenceId));
         }
     }
 
@@ -104,7 +104,7 @@ public class EvidenceService {
     public void saveEvidence(Evidence evidence) throws IncorrectDetailsException {
         try {
             verifyEvidence(evidence);
-            evidence = evidenceRepository.save(evidence);
+            evidenceRepository.save(evidence);
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);
             throw new IncorrectDetailsException("Failure saving evidence");

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
  * Test class for the functionality in the evidence service class
  */
 @SpringBootTest
-public class EvidenceServiceTest {
+class EvidenceServiceTest {
     @MockBean
     private EvidenceRepository evidenceRepository;
     private EvidenceService evidenceService;
@@ -59,7 +59,7 @@ public class EvidenceServiceTest {
      * Asserts that the correct exception is thrown when verify evidence is called when given a null value
      */
     @Test
-    public void givenEvidenceIsNull_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceIsNull_whenVerifyEvent_thenCorrectExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(null));
 
@@ -70,7 +70,7 @@ public class EvidenceServiceTest {
      * Asserts that the correct exception is thrown when verify evidence is called when given an object with null attributes
      */
     @Test
-    public void givenEvidenceContainsNull_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceContainsNull_whenVerifyEvent_thenCorrectExceptionIsThrown() {
         Evidence incorrectEvidence = evidenceBuilder
                 .evidenceId(99)
                 .title(null)
@@ -89,7 +89,7 @@ public class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with an empty title
      */
     @Test
-    public void givenEvidenceTitleIsEmpty_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceTitleIsEmpty_whenVerifyEvent_thenCorrectExceptionIsThrown() {
         evidence1.setTitle("");
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -101,7 +101,7 @@ public class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a too long title
      */
     @Test
-    public void givenEvidenceTitleIsTooLong_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceTitleIsTooLong_whenVerifyEvent_thenCorrectExceptionIsThrown() {
         evidence1.setTitle("This is a too long title for a piece of evidence, This is a too long title for a piece of evidence");
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -113,7 +113,7 @@ public class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a date too early
      */
     @Test
-    public void givenEvidenceDateTooEarly_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceDateTooEarly_whenVerifyEvent_thenCorrectExceptionIsThrown() {
         evidence1.setDateOccurred(new Date(0));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -125,7 +125,7 @@ public class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a date too late
      */
     @Test
-    public void givenEvidenceDateTooLate_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceDateTooLate_whenVerifyEvent_thenCorrectExceptionIsThrown() {
         evidence1.setDateOccurred(new Date(3025, Calendar.MARCH, 2));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -137,7 +137,7 @@ public class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a date too late
      */
     @Test
-    public void givenCorrectEvidence_whenVerifyEvent_thenNoExceptionIsThrown() throws IncorrectDetailsException {
+    void givenCorrectEvidence_whenVerifyEvent_thenNoExceptionIsThrown() throws IncorrectDetailsException {
         evidenceService.verifyEvidence(evidence1);
     }
 
@@ -145,7 +145,7 @@ public class EvidenceServiceTest {
      * Asserts that the correct exception is thrown when getEvidence() called with an incorrect ID
      */
     @Test
-    public void givenIncorrectId_whenGetEvidenceCalled_thenExceptionIsThrown() {
+    void givenIncorrectId_whenGetEvidenceCalled_thenExceptionIsThrown() {
         when(evidenceRepository.getEvidenceByEvidenceId(999)).thenReturn(null);
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.getEvidence(999));
@@ -159,7 +159,7 @@ public class EvidenceServiceTest {
      * @throws IncorrectDetailsException If the evidence object can't be found
      */
     @Test
-    public void givenCorrectId_whenGetEvidenceCalled_thenEvidenceIsReturned() throws IncorrectDetailsException {
+    void givenCorrectId_whenGetEvidenceCalled_thenEvidenceIsReturned() throws IncorrectDetailsException {
         when(evidenceRepository.getEvidenceByEvidenceId(999)).thenReturn(evidence1);
         Evidence testEvidence = evidenceService.getEvidence(999);
         assertEquals(evidence1, testEvidence);
@@ -169,7 +169,7 @@ public class EvidenceServiceTest {
      * Asserts that when getNewEvidence is called then a new evidence object with correct information is returned
      */
     @Test
-    public void given_whenGetNewEvidenceIsCalled_thenNewEvidenceObjectReturned() {
+    void given_whenGetNewEvidenceIsCalled_thenNewEvidenceObjectReturned() {
         User user = new User.Builder().userId(999).build();
         Evidence expectedEvidence = new Evidence.Builder()
                 .evidenceId(999)
@@ -186,7 +186,7 @@ public class EvidenceServiceTest {
      * Asserts that a list of evidence is returned when getEvidenceByUserId is called
      */
     @Test
-    public void givenEvidenceWithUser_whenGetEvidenceByUserIdCalled_thenCorrectEvidenceReturned() {
+    void givenEvidenceWithUser_whenGetEvidenceByUserIdCalled_thenCorrectEvidenceReturned() {
         List<Evidence> expectedEvidence = List.of(evidence1);
         when(evidenceRepository.getAllByOwnerIdEquals(999)).thenReturn(expectedEvidence);
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(999);
@@ -197,7 +197,7 @@ public class EvidenceServiceTest {
      * Asserts that correct exception is thrown when saveEvidence is called with an incorrect evidence object
      */
     @Test
-    public void givenIncorrectEvidence_whenSaveEvidenceCalled_thenThrowCorrectException() {
+    void givenIncorrectEvidence_whenSaveEvidenceCalled_thenThrowCorrectException() {
         when(evidenceRepository.save(evidence1)).thenThrow(new PersistenceException("This is a test"));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.saveEvidence(evidence1));
@@ -210,8 +210,7 @@ public class EvidenceServiceTest {
      * @throws IncorrectDetailsException If there is an error saving the evidence
      */
     @Test
-    public void givenCorrectEvidence_whenSaveEvidenceCalled_thenNothingThrown() throws IncorrectDetailsException {
-        when(evidenceRepository.save(evidence1)).thenReturn(evidence1);
+    void givenCorrectEvidence_whenSaveEvidenceCalled_thenNothingThrown() throws IncorrectDetailsException {
         evidenceService.saveEvidence(evidence1);
 
     }
