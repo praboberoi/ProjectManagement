@@ -24,7 +24,7 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private AuthenticateClientService authenticateClientService;
-    private String COOKIE_NAME = "lens-session-token";
+    private static final String COOKIE_NAME = "lens-session-token";
 
     private AuthenticateClientService getAuthenticateClientService(HttpServletRequest request) {
         if(authenticateClientService == null){
