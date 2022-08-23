@@ -45,11 +45,13 @@ public class EvidenceService {
     /**
      * Creates a new evidence object
      * @param user User who the evidence relates to
+     * @param project Project which the evidence relates to
      * @return Evidence object
      */
-    public Evidence getNewEvidence(User user) {
+    public Evidence getNewEvidence(User user, Project project) {
         return new Evidence.Builder()
                 .evidenceId(999)
+                .project(project)
                 .dateOccurred(new Date())
                 .title("New evidence")
                 .description("A new piece of evidence")

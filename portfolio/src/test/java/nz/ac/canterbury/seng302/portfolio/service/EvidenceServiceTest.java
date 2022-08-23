@@ -28,6 +28,7 @@ class EvidenceServiceTest {
     private EvidenceService evidenceService;
     private final Evidence.Builder evidenceBuilder = new Evidence.Builder();
     private Evidence evidence1;
+    private Project project;
 
     /**
      * Initialises evidence and project objects
@@ -36,7 +37,7 @@ class EvidenceServiceTest {
     public void setup() {
         Calendar c = Calendar.getInstance();
         c.add(Calendar.DATE, 1);
-        Project project = new Project.Builder()
+        project = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new java.sql.Date(Calendar.getInstance().getTimeInMillis()))
@@ -173,12 +174,13 @@ class EvidenceServiceTest {
         User user = new User.Builder().userId(999).build();
         Evidence expectedEvidence = new Evidence.Builder()
                 .evidenceId(999)
+                .project(project)
                 .dateOccurred(new Date())
                 .title("New evidence")
                 .description("A new piece of evidence")
                 .ownerId(999)
                 .build();
-        Evidence testEvidence = evidenceService.getNewEvidence(user);
+        Evidence testEvidence = evidenceService.getNewEvidence(user, project);
         assertEquals(testEvidence, expectedEvidence);
     }
 
