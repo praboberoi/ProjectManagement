@@ -37,7 +37,7 @@ public class EvidenceService {
         if (result != null)
             return result;
         else {
-            logger.error(String.format("Failure locating evidence with ID: %d",evidenceId));
+            logger.error("Failure locating evidence with ID: {}",evidenceId);
             throw new IncorrectDetailsException(String.format("Failed to locate the piece of evidence with ID: %d", evidenceId));
         }
     }

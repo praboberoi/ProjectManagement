@@ -134,7 +134,7 @@ class EvidenceServiceTest {
     }
 
     /**
-     * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a date too late
+     * Asserts that the no exception is thrown by verifyEvidence when given evidence is a valid object
      */
     @Test
     void givenCorrectEvidence_whenVerifyEvent_thenNoExceptionIsThrown() throws IncorrectDetailsException {
@@ -206,7 +206,7 @@ class EvidenceServiceTest {
     }
 
     /**
-     * Asserts that correct exception is thrown when saveEvidence is called with an incorrect evidence object
+     * Asserts that no exception is thrown when saveEvidence is called with a correct evidence object
      * @throws IncorrectDetailsException If there is an error saving the evidence
      */
     @Test
