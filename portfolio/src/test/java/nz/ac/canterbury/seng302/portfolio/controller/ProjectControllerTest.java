@@ -51,6 +51,9 @@ public class ProjectControllerTest {
     private EventService eventService;
 
     @MockBean
+    private DeadlineService deadlineService;
+
+    @MockBean
     private DashboardService dashboardService;
 
     @MockBean
@@ -125,17 +128,21 @@ public class ProjectControllerTest {
      */
     @Test
     public void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
-        Event newEvent = new Event.Builder().eventName("Test").build();
+        Event newEvent = new Event.Builder().eventName("Test").project(project).build();
+        Deadline newDeadline = new Deadline.Builder().name("Test").project(project).build();
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
         when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         when(eventService.getNewEvent(any())).thenReturn(newEvent);
+        when(deadlineService.getNewDeadline(any())).thenReturn(newDeadline);
 
         this.mockMvc
                 .perform(get("/project/1"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listSprints", testSprintList))
                 .andExpect(model().attribute("listEvents", List.of()))
+                .andExpect(model().attribute("listDeadlines", List.of()))
+                .andExpect(model().attribute("deadline", newDeadline))
                 .andExpect(model().attribute("project", project))
                 .andExpect(model().attribute("event", newEvent))
                 .andExpect(model().attribute("roles", testList))

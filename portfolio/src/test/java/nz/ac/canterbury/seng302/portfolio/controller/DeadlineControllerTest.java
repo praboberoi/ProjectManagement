@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.portfolio.controllers;
+package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.controller.DeadlineController;
@@ -244,36 +244,6 @@ public class DeadlineControllerTest {
                     .andExpect(flash().attribute("messageDanger", "Project not found"))
                     .andExpect(view().name("redirect:/project/{projectId}"));
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Test call to newDeadline redirects to the new deadline form with the correct data
-     */
-    @Test
-    public void givenDeadlineDoesNotExist_whenNewDeadlineFormRequested_thenAppropriateFormAndFormDataIsReturned() {
-        try {
-            when(projectService.getProjectById(1)).thenReturn(project);
-            when(deadlineService.getNewDeadline(project)).thenReturn(deadline);
-            when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-            this.mockMvc.perform(MockMvcRequestBuilders
-                    .get("/project/1/newDeadline"))
-                    .andExpect(model().attribute("project", project))
-                    .andExpect(model().attribute("deadline", deadline))
-                    .andExpect(model().attribute("pageTitle", "Add New Deadline"))
-                    .andExpect(model().attribute("submissionName", "Create"))
-                    .andExpect(model().attribute("image",  "/icons/create-icon.svg"))
-                    .andExpect(model().attribute("user", userResponse.build()))
-                    .andExpect(model().attribute("projectDateMin", project.getStartDate().toString() + "T00:00"))
-                    .andExpect(model().attribute("projectDateMax", project.getEndDate().toString() + "T00:00"))
-                    .andExpect(view().name("deadlineForm"));
-
-            when(projectService.getProjectById(2)).thenThrow(new IncorrectDetailsException("Project not found"));
-            this.mockMvc.perform(MockMvcRequestBuilders
-                    .get("/project/2/newDeadline"))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
-        } catch(Exception e) {
             e.printStackTrace();
         }
     }
