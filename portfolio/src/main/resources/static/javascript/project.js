@@ -141,3 +141,15 @@ function sendName() {
 document.addEventListener('DOMContentLoaded', function() {
     connect();
 })
+
+function editDeadline(deadline) {
+    document.getElementById('deadline-name').value = deadline.name;
+    // document.getElementById('deadlineCharCount').value = deadline.name.length;
+    document.getElementById('deadlineDate').value = deadline.date;
+    document.getElementById('deadlineFormTitle').textContent = "Edit deadline";
+    document.getElementById('deadlineFormSubmitButton').textContent = " Edit";
+    const modalElement = document.getElementById('deadlineFormModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.show();
+
+}
