@@ -144,7 +144,7 @@ public class EventControllerTest {
      * Tests to make sure an appropriate success message is displayed when a post request is made to delete the given event
      */
     @Test
-    public void givenEventExists_whenDeleteEventIsRequested_thenEventDeletedSuccessfully() {
+    void givenEventExists_whenDeleteEventIsRequested_thenEventDeletedSuccessfully() {
         try {
             when(eventService.deleteEvent(event.getEventId()))
                     .thenReturn("Successfully deleted " + event.getEventName());

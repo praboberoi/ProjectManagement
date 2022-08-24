@@ -123,7 +123,7 @@ public class ProjectControllerTest {
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
-    public void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
+    void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
         Event newEvent = new Event.Builder().eventName("Test").build();
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
@@ -149,7 +149,7 @@ public class ProjectControllerTest {
      * @throws Exception Thrown during mockmvc runtime
      */
     @Test
-    public void givenIncorrectDetails_whenNavigateToProjectPage_thenDashboardReturned() throws Exception {
+    void givenIncorrectDetails_whenNavigateToProjectPage_thenDashboardReturned() throws Exception {
         when(projectService.getProjectById(anyInt())).thenThrow(new IncorrectDetailsException("Project not found"));
         this.mockMvc
                 .perform(get("/project/9999"))

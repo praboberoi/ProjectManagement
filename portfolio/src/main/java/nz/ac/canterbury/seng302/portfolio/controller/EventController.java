@@ -33,6 +33,10 @@ public class EventController {
     @Autowired
     private SimpMessagingTemplate template;
 
+    private static final String PROJECT_REDIRECT = "redirect:/project/{projectId}";
+    private static final String SUCCESS_MESSAGE = "messageSuccess";
+    private static final String FAILURE_MESSAGE = "messageDanger";
+
     /**
      * Adds common model elements used by all controller methods.
      */
@@ -61,12 +65,12 @@ public class EventController {
             eventService.verifyEvent(event);
             message = eventService.saveEvent(event);
             notifyEvent(projectId, event.getEventId(), "edited");
-            ra.addFlashAttribute("messageSuccess", message);
+            ra.addFlashAttribute(SUCCESS_MESSAGE, message);
 
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute(FAILURE_MESSAGE, e.getMessage());
         }
-        return "redirect:/project/{projectId}";
+        return PROJECT_REDIRECT;
     }
 
 

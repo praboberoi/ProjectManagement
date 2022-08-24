@@ -7,15 +7,15 @@ import net.devh.boot.grpc.client.inject.GrpcClient;
 import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -29,6 +29,8 @@ public class UserAccountClientService {
     private UserAccountServiceGrpc.UserAccountServiceBlockingStub userAccountStub;
     @GrpcClient("identity-provider-grpc-server")
     private UserAccountServiceGrpc.UserAccountServiceStub userAccountServiceStub;
+
+    private static Logger logger =LoggerFactory.getLogger(UserAccountClientService.class);
 
     /**
      * Sends a register request to the server
@@ -51,7 +53,7 @@ public class UserAccountClientService {
                            final String pronouns,
                            final String email,
                            final String password) throws StatusRuntimeException {
-        UserRegisterResponse response = userAccountStub.register(UserRegisterRequest.newBuilder()
+        return userAccountStub.register(UserRegisterRequest.newBuilder()
                 .setUsername(username)
                 .setFirstName(firstName)
                 .setLastName(lastName)
@@ -61,7 +63,6 @@ public class UserAccountClientService {
                 .setEmail(email)
                 .setPassword(password)
                 .build());
-        return response;
     }
 
     /**
@@ -85,7 +86,7 @@ public class UserAccountClientService {
             final String pronouns,
             final String email
     ) throws StatusRuntimeException {
-        EditUserResponse response = userAccountStub.editUser(EditUserRequest.newBuilder()
+        return userAccountStub.editUser(EditUserRequest.newBuilder()
                 .setUserId(userId)
                 .setFirstName(firstName)
                 .setLastName(lastName)
@@ -94,7 +95,6 @@ public class UserAccountClientService {
                 .setPersonalPronouns(pronouns)
                 .setEmail(email)
                 .build());
-        return response;
     }
 
     /**
@@ -104,8 +104,7 @@ public class UserAccountClientService {
      * @throws StatusRuntimeException
      */
     public UserResponse getUser(int id) throws StatusRuntimeException {
-        UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
-        return response;
+        return userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
     }
 
 
@@ -119,8 +118,7 @@ public class UserAccountClientService {
      * @throws StatusRuntimeException
      */
     public PaginatedUsersResponse getUsers(int page, int limit, UserField order, boolean isAsc) throws StatusRuntimeException{
-        PaginatedUsersResponse response = userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setOrderBy(order.value).setIsAscendingOrder(isAsc).setLimit(limit).setOffset(page).build());
-        return response;
+        return userAccountStub.getPaginatedUsers(GetPaginatedUsersRequest.newBuilder().setOrderBy(order.value).setIsAscendingOrder(isAsc).setLimit(limit).setOffset(page).build());
     }
 
     /**
@@ -135,8 +133,7 @@ public class UserAccountClientService {
                 .map(ClaimDTO::getValue)
                 .orElse("-100"));
 
-        UserResponse response = userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
-        return response;
+        return userAccountStub.getUserAccountById(GetUserByIdRequest.newBuilder().setId(id).build());
     }
 
     /**
@@ -145,10 +142,7 @@ public class UserAccountClientService {
      * @return
      */
     public DeleteUserProfilePhotoResponse deleteUserProfilePhoto(int userId) {
-        DeleteUserProfilePhotoResponse response = userAccountStub.deleteUserProfilePhoto(
-            DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build()
-            );
-        return response;
+        return userAccountStub.deleteUserProfilePhoto(DeleteUserProfilePhotoRequest.newBuilder().setUserId(userId).build());
     }
 
     /**
@@ -157,9 +151,8 @@ public class UserAccountClientService {
      * @return List of current user roles.
      */
     public List<String> getUserRole(AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream()
+        return Arrays.asList(principal.getClaimsList().stream()
         .filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        return userRoles;
     }
 
     /**
@@ -169,10 +162,7 @@ public class UserAccountClientService {
      */
     public boolean checkUserIsTeacherOrAdmin(@AuthenticationPrincipal AuthState principal) {
         List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if ((userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return true;
-        }
-        return false;
+        return(userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()));
     }
 
     /**
@@ -215,16 +205,17 @@ public class UserAccountClientService {
     private static class FileUploadObserver implements StreamObserver<FileUploadStatusResponse>{
         @Override
         public void onNext(FileUploadStatusResponse fileUploadStatusResponse) {
+          // Does not make any changes depending on response as error and complete are already handled
         }
 
         @Override
         public void onError(Throwable throwable){
-
+            logger.error("Profile image uploaded", throwable);
         }
 
         @Override
         public void onCompleted(){
-
+            logger.info("Profile image uploaded");
         }
     }
 
@@ -235,9 +226,8 @@ public class UserAccountClientService {
      * @return A UserRoleChangeResponse object containing success or failure of the request
      */
     public UserRoleChangeResponse removeUserRole(int userId, UserRole role) {
-        UserRoleChangeResponse response = userAccountStub.removeRoleFromUser(
+        return userAccountStub.removeRoleFromUser(
                 ModifyRoleOfUserRequest.newBuilder().setRole(role).setUserId(userId).build());
-        return response;
     }
 
     /**
@@ -247,9 +237,7 @@ public class UserAccountClientService {
      * @return A UserRoleChangeResponse object containing success or failure of the request
      */
     public UserRoleChangeResponse addRoleToUser(int userId, UserRole role) {
-        UserRoleChangeResponse response = userAccountStub.addRoleToUser(
+        return userAccountStub.addRoleToUser(
             ModifyRoleOfUserRequest.newBuilder().setUserId(userId).setRole(role).build());
-        return response;
     }
-
 }
