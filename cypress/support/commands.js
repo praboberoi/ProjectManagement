@@ -11,7 +11,7 @@
 //
 // -- This is a parent command --
 Cypress.Commands.add('login', (username, password) => {
-    cy.visit('/login')
+    cy.visit('')
     cy.get('#username-field').type(username, {scrollBehavior:'center'})
     cy.get('#password-field').type(password, {scrollBehavior:'center'})
     cy.get('#submit').click()

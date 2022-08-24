@@ -49,6 +49,9 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private Set<Event> events;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<Evidence> evidences;
+
     /**
      * No args Constructor of the Project.
      */

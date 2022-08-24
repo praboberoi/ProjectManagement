@@ -81,7 +81,7 @@ public class EventService {
     /**
      * Verifies the event date and time
      * @param event The event object to verify
-     * @return Message explaining the error
+     * @throws IncorrectDetailsException Message explaining the error
      * */
     public void verifyEvent(Event event) throws IncorrectDetailsException {
 
@@ -112,7 +112,6 @@ public class EventService {
         else if(event.getStartDate().after(event.getProject().getEndDate()) || event.getEndDate().after(event.getProject().getEndDate()))
             throw new IncorrectDetailsException("The event cannot start or end after the project");
 
-        event.setEventName(event.getEventName().strip());
     }
 
     /**

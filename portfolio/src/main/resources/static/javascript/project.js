@@ -56,11 +56,35 @@ function navToPlanner() {
     }
 }
 
-function deletingEvent(eventId, eventName, apiPrefix, projectId) {
-    if(apiPrefix === null)
-        apiPrefix = ""
+function deletingEvent(eventId, eventName) {
     document.getElementById('messageEvent').innerText =  `Are you sure you want to delete ${eventName}`;
-    document.getElementById('deleteEvent').setAttribute('action', `${apiPrefix}/${projectId}/deleteEvent/${eventId}`);
+    document.getElementById('deleteEvent-btn').onclick = function() {
+        deleteEvent(eventId);
+    }
+}
+
+/**
+ * Calls the server to delete the selected event and provide an error message on failure
+ * @param eventId Id of the group to delete
+ */
+function deleteEvent(eventId) {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                messageSuccess.hidden = false
+                messageDanger.hidden = true;
+                messageSuccess.innerText = httpRequest.responseText;
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.responseText;
+            }
+        }
+    }
+
+    httpRequest.open('DELETE', apiPrefix + `/project/${projectId}/event/${eventId}/delete`);
+    httpRequest.send();
 }
 
 /**
@@ -98,6 +122,7 @@ function connect() {
     stompClient.onConnect = function (frame) {
         console.log('Connected: ' + frame);
         subscribe()
+        document.getElementById("websocket-status").value = "connected"
     };
 
     stompClient.onStompError = function (frame) {
@@ -112,27 +137,59 @@ function connect() {
  * Subscribes to the required websocket notification channels
  */
 function subscribe() {
-    stompClient.subscribe('/topic/greetings', function (greeting) {
-        console.log(greeting.body);
-    });
+    stompClient.subscribe('/element/project' + projectId + '/sprint', updateSprint);
+    stompClient.subscribe('/element/project' + projectId + '/events', updateEvent);
 }
 
 /**
- * Disconnects from the websocket
+ * Replaces the relevant component of the sprint table
+ * @param message Message with sprint and edit type
  */
-function disconnect() {
-    if (stompClient !== null) {
-        stompClient.disconnect();
+function updateSprint(message) {
+    let array = message.body.split(' ')
+    let sprint = array[0]
+    let action = array[1]
+    let httpRequest = new XMLHttpRequest();
+    if (action === "edited") {
+        element = document.getElementById("sprint-list")
+        httpRequest.open('GET', window.location.pathname + `/sprints`);
+    } else if (action === "deleted") {
+        document.getElementById(sprint + "Row").outerHTML = ""
+        return
+    }else {
+        console.log("Unknown command: " + action)
+        return
     }
-    setConnected(false);
-    console.log("Disconnected");
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
+
+    httpRequest.send();
 }
 
 /**
- * Sends a message to the hello message receiver
+ * Replaces the relevant component of the event table
+ * @param message Message with event and edit type
  */
-function sendName() {
-    stompClient.publish({ destination:"/app/hello", body: "test message" });
+function updateEvent(message) {
+    let array = message.body.split(' ')
+    let event = array[0]
+    let action = array[1]
+    let httpRequest = new XMLHttpRequest();
+    let element;
+
+    if (action === "edited") {
+        element = document.getElementById("event-list")
+        httpRequest.open('GET', window.location.pathname + `/events`);
+    } else if (action === "deleted") {
+        document.getElementById(event+ "-card").outerHTML = ""
+        return
+    } else {
+        console.log("Unknown command: " + action)
+        return
+    }
+
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
+
+    httpRequest.send();
 }
 
 /**
@@ -141,3 +198,24 @@ function sendName() {
 document.addEventListener('DOMContentLoaded', function() {
     connect();
 })
+
+/**
+ * Replaces the old http component with the new one contained in the request
+ * @param httpRequest Request containing a model view element
+ * @param element The element to replace
+ */
+function updateElement(httpRequest, element){
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            element.innerHTML = httpRequest.responseText;
+        } else if (httpRequest.status === 400) {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Bad Request";
+        } else {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Something went wrong.";
+        }
+    }
+}

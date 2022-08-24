@@ -180,4 +180,28 @@ public class ProjectControllerTest {
                 .perform(get("/project/1/getAllSprints"))
                 .andExpect(status().isOk());
     }
+
+    /**
+     * Test get sprints and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetSprints_ThenSprintsReturnedSuccessfully() throws Exception{
+        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        this.mockMvc
+                .perform(get("/project/1/sprints"))
+                .andExpect(status().isOk());
+    }
+
+    /**
+     * Test get events and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetEvents_ThenEventsReturnedSuccessfully() throws Exception{
+        when(eventService.getEventByProjectId(anyInt())).thenReturn(List.of());
+        this.mockMvc
+                .perform(get("/project/1/events"))
+                .andExpect(status().isOk());
+    }
 }
