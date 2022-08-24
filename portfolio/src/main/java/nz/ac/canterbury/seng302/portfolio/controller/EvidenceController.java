@@ -47,11 +47,11 @@ public class EvidenceController {
     public String saveEvidence(
             @ModelAttribute Evidence evidence,
             RedirectAttributes ra) {
+        String message = "";
         try {
-//            evidence.setProject(projectService.getProjectById(projectId));
-            evidenceService.verifyEvidence(evidence);
-            evidenceService.saveEvidence(evidence);
-            ra.addFlashAttribute("messageSuccess", "Successfully Created " + evidence.getTitle());
+//            TODO: <May need to set the project after the html has been done>
+            message = evidenceService.saveEvidence(evidence);
+            ra.addFlashAttribute("messageSuccess", message);
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }

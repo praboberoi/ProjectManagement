@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -21,6 +22,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.nullValue;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -50,7 +52,8 @@ public class EvidenceControllerTest {
 
     @BeforeAll
     private static void beforeAllInit() {
-
+        utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
     }
 
     @BeforeEach
@@ -80,14 +83,27 @@ public class EvidenceControllerTest {
     @Test
     void givenServer_WhenSaveValidEvidence_ThenEvidenceVerifiedSuccessfully() {
         try{
-//            when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidence.getTitle());
-//            when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure saving evidence"));
+            when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidence.getTitle());
 
             this.mockMvc
                     .perform(post("/evidence/saveEvidence").flashAttr("evidence", evidence))
                     .andExpect(status().is3xxRedirection())
                     .andExpect(flash().attribute("messageDanger", nullValue()))
                     .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getEvidenceId()));
+
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Tests verification of evidence object when an invalid evidence is saved
+     */
+    @Test
+    void givenServer_WhenSaveInvalidEvidence_ThenEvidenceVerifiedSuccessfully(){
+        try {
+            when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure saving evidence"));
 
             this.mockMvc
                     .perform(post("/evidence/saveEvidence").flashAttr("evidence", evidence1))
@@ -98,6 +114,5 @@ public class EvidenceControllerTest {
         } catch (Exception e){
             e.printStackTrace();
         }
-
     }
 }
