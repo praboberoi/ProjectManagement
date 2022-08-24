@@ -48,7 +48,6 @@ public class EvidenceController {
             RedirectAttributes ra) {
         String message = "";
         try {
-//            TODO: <May need to set the project after the html has been done>
             message = evidenceService.saveEvidence(evidence);
             ra.addFlashAttribute("messageSuccess", message);
 
