@@ -214,7 +214,7 @@ class EvidenceServiceTest {
     @Test
     void givenCorrectEvidence_whenSaveEvidenceCalled_thenStringReturned() throws IncorrectDetailsException {
         String success = evidenceService.saveEvidence(evidence1);
-        assertEquals("Evidence saved successfully", success);
+        assertEquals("Successfully Created " + evidence1.getTitle(), success);
 
     }
 
