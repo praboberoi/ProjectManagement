@@ -107,7 +107,7 @@ public class EvidenceService {
         try {
             verifyEvidence(evidence);
             evidenceRepository.save(evidence);
-            logger.error("Successfully created evidence with ID: {}", evidence.getEvidenceId());
+            logger.info("Successfully created evidence {} for user with ID: {}", evidence.getEvidenceId(),evidence.getOwnerId());
             return "Successfully Created " + evidence.getTitle();
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);
