@@ -25,16 +25,7 @@ public class EvidenceController {
 
     @Autowired
     private EvidenceService evidenceService;
-    @Value("${apiPrefix}") private String apiPrefix;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
-
-    /**
-     * Adds common model elements used by all controller methods.
-     */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
 
 
     /** Checks if evidence variables are valid and if it is then saves the evidence
@@ -42,7 +33,7 @@ public class EvidenceController {
      * @param ra Redirect Attribute frontend message object
      * @return link of html page to display
      */
-    @PostMapping(path="/evidence/saveEvidence")
+    @PostMapping(path="/evidence/save")
     public String saveEvidence(
             @ModelAttribute Evidence evidence,
             RedirectAttributes ra) {
