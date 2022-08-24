@@ -19,7 +19,6 @@ public class EvidenceController {
 
     @Autowired
     private EvidenceService evidenceService;
-    private Logger logger = LoggerFactory.getLogger(EventController.class);
 
 
     /** Checks if evidence variables are valid and if it is then saves the evidence
