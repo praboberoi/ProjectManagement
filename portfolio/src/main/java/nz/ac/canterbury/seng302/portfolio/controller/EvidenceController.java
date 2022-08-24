@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
+import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
@@ -25,7 +27,8 @@ public class EvidenceController {
     private EvidenceService evidenceService;
     @Value("${apiPrefix}") private String apiPrefix;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
-
+    @Autowired
+    private ProjectService projectService;
     /**
      * Adds common model elements used by all controller methods.
      */
@@ -43,12 +46,9 @@ public class EvidenceController {
     @PostMapping(path="/evidence/saveEvidence")
     public String saveEvidence(
             @ModelAttribute Evidence evidence,
-            Model model,
-            RedirectAttributes ra,
-            @AuthenticationPrincipal AuthState principal
-            ) {
-//        String message ="";
+            RedirectAttributes ra) {
         try {
+//            evidence.setProject(projectService.getProjectById(projectId));
             evidenceService.verifyEvidence(evidence);
             evidenceService.saveEvidence(evidence);
             ra.addFlashAttribute("messageSuccess", "Successfully Created " + evidence.getTitle());
@@ -59,28 +59,28 @@ public class EvidenceController {
     }
 
 //    NOTE: delete not part of this story
-    /**
-     * Deletes the evidence and redirects back to the evidence page
-     * @param evidenceId
-     * @param model
-     * @return
-     */
-    @PostMapping(path="/evidence/{evidenceId}/deleteEvidence")
-    public String deleteEvidence(
-            @PathVariable("evidenceId") int evidenceId,
-            RedirectAttributes ra,
-            Model model
-    ){
-        try {
-            String message = evidenceService.deleteEvidence(evidenceId);
-            ra.addFlashAttribute("messageSuccess", message);
-//            List<Evidence> listEvidence = evidenceService
-            model.addAttribute("listEvidence", listEvidence);
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-        }
-        return "redirect:/evidence";
-    }
+//    /**
+//     * Deletes the evidence and redirects back to the evidence page
+//     * @param evidenceId
+//     * @param model
+//     * @return
+//     */
+//    @PostMapping(path="/evidence/{evidenceId}/deleteEvidence")
+//    public String deleteEvidence(
+//            @PathVariable("evidenceId") int evidenceId,
+//            RedirectAttributes ra,
+//            Model model
+//    ){
+//        try {
+//            String message = evidenceService.deleteEvidence(evidenceId);
+//            ra.addFlashAttribute("messageSuccess", message);
+////            List<Evidence> listEvidence = evidenceService
+//            model.addAttribute("listEvidence", listEvidence);
+//        } catch (IncorrectDetailsException e) {
+//            ra.addFlashAttribute("messageDanger", e.getMessage());
+//        }
+//        return "redirect:/evidence";
+//    }
 
 
 
