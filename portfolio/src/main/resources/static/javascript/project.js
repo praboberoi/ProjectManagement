@@ -159,7 +159,6 @@ function editDeadline(name, date, id) {
     document.getElementById('deadlineCharCount').value = name.length;
     document.getElementById('deadlineDate').value = date;
     document.getElementById('deadlineFormTitle').textContent = "Edit deadline";
-    document.getElementById('deadlineFormSubmitButton').innerHTML = document.getElementById('deadline-edit-btn').innerHTML;
     const modalElement = document.getElementById('deadlineFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
         keyword: false,
@@ -186,8 +185,6 @@ function createDeadline() {
     document.getElementById('deadlineCharCount').value = "12";
     document.getElementById('deadlineDate').value = new Date().toLocaleDateString().split('/').reverse().join('-') + 'T00:00';
     document.getElementById('deadlineFormTitle').textContent = "Create New Deadline";
-    const deadlineBtnInnerHTML = document.getElementById('deadline-btn').innerHTML.replace('Create Deadline', 'Create');
-    document.getElementById('deadlineFormSubmitButton').innerHTML = deadlineBtnInnerHTML
     const modalElement = document.getElementById('deadlineFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
         keyword: false,
