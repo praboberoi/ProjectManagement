@@ -86,19 +86,16 @@ public class EvidenceControllerTest {
      * Test verification of evidence object when a valid evidence is saved and checks it redirects the user
      */
     @Test
-    void givenServer_WhenSaveValidEvidence_ThenEvidenceVerifiedSuccessfully() {
-        try{
-            when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidence.getTitle());
+    void givenServer_WhenSaveValidEvidence_ThenEvidenceVerifiedSuccessfully() throws Exception {
 
-            this.mockMvc
-                    .perform(post("/evidence/saveEvidence").flashAttr("evidence", evidence))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", nullValue()))
-                    .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getTitle()));
+        when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidence.getTitle());
 
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        this.mockMvc
+                .perform(post("/evidence/saveEvidence").flashAttr("evidence", evidence))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", nullValue()))
+                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getTitle()));
+
 
     }
 
@@ -106,19 +103,16 @@ public class EvidenceControllerTest {
      * Tests verification of evidence object when an invalid evidence is saved and checks it redirects the user
      */
     @Test
-    void givenServer_WhenSaveInvalidEvidence_ThenEvidenceVerifiedSuccessfully(){
-        try {
-            when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure saving evidence"));
+    void givenServer_WhenSaveInvalidEvidence_ThenEvidenceVerifiedSuccessfully() throws Exception {
 
-            this.mockMvc
-                    .perform(post("/evidence/saveEvidence").flashAttr("evidence", evidence1))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
-                    .andExpect(flash().attribute("messageSuccess", nullValue()));
+        when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure saving evidence"));
 
-        } catch (Exception e){
-            e.printStackTrace();
-        }
+        this.mockMvc
+                .perform(post("/evidence/saveEvidence").flashAttr("evidence", evidence1))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
+                .andExpect(flash().attribute("messageSuccess", nullValue()));
+
     }
 
     @AfterAll
