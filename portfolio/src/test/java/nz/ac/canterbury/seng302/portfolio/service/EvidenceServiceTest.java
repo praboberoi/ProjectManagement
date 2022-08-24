@@ -208,12 +208,13 @@ class EvidenceServiceTest {
     }
 
     /**
-     * Asserts that no exception is thrown when saveEvidence is called with a correct evidence object
+     * Asserts that success string is returned when saveEvidence is called with a correct evidence object
      * @throws IncorrectDetailsException If there is an error saving the evidence
      */
     @Test
-    void givenCorrectEvidence_whenSaveEvidenceCalled_thenNothingThrown() throws IncorrectDetailsException {
-        evidenceService.saveEvidence(evidence1);
+    void givenCorrectEvidence_whenSaveEvidenceCalled_thenStringReturned() throws IncorrectDetailsException {
+        String success = evidenceService.saveEvidence(evidence1);
+        assertEquals("Evidence saved successfully", success);
 
     }
 
