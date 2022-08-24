@@ -27,8 +27,7 @@ public class EvidenceController {
     private EvidenceService evidenceService;
     @Value("${apiPrefix}") private String apiPrefix;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
-    @Autowired
-    private ProjectService projectService;
+
     /**
      * Adds common model elements used by all controller methods.
      */
@@ -52,36 +51,12 @@ public class EvidenceController {
 //            TODO: <May need to set the project after the html has been done>
             message = evidenceService.saveEvidence(evidence);
             ra.addFlashAttribute("messageSuccess", message);
+
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
         return "redirect:/evidence";
     }
-
-//    NOTE: delete not part of this story
-//    /**
-//     * Deletes the evidence and redirects back to the evidence page
-//     * @param evidenceId
-//     * @param model
-//     * @return
-//     */
-//    @PostMapping(path="/evidence/{evidenceId}/deleteEvidence")
-//    public String deleteEvidence(
-//            @PathVariable("evidenceId") int evidenceId,
-//            RedirectAttributes ra,
-//            Model model
-//    ){
-//        try {
-//            String message = evidenceService.deleteEvidence(evidenceId);
-//            ra.addFlashAttribute("messageSuccess", message);
-////            List<Evidence> listEvidence = evidenceService
-//            model.addAttribute("listEvidence", listEvidence);
-//        } catch (IncorrectDetailsException e) {
-//            ra.addFlashAttribute("messageDanger", e.getMessage());
-//        }
-//        return "redirect:/evidence";
-//    }
-
 
 
 }

@@ -111,7 +111,7 @@ public class Evidence {
      * Builder class to construct an evidence object.
      */
     public static class Builder {
-        private Integer evidenceId;
+        private int evidenceId;
         private Date dateOccurred;
         private String title;
         private String description = "";

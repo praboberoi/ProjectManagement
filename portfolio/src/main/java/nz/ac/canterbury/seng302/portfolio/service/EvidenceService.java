@@ -107,7 +107,7 @@ public class EvidenceService {
         try {
             verifyEvidence(evidence);
             evidenceRepository.save(evidence);
-            return "Evidence saved successfully";
+            return "Successfully Created " + evidence.getTitle();
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);
             throw new IncorrectDetailsException("Failure saving evidence");

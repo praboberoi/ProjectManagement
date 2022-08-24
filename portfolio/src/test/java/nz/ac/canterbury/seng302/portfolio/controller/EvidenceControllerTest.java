@@ -2,10 +2,12 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,9 +38,6 @@ public class EvidenceControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
-    private Evidence evidence;
-    private Evidence evidence1;
-
     @MockBean
     private EvidenceService evidenceService;
 
@@ -50,6 +49,10 @@ public class EvidenceControllerTest {
     @MockBean
     private UserAccountClientService userAccountClientService;
 
+    private Evidence evidence;
+    private Evidence evidence1;
+    private Project project;
+
     @BeforeAll
     private static void beforeAllInit() {
         utilities = Mockito.mockStatic(PrincipalUtils.class);
@@ -59,26 +62,28 @@ public class EvidenceControllerTest {
     @BeforeEach
     public void init() {
         LocalDate now = LocalDate.now();
+        project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
+
         evidence = new Evidence.Builder()
-                .evidenceId(2)
             .title("New Evidence")
             .description("I am adding a new piece of evidence")
             .dateOccurred(java.sql.Date.valueOf(now))
             .ownerId(1)
+            .project(project)
             .build();
 
         evidence1 = new Evidence.Builder()
-                .evidenceId(3)
-                .title("Another Evidence")
-                .description("Additional piece of evidence")
-                .dateOccurred(java.sql.Date.valueOf(now))
-                .ownerId(1)
-                .build();
+            .title("Another Evidence")
+            .description("Additional piece of evidence")
+            .dateOccurred(java.sql.Date.valueOf(now))
+            .ownerId(1)
+            .project(project)
+            .build();
 
     }
 
     /**
-     * Test verification of evidence object and checks it redirect the user
+     * Test verification of evidence object when a valid evidence is saved and checks it redirects the user
      */
     @Test
     void givenServer_WhenSaveValidEvidence_ThenEvidenceVerifiedSuccessfully() {
@@ -89,7 +94,7 @@ public class EvidenceControllerTest {
                     .perform(post("/evidence/saveEvidence").flashAttr("evidence", evidence))
                     .andExpect(status().is3xxRedirection())
                     .andExpect(flash().attribute("messageDanger", nullValue()))
-                    .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getEvidenceId()));
+                    .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getTitle()));
 
         } catch (Exception e){
             e.printStackTrace();
@@ -98,7 +103,7 @@ public class EvidenceControllerTest {
     }
 
     /**
-     * Tests verification of evidence object when an invalid evidence is saved
+     * Tests verification of evidence object when an invalid evidence is saved and checks it redirects the user
      */
     @Test
     void givenServer_WhenSaveInvalidEvidence_ThenEvidenceVerifiedSuccessfully(){
@@ -115,4 +120,10 @@ public class EvidenceControllerTest {
             e.printStackTrace();
         }
     }
+
+    @AfterAll
+    public static void afterAll() {
+        utilities.close();
+    }
+
 }
