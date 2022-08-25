@@ -227,7 +227,8 @@
                         <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
                         Events <t></t>
                         <p th:each="event : ${listEvents}">[[${event.eventName}]]
-                          <br>[[${#dates.format(event.startDate, 'dd MMM yyyy')}]]</p>
+                          <br>Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
+                          <br>End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]</p>
                       </div>
                       <div id="ccm">
                         <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
