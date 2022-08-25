@@ -219,7 +219,37 @@
                 </td>
               </tr>
 
-        </th:block>
+              <tr id="no">
+                <td colspan="100%" class="hiddenRow">
+                  <div class="cc">
+                    <div th:id="'R'+ ${sprint.sprintId}" class="collapse" data-bs-parent=".table">
+                      <div id="cce" >
+                        <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
+                        Events <t></t>
+                        <p th:each="event : ${listEvents}">[[${event.eventName}]]
+                          <br>[[${#dates.format(event.startDate, 'dd MMM yyyy')}]]</p>
+                      </div>
+                      <div id="ccm">
+                        <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
+
+                        Deadlines
+                        <p>Coding Competion</p>
+                        <p>Start Date:21 July 2022</p>
+                      </div>
+                      <div id="cco">
+                        <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
+
+                        Milestones
+                      </div>
+                    </div>
+                  </div>
+                </td>
+
+              </tr>
+
+
+            </th:block>
+          </div>
         </tbody>
       </table>
     </div>
@@ -339,6 +369,11 @@
     </div>
   </div>
 </div>
+<br>
+<br>
+<br>
+<br>
+<br>
 
 <div th:replace="forms :: eventsForm"></div>
 <script th:inline="javascript">
