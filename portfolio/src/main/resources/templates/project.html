@@ -82,7 +82,7 @@
             Events</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+          <button class="nav-link" id="deadline-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
             <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
             Deadlines</button>
         </li>
@@ -128,7 +128,7 @@
           </div>
 
         </div>
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="deadline-tab">
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
             <div class = "createBtn">
@@ -145,9 +145,12 @@
                     <p class="eventDates" th:id="'deadline' + ${deadline.deadlineId} + 'date'"><b>Date:</b> [[${#dates.format(deadline.date, 'dd MMM yyyy hh:mm a')}]]
                   </div>
                   <div class="d-flex align-items-baseline pt-2 mt-2" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-                    <button type="button" class="btn btn-outline-primary btn-sm mr-1" id = "deadline-edit-btn" th:data-deadlineId="${deadline.deadlineId}" th:data-deadlineName="${deadline.name}" th:data-deadlineDate="${deadline.date}" th:onclick="editDeadline(this.getAttribute('data-deadlineName'), this.getAttribute('data-deadlineDate'), this.getAttribute('data-deadlineId'))">
+                    <button type="button" class="btn btn-outline-primary btn-sm mr-1" th:id = "${deadline.deadlineId} + 'edit-btn'"
+                            th:data-deadlineId="${deadline.deadlineId}" th:data-deadlineName="${deadline.name}"
+                            th:data-deadlineDate="${deadline.date}" th:onclick="editDeadline(this.getAttribute('data-deadlineName'), this.getAttribute('data-deadlineDate'), this.getAttribute('data-deadlineId'))">
                       <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</button>
-                    <button type="button" class="btn btn-outline-secondary btn-sm" id = "deadline-delete-btn"  data-toggle="modal" data-target="#conformationModalDeadline"
+
+                    <button type="button" class="btn btn-outline-secondary btn-sm" th:id = "${deadline.deadlineId} + 'delete-btn'"  data-toggle="modal" data-target="#conformationModalDeadline"
                             th:data-deadlineId="${deadline.deadlineId}" th:data-deadlineName="${deadline.name}" th:onclick="deleteDeadline(this.getAttribute('data-deadlineId'), this.getAttribute('data-deadlineName'))">
                       <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
                     <br>
@@ -338,7 +341,7 @@
       </div>
       <div class="modal-footer">
         <form action="" method="post" id="deleteDeadline">
-          <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+          <button type= "submit" class="btn btn-outline-primary" id="deleteDeadlineModalBtn"><img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
         </form>
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
           <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
@@ -361,7 +364,8 @@
       </div>
       <div class="modal-footer">
         <form action="" method="post" id="deleteSprint">
-          <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+          <button type= "submit" class="btn btn-outline-primary">
+            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
         </form>
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
           <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
