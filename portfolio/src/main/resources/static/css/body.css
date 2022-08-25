@@ -188,7 +188,7 @@ a.project-name {
     overflow-y: auto;
 }
 
-#eventCard, #deadlineCard, #milestoneCard {
+.event-card, #deadlineCard, #milestoneCard {
     margin-left: 20px;
     margin-right: 20px;
     margin-bottom: 15px;
@@ -366,6 +366,10 @@ a.desc.sort:after {
 }
 
 #selectedGroupDropdown {
+    display: none;
+}
+
+.alert:empty {
     display: none;
 }
 

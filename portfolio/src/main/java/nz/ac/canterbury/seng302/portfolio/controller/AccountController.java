@@ -35,6 +35,8 @@ public class AccountController {
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
 
+    private static final String EDIT_ACCOUNT_PAGE = "editAccount";
+
     public AccountController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
     }
@@ -104,9 +106,8 @@ public class AccountController {
     ) {
         this.addAttributesToModel(principal, model);
 
-        return "editAccount";
+        return EDIT_ACCOUNT_PAGE;
     }
-
 
     /**
      * The mapping for a Post request relating to editing a user
@@ -132,7 +133,7 @@ public class AccountController {
             @RequestParam String bio,
             @RequestParam String pronouns,
             @RequestParam String email,
-            Boolean deleteImage,
+            boolean deleteImage,
             Model model,
             RedirectAttributes ra
     ) throws IOException {
@@ -162,7 +163,7 @@ public class AccountController {
                 String msgString;
                 msgString = "File must be an image of type jpg, jpeg or png";
                 ra.addFlashAttribute("messageDanger", msgString);
-                return "editAccount";
+                return EDIT_ACCOUNT_PAGE;
             }
         }
         if (deleteImage) deleteUserProfilePhoto(principal);
@@ -180,7 +181,7 @@ public class AccountController {
 
 
 
-        return "editAccount";
+        return EDIT_ACCOUNT_PAGE;
     }
 
 
@@ -192,7 +193,7 @@ public class AccountController {
         StringBuilder roles = new StringBuilder();
         user.getRoles().forEach(role -> roles.append(capitaliseFirstLetter(role.toString() + ", ")));
         model.addAttribute("roles",
-                user.getRoles().size() > 0 ? roles.substring(0, roles.length() - 2): user.getRoles());
+                !user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()

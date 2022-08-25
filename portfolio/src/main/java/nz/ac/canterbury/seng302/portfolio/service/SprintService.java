@@ -43,7 +43,7 @@ public class SprintService {
                                   .sprintName("Sprint " + sprintNo).build();
 
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
-        if (listSprints.size() == 0) {
+        if (listSprints.isEmpty()) {
             LocalDate startDate = project.getStartDate().toLocalDate();
             sprint.setStartDate(Date.valueOf(startDate));
             sprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
@@ -103,17 +103,13 @@ public class SprintService {
      * @throws IncorrectDetailsException If null value is returned from the sprintRepository's findById function
      * @throws PersistenceException Passed by {@link SprintRepository#deleteById(Object) deleteById}
      */
-    public String deleteSprint(int sprintId) throws Exception,IncorrectDetailsException, PersistenceException {
-        try {
-            Optional<Sprint> sprint = sprintRepository.findById(sprintId);
-            if(sprint.isPresent()) {
-                sprintRepository.deleteById(sprintId);
-                return "Successfully deleted " + sprint.get().getSprintLabel();
-            }
-            else
-                throw new IncorrectDetailsException("Could not find the given sprint");
-        } catch (Exception e) {
-            throw new Exception("Failure Deleting Sprint");
+    public String deleteSprint(int sprintId) throws IncorrectDetailsException, PersistenceException {
+        Optional<Sprint> sprint = sprintRepository.findById(sprintId);
+        if(sprint.isPresent()) {
+            sprintRepository.deleteById(sprintId);
+            return "Successfully deleted " + sprint.get().getSprintLabel();
+        } else {
+            throw new IncorrectDetailsException("Could not find the given sprint");
         }
     }
 
@@ -159,7 +155,7 @@ public class SprintService {
         List<Sprint> sprints = getSprintByProject(project.getProjectId());
         String stringSprintMinDate;
         String stringSprintMaxDate;
-        if(sprints.size() == 0) {
+        if(sprints.isEmpty()) {
             stringSprintMinDate = project.getStartDate().toString();
             stringSprintMaxDate = project.getEndDate().toString();
         } else if (!sprints.contains(sprint)) {

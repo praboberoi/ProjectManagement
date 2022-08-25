@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest(controllers = AccountController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class AccountControllerTest {
+class AccountControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -78,7 +78,7 @@ public class AccountControllerTest {
      * @throws Exception Expection thrown during checking time
      */
     @Test
-    public void getTimePassed_20Days() throws Exception{
+    void getTimePassed_20Days() throws Exception{
         Calendar cal = new GregorianCalendar();
         cal.add(Calendar.DAY_OF_MONTH, -7);
 
@@ -113,7 +113,7 @@ public class AccountControllerTest {
      * @throws Exception That may occur during checking of time
      */
     @Test
-    public void getTimePassed_1Month() throws Exception{
+    void getTimePassed_1Month() throws Exception{
         Calendar cal = new GregorianCalendar();
         cal.add(Calendar.MONTH, -1);
 
@@ -149,7 +149,7 @@ public class AccountControllerTest {
      * @throws Exception An exception can occur during the parsing and checking of time
      */
     @Test
-    public void getTimePassed_2Year3Month() throws Exception{
+    void getTimePassed_2Year3Month() throws Exception{
         Calendar cal = new GregorianCalendar();
         cal.add(Calendar.MONTH, -3);
         cal.add(Calendar.YEAR, -2);
@@ -186,7 +186,7 @@ public class AccountControllerTest {
      * receives the correct response that it redirects the Html to the right page
      */
     @Test
-    public void GivenNonExistentUser_WhenEditRequestMade_ThenEditAccountReturned() throws IOException {
+    void GivenNonExistentUser_WhenEditRequestMade_ThenEditAccountReturned() throws IOException {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(false).build();
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
@@ -209,7 +209,7 @@ public class AccountControllerTest {
      * redirects back to the account page.
      */
     @Test
-    public void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws IOException {
+    void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws IOException {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
 

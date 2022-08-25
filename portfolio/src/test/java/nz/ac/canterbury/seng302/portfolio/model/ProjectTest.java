@@ -32,57 +32,57 @@ class ProjectTest {
     }
 
     @Test
-    public void givenProjectsExits_Equals(){
+    void givenProjectsExits_Equals(){
         assertEquals(false, project1.equals(null));
         assertEquals(false, project1.equals(project2));
     }
 
     @Test
-    public void givenProjectExists_GetProjectId() {
+    void givenProjectExists_GetProjectId() {
         assertEquals(1, project1.getProjectId());
         assertNotEquals(2, project1.getProjectId());
     }
 
     @Test
-    public void givenProjectExists_GetProjectName() {
+    void givenProjectExists_GetProjectName() {
         assertEquals("Project 2020", project1.getProjectName());
         assertNotEquals("Project 2021", project1.getProjectName());
     }
 
     @Test
-    public void givenProjectExists_GetDescription() {
+    void givenProjectExists_GetDescription() {
         assertEquals("First Attempt", project1.getDescription());
         assertNotEquals("Testing", project1.getDescription());
     }
 
     @Test
-    public void givenProjectExists_GetStartDate() {
+    void givenProjectExists_GetStartDate() {
         assertEquals(new Date(2020, 3, 12), project1.getStartDate());
         assertNotEquals(new Date(2023, 1,1), project1.getStartDate());
     }
 
     @Test
-    public void givenProjectExists_GetEndDate() {
+    void givenProjectExists_GetEndDate() {
         assertEquals(new Date(2021, 1, 10), project1.getEndDate());
         assertNotEquals(new Date(2023, 2,1), project1.getEndDate());
     }
 
     @Test
-    public void givenProjectExists_SetProjectName() {
+    void givenProjectExists_SetProjectName() {
         project1.setProjectName("Project 2025");
         assertEquals("Project 2025", project1.getProjectName());
         assertNotEquals("Project 2020", project1.getProjectName());
     }
 
     @Test
-    public void givenProjectExists_SetDescription() {
+    void givenProjectExists_SetDescription() {
         project1.setDescription("Updated");
         assertEquals("Updated", project1.getDescription());
         assertNotEquals("First Attempt", project1.getDescription());
     }
 
     @Test
-    public void givenProjectExists_SetStartDate() {
+    void givenProjectExists_SetStartDate() {
 
         project1.setStartDate(new Date(2020, 4, 1));
         assertEquals(new Date(2020, 4, 1), project1.getStartDate());
@@ -90,7 +90,7 @@ class ProjectTest {
     }
 
     @Test
-    public void givenProjectExists_SetEndDate() {
+    void givenProjectExists_SetEndDate() {
         project1.setEndDate(new Date(2020, 12,1));
         assertEquals(new Date(2020, 12,1), project1.getEndDate());
         assertNotEquals(new Date(2021, 1, 10), project1.getEndDate());

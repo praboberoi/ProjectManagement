@@ -7,7 +7,6 @@ import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
-import org.junit.After;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -127,9 +126,8 @@ public class ProjectControllerTest {
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
-    public void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
-        Event newEvent = new Event.Builder().eventName("Test").project(project).build();
-        Deadline newDeadline = new Deadline.Builder().name("Test").project(project).build();
+    void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
+        Event newEvent = new Event.Builder().eventName("Test").build();
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
         when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
@@ -157,7 +155,7 @@ public class ProjectControllerTest {
      * @throws Exception Thrown during mockmvc runtime
      */
     @Test
-    public void givenIncorrectDetails_whenNavigateToProjectPage_thenDashboardReturned() throws Exception {
+    void givenIncorrectDetails_whenNavigateToProjectPage_thenDashboardReturned() throws Exception {
         when(projectService.getProjectById(anyInt())).thenThrow(new IncorrectDetailsException("Project not found"));
         this.mockMvc
                 .perform(get("/project/9999"))
@@ -186,6 +184,30 @@ public class ProjectControllerTest {
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         this.mockMvc
                 .perform(get("/project/1/getAllSprints"))
+                .andExpect(status().isOk());
+    }
+
+    /**
+     * Test get sprints and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetSprints_ThenSprintsReturnedSuccessfully() throws Exception{
+        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        this.mockMvc
+                .perform(get("/project/1/sprints"))
+                .andExpect(status().isOk());
+    }
+
+    /**
+     * Test get events and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetEvents_ThenEventsReturnedSuccessfully() throws Exception{
+        when(eventService.getEventByProjectId(anyInt())).thenReturn(List.of());
+        this.mockMvc
+                .perform(get("/project/1/events"))
                 .andExpect(status().isOk());
     }
 }

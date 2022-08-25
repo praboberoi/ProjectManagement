@@ -9,6 +9,8 @@ import java.util.regex.Pattern;
  */
 public class ValidationUtilities {
 
+    private ValidationUtilities() {}
+
     /**
      * Checks if a string has a special character e.g !?@,.
      * @param str String to be checked.
@@ -25,20 +27,19 @@ public class ValidationUtilities {
      * @param str String to be checked.
      * @return true if str contains special characters.
      */
-    public static boolean hasDashSpecial(String str) {
-        Pattern pattern = Pattern.compile("^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$");
+    public static boolean hasMultipleDashes(String str) {
+        Pattern pattern = Pattern.compile("(.*-{2,}.*)");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
 
-
     /**
      * Checks if a string has consecutive " " e.g "   "
      * @param str String to be checked.
-     * @return true if str contains special characters.
+     * @return true if str contains consecutive spaces.
      */
-    public static boolean hasSpaceSpecial(String str) {
-        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\-]+( [A-Za-z0-9\\-]+)*$");
+    public static boolean hasMultipleSpaces(String str) {
+        Pattern pattern = Pattern.compile("(.* {2,}.*)");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
