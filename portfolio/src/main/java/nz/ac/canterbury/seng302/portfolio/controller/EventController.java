@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -110,6 +111,12 @@ public class EventController {
      */
     private void notifyEvent(int projectId, int eventId, String action) {
         template.convertAndSend("/element/project" + projectId + "/events", ("event" + eventId + " " + action));
+    }
+
+    @MessageMapping("/event/edit")
+    public void editing(int projectId, int eventId) {
+        System.out.println("Test");
+        template.convertAndSend("/element/project" + projectId + "/events", ("event" + eventId + " editing"));
     }
 }
 

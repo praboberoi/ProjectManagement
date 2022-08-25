@@ -17,7 +17,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="eventFormTitle">Create New Event</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -65,7 +65,7 @@
                             <div class="modal-footer">
                                 <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create</button>
-                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                             </div>
                         </form>
