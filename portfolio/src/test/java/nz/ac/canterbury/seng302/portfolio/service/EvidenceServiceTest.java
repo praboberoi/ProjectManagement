@@ -203,7 +203,7 @@ class EvidenceServiceTest {
         when(evidenceRepository.save(evidence1)).thenThrow(new PersistenceException("This is a test"));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.saveEvidence(evidence1));
-        assertEquals("Failure saving evidence", exception.getMessage());
+        assertEquals("Failure Saving Evidence", exception.getMessage());
 
     }
 
