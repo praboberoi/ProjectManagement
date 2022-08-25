@@ -10,7 +10,7 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
+
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,16 +39,13 @@ public class EvidenceControllerTest {
     private EvidenceService evidenceService;
 
     @MockBean
-    private EvidenceController evidenceController;
-
-    private static MockedStatic<PrincipalUtils> utilities;
-
-    @MockBean
     private UserAccountClientService userAccountClientService;
 
     private Evidence evidence;
     private Evidence evidence1;
     private Project project;
+
+    private static MockedStatic<PrincipalUtils> utilities;
 
     @BeforeAll
     private static void beforeAllInit() {
@@ -102,7 +99,7 @@ public class EvidenceControllerTest {
     @Test
     void givenServer_WhenSaveInvalidEvidence_ThenEvidenceVerifiedSuccessfully() throws Exception {
 
-        when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure saving evidence"));
+        when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
 
         this.mockMvc
                 .perform(post("/evidence/save").flashAttr("evidence", evidence1))

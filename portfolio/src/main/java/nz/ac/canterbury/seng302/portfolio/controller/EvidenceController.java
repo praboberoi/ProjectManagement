@@ -3,8 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -32,6 +31,7 @@ public class EvidenceController {
             RedirectAttributes ra) {
         String message = "";
         try {
+            evidenceService.verifyEvidence(evidence);
             message = evidenceService.saveEvidence(evidence);
             ra.addFlashAttribute("messageSuccess", message);
 
