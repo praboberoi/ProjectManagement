@@ -127,6 +127,7 @@ public class ProjectControllerTest {
      */
     @Test
     void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
+        Deadline newDeadline = new Deadline.Builder().project(project).name("Test").build();
         Event newEvent = new Event.Builder().eventName("Test").build();
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
