@@ -6,6 +6,8 @@ import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBr
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
+import nz.ac.canterbury.seng302.portfolio.authentication.CustomHandshakeHandler;
+
 /**
  * Configuration class for WebSocket, creates the required endpoints and prefixes for the connections
  */

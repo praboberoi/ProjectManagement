@@ -103,11 +103,6 @@ document.addEventListener('DOMContentLoaded', function() {
     eventLabel.hidden = false
 });
 
-let myModalEl = document.getElementById('eventFormModal');
-myModalEl.addEventListener('hidden.bs.modal', function (event) {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'projectId': 1, 'eventId': 1})})
-});
-
 let stompClient = null;
 
 /**
@@ -187,6 +182,10 @@ function updateEvent(message) {
     } else if (action === "deleted") {
         document.getElementById(event+ "-card").outerHTML = ""
         return
+    } else if (action === "editing") {
+        console.log(message)
+        let user = array[2]
+        return
     } else {
         console.log("Unknown command: " + action)
         return
@@ -223,8 +222,4 @@ function updateElement(httpRequest, element){
             messageDanger.innerText = "Something went wrong.";
         }
     }
-}
-
-function editEvent() {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'projectId': 1, 'eventId': 1})})
 }

@@ -1,15 +1,18 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.EditNotification;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -29,7 +32,6 @@ public class EventController {
     private EventService eventService;
     @Autowired
     private ProjectService projectService;
-    @Value("${apiPrefix}") private String apiPrefix;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
     @Autowired
     private SimpMessagingTemplate template;
@@ -38,13 +40,8 @@ public class EventController {
     private static final String SUCCESS_MESSAGE = "messageSuccess";
     private static final String FAILURE_MESSAGE = "messageDanger";
 
-    /**
-     * Adds common model elements used by all controller methods.
-     */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
+    private static Set<EditNotification> editing;
+
 
     /**
      * Checks if event dates are valid and if it is saves the event
@@ -114,9 +111,9 @@ public class EventController {
     }
 
     @MessageMapping("/event/edit")
-    public void editing(int projectId, int eventId) {
-        System.out.println("Test");
-        template.convertAndSend("/element/project" + projectId + "/events", ("event" + eventId + " editing"));
+    public void editing(EditNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal) {
+        notification.setUsername(principal.getName());
+        template.convertAndSend("/element/project" + notification.getProjectId() + "/events", ("event" + notification.getEventId() + " editing " + notification.getUsername()));
     }
 }
 
