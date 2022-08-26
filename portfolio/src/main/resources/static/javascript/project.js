@@ -210,6 +210,10 @@ document.addEventListener('DOMContentLoaded', function() {
  * Updates the deadline modal form to edit the chosen deadline and shows the modal
  */
 function editDeadline(name, date, id) {
+    document.getElementById('deadlineFormSubmitButton').disabled = false;
+    document.getElementById('deadline-name').classList.remove("formError");
+    document.getElementById('deadlineNameError').innerText = null;
+    document.getElementById('deadlineDateError');
     document.getElementById('deadline-name').value = name;
     document.getElementById('deadlineId').value = id;
     document.getElementById('deadlineCharCount').value = name.length;
@@ -236,7 +240,9 @@ function closeDeadlineModal() {
  *  Updates the deadline modal form to create a new deadline and shows the modal
  */
 function createDeadline() {
-    console.log(new Date().toISOString())
+    document.getElementById('deadline-name').classList.remove("formError");
+    document.getElementById('deadlineNameError').innerText = null;
+    document.getElementById('deadlineFormSubmitButton').disabled = false;
     document.getElementById('deadline-name').value = "New Deadline";
     document.getElementById('deadlineCharCount').value = "12";
     document.getElementById('deadlineDate').value = new Date().toLocaleDateString().split('/').reverse().join('-') + 'T00:00';

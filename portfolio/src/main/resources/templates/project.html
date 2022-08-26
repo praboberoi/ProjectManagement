@@ -132,8 +132,8 @@
           <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
             <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "deadline-btn" data-backdrop="static" data-keyboard="false" th:onclick="createDeadline()">
-                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</a>
+              <button type="button" class="btn btn-outline-primary btn-sm" id = "deadline-btn" data-backdrop="static" data-keyboard="false" th:onclick="createDeadline()">
+                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</button>
             </div>
           </div>
           <div class="card shadow-sm bg-white rounded" id = "deadlineCard" th:each="deadline : ${listDeadlines}">
