@@ -109,6 +109,11 @@ public class Evidence {
         setOwnerId(evidenceDTO.getOwnerId());
     }
 
+    /**
+     * Overrides for comparing evidence objects
+     * @param o Object being compared
+     * @return True or False
+     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -163,6 +168,11 @@ public class Evidence {
             return this;
         }
 
+        /**
+         * Builds the current Builder with the given project.
+         * @param project of type Project
+         * @return the current Builder
+         */
         public Evidence.Builder project(Project project) {
             this.project = project;
             return this;

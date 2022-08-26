@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
@@ -41,8 +42,8 @@ public class EvidenceControllerTest {
     @MockBean
     private UserAccountClientService userAccountClientService;
 
-    private Evidence evidence;
-    private Evidence evidence1;
+    private EvidenceDTO evidenceDTO;
+    private EvidenceDTO evidenceDTO1;
     private Project project;
 
     private static MockedStatic<PrincipalUtils> utilities;
@@ -58,15 +59,15 @@ public class EvidenceControllerTest {
         LocalDate now = LocalDate.now();
         project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
 
-        evidence = new Evidence.Builder()
+        evidenceDTO = new EvidenceDTO.Builder()
             .title("New Evidence")
-            .description("I am adding a new piece of evidence")
+            .description("New piece of evidence")
             .dateOccurred(java.sql.Date.valueOf(now))
             .ownerId(1)
             .project(project)
             .build();
 
-        evidence1 = new Evidence.Builder()
+        evidenceDTO1 = new EvidenceDTO.Builder()
             .title("Another Evidence")
             .description("Additional piece of evidence")
             .dateOccurred(java.sql.Date.valueOf(now))
@@ -81,14 +82,14 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenServer_WhenSaveValidEvidence_ThenEvidenceVerifiedSuccessfully() throws Exception {
-
-        when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidence.getTitle());
+        Evidence evidence = new Evidence(evidenceDTO);
+        when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidenceDTO.getTitle());
 
         this.mockMvc
-                .perform(post("/evidence/save").flashAttr("evidence", evidence))
+                .perform(post("/evidence/save").flashAttr("evidenceDTO", evidenceDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", nullValue()))
-                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getTitle()));
+                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidenceDTO.getTitle()));
 
 
     }
@@ -98,11 +99,11 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenServer_WhenSaveInvalidEvidence_ThenEvidenceVerifiedSuccessfully() throws Exception {
-
+        Evidence evidence1 = new Evidence(evidenceDTO1);
         when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
 
         this.mockMvc
-                .perform(post("/evidence/save").flashAttr("evidence", evidence1))
+                .perform(post("/evidence/save").flashAttr("evidenceDTO", evidenceDTO1))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
                 .andExpect(flash().attribute("messageSuccess", nullValue()));
