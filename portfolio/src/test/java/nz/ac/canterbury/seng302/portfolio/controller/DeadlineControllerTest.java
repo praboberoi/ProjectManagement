@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(controllers = DeadlineController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class DeadlineControllerTest {
+class DeadlineControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -133,7 +133,7 @@ public class DeadlineControllerTest {
      * Tests to make sure an appropriate message is displayed when a post request is made to save the deadline.
      */
     @Test
-    public void givenDeadlineExists_whenSaveDeadlineIsRequested_anAppropriateMessageIsDisplayed()  {
+     void givenDeadlineExists_whenSaveDeadlineIsRequested_anAppropriateMessageIsDisplayed()  {
         try {
             when(deadlineService.saveDeadline(deadline)).thenReturn("Successfully Updated " + deadline.getName());
 
@@ -172,7 +172,7 @@ public class DeadlineControllerTest {
      * Tests to make sure an appropriate message is displayed when a post request is made to delete the given deadline
      */
     @Test
-    public void givenDeadlineExists_whenDeleteDeadlineIsRequested_thenAnAppropriateMessageIsDisplayed() {
+     void givenDeadlineExists_whenDeleteDeadlineIsRequested_thenAnAppropriateMessageIsDisplayed() {
         try {
             when(deadlineService.deleteDeadline(1))
                     .thenReturn("Successfully deleted " + deadline.getName());
@@ -204,7 +204,7 @@ public class DeadlineControllerTest {
      * Tests to make sure the appropriate attributes are added and the correct redirection is made when calling the deadlineEditForm
      */
     @Test
-    public void givenDeadlineExists_whenDeadlineEditFormRequested_thenAnAppropriateMessageIsDisplayed() {
+     void givenDeadlineExists_whenDeadlineEditFormRequested_thenAnAppropriateMessageIsDisplayed() {
         try {
             when(projectService.getProjectById(1)).thenReturn(project);
             when(deadlineService.getDeadline(1)).thenReturn(deadline);
@@ -233,7 +233,7 @@ public class DeadlineControllerTest {
      * Test call to deadlineEditForm to assert exception redirects to the project page with the correct message
      */
     @Test
-    public void givenProjectDoesNotExist_whenDeadlineEditFormRequested_thenErrorIsHandledAppropriately() {
+     void givenProjectDoesNotExist_whenDeadlineEditFormRequested_thenErrorIsHandledAppropriately() {
         try {
             when(projectService.getProjectById(1)).thenReturn(project);
             when(deadlineService.getDeadline(1)).thenReturn(deadline);
