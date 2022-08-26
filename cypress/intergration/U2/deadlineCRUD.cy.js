@@ -8,7 +8,7 @@ Given("I select Create Deadline", () => {
     cy.get('#deadline-btn').click()
 })
 
-When("I enter {string} name and {string} date", (deadlineName, deadlineDate) => {
+When("I enter {string} deadline name and {string} date", (deadlineName, deadlineDate) => {
     cy.get('#deadline-name').clear()
     cy.get('#deadlineNameError').should('have.text', 'Deadline Name must not be empty')
     cy.get('#deadline-name').type(deadlineName)
@@ -16,7 +16,7 @@ When("I enter {string} name and {string} date", (deadlineName, deadlineDate) => 
     cy.get('#deadlineDate').type(deadlineDate)
 })
 
-When('I select save',  () => {
+When('I select save on the deadline form',  () => {
     cy.get('#deadlineFormSubmitButton').click()
 })
 

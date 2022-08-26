@@ -14,31 +14,31 @@ Given("I navigate to {word}", (location) => {
 
 When("I select the {word} project", (project) => {
     cy.contains(project).click()
-    waitForWebSocket()
+    // waitForWebSocket()
 })
 
-/**
- * Waits for the websocket to subscribe to the required channels (Might move to commands if websockets gets used more)
- * @param {number} counter 
- */
-function waitForWebSocket(counter=0) {
-    cy.get('#websocket-status').then((el) => {
-        if (counter > 5) {
-            throw new Error(
-            `Websockets not connected`
-            );
-        // if the element still says loading, wait 500ms and recurse
-        } else if (el.val() !== 'connected') {
-            cy.wait(100)
-            return waitForWebSocket(counter + 1)
-        }
-    });
-}
-
-Then("{string} doesn't exist", (string) => {
-    cy.contains(string).should('not.exist')
-})
-
-Then("{string} exists", (string) => {
-    cy.contains(string).should('exist')
-})
+// /**
+//  * Waits for the websocket to subscribe to the required channels (Might move to commands if websockets gets used more)
+//  * @param {number} counter
+//  */
+// function waitForWebSocket(counter=0) {
+//     cy.get('#websocket-status').then((el) => {
+//         if (counter > 5) {
+//             throw new Error(
+//             `Websockets not connected`
+//             );
+//         // if the element still says loading, wait 500ms and recurse
+//         } else if (el.val() !== 'connected') {
+//             cy.wait(100)
+//             return waitForWebSocket(counter + 1)
+//         }
+//     });
+// }
+//
+// Then("{string} doesn't exist", (string) => {
+//     cy.contains(string).should('not.exist')
+// })
+//
+// Then("{string} exists", (string) => {
+//     cy.contains(string).should('exist')
+// })
