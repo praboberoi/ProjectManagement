@@ -7,7 +7,6 @@ import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
-import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
@@ -17,12 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
@@ -125,13 +123,34 @@ public class ProjectController {
     }
 
     /**
-     * Basic message to test the functionality of the websocket
-     * @param message Message to send to all subscribe clients
-     * @return Message for subscribed clients
-     */
-    @MessageMapping("/hello")
-    @SendTo("/topic/greetings")
-    public String greeting(String message) {
-        return message;
+     * Return the html component which contains the specified project's sprints
+      * @param projectId Project containing the desired sprints
+      * @return Page fragment containing sprints
+      */
+    @GetMapping(path="/project/{projectId}/sprints")
+    public ModelAndView groupsList(@PathVariable("projectId") int projectId) {
+        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+        Project project = new Project();
+        project.setProjectId(projectId);
+        ModelAndView mv = new ModelAndView("project::sprints");
+        mv.addObject("project", project);
+        mv.addObject("listSprints", listSprints);
+        return mv;
+    }
+
+     /**
+     * Return the html component which contains the specified project's events
+      * @param projectId Project containing the desired events
+      * @return Page fragment containing events
+      */
+    @GetMapping(path="/project/{projectId}/events")
+    public ModelAndView events(@PathVariable("projectId") int projectId) {
+        List<Event> listEvents = eventService.getEventByProjectId(projectId);
+        Project project = new Project();
+        project.setProjectId(projectId);
+        ModelAndView mv = new ModelAndView("project::events");
+        mv.addObject("project", project);
+        mv.addObject("listEvents", listEvents);
+        return mv;
     }
 }

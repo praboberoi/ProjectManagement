@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -11,14 +10,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.List;
-
 
 /**
  * Controller for the events page
@@ -26,13 +25,17 @@ import java.util.List;
 @Controller
 public class EventController {
     @Autowired
-    private UserAccountClientService userAccountClientService;
-    @Autowired
     private EventService eventService;
     @Autowired
     private ProjectService projectService;
     @Value("${apiPrefix}") private String apiPrefix;
     private Logger logger = LoggerFactory.getLogger(EventController.class);
+    @Autowired
+    private SimpMessagingTemplate template;
+
+    private static final String PROJECT_REDIRECT = "redirect:/project/{projectId}";
+    private static final String SUCCESS_MESSAGE = "messageSuccess";
+    private static final String FAILURE_MESSAGE = "messageDanger";
 
     /**
      * Adds common model elements used by all controller methods.
@@ -61,13 +64,15 @@ public class EventController {
             event.setProject(projectService.getProjectById(projectId));
             eventService.verifyEvent(event);
             message = eventService.saveEvent(event);
-            ra.addFlashAttribute("messageSuccess", message);
+            notifyEvent(projectId, event.getEventId(), "edited");
+            ra.addFlashAttribute(SUCCESS_MESSAGE, message);
 
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute(FAILURE_MESSAGE, e.getMessage());
         }
-        return "redirect:/project/{projectId}";
+        return PROJECT_REDIRECT;
     }
+
 
     /**
      * Deletes the event and redirects back to project page
@@ -75,27 +80,36 @@ public class EventController {
      * @param projectId Of type int
      * @param eventId Of type int
      * @param principal Of type {@link AuthState}
-     * @param ra Of type {@link RedirectAttributes}
-     * @return project.html or error.html
+     * @return Status code and outcome message
      */
-    @PostMapping(path="/{projectId}/deleteEvent/{eventId}")
-    public String deleteEvent(
+    @DeleteMapping(path="project/{projectId}/event/{eventId}/delete")
+    public ResponseEntity<String> deleteEvent(
             @PathVariable("eventId") int eventId,
             Model model,
             @PathVariable int projectId,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+            @AuthenticationPrincipal AuthState principal) {
+        if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }        
         try {
             String message = eventService.deleteEvent(eventId);
-            ra.addFlashAttribute("messageSuccess", message);
-            List<Event> listEvents = eventService.getEventByProjectId(projectId);
-            model.addAttribute("listEvents", listEvents);
+            logger.info("Event {} has been deleted", eventId);
+            notifyEvent(projectId, eventId, "deleted");
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            logger.info("Event {} was unable to delete", eventId);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
+    }
 
-        return "redirect:/project/{projectId}";
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param projectId Id of the event's project updated
+     * @param eventId Id of the event edited
+     * @param action The action taken (delete, created, edited)
+     */
+    private void notifyEvent(int projectId, int eventId, String action) {
+        template.convertAndSend("/element/project" + projectId + "/events", ("event" + eventId + " " + action));
     }
 }
 

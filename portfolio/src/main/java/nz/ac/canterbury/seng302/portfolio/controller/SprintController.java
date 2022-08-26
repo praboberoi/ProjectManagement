@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,9 @@ public class SprintController {
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     /**
      * Adds common model elements used by all controller methods.
@@ -131,6 +135,7 @@ public class SprintController {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
             String message = sprintService.saveSprint(sprint);
+            notifySprint(projectId, sprint.getSprintId(), "edited");
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
@@ -246,5 +251,16 @@ public class SprintController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
+    
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param projectId Id of the sprint's project updated
+     * @param sprintId Id of the sprint edited
+     * @param action The action taken (delete, created, edited)
+     */
+    public void notifySprint(int projectId, int sprintId, String action) {
+        template.convertAndSend("/element/project" + projectId + "/sprint", ("sprint" + sprintId + " " + action));
+    }
 
 }

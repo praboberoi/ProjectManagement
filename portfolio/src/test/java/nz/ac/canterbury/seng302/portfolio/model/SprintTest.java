@@ -44,13 +44,13 @@ class SprintTest {
 
 
     @Test
-    public void givenSprintExists_GetSprintId() {
+    void givenSprintExists_GetSprintId() {
         assertEquals(1,sprint1.getSprintId());
         assertNotEquals(2, sprint1.getSprintId());
     }
 
     @Test
-    public void givenSprintExists_GetProject() {
+    void givenSprintExists_GetProject() {
         Project project2 = new Project.Builder()
                 .projectName("Project 2021")
                 .description("Second Attempt")
@@ -63,7 +63,7 @@ class SprintTest {
     }
 
     @Test
-    public void givenSprintExists_SetProject() {
+    void givenSprintExists_SetProject() {
         Project proj = new Project();
         sprint1.setProject(proj);
         assertEquals(proj, sprint1.getProject());
@@ -71,52 +71,52 @@ class SprintTest {
     }
 
     @Test
-    public void givenSprintExists_GetSprintName() {
+    void givenSprintExists_GetSprintName() {
         assertEquals("Sprint 1", sprint1.getSprintName());
         assertNotEquals("Sprint 2", sprint1.getSprintName());
     }
 
     @Test
-    public void givenSprintExists_SetSprintName() {
+    void givenSprintExists_SetSprintName() {
         sprint1.setSprintName("Test");
         assertEquals("Test", sprint1.getSprintName());
         assertNotEquals("Sprint 1", sprint1.getSprintName());
     }
 
     @Test
-    public void givenSprintExists_GetDescription() {
+    void givenSprintExists_GetDescription() {
         assertEquals("Attempt 1", sprint1.getDescription());
         assertNotEquals("Attempt 2", sprint1.getDescription());
     }
 
     @Test
-    public void givenSprintExistsSetDescription() {
+    void givenSprintExistsSetDescription() {
         sprint1.setDescription("Test");
         assertEquals("Test", sprint1.getDescription());
         assertNotEquals("Attempt 1", sprint1.getDescription());
     }
 
     @Test
-    public void givenSprintExists_GetStartDate() {
+    void givenSprintExists_GetStartDate() {
         assertEquals(new Date(2021,1,1), sprint1.getStartDate());
         assertNotEquals(new Date(2021,1,1), sprint2.getStartDate());
     }
 
     @Test
-    public void givenSprintExists_SetStartDate() {
+    void givenSprintExists_SetStartDate() {
         sprint1.setStartDate(new Date(2022, 1, 1));
         assertEquals(new Date(2022, 1, 1), sprint1.getStartDate());
         assertNotEquals(new Date(2021,1,1), sprint1.getStartDate());
     }
 
     @Test
-    public void givenSprintExists_GetEndDate() {
+    void givenSprintExists_GetEndDate() {
         assertEquals(new Date(2021, 3, 1), sprint1.getEndDate());
         assertNotEquals(new Date(2021, 10, 10),sprint1.getEndDate());
     }
 
     @Test
-    public void givenSprintExists_SetEndDate() {
+    void givenSprintExists_SetEndDate() {
         sprint1.setEndDate(new Date(2022, 3, 1));
         assertEquals(new Date(2022, 3, 1), sprint1.getEndDate());
         assertNotEquals(new Date(2021, 3, 1), sprint1.getEndDate());

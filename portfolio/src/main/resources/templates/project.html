@@ -15,6 +15,7 @@
 
 <!--fragments-->
 <header>
+  <input id="websocket-status" hidden>
   <div th:replace="fragments :: header"></div>
 </header>
 <div th:replace="fragments :: sidebar"></div>
@@ -23,16 +24,13 @@
 <div class="main">
   <br>
   <div class="page-title">
-    <h2 id="name">[[${project.projectName}]] </h2>
+    <h2 id="name">[[${project.projectName}]]</h2>
+    <input type="hidden" id="projectId" name="projectId" th:value="${project.projectId}">
   </div>
   <div>
     <br>
-    <div th:if="${messageSuccess}" class="alert alert-success text-center">
-      [[${messageSuccess}]]
-    </div>
-    <div th:if="${messageDanger}" class="alert alert-danger text-center">
-      [[${messageDanger}]]
-    </div>
+    <div id="messageSuccess" class="alert alert-success text-center">[[${messageSuccess}]]</div>
+    <div id="messageDanger" class="alert alert-danger text-center">[[${messageDanger}]]</div>
   </div>
   <br>
   <nav>
@@ -54,10 +52,10 @@
         <input type="hidden" id="endDate" th:value="*{project.endDate}" />
         <h5>Project Description</h5>
         <div id ="edit-del-buttons">
-          <div class="container-fluid p-0" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-            <a type="button" class="btn btn-outline-primary me-2"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${projectId}}">
+          <div class="container-fluid p-0" th:if="${adminOrTeacher}">
+            <a type="button" class="btn btn-outline-primary me-2"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
               <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
-            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModalProject" th:data-id = "${projectId}"
+                <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModalProject" th:data-id = "${projectId}"
                     th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
               <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
           </div>
@@ -95,7 +93,7 @@
 
       <div class="tab-content" id="myTabContent">
         <div class="tab-pane fade show active" id="home" role="tabpanel" aria-labelledby="home-tab">
-          <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+          <div th:if="${adminOrTeacher}">
             <!-- If a user is a STUDENT do not show the 'create' event button !-->
             <div class = "createBtn">
               <a class="btn btn-outline-primary" id = "event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false" th:data-id =
@@ -107,37 +105,41 @@
           </div>
 
 <!--          Shows each individual event-->
-          <div class="card" id = "eventCard" th:each="event : ${listEvents}">
-            <div class="container">
-              <div class="row">
-                <div class="col-5">
-                  <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
-                  <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]]
-                    <br>
-                    End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]] </p>
-                </div>
-                <!--If a user is a STUDENT do not show the 'edit', 'delete' calendar object buttons !-->
-                <div class="col-7" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-                  <br>
-
+          <div id="event-list">
+            <th:block th:each="event: ${listEvents}" th:fragment="events">
+              <div class="card event-card" th:id="'event' + ${event.eventId} + '-card'">
+                <input class="hiddenEventId" hidden th:value="${event.eventId}">
+                <div class="container">
+                  <div class="row">
+                    <div class="col-5">
+                      <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
+                      <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]]
+                        <br>
+                        End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]] </p>
+                    </div>
+                    <!--If a user is a STUDENT do not show the 'edit', 'delete' calendar object buttons !-->
+                    <div class="col-7" th:if="${adminOrTeacher}">
+                      <br>
+    
                   <a class="btn btn-outline-primary mr-2 my-2" id = "event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false" th:data-id =
                           "${event.eventId}" th:data-name = "${event.eventName}" th:data-startDate =
                           "${event.startDate}" th:data-endDate =
                           "${event.endDate}" th:onclick="populateEventModal(true, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'))">
-                    <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
-
+                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+    
                   <button type="button" class="btn btn-outline-secondary my-2" id = "event-delete-btn"  data-toggle="modal" data-target="#conformationModalEvent" th:data-id =
-                          "${event.eventId}" th:data-name = "${event.eventName}" th:data-prefix = "${apiPrefix}" th:data-projectId = "${projectId}" th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'), this.getAttribute('data-projectId'))">
-                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
-                  <br>
+                              "${event.eventId}" th:data-name = "${event.eventName}" th:data-prefix = "${apiPrefix}" th:data-projectId = "${project.projectId}" th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+                      <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+                      <br>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+           </th:block>
           </div>
-
         </div>
         <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-          <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+          <div th:if="${adminOrTeacher}">
             <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
             <div class = "createBtn">
               <a class="btn btn-outline-primary" id = "deadline-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newDeadline'}">
@@ -150,7 +152,7 @@
           </div>
         </div>
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
-          <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+          <div th:if="${adminOrTeacher}">
             <!-- If a user is a STUDENT do not show the 'create' milestone button !-->
             <div class = "createBtn">
               <a class="btn btn-outline-primary" id = "milestone-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newMilestone'}">
@@ -175,14 +177,14 @@
     <div class="container-fluid d-flex p-0">
       <h3 class="pe-3">Sprints</h3>
       <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
-      <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+      <div th:if="${adminOrTeacher}">
         <a class="btn btn-outline-primary" id = "sprint-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newSprint'}">
           <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/></a>
       </div>
     </div>
   </div>
   <br>
-  <div class="desktop-only" id="showSprints" hidden>
+  <div id="showSprints">
     <!-- Table for sprints -->
     <div class="table-border table-responsive bdr">
       <table class="table accordion">
@@ -197,25 +199,25 @@
         </tr>
         </thead>
         <tbody>
-
-        <th:block th:each="sprint : ${listSprints}">
-          <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'" data-bs-toggle="collapse" th:data-bs-target="'#R' + ${sprint.sprintId}" class="clickable">
-            <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">[[${sprint.sprintLabel}]]</td>
-            <td th:id="'sprint' + ${sprint.sprintId} + 'Name'">[[${sprint.sprintName}]]</td>
-            <td th:id="'sprint' + ${sprint.sprintId} + 'Description'">[[${sprint.description}]]</td>
-            <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
-            <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
-            <td>
-              <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
-              <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-                <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
-                  <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
-                <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${projectId}"
-                        th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'))" >
-                  <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
-              </div>
-            </td>
-          </tr>
+          <div id="sprint-list">
+            <th:block th:each="sprint : ${listSprints}"  th:fragment="sprints">
+              <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'" data-bs-toggle="collapse" th:data-bs-target="'#R' + ${sprint.sprintId}" class="clickable">
+                <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">[[${sprint.sprintLabel}]]</td>
+                <td th:id="'sprint' + ${sprint.sprintId} + 'Name'">[[${sprint.sprintName}]]</td>
+                <td class="d-none d-lg-table-cell" th:id="'sprint' + ${sprint.sprintId} + 'Description'">[[${sprint.description}]]</td>
+                <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM yyyy')}]]</td>
+                <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM yyyy')}]]</td>
+                <td>
+                  <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
+                  <div th:if="${adminOrTeacher}">
+                    <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
+                      <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+                    <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
+                            th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'))" >
+                      <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+                  </div>
+                </td>
+              </tr>
 
         </th:block>
         </tbody>
@@ -307,9 +309,7 @@
         <p id="messageEvent"></p>
       </div>
       <div class="modal-footer">
-        <form action="" method="post" id="deleteEvent">
-          <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
-        </form>
+        <button type= "submit" class="btn btn-outline-primary" id="deleteEvent-btn" data-dismiss="modal"><img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
         <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
           <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
       </div>

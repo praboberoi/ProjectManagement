@@ -19,13 +19,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.util.Date;
-import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -49,6 +49,9 @@ public class EventControllerTest {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+
+    @MockBean
+    private SimpMessagingTemplate template; 
 
     @MockBean
     private EventRepository eventRepository;
@@ -141,22 +144,17 @@ public class EventControllerTest {
      * Tests to make sure an appropriate success message is displayed when a post request is made to delete the given event
      */
     @Test
-    public void givenEventExists_whenDeleteEventIsRequested_thenEventDeletedSuccessfully() {
+    void givenEventExists_whenDeleteEventIsRequested_thenEventDeletedSuccessfully() {
         try {
             when(eventService.deleteEvent(event.getEventId()))
                     .thenReturn("Successfully deleted " + event.getEventName());
 
-            MockedStatic<PrincipalUtils> utilities = Mockito.mockStatic(PrincipalUtils.class);
-
             utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
 
             this.mockMvc.perform(MockMvcRequestBuilders
-                            .post("/1/deleteEvent/" + event.getEventId())
-                            .flashAttr("eventId", event.getEventId()))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(model().attribute("listEvents", List.of()))
-                    .andExpect(flash().attribute("messageSuccess", "Successfully deleted " + event.getEventName()))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
+                            .delete("/project/1/event/" + event.getEventId() + "/delete"))
+                    .andExpect(status().isOk())
+                    .andExpect(content().string("Successfully deleted " + event.getEventName()));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -166,22 +164,18 @@ public class EventControllerTest {
 
     /**
      * Asserts that the correct error message is returned when deleteEvent is called on a non-existent event
+     * @throws Exception
      */
     @Test
-    public void givenEventDoesNotExist_whenDeleteEventCalled_thenExceptionIsThrown() {
-        try {
-            when(eventService.deleteEvent(99))
-                    .thenThrow(new IncorrectDetailsException("Failure deleting Event"));
+    public void givenEventDoesNotExist_whenDeleteEventCalled_thenExceptionIsThrown() throws Exception {
+        when(eventService.deleteEvent(99))
+                .thenThrow(new IncorrectDetailsException("Failure deleting Event"));
 
-            this.mockMvc.perform(MockMvcRequestBuilders
-                            .post("/1/deleteEvent/99")
-                            .flashAttr("eventId", 99))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", "Failure deleting Event"))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.mockMvc.perform(MockMvcRequestBuilders
+            .delete("/project/1/event/99/delete")
+            .flashAttr("eventId", 99))
+            .andExpect(status().is4xxClientError())
+            .andExpect(content().string("Failure deleting Event"));
     }
 
     @AfterAll

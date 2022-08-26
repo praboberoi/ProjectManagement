@@ -22,8 +22,7 @@ public class ProjectService {
      * Get list of all projects
      */
     public List<Project> getAllProjects() {
-        List<Project> list = (List<Project>) repository.findAll();
-        return list;
+        return (List<Project>) repository.findAll();
     }
 
     /**
@@ -32,7 +31,7 @@ public class ProjectService {
     public Project getProjectById(int id) throws IncorrectDetailsException {
 
         Optional<Project> project = repository.findById(id);
-        if(project!=null) {
+        if(project.isPresent()) {
             return project.get();
         }
         else

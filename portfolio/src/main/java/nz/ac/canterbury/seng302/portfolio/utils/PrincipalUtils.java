@@ -12,18 +12,19 @@ import java.util.List;
  */
 public class PrincipalUtils {
 
+    private PrincipalUtils() {}
+
     /**
      * Gets the user's id from the provided AuthState principal
      * @param principal - current user detail.
      * @return
      */
     public static int getUserId(AuthState principal) {
-        int id = Integer.parseInt(principal.getClaimsList().stream()
+        return Integer.parseInt(principal.getClaimsList().stream()
             .filter(claim -> claim.getType().equals("nameid"))
             .findFirst()
             .map(ClaimDTO::getValue)
             .orElse("-100"));
-        return id;
     }
  
     /**
@@ -32,9 +33,8 @@ public class PrincipalUtils {
      * @return List of current user roles.
      */
     public static List<String> getUserRole(AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream()
+        return Arrays.asList(principal.getClaimsList().stream()
         .filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        return userRoles;
     }
 
     /**
