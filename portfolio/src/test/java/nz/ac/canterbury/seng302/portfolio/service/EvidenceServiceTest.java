@@ -78,7 +78,7 @@ class EvidenceServiceTest {
                 .description(null)
                 .dateOccurred(null)
                 .project(null)
-                .ownerId(null)
+                .ownerId(1)
                 .build();
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(incorrectEvidence));

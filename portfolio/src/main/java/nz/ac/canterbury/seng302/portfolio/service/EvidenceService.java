@@ -77,7 +77,7 @@ public class EvidenceService {
         if (evidence == null)
             throw new IncorrectDetailsException ("No evidence to verify");
 
-        else if (evidence.getDateOccurred() == null || evidence.getDescription() == null || evidence.getOwnerId() == null ||
+        else if (evidence.getDateOccurred() == null || evidence.getDescription() == null ||
                 evidence.getTitle() == null || evidence.getProject() == null)
             throw new IncorrectDetailsException ("Evidence values are null");
 

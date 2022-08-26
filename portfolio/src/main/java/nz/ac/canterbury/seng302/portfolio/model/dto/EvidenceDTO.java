@@ -22,7 +22,7 @@ public class EvidenceDTO {
 
     private Date dateOccurred;
 
-    private Integer ownerId;
+    private int ownerId;
 
 
     public int getEvidenceId() {
@@ -33,7 +33,7 @@ public class EvidenceDTO {
         return this.dateOccurred;
     }
 
-    public Integer getOwnerId() {
+    public int getOwnerId() {
         return this.ownerId;
     }
 
@@ -61,7 +61,7 @@ public class EvidenceDTO {
      * @param description the description of the evidence.
      * @param ownerId the user id of the creator and owner of the evidence.
      */
-    public EvidenceDTO(Integer evidenceId, Project project, Date dateOccurred, String title, String description, Integer ownerId)  {
+    public EvidenceDTO(int evidenceId, Project project, Date dateOccurred, String title, String description, int ownerId)  {
         this.evidenceId = evidenceId;
         this.project = project;
         this.dateOccurred = dateOccurred;
@@ -92,7 +92,7 @@ public class EvidenceDTO {
         private Date dateOccurred;
         private String title;
         private String description = "";
-        private Integer ownerId;
+        private int ownerId;
         private Project project;
 
         /**
@@ -151,7 +151,7 @@ public class EvidenceDTO {
          * @param ownerId user id of the owner of the evidence.
          * @return the current Builder
          */
-        public EvidenceDTO.Builder ownerId(Integer ownerId) {
+        public EvidenceDTO.Builder ownerId(int ownerId) {
             this.ownerId = ownerId;
             return this;
         }
