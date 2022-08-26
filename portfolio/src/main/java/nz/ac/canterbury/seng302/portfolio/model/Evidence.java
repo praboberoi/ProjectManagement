@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
+
 import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
@@ -92,6 +94,19 @@ public class Evidence {
         this.title = title;
         this.description = description;
         this.ownerId = ownerId;
+    }
+
+    /**
+     * Creates a new evidence object with the evidenceDTO
+     * @param evidenceDTO the DTO of the evidence object
+     */
+    public Evidence(EvidenceDTO evidenceDTO)  {
+        setEvidenceId(evidenceDTO.getEvidenceId());
+        setProject(evidenceDTO.getProject());
+        setDateOccurred(evidenceDTO.getDateOccurred());
+        setTitle(evidenceDTO.getTitle());
+        setDescription(evidenceDTO.getDescription());
+        setOwnerId(evidenceDTO.getOwnerId());
     }
 
     @Override
