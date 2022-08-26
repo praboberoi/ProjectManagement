@@ -30,7 +30,7 @@ public class Evidence {
     private Date dateOccurred;
 
     @Column(nullable = false)
-    private Integer ownerId;
+    private int ownerId;
 
 
     public int getEvidenceId() {
