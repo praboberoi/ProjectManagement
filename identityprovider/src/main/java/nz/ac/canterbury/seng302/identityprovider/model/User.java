@@ -206,7 +206,7 @@ public class User implements Serializable {
         this.password = password;
         this.salt = salt;
         this.roles.add(UserRole.STUDENT);
-        this.roles.add(UserRole.TEACHER);
+
         this.dateCreated = new Timestamp(new Date().getTime());
     }
 }
