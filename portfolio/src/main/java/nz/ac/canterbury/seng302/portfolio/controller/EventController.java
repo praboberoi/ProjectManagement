@@ -14,15 +14,19 @@ import java.util.Set;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.simp.annotation.SubscribeMapping;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 /**
  * Controller for the events page
@@ -108,19 +112,34 @@ public class EventController {
      * @param action The action taken (delete, created, edited)
      */
     private void notifyEvent(int projectId, int eventId, String action) {
-        template.convertAndSend("/element/project" + projectId + "/events", ("event" + eventId + " " + action));
+        System.out.println("Notifying events");
+        template.convertAndSend("/element/project/" + projectId + "/events", ("event" + eventId + " " + action));
     }
 
     @MessageMapping("/event/edit")
-    public void editing(EditNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal) {
+    public void editing(EditNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal, @Header("simpSessionId") String sessionId) {
+        System.out.println("Event edited");
         notification.setUsername(principal.getName());
+        notification.setSessionId(sessionId);
         if (notification.isActive()) {
-            template.convertAndSend("/element/project" + notification.getProjectId() + "/events", ("event" + notification.getEventId() + " editing " + notification.getUsername()));
+            template.convertAndSend("/element/project/" + notification.getProjectId() + "/events", ("event" + notification.getEventId() + " editing " + notification.getUsername()));
             editing.add(notification);
         } else {
             editing.remove(notification);
         }
-        System.out.println(editing.size());
+    }
+
+    @SubscribeMapping("/project/{projectId}/events")
+    public Set<EditNotification> subscribeEvents() {
+        System.out.println("Subscribed");
+        return editing;
+    }
+
+    @EventListener
+    public void onApplicationEvent(SessionDisconnectEvent event) {
+        System.out.println(event);
+        logger.info("websocket disconnected {}", event);
+        editing.removeIf(notification->notification.getSessionId().equals(event.getSessionId()));
     }
 }
 

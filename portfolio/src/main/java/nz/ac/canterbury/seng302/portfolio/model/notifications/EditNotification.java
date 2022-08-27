@@ -7,6 +7,7 @@ public class EditNotification {
     private int projectId;
     private String username;
     private boolean active;
+    private String sessionId;
 
     public EditNotification(int projectId, int eventId, String username, boolean active) {
         this.eventId = eventId;
@@ -47,16 +48,26 @@ public class EditNotification {
         this.active = active;
     }
 
+    public String getSessionId() {
+        return this.sessionId;
+    }
+
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof EditNotification notification)) return false;
-        return notification.getUsername().equals(username) && notification.getEventId() == eventId && notification.getProjectId() == projectId;
+        return notification.getUsername().equals(username) 
+            && notification.getEventId() == eventId 
+            && notification.getProjectId() == projectId 
+            && notification.getSessionId().equals(sessionId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(username, eventId, projectId);
+        return Objects.hash(username, eventId, projectId, sessionId);
     }
 }

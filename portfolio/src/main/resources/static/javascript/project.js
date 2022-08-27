@@ -137,8 +137,8 @@ function connect() {
  * Subscribes to the required websocket notification channels
  */
 function subscribe() {
-    stompClient.subscribe('/element/project' + projectId + '/sprint', updateSprint);
-    stompClient.subscribe('/element/project' + projectId + '/events', updateEvent);
+    stompClient.subscribe('/element/project/' + projectId + '/sprints', updateSprint);
+    stompClient.subscribe('/element/project/' + projectId + '/events', updateEvent);
 }
 
 /**
@@ -156,7 +156,7 @@ function updateSprint(message) {
     } else if (action === "deleted") {
         document.getElementById(sprint + "Row").outerHTML = ""
         return
-    }else {
+    } else {
         console.log("Unknown command: " + action)
         return
     }
