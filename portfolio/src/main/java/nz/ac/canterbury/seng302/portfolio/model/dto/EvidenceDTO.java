@@ -1,35 +1,27 @@
-package nz.ac.canterbury.seng302.portfolio.model;
+package nz.ac.canterbury.seng302.portfolio.model.dto;
 
-import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 
-import javax.persistence.*;
 import java.util.Date;
 import java.util.Objects;
 
 /**
- * The evidence entity stored in the database for the portfolio application
+ * The evidenceDTO entity stored in the database for the portfolio application
  */
-@Entity
-public class Evidence {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class EvidenceDTO {
+
+
     private int evidenceId;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "projectId", nullable = false)
     private Project project;
 
-    @Column(nullable = false, length=50)
     private String title;
 
-    @Column(nullable = false, length = 250)
     private String description;
 
-    @Column(nullable = false)
     private Date dateOccurred;
 
-    @Column(nullable = false)
     private int ownerId;
 
 
@@ -52,42 +44,24 @@ public class Evidence {
     public String getTitle() {
         return this.title;
     }
+
     public Project getProject() {return project;}
-    public void setProject(Project project) {this.project = project;}
-    public void setDateOccurred(Date dateOccurred) {
-        this.dateOccurred = dateOccurred;
-    }
 
-    public void setEvidenceId(int evidenceId) {
-        this.evidenceId = evidenceId;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public void setOwnerId(int ownerId) {
-        this.ownerId = ownerId;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
 
     /**
      * Blank constructor required by JPA
      */
-    public Evidence() {}
+    public EvidenceDTO() {}
 
     /**
-     * Creates a new evidence object with the provided details
+     * Creates a new evidenceDTO object with the provided details
      * @param evidenceId id of the evidence object.
      * @param dateOccurred The date the evidence occurred.
      * @param title The title of the evidence (max 50).
      * @param description the description of the evidence.
      * @param ownerId the user id of the creator and owner of the evidence.
      */
-    public Evidence(int evidenceId, Project project, Date dateOccurred, String title, String description, int ownerId)  {
+    public EvidenceDTO(int evidenceId, Project project, Date dateOccurred, String title, String description, int ownerId)  {
         this.evidenceId = evidenceId;
         this.project = project;
         this.dateOccurred = dateOccurred;
@@ -96,30 +70,12 @@ public class Evidence {
         this.ownerId = ownerId;
     }
 
-    /**
-     * Creates a new evidence object with the evidenceDTO
-     * @param evidenceDTO the DTO of the evidence object
-     */
-    public Evidence(EvidenceDTO evidenceDTO)  {
-        setEvidenceId(evidenceDTO.getEvidenceId());
-        setProject(evidenceDTO.getProject());
-        setDateOccurred(evidenceDTO.getDateOccurred());
-        setTitle(evidenceDTO.getTitle());
-        setDescription(evidenceDTO.getDescription());
-        setOwnerId(evidenceDTO.getOwnerId());
-    }
-
-    /**
-     * Overrides for comparing evidence objects
-     * @param o Object being compared
-     * @return True or False
-     */
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Evidence)) return false;
-        Evidence evidence = (Evidence) o;
-        return evidenceId == evidence.evidenceId && Objects.equals(project, evidence.project) && Objects.equals(title, evidence.title) && Objects.equals(dateOccurred, evidence.dateOccurred);
+        if (!(o instanceof EvidenceDTO)) return false;
+        EvidenceDTO evidenceDTO = (EvidenceDTO) o;
+        return evidenceId == evidenceDTO.evidenceId && Objects.equals(project, evidenceDTO.project) && Objects.equals(title, evidenceDTO.title) && Objects.equals(dateOccurred, evidenceDTO.dateOccurred);
     }
 
     @Override
@@ -127,8 +83,9 @@ public class Evidence {
         return Objects.hash(evidenceId, project, title, description, dateOccurred);
     }
 
+
     /**
-     * Builder class to construct an evidence object.
+     * Builder class to construct an evidenceDTO object.
      */
     public static class Builder {
         private int evidenceId;
@@ -143,7 +100,7 @@ public class Evidence {
          * @param evidenceId of type int.
          * @return The current Builder.
          */
-        public Evidence.Builder evidenceId(int evidenceId) {
+        public EvidenceDTO.Builder evidenceId(int evidenceId) {
             this.evidenceId = evidenceId;
             return this;
         }
@@ -153,7 +110,7 @@ public class Evidence {
          * @param dateOccurred of type String
          * @return the current Builder
          */
-        public Evidence.Builder dateOccurred(Date dateOccurred) {
+        public EvidenceDTO.Builder dateOccurred(Date dateOccurred) {
             this.dateOccurred = dateOccurred;
             return this;
         }
@@ -163,7 +120,7 @@ public class Evidence {
          * @param title of type String
          * @return the current Builder
          */
-        public Evidence.Builder title(String title) {
+        public EvidenceDTO.Builder title(String title) {
             this.title = title;
             return this;
         }
@@ -173,7 +130,7 @@ public class Evidence {
          * @param project of type Project
          * @return the current Builder
          */
-        public Evidence.Builder project(Project project) {
+        public EvidenceDTO.Builder project(Project project) {
             this.project = project;
             return this;
         }
@@ -183,7 +140,7 @@ public class Evidence {
          * @param description of type String.
          * @return the current Builder.
          */
-        public Evidence.Builder description(String description) {
+        public EvidenceDTO.Builder description(String description) {
             this.description = description;
             return this;
         }
@@ -194,7 +151,7 @@ public class Evidence {
          * @param ownerId user id of the owner of the evidence.
          * @return the current Builder
          */
-        public Evidence.Builder ownerId(int ownerId) {
+        public EvidenceDTO.Builder ownerId(int ownerId) {
             this.ownerId = ownerId;
             return this;
         }
@@ -203,8 +160,9 @@ public class Evidence {
          * Returns a new Evidence with all the parameters of the current Builder
          * @return Evidence object
          */
-        public Evidence build() {
-            return new Evidence(evidenceId, project, dateOccurred, title, description, ownerId);
+        public EvidenceDTO build() {
+            return new EvidenceDTO(evidenceId, project, dateOccurred, title, description, ownerId);
         }
     }
+
 }

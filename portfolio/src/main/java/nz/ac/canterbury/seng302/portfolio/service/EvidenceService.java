@@ -77,7 +77,7 @@ public class EvidenceService {
         if (evidence == null)
             throw new IncorrectDetailsException ("No evidence to verify");
 
-        else if (evidence.getDateOccurred() == null || evidence.getDescription() == null || evidence.getOwnerId() == null ||
+        else if (evidence.getDateOccurred() == null || evidence.getDescription() == null ||
                 evidence.getTitle() == null || evidence.getProject() == null)
             throw new IncorrectDetailsException ("Evidence values are null");
 
@@ -103,13 +103,14 @@ public class EvidenceService {
      * @param evidence The evidence object to be saved
      * @throws IncorrectDetailsException If the evidence has incorrect
      */
-    public void saveEvidence(Evidence evidence) throws IncorrectDetailsException {
+    public String saveEvidence(Evidence evidence) throws IncorrectDetailsException {
         try {
-            verifyEvidence(evidence);
             evidenceRepository.save(evidence);
+            logger.info("Successfully created evidence {} for user with ID: {}", evidence.getEvidenceId(),evidence.getOwnerId());
+            return "Successfully Created " + evidence.getTitle();
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);
-            throw new IncorrectDetailsException("Failure saving evidence");
+            throw new IncorrectDetailsException("Failure Saving Evidence");
         }
     }
 
