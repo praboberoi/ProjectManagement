@@ -57,6 +57,12 @@ public class Sprint {
     private Date endDate;
 
     /**
+     * Colour of the sprint
+     */
+    @Column(nullable = false)
+    private String color;
+
+    /**
      * Constructor for the Sprint class without arguments
      */
     public Sprint() {
@@ -72,7 +78,7 @@ public class Sprint {
      * @param startDate Start date of the sprint.
      * @param endDate End date of the sprint.
      */
-    public Sprint(int sprintId, Project project, String sprintLabel, String sprintName, String description, Date startDate, Date endDate) {
+    public Sprint(int sprintId, Project project, String sprintLabel, String sprintName, String description, Date startDate, Date endDate, String color) {
         this.sprintId = sprintId;
         this.project = project;
         this.sprintLabel= sprintLabel;
@@ -80,6 +86,7 @@ public class Sprint {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.color = color;
     }
 
     /**
@@ -195,6 +202,22 @@ public class Sprint {
     }
 
     /**
+     * Getter for the color attribute
+     * @return color of type String
+     */
+    public String getColor() {
+        return color;
+    }
+
+    /**
+     * Setter for the color attribute
+     * @param color of type String
+     */
+    public void setColor(String color) {
+        this.color = color;
+    }
+
+    /**
      * To check the given sprint is equal to the current sprint.
      * @param o Of type object
      * @return A boolean
@@ -204,7 +227,7 @@ public class Sprint {
         if (this == o) return true;
         if (!(o instanceof Sprint)) return false;
         Sprint sprint = (Sprint) o;
-        return sprintId == sprint.sprintId && Objects.equals(project, sprint.project) && Objects.equals(sprintLabel, sprint.sprintLabel) && Objects.equals(sprintName, sprint.sprintName) && description.equals(sprint.description) && Objects.equals(startDate, sprint.startDate) && Objects.equals(endDate, sprint.endDate);
+        return sprintId == sprint.sprintId && Objects.equals(project, sprint.project) && Objects.equals(sprintLabel, sprint.sprintLabel) && Objects.equals(sprintName, sprint.sprintName) && description.equals(sprint.description) && Objects.equals(startDate, sprint.startDate) && Objects.equals(endDate, sprint.endDate) && Objects.equals(color, sprint.color);
     }
 
 
@@ -219,6 +242,7 @@ public class Sprint {
         private Date startDate;
         private Date endDate;
         private Project project;
+        private String color;
 
         /**
          * Builds the current Builder with the given sprint id
@@ -290,12 +314,17 @@ public class Sprint {
             return this;
         }
 
+        public Builder color(String color) {
+            this.color = color;
+            return this;
+        }
+
         /**
          * Returns a new Sprint with all the parameters of the current Builder
          * @return of type Sprint
          */
         public Sprint build() {
-            return new Sprint(sprintId, project, sprintLabel, sprintName, description, startDate, endDate);
+            return new Sprint(sprintId, project, sprintLabel, sprintName, description, startDate, endDate, color);
         }
     }
 }
