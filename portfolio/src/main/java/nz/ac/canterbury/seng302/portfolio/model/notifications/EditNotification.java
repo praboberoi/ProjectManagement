@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model.notifications;
 
+import java.util.Objects;
+
 public class EditNotification {
     private int eventId;
     private int projectId;
@@ -43,5 +45,18 @@ public class EditNotification {
 
     public void setActive(boolean active) {
         this.active = active;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EditNotification notification)) return false;
+        return notification.getUsername().equals(username) && notification.getEventId() == eventId && notification.getProjectId() == projectId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(username, eventId, projectId);
     }
 }

@@ -8,6 +8,7 @@ import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -40,7 +41,7 @@ public class EventController {
     private static final String SUCCESS_MESSAGE = "messageSuccess";
     private static final String FAILURE_MESSAGE = "messageDanger";
 
-    private static Set<EditNotification> editing;
+    private static Set<EditNotification> editing = new HashSet<>();
 
 
     /**
@@ -113,7 +114,13 @@ public class EventController {
     @MessageMapping("/event/edit")
     public void editing(EditNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal) {
         notification.setUsername(principal.getName());
-        template.convertAndSend("/element/project" + notification.getProjectId() + "/events", ("event" + notification.getEventId() + " editing " + notification.getUsername()));
+        if (notification.isActive()) {
+            template.convertAndSend("/element/project" + notification.getProjectId() + "/events", ("event" + notification.getEventId() + " editing " + notification.getUsername()));
+            editing.add(notification);
+        } else {
+            editing.remove(notification);
+        }
+        System.out.println(editing.size());
     }
 }
 
