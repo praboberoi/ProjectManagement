@@ -130,6 +130,7 @@ function connect() {
     stompClient.onConnect = function (frame) {
         console.log('Connected: ' + frame);
         subscribe()
+        document.getElementById("websocket-status").value = "connected"
     };
 
     stompClient.onStompError = function (frame) {
