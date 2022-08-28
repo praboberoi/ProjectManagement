@@ -4,6 +4,7 @@ package nz.ac.canterbury.seng302.portfolio.model;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
@@ -19,9 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 class ProjectRepositoryTest {
     @Autowired private ProjectRepository projectRepo;
 
+    @MockBean
+    private EvidenceRepository evidenceRepository;
+
     @Test
     @Transactional
-    public void givenProjectExists_FindByProjectName() {
+    void givenProjectExists_FindByProjectName() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
@@ -51,7 +55,7 @@ class ProjectRepositoryTest {
 
     @Test
     @Transactional
-    public void givenProjectsExists_FindByProjectNameContaining() {
+    void givenProjectsExists_FindByProjectNameContaining() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
@@ -82,7 +86,7 @@ class ProjectRepositoryTest {
 
     @Test
     @Transactional
-    public void givenDescriptionExists_findByDescription() {
+    void givenDescriptionExists_findByDescription() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
@@ -113,7 +117,7 @@ class ProjectRepositoryTest {
 
     @Test
     @Transactional
-    public void givenDescriptionExists_findByDescriptionContaining() {
+    void givenDescriptionExists_findByDescriptionContaining() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
@@ -145,7 +149,7 @@ class ProjectRepositoryTest {
 
     @Test
     @Transactional
-    public void givenDateExists_FindByStartDate() {
+    void givenDateExists_FindByStartDate() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")
@@ -163,7 +167,7 @@ class ProjectRepositoryTest {
 
     @Test
     @Transactional
-    public void givenEndDateExists_FindByEndDate() {
+    void givenEndDateExists_FindByEndDate() {
         Project project1 = new Project.Builder()
                 .projectName("Project 2020")
                 .description("First Attempt")

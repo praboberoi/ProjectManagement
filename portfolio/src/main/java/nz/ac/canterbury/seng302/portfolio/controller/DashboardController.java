@@ -8,9 +8,6 @@ import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,6 +25,9 @@ public class DashboardController {
     @Autowired private UserAccountClientService userAccountClientService;
     private Logger logger = LoggerFactory.getLogger(DashboardController.class);
     @Value("${apiPrefix}") private String apiPrefix;
+
+    private static final String ERROR_PAGE = "error";
+    private static final String DASHBOARD_REDIRECT = "redirect:/dashboard";
 
     /**
     * Adds common model elements used by all controller methods.
@@ -54,7 +54,7 @@ public class DashboardController {
             return "dashboard";
         } catch (Exception e) {
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "error";
+            return ERROR_PAGE;
         }
     }
 
@@ -67,7 +67,7 @@ public class DashboardController {
      */
     @GetMapping(path="/dashboard/newProject")
     public String showNewForm(Model model, @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
         model.addAttribute("apiPrefix", apiPrefix);
         Project newProject = dashboardService.getNewProject();
         List<Date> dateRange = dashboardService.getProjectDateRange(newProject);
@@ -97,20 +97,20 @@ public class DashboardController {
             Model model,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
         try {
             dashboardService.verifyProject(project);
             String message =  dashboardService.saveProject(project);
             ra.addFlashAttribute("messageSuccess", message);
             logger.info("Project {} has been created by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
-            return "redirect:/dashboard";
+            return DASHBOARD_REDIRECT;
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/dashboard";
+            return DASHBOARD_REDIRECT;
         } catch (Exception e) {
             model.addAttribute("user", userAccountClientService.getUser(principal));
             logger.error("An error occured while saving a project.", e);
-            return "error";
+            return ERROR_PAGE;
         }
     }
 
@@ -129,7 +129,7 @@ public class DashboardController {
         Model model,
         RedirectAttributes ra,
         @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
         try {
             Project project  = dashboardService.getProject(projectId);
             List<Date> dateRange = dashboardService.getProjectDateRange(project);
@@ -145,7 +145,7 @@ public class DashboardController {
             return "projectForm";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-                return "redirect:/dashboard";
+                return DASHBOARD_REDIRECT;
         }
     }
 
@@ -163,16 +163,16 @@ public class DashboardController {
         RedirectAttributes ra,
         Model model,
         @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
         try {
             Project project  = dashboardService.getProject(projectId);
             String message = "Successfully Deleted " + project.getProjectName();
             dashboardService.deleteProject(projectId);
             ra.addFlashAttribute("messageSuccess", message);
-            return "redirect:/dashboard";
+            return DASHBOARD_REDIRECT;
         } catch (IncorrectDetailsException e) {
             model.addAttribute("user", userAccountClientService.getUser(principal));
-            return "error";
+            return ERROR_PAGE;
         }
     }
 

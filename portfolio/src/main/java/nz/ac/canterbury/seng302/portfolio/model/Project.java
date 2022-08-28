@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Creates a Project class required for creating a table in the database
@@ -44,6 +45,12 @@ public class Project {
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private List<Sprint> sprints;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<Event> events;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<Evidence> evidences;
 
     /**
      * No args Constructor of the Project.

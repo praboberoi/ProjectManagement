@@ -12,18 +12,19 @@ import java.util.List;
  */
 public class PrincipalUtils {
 
+    private PrincipalUtils() {}
+
     /**
      * Gets the user's id from the provided AuthState principal
      * @param principal - current user detail.
      * @return
      */
     public static int getUserId(AuthState principal) {
-        int id = Integer.parseInt(principal.getClaimsList().stream()
+        return Integer.parseInt(principal.getClaimsList().stream()
             .filter(claim -> claim.getType().equals("nameid"))
             .findFirst()
             .map(ClaimDTO::getValue)
             .orElse("-100"));
-        return id;
     }
  
     /**
@@ -32,9 +33,8 @@ public class PrincipalUtils {
      * @return List of current user roles.
      */
     public static List<String> getUserRole(AuthState principal) {
-        List<String> userRoles = Arrays.asList(principal.getClaimsList().stream()
+        return Arrays.asList(principal.getClaimsList().stream()
         .filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        return userRoles;
     }
 
     /**
@@ -44,10 +44,20 @@ public class PrincipalUtils {
      */
     public static boolean checkUserIsTeacherOrAdmin(AuthState principal) {
         List<String> userRoles = Arrays.asList(principal.getClaimsList().stream().filter(claim -> claim.getType().equals("role")).findFirst().map(ClaimDTO::getValue).orElse("NOT FOUND").split(","));
-        if ((userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()))) {
-            return true;
-        }
-        return false;
+        return (userRoles.contains(UserRole.TEACHER.name()) || userRoles.contains(UserRole.COURSE_ADMINISTRATOR.name()));
+    }
+
+    /**
+     * Get the current user's username.
+     * @param principal - current user detail.
+     * @return Current user's username.
+     */
+    public static String getUserName(AuthState principal) {
+        return principal.getClaimsList().stream()
+            .filter(claim -> claim.getType().equals("unique_name"))
+            .findFirst()
+            .map(ClaimDTO::getValue)
+            .orElse("guest");
     }
    
 }

@@ -1,17 +1,7 @@
-// Regular expression for Sprint Name field. No leading white spaces or empty field.
-const eventNameRegex = /^\S/
-const eventNameSpacesRegex = /^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$/
-
 const startDateElement = document.getElementById('eventStartDate');
 const endDateElement = document.getElementById('eventEndDate');
 const startDateError = document.getElementById('eventStartDateError');
 const endDateError = document.getElementById('eventEndDateError');
-
-const startTimeElement = document.querySelector('#startTime');
-const endTimeElement = document.querySelector('#endTime');
-
-const startTimeError = document.getElementById('startTimeError');
-const endTimeError = document.getElementById('endTimeError');
 
 /**
  * Function for error validation of Event Name field.
@@ -62,8 +52,8 @@ function checkEventDates() {
     }
 
     if (startDate >= endDate ) {
-        startDateError.innerText = "Start Date must be on or before the End Date.";
-        endDateError.innerText = "End Date must be on or after the Start Date";
+        startDateError.innerText = "Start Date must be before the End Date";
+        endDateError.innerText = "End Date must be after the Start Date";
         startDateElement.classList.add("eventFormError");
         endDateElement.classList.add("eventFormError");
         document.getElementById("eventFormSubmitButton").disabled = true;
@@ -109,6 +99,32 @@ function checkEndDate() {
 
     endDateError.innerText = "";
     endDateElement.classList.remove("eventFormError")
+}
+
+/**
+ * Populate event creation or editing modal with proper values
+ * @param isEdit Bool for if create or edit selected
+ * @param eventId ID of event
+ * @param eventName Name of event
+ * @param startDate Event start date and time
+ * @param endDate Event end date and time
+ */
+function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
+    if (isEdit) {
+        document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
+        document.getElementById('eventFormSubmitButton').innerText =  'Save';
+        document.getElementById('eventStartDate').value = startDate;
+        document.getElementById('eventEndDate').value =  endDate;
+    } else {
+        document.getElementById('eventFormTitle').innerText =  'Create New Event';
+        document.getElementById('eventFormSubmitButton').innerText =  'Create';
+        document.getElementById('eventStartDate').value =  startDate + 'T00:00';
+        document.getElementById('eventEndDate').value =  endDate + 'T00:00';
+    }
+    document.getElementById('eventId').value =  eventId;
+    document.getElementById('event-name').value =  eventName;
+    checkEventName()
+    checkEventDates()
 }
 
 

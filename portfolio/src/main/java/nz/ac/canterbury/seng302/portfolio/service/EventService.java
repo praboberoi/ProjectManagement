@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.controller.EventController;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
@@ -16,7 +15,6 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 
 /**
@@ -26,7 +24,7 @@ import java.util.stream.Collectors;
 public class EventService {
     @Autowired private EventRepository eventRepository;
     @Autowired private ProjectRepository projectRepository;
-    private Logger logger = LoggerFactory.getLogger(EventController.class);
+    private Logger logger = LoggerFactory.getLogger(EventService.class);
 
 
     public EventService(ProjectRepository projectRepository, EventRepository eventRepository) {
@@ -57,13 +55,12 @@ public class EventService {
         int currentNumber = eventRepository.findByProject(project).size() + 1;
 
         LocalDate now = LocalDate.now();
-        Event newEvent = new Event.Builder()
+        return new Event.Builder()
                 .project(project)
                 .eventName("New Event " + currentNumber)
                 .startDate(java.sql.Date.valueOf(now))
                 .endDate(java.sql.Date.valueOf(now.plusDays(1)))
                 .build();
-        return newEvent;
     }
 
     /**
@@ -77,15 +74,14 @@ public class EventService {
                     .findByProject(project)
                     .stream()
                     .sorted(Comparator.comparing(Event::getStartDate))
-                    .collect(Collectors.toList()))
+                    .toList())
                 .orElse(List.of());
     }
-
 
     /**
      * Verifies the event date and time
      * @param event The event object to verify
-     * @return Message explaining the error
+     * @throws IncorrectDetailsException Message explaining the error
      * */
     public void verifyEvent(Event event) throws IncorrectDetailsException {
 
@@ -116,7 +112,6 @@ public class EventService {
         else if(event.getStartDate().after(event.getProject().getEndDate()) || event.getEndDate().after(event.getProject().getEndDate()))
             throw new IncorrectDetailsException("The event cannot start or end after the project");
 
-        event.setEventName(event.getEventName().strip());
     }
 
     /**
@@ -132,10 +127,10 @@ public class EventService {
             message = "Successfully Saved " + event.getEventName();
         }
         try {
-            event = eventRepository.save(event);
+            eventRepository.save(event);
             return message;
         } catch (PersistenceException e) {
-            logger.error("Failure Saving Event", e);
+            logger.error("Failure Saving Event {}", event.getEventId(), e);
             throw new IncorrectDetailsException("Failure Saving Event");
         }
     }

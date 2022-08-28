@@ -4,11 +4,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.sql.Date;
 
+import javax.transaction.Transactional;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 /**
@@ -16,17 +18,17 @@ import org.springframework.test.context.ActiveProfiles;
  */
 @SpringBootTest
 @ActiveProfiles("test")
-@DirtiesContext
-public class EventRepositoryTest {
+class EventRepositoryTest {
 
     @Autowired 
     private EventRepository eventRepo;
     @Autowired
     private ProjectRepository projectRepository;
 
+    @MockBean
+    private EvidenceRepository evidenceRepository;
 
     private Event.Builder basicEventBuilder;
-    private Project project;
 
     /**
      * Creates an event builder
@@ -55,19 +57,19 @@ public class EventRepositoryTest {
      * Adds an event and checks if it exists by id
      */
     @Test
-    @DirtiesContext
-    public void givenEventExists_FindByEventId() {
+    @Transactional
+    void givenEventExists_FindByEventId() {
         Event testEvent = basicEventBuilder.build();
         testEvent = eventRepo.save(testEvent);
-        assertEquals(testEvent, eventRepo.findById(1));
+        assertEquals(testEvent, eventRepo.findById(testEvent.getEventId()));
     }
 
     /**
      * Adds an event and checks if it exists by name
      */
     @Test
-    @DirtiesContext
-    public void givenEventExists_FindByEventName() {
+    @Transactional
+    void givenEventExists_FindByEventName() {
         Event testEvent = basicEventBuilder.build();
         eventRepo.save(testEvent);
         assertEquals(testEvent, eventRepo.findByEventName(testEvent.getEventName()).get(0));
