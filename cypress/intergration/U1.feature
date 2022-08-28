@@ -54,4 +54,3 @@ Feature: U1 Events on the project details page
     And I select the CypressProject project
     When I call create event on "Cypress Websocket Created Event"
     Then "Cypress Websocket Created Event" exists
-
