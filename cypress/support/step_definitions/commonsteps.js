@@ -43,9 +43,6 @@ Then("{string} exists", (string) => {
     cy.contains(string).should('exist')
 })
 
-Then("I log out", () => {
-    cy.visit("/logout")
-})
 Then("I am directed to {string} URL", (url) => {
     cy.url().should('include', url)
 })
