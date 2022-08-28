@@ -15,3 +15,10 @@ Given("I navigate to {word}", (location) => {
 When("I select the {word} project", (project) => {
     cy.contains(project).click()
 })
+
+Then("I log out", () => {
+    cy.visit("/logout")
+})
+Then("I am directed to {string} URL", (url) => {
+    cy.url().should('include', url)
+})

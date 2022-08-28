@@ -33,18 +33,14 @@ When("I click on Create button", () => {
 
 Then("I am directed to {string} URL", (url) => {
     cy.url().should('include', url)
-    cy.visit("/logout")
-})
 
-Then("I am redirected to {string} URL", (url) => {
-    cy.url().should('include', url)
 })
 
 Then("A new Project with {word} is created", (word) => {
     cy.contains(word)
     cy.get(`[data-name="${word}"]`).click()
     cy.get('#deleteProject').children().contains(' Delete').click()
-    cy.visit("/logout")
+
 })
 
 Then("I am unable to create the project", () => {
@@ -57,7 +53,6 @@ Then("{string} error message is displayed under the start date", (errorMessage) 
 
 Then("{string} error message is displayed under the end date", (errorMessage) => {
     cy.get('#endDateError').should('have.text',errorMessage )
-    cy.visit("/logout")
 })
 
 

@@ -16,6 +16,7 @@ Feature: UPi Project Details
     Given I login as an admin
     When I select Create Project
     Then I am directed to "/dashboard/newProject" URL
+    And I log out
 
     Given I login as an admin
     When I select Create Project
@@ -26,7 +27,7 @@ Feature: UPi Project Details
     And I click on Create button
     Then I am redirected to "/dashboard" URL
     And A new Project with CypressTest is created
-
+    And I log out
 
   Scenario: AC6: As a teacher, I can create a sprint easily (e.g., a “+” button to add another).
     Given I login as an admin
@@ -78,6 +79,7 @@ Feature: UPi Project Details
       And I click on Create button
       Then I am unable to create the project
       And "Project must have started in the last year." error message is displayed under the start date
+      And I log out
 
       Given I login as an admin
       When I select Create Project
@@ -86,3 +88,4 @@ Feature: UPi Project Details
       Then I am unable to create the project
       And "Start date must be before the end date." error message is displayed under the start date
       And "End date must be after the start date" error message is displayed under the end date
+      And I log out
