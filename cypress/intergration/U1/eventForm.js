@@ -5,38 +5,49 @@ Given("I select the create event button", ()=> {
 })
 
 When("I create a new event", () => {
-    cy.get('#event-name').type('New Event')
-    cy.get('#eventStartDate').clear().type('25082022')
-    cy.get('#eventEndDate').clear().type('26082022')
+    cy.get('#event-name').click().clear().type('Coding Competition', {"delay":1})
     cy.get('#eventFormSubmitButton').click()
 })
 
 Then("A new event is created with a success message", () => {
-    cy.get('.alert-success').should('contain.text', 'Successfully Created New Event')
+    cy.get('.alert-success').should('contain.text', 'Successfully Created Coding Competition', {"delay":1})
+})
+
+
+When("I type in an event name", ()=> {
+    cy.get('#event-name').click().clear().type('Tech Meeting', {"delay":1})
+})
+
+Then('I am told how many characters I have used', ()=> {
+    cy.get('#charCount').should('have.text', '12 ')
 })
 
 When("I type in an event name that is very long", ()=> {
-    cy.get('#event-name').type('Shared lunch will all of the seng302 students to celebrate the end of the year')
+    cy.get('#event-name').click().clear().type('Shared lunch will all of the seng302 students to celebrate the end of the year', {"delay":1})
 })
 
-Then('Event name validation is carried out', ()=> {
+Then('An error message is displayed showing that the event name has exceeded the maximum characters', ()=> {
     cy.get('#eventNameError').should('have.text', 'Event Name cannot exceed 50 characters')
 })
 
-When("The start date is after the end date", () => {
-    cy.get('#event-name').type('New Event')
-    cy.get('#eventStartDate').clear().type('28082022')
-    cy.get('#eventEndDate').clear().type('26082022')
 
+When("The event start date is outside the project date", () => {
+    cy.get('#event-name').click().clear().type('New Event')
+    cy.get('#eventStartDate').click().clear().type('2022-06-10T08:30')
+    cy.get('#eventEndDate').click().clear().type('2022-12-25T08:30')
 })
 
-Then("Date validation is carried out", ()=> {
-    cy.get('#eventStartDateError').should('have.text', 'Start Date must be on or before the End Date.')
-    cy.get('#eventEndDateError').should('have.text', 'End Date must be on or after the Start Date')
+Then("An error message is shown with the valid event dates", ()=> {
+    cy.get('#eventStartDateError').should('have.text', 'Event must start on or after the 15 Jul 2022')
 })
 
-// cypress
-// open terminal
-// 1. npm install
-// 2. npx cypress open
-// 3. e2e
+When("I enter the valid date and times for the event", () => {
+    cy.get('#event-name').click().clear().type('New Event')
+    cy.get('#eventStartDate').click().clear().type('2022-07-30T08:30')
+    cy.get('#eventEndDate').click().clear().type('2022-08-25T08:30')
+    cy.get('#eventFormSubmitButton').click()
+})
+
+Then("The event is successfully saved", ()=> {
+    cy.get('.alert-success').should('contain.text', 'Successfully Created New Event')
+})
