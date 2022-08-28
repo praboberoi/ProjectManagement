@@ -31,16 +31,12 @@ When("I click on Create button", () => {
     cy.get('#save-submit-button').click()
 })
 
-Then("I am directed to {string} URL", (url) => {
+Then("I am redirected to {string} URL", (url) => {
     cy.url().should('include', url)
-
 })
 
 Then("A new Project with {word} is created", (word) => {
     cy.contains(word)
-    cy.get(`[data-name="${word}"]`).click()
-    cy.get('#deleteProject').children().contains(' Delete').click()
-
 })
 
 Then("I am unable to create the project", () => {
