@@ -54,7 +54,7 @@ public class RegistrationService {
             errorBuilder.setErrorText("First name must be between 2 and 32 characters.");
             result.add(errorBuilder.build());
         } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)||
-                !ValidationUtilities.hasDashSpecial(firstName) || !ValidationUtilities.hasSpaceSpecial(lastName)){
+                ValidationUtilities.hasMultipleDashes(firstName) || ValidationUtilities.hasMultipleSpaces(lastName)){
             errorBuilder.setFieldName("firstNameError");
             errorBuilder.setErrorText("First name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
@@ -70,7 +70,7 @@ public class RegistrationService {
             errorBuilder.setErrorText("Last name must be between 2 and 32 characters.");
             result.add(errorBuilder.build());
         } else if (ValidationUtilities.hasNameSpecial(lastName) || ValidationUtilities.hasDigit(lastName) ||
-                !ValidationUtilities.hasDashSpecial(lastName) || !ValidationUtilities.hasSpaceSpecial(lastName)) {
+                ValidationUtilities.hasMultipleDashes(lastName) || ValidationUtilities.hasMultipleSpaces(lastName)) {
             errorBuilder.setFieldName("lastNameError");
             errorBuilder.setErrorText("Last name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
