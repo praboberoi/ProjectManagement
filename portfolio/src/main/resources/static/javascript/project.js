@@ -139,6 +139,7 @@ function connect() {
 function subscribe() {
     stompClient.subscribe('/element/project/' + projectId + '/sprints', updateSprint);
     stompClient.subscribe('/element/project/' + projectId + '/events', updateEvent);
+    loadEvents()
 }
 
 /**
@@ -218,6 +219,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateElement(httpRequest, element){
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
+            console.log(httpRequest)
             element.innerHTML = httpRequest.responseText;
         } else if (httpRequest.status === 400) {
             messageDanger.hidden = false;
@@ -229,4 +231,14 @@ function updateElement(httpRequest, element){
             messageDanger.innerText = "Something went wrong.";
         }
     }
+}
+
+function loadEvents() {
+    let httpRequest = new XMLHttpRequest();
+
+    element = document.getElementById("event-list")
+    httpRequest.open('GET', window.location.pathname + `/events`);
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
+
+    httpRequest.send();
 }

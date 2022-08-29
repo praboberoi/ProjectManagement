@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.slf4j.Logger;
@@ -24,6 +25,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
@@ -46,6 +48,19 @@ public class EventController {
 
     private static Set<EditNotification> editing = new HashSet<>();
 
+    /**
+     * Return the html component which contains the specified project's events
+      * @param projectId Project containing the desired events
+      * @return Page fragment containing events
+      */
+      @GetMapping(path="/project/{projectId}/events")
+      public ModelAndView events(@PathVariable("projectId") int projectId) {
+          List<Event> listEvents = eventService.getEventByProjectId(projectId);
+          ModelAndView mv = new ModelAndView("eventFragments::projectList");
+          mv.addObject("listEvents", listEvents);
+          mv.addObject("editNotifications", editing);
+          return mv;
+      }
 
     /**
      * Checks if event dates are valid and if it is saves the event

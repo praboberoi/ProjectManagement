@@ -13,7 +13,6 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -37,15 +36,6 @@ public class ProjectController {
     @Autowired private EventService eventService;
     @Autowired private UserAccountClientService userAccountClientService;
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
-    @Value("${apiPrefix}") private String apiPrefix;
-
-    /**
-     * Adds common model elements used by all controller methods.
-     */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
 
     /**
      * Gets all of the sprints and returns it in a ResponseEntity
@@ -138,19 +128,4 @@ public class ProjectController {
         return mv;
     }
 
-     /**
-     * Return the html component which contains the specified project's events
-      * @param projectId Project containing the desired events
-      * @return Page fragment containing events
-      */
-    @GetMapping(path="/project/{projectId}/events")
-    public ModelAndView events(@PathVariable("projectId") int projectId) {
-        List<Event> listEvents = eventService.getEventByProjectId(projectId);
-        Project project = new Project();
-        project.setProjectId(projectId);
-        ModelAndView mv = new ModelAndView("project::events");
-        mv.addObject("project", project);
-        mv.addObject("listEvents", listEvents);
-        return mv;
-    }
 }
