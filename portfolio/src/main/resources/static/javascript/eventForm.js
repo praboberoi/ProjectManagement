@@ -2,6 +2,7 @@ const startDateElement = document.getElementById('eventStartDate');
 const endDateElement = document.getElementById('eventEndDate');
 const startDateError = document.getElementById('eventStartDateError');
 const endDateError = document.getElementById('eventEndDateError');
+let currentEventId;
 
 /**
  * Function for error validation of Event Name field.
@@ -110,6 +111,7 @@ function checkEndDate() {
  * @param endDate Event end date and time
  */
 function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
+    currentEventId = eventId
     if (isEdit) {
         document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
         document.getElementById('eventFormSubmitButton').innerText =  'Save';
@@ -128,13 +130,13 @@ function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
 }
 
 document.getElementById('eventFormModal').addEventListener('hidden.bs.modal', function (event) {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'eventId': 1})})
+    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'eventId': currentEventId})})
 });
 
 document.getElementById('eventFormModal').addEventListener('shown.bs.modal', function (event) {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'eventId': 1})})
+    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'eventId': currentEventId})})
 });
 
 function editEvent() {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'projectId': 1, 'eventId': 1})})
+    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'projectId': 1, 'eventId': currentEventId})})
 }

@@ -112,7 +112,7 @@ function connect() {
     stompClient = new StompJs.Client({
         brokerURL: 'ws://' + window.location.host + apiPrefix + '/gs-guide-websocket',
         debug: function(str) {
-            console.log(str);
+            // console.log(str);
         },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
@@ -183,8 +183,15 @@ function updateEvent(message) {
         document.getElementById(event+ "-card").outerHTML = ""
         return
     } else if (action === "editing") {
-        console.log(message)
         let user = array[2]
+        document.getElementById(event + '-notification').innerText = user + " is currently editing."
+        document.getElementById(event + '-edit-btn').disabled = true
+        document.getElementById(event + '-delete-btn').disabled = true
+        return
+    } else if (action === "finished") {
+        document.getElementById(event + '-notification').innerText = ""
+        document.getElementById(event + '-edit-btn').disabled = false
+        document.getElementById(event + '-delete-btn').disabled = false
         return
     } else {
         console.log("Unknown command: " + action)

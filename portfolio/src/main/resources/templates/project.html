@@ -119,17 +119,19 @@
                     </div>
                     <!--If a user is a STUDENT do not show the 'edit', 'delete' calendar object buttons !-->
                     <div class="col-7" th:if="${adminOrTeacher}">
-                      <br>
+                    <p th:id="'event' + ${event.eventId} + '-notification'"></p>
     
-                  <a class="btn btn-outline-primary mr-2 my-2" id = "event-btn" data-bs-toggle="modal" data-bs-target="#eventFormModal" data-bs-backdrop="static" data-bs-keyboard="false" th:data-id =
+                  <button class="btn btn-outline-primary mr-2 my-2" th:id = "'event' + ${event.eventId} + '-edit-btn'" data-bs-toggle="modal" data-bs-target="#eventFormModal" data-bs-backdrop="static" data-bs-keyboard="false" th:data-id =
                           "${event.eventId}" th:data-name = "${event.eventName}" th:data-startDate =
                           "${event.startDate}" th:data-endDate =
                           "${event.endDate}" th:onclick="populateEventModal(true, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'))">
-                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+                      <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit
+                    </button>
     
-                  <button type="button" class="btn btn-outline-secondary my-2" id = "event-delete-btn"  data-bs-toggle="modal" data-bs-target="#conformationModalEvent" th:data-id =
+                  <button type="button" class="btn btn-outline-secondary my-2" th:id = "'event' + ${event.eventId} + '-delete-btn'"  data-bs-toggle="modal" data-bs-target="#conformationModalEvent" th:data-id =
                               "${event.eventId}" th:data-name = "${event.eventName}" th:data-prefix = "${apiPrefix}" th:data-projectId = "${project.projectId}" th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'))">
-                      <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete
+                  </button>
                       <br>
                     </div>
                   </div>
