@@ -19,7 +19,7 @@ When("I select the {word} project", (project) => {
 
 /**
  * Waits for the websocket to subscribe to the required channels (Might move to commands if websockets gets used more)
- * @param {number} counter 
+ * @param {number} counter
  */
 function waitForWebSocket(counter=0) {
     cy.get('#websocket-status').then((el) => {
