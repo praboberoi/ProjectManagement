@@ -96,7 +96,7 @@
           <div th:if="${adminOrTeacher}">
             <!-- If a user is a STUDENT do not show the 'create' event button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false" th:data-id =
+              <a class="btn btn-outline-primary" id = "create-event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false" th:data-id =
                       "${event.eventId}" th:data-name = "${event.eventName}" th:data-startDate =
                          "${event.startDate}" th:data-endDate =
                          "${event.endDate}" th:onclick="populateEventModal(false, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'))">
@@ -226,9 +226,17 @@
                       <div id="cce" >
                         <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
                         Events <t></t>
-                        <p th:each="event : ${listEvents}">[[${event.eventName}]]
-                          <br>Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
-                          <br>End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]</p>
+                        <p th:each="event : ${listEvents}">
+                          <th:block th:if="${event.startDate >= sprint.startDate and event.startDate <= sprint.endDate}">
+                            [[${event.eventName}]]
+                            <br>Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
+                            <br>End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]
+                         </th:block>
+                          <th:block th:if="${event.endDate >= sprint.endDate and event.endDate <= sprint.endDate}">
+                            [[${event.eventName}]]
+                            <br>Start Date: [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
+                            <br>End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]
+                          </th:block>
                       </div>
                       <div id="ccm">
                         <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
