@@ -40,9 +40,11 @@ public class DeadlineServiceTest {
     private Deadline deadline;
     private Project project;
     private Sprint sprint;
+    private Deadline deadline2;
 
     /**
-     * Initialises a project, deadline and values to be returned for mocking the DeadlineRepository and ProjectRepository.
+     * Initialises a project, 2 deadlines, a sprint and values to be returned for mocking the DeadlineRepository and
+     * ProjectRepository.
      */
     @BeforeEach
     public void setUp() {
@@ -61,9 +63,26 @@ public class DeadlineServiceTest {
                 .project(project)
                 .build();
 
+        sprint = new Sprint.Builder()
+                .sprintId(1)
+                .startDate(new java.sql.Date(2020, 1, 1))
+                .endDate(new java.sql.Date(2020, 5, 1))
+                .build();
+
+        deadline2 = new Deadline.Builder()
+                .deadlineId(2)
+                .date(new Date(2020, 4, 4))
+                .name("Deadline 2")
+                .project(project)
+                .build();
+
         deadlineService = new DeadlineService(deadlineRepository, projectRepository, sprintRepository);
 
+        when(sprintRepository.findById(1)).thenReturn(Optional.ofNullable(sprint));
+
         when(deadlineRepository.findById(1)).thenReturn(Optional.ofNullable(deadline));
+
+        when(deadlineRepository.findDeadlinesBySprint(sprint)).thenReturn(List.of(deadline2));
 
         when(projectRepository.findById(1)).thenReturn(Optional.ofNullable(project));
 
@@ -99,6 +118,15 @@ public class DeadlineServiceTest {
     @Test
     public void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlinesIsReturned() {
         Assertions.assertEquals(List.of(deadline), deadlineService.getDeadlineByProject(1));
+    }
+
+    /**
+     * Test to make sure an expected list of deadlines is returned when deadlines
+     * are requested by a sprint id that exists
+     */
+    @Test
+    public void givenDeadlineAndSprintExist_whenDeadlineBySprintRequested_thenAListOfDeadlinesIsReturned() {
+        Assertions.assertEquals(List.of(deadline2), deadlineService.getDeadlineBySprint(1));
     }
 
     /**
