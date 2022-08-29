@@ -6,6 +6,12 @@ Feature: U1 Events on the project details page
     When I create a new event
     Then A new event is created with a success message
 
+  Scenario: AC4: I can modify an event
+    Given I login as an admin
+    And I select the CypressProject project
+    When I edit the event "Coding Competition"
+    Then The event is successfully updated
+
   Scenario: AC 6: I should be able to type the text for the event name. As I type, I should be told
   how many characters are left (i.e., how many more characters I am allowed to type).
     Given I login as an admin
