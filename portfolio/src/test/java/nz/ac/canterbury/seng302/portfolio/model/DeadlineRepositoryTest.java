@@ -134,4 +134,17 @@ public class DeadlineRepositoryTest {
 
         projectRepository.delete(project2);
     }
+
+    /**
+     * Asserts that correct deadlines are returned when findDeadlinesBySprint is called.
+     */
+    @Test
+    public void givenDeadlineExists_FindBySprint() {
+        List<Deadline> deadlineList = Arrays.asList(deadline1, deadline2);
+        Sprint sprint = new Sprint.Builder()
+                .startDate(new Date(2021, 1, 1))
+                .endDate(new Date(2021, 11, 21))
+                .build();
+        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findDeadlinesBySprint(sprint).toArray());
+    }
 }

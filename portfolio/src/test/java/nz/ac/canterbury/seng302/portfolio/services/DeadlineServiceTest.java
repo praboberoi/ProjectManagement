@@ -39,6 +39,7 @@ public class DeadlineServiceTest {
 
     private Deadline deadline;
     private Project project;
+    private Sprint sprint;
 
     /**
      * Initialises a project, deadline and values to be returned for mocking the DeadlineRepository and ProjectRepository.
@@ -68,6 +69,8 @@ public class DeadlineServiceTest {
 
         when(deadlineRepository.findByProject(project)).thenReturn(List.of(deadline));
     }
+
+
 
     /**
      * Test to make sure no exception is thrown when a deadline requested exists
