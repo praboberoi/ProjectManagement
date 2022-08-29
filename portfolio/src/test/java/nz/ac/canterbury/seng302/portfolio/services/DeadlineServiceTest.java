@@ -1,9 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.services;
 
-import nz.ac.canterbury.seng302.portfolio.model.Deadline;
-import nz.ac.canterbury.seng302.portfolio.model.DeadlineRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.Assertions;
@@ -35,6 +32,8 @@ public class DeadlineServiceTest {
     @MockBean
     private ProjectRepository projectRepository;
 
+    @MockBean
+    private SprintRepository sprintRepository;
 
     private DeadlineService deadlineService;
 
@@ -61,7 +60,7 @@ public class DeadlineServiceTest {
                 .project(project)
                 .build();
 
-        deadlineService = new DeadlineService(deadlineRepository, projectRepository);
+        deadlineService = new DeadlineService(deadlineRepository, projectRepository, sprintRepository);
 
         when(deadlineRepository.findById(1)).thenReturn(Optional.ofNullable(deadline));
 

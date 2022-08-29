@@ -22,11 +22,14 @@ import org.slf4j.Logger;
 public class DeadlineService {
     @Autowired private DeadlineRepository deadlineRepository;
     @Autowired private ProjectRepository projectRepository;
+    @Autowired private SprintRepository sprintRepository;
     private Logger logger = LoggerFactory.getLogger(DeadlineService.class);
 
 
-    public DeadlineService(DeadlineRepository deadlineRepository, ProjectRepository projectRepository) {
+    public DeadlineService(DeadlineRepository deadlineRepository, ProjectRepository projectRepository,
+                           SprintRepository sprintRepository) {
         this.deadlineRepository = deadlineRepository;
+        this.sprintRepository = sprintRepository;
         this.projectRepository = projectRepository;
     }
     /**
@@ -72,6 +75,22 @@ public class DeadlineService {
                 .collect(Collectors.toList()))
             .orElse(List.of());
     }
+
+    /**
+     * Returns a list of deadlines that occur within the given sprint related to the sprint ID.
+     * @param sprintId The id of the sprint (int).
+     * @return A list of deadlines from a sprint specified by its id.
+     */
+    public List<Deadline> getDeadlineBySprint(int sprintId) {
+        Optional<Sprint> current = sprintRepository.findById(sprintId);
+        return current.map(sprint -> deadlineRepository
+                .findDeadlinesBySprint(sprint)
+                .stream()
+                .sorted(Comparator.comparing(Deadline::getDate))
+                .collect(Collectors.toList()))
+                .orElse(List.of());
+    }
+
 
     /**
      * Deletes deadline object from the database

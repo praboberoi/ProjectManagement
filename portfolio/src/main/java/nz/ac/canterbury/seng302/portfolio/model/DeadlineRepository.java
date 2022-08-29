@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.Date;
@@ -15,6 +17,15 @@ public interface DeadlineRepository extends CrudRepository<Deadline, Integer> {
      * @return List of deadline(s) with the given name
      */
     public List<Deadline> findByName(String deadlineName);
+
+    /**
+     * Gets a list of deadlines that occur during a givent sprint
+     * @param sprint the sprint to search for deadlines within
+     * @return A list of deadlines occuring within the given sprint
+     */
+
+    @Query(value = "select deadlines from Deadline where date between :#{#sprint.startDate} and :#{#sprint.endDate}")
+    List<Deadline> findDeadlinesBySprint(@Param("sprint") Sprint sprint);
 
 
     /**
