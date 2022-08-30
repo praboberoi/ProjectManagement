@@ -234,6 +234,26 @@ public class EventControllerTest {
     }
 
     /**
+     * Check that the user is removed from the list of editing users when they finish editing
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenAUserIsEditing_whenTheyFinishEditing_thenUserIsNotEditing() throws Exception {
+        Set<EventNotification> expectedNotifications = new HashSet<>();
+        
+        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+        eventController.editing(new EventNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+        eventController.editing(new EventNotification(1, 1, "Tester", false, "0"), mockedWebSocketPrincipal, "0");
+        
+
+        this.mockMvc
+            .perform(get("/project/1/events"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("editNotifications", expectedNotifications));
+    }
+
+    /**
      * Check that the user is removed from the list of editing users when they are disconnected
      * @throws Exception Thrown during mockmvc run time
      */
