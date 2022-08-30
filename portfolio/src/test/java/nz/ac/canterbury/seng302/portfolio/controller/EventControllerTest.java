@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -167,7 +168,7 @@ public class EventControllerTest {
      * @throws Exception
      */
     @Test
-    public void givenEventDoesNotExist_whenDeleteEventCalled_thenExceptionIsThrown() throws Exception {
+    void givenEventDoesNotExist_whenDeleteEventCalled_thenExceptionIsThrown() throws Exception {
         when(eventService.deleteEvent(99))
                 .thenThrow(new IncorrectDetailsException("Failure deleting Event"));
 
@@ -176,6 +177,18 @@ public class EventControllerTest {
             .flashAttr("eventId", 99))
             .andExpect(status().is4xxClientError())
             .andExpect(content().string("Failure deleting Event"));
+    }
+
+    /**
+     * Test get events and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetEvents_ThenEventsReturnedSuccessfully() throws Exception{
+        when(eventService.getEventByProjectId(anyInt())).thenReturn(List.of());
+        this.mockMvc
+            .perform(get("/project/1/events"))
+            .andExpect(status().isOk());
     }
 
     @AfterAll
