@@ -129,14 +129,16 @@ function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
     checkEventDates()
 }
 
-document.getElementById('eventFormModal').addEventListener('hidden.bs.modal', function (event) {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'eventId': currentEventId})})
-});
-
-document.getElementById('eventFormModal').addEventListener('shown.bs.modal', function (event) {
+/**
+ * Sends a notification to the server when a user starts editing an event
+ */
+document.getElementById('eventFormModal').addEventListener('shown.bs.modal', function () {
     stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'eventId': currentEventId})})
 });
 
-function editEvent() {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'projectId': 1, 'eventId': currentEventId})})
-}
+/**
+ * Sends a notification to the server when a user stops editing an event
+ */
+document.getElementById('eventFormModal').addEventListener('hidden.bs.modal', function () {
+    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'eventId': currentEventId})})
+});

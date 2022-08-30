@@ -109,8 +109,9 @@ let stompClient = null;
  * Connects to the websocket server
  */
 function connect() {
+    let websocketProtocol = window.location.protocol === 'http:'?'ws://':'wss://'
     stompClient = new StompJs.Client({
-        brokerURL: 'ws://' + window.location.host + apiPrefix + '/gs-guide-websocket',
+        brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
         debug: function(str) {
             // console.log(str);
         },
@@ -119,15 +120,14 @@ function connect() {
         heartbeatOutgoing: 4000,
     });
     
-    stompClient.onConnect = function (frame) {
-        console.log('Connected: ' + frame);
+    stompClient.onConnect = function () {
+        console.log('Active updating enabled');
         subscribe()
         document.getElementById("websocket-status").value = "connected"
     };
 
-    stompClient.onStompError = function (frame) {
-        console.log('Broker reported error: ' + frame.headers['message']);
-        console.log('Additional details: ' + frame.body);
+    stompClient.onStompError = function () {
+        console.log('Websocket communication error')
     }
 
     stompClient.activate();
@@ -138,8 +138,8 @@ function connect() {
  */
 function subscribe() {
     stompClient.subscribe('/element/project/' + projectId + '/sprints', updateSprint);
-    stompClient.subscribe('/element/project/' + projectId + '/events', updateEvent);
-    loadEvents()
+    stompClient.subscribe('/element/project/' + projectId + '/events', handleEventNotification);
+    loadEventCards()
 }
 
 /**
@@ -167,19 +167,16 @@ function updateSprint(message) {
 }
 
 /**
- * Replaces the relevant component of the event table
+ * Handles event updates from the server
  * @param message Message with event and edit type
  */
-function updateEvent(message) {
+function handleEventNotification(message) {
     let array = message.body.split(' ')
     let event = array[0]
     let action = array[1]
-    let httpRequest = new XMLHttpRequest();
-    let element;
 
     if (action === "edited") {
-        element = document.getElementById("event-list")
-        httpRequest.open('GET', window.location.pathname + `/events`);
+        loadEventCards()
     } else if (action === "deleted") {
         document.getElementById(event+ "-card").outerHTML = ""
         return
@@ -188,20 +185,13 @@ function updateEvent(message) {
         document.getElementById(event + '-notification').innerText = user + " is currently editing."
         document.getElementById(event + '-edit-btn').disabled = true
         document.getElementById(event + '-delete-btn').disabled = true
-        return
     } else if (action === "finished") {
         document.getElementById(event + '-notification').innerText = ""
         document.getElementById(event + '-edit-btn').disabled = false
         document.getElementById(event + '-delete-btn').disabled = false
-        return
     } else {
         console.log("Unknown command: " + action)
-        return
     }
-
-    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
-
-    httpRequest.send();
 }
 
 /**
@@ -219,7 +209,6 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateElement(httpRequest, element){
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
-            console.log(httpRequest)
             element.innerHTML = httpRequest.responseText;
         } else if (httpRequest.status === 400) {
             messageDanger.hidden = false;
@@ -233,7 +222,10 @@ function updateElement(httpRequest, element){
     }
 }
 
-function loadEvents() {
+/**
+ * Loads the list of events cards under the event tab
+ */
+function loadEventCards() {
     let httpRequest = new XMLHttpRequest();
 
     element = document.getElementById("event-list")

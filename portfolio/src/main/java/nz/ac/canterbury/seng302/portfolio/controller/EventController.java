@@ -1,7 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
-import nz.ac.canterbury.seng302.portfolio.model.notifications.EditNotification;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -46,7 +46,7 @@ public class EventController {
     private static final String SUCCESS_MESSAGE = "messageSuccess";
     private static final String FAILURE_MESSAGE = "messageDanger";
 
-    private static Set<EditNotification> editing = new HashSet<>();
+    private static Set<EventNotification> editing = new HashSet<>();
 
     /**
      * Return the html component which contains the specified project's events
@@ -90,7 +90,6 @@ public class EventController {
         return PROJECT_REDIRECT;
     }
 
-
     /**
      * Deletes the event and redirects back to project page
      * @param model Of type {@link Model}
@@ -129,8 +128,14 @@ public class EventController {
         template.convertAndSend("/element/project/" + projectId + "/events", ("event" + eventId + " " + action));
     }
 
+    /**
+     * Sends an update message to every client subscribed to /event/edit when a user starts editing an event
+     * @param notification Notification containing the event ID and project ID that is being edited
+     * @param principal Authentication information containing user info
+     * @param sessionId Session ID of the websocket communication
+     */
     @MessageMapping("/event/edit")
-    public void editing(EditNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal, @Header("simpSessionId") String sessionId) {
+    public void editing(EventNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal, @Header("simpSessionId") String sessionId) {
         notification.setUsername(principal.getName());
         notification.setSessionId(sessionId);
         if (notification.isActive()) {
@@ -142,6 +147,10 @@ public class EventController {
         }
     }
 
+    /**
+     * Detects when a websocket disconnects to send remove them from the list of editors
+     * @param event Websocket disconnect event
+     */
     @EventListener
     public void onApplicationEvent(SessionDisconnectEvent event) {
         editing.stream().filter(notification->notification.getSessionId().equals(event.getSessionId()))

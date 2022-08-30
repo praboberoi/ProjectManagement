@@ -31,9 +31,13 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/gs-guide-websocket").setHandshakeHandler(new CustomHandshakeHandler());
+        registry.addEndpoint("/lensfolio-websocket").setHandshakeHandler(new CustomHandshakeHandler());
     }
 
+    /**
+     * Returns a thread pool task schedular to allow heartbeats to be sent between the server and client
+     * @return
+     */
     @Bean
     public TaskScheduler heartBeatScheduler() {
         return new ThreadPoolTaskScheduler();

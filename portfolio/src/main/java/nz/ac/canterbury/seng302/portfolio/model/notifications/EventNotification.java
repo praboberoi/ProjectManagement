@@ -2,14 +2,14 @@ package nz.ac.canterbury.seng302.portfolio.model.notifications;
 
 import java.util.Objects;
 
-public class EditNotification {
+public class EventNotification {
     private int eventId;
     private int projectId;
     private String username;
     private boolean active;
     private String sessionId;
 
-    public EditNotification(int projectId, int eventId, String username, boolean active) {
+    public EventNotification(int projectId, int eventId, String username, boolean active) {
         this.eventId = eventId;
         this.projectId = projectId;
         this.username = username;
@@ -59,7 +59,7 @@ public class EditNotification {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof EditNotification notification)) return false;
+        if (!(o instanceof EventNotification notification)) return false;
         return notification.getUsername().equals(username) 
             && notification.getEventId() == eventId 
             && notification.getProjectId() == projectId 
