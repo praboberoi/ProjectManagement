@@ -36,11 +36,14 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 public class EventController {
     @Autowired
     private EventService eventService;
+    
     @Autowired
     private ProjectService projectService;
-    private Logger logger = LoggerFactory.getLogger(EventController.class);
+    
     @Autowired
     private SimpMessagingTemplate template;
+
+    private Logger logger = LoggerFactory.getLogger(EventController.class);
 
     private static final String PROJECT_REDIRECT = "redirect:/project/{projectId}";
     private static final String SUCCESS_MESSAGE = "messageSuccess";

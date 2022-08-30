@@ -9,11 +9,12 @@ public class EventNotification {
     private boolean active;
     private String sessionId;
 
-    public EventNotification(int projectId, int eventId, String username, boolean active) {
+    public EventNotification(int projectId, int eventId, String username, boolean active, String sessionId) {
         this.eventId = eventId;
         this.projectId = projectId;
         this.username = username;
         this.active = active;
+        this.sessionId = sessionId;
     }
 
     public int getEventId() {
