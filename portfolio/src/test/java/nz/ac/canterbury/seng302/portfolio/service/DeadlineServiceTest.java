@@ -238,10 +238,10 @@ class DeadlineServiceTest {
                 .build();
         try {
             deadlineService.saveDeadline(deadline1);
-            assertEquals("New Deadline Test", deadline1.getName());
         } catch (IncorrectDetailsException e) {
              e.printStackTrace();
         }
+        assertEquals("New Deadline Test", deadline1.getName());
     }
 
     /**
