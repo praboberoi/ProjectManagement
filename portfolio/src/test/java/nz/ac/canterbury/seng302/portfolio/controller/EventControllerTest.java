@@ -131,12 +131,6 @@ public class EventControllerTest {
                 .build());
 
         mockedWebSocketPrincipal = mock(WebSocketPrincipal.class);
-
-        // this.brokerChannelInterceptor = new TestChannelInterceptor();
-		// this.clientOutboundChannelInterceptor = new TestChannelInterceptor();
-
-		// this.brokerChannel.addInterceptor(this.brokerChannelInterceptor);
-		// this.clientOutboundChannel.addInterceptor(this.clientOutboundChannelInterceptor);
     }
 
     /**
