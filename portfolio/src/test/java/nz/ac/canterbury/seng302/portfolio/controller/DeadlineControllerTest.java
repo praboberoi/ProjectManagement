@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.portfolio.controllers;
+package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.controller.DeadlineController;
@@ -36,7 +36,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 @WebMvcTest(controllers = DeadlineController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class DeadlineControllerTest {
+class DeadlineControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -133,7 +133,7 @@ public class DeadlineControllerTest {
      * Tests to make sure an appropriate message is displayed when a post request is made to save the deadline.
      */
     @Test
-    public void givenDeadlineExists_whenSaveDeadlineIsRequested_anAppropriateMessageIsDisplayed()  {
+     void givenDeadlineExists_whenSaveDeadlineIsRequested_anAppropriateMessageIsDisplayed()  {
         try {
             when(deadlineService.saveDeadline(deadline)).thenReturn("Successfully Updated " + deadline.getName());
 
@@ -172,7 +172,7 @@ public class DeadlineControllerTest {
      * Tests to make sure an appropriate message is displayed when a post request is made to delete the given deadline
      */
     @Test
-    public void givenDeadlineExists_whenDeleteDeadlineIsRequested_thenAnAppropriateMessageIsDisplayed() {
+     void givenDeadlineExists_whenDeleteDeadlineIsRequested_thenAnAppropriateMessageIsDisplayed() {
         try {
             when(deadlineService.deleteDeadline(1))
                     .thenReturn("Successfully deleted " + deadline.getName());
@@ -204,7 +204,7 @@ public class DeadlineControllerTest {
      * Tests to make sure the appropriate attributes are added and the correct redirection is made when calling the deadlineEditForm
      */
     @Test
-    public void givenDeadlineExists_whenDeadlineEditFormRequested_thenAnAppropriateMessageIsDisplayed() {
+     void givenDeadlineExists_whenDeadlineEditFormRequested_thenAnAppropriateMessageIsDisplayed() {
         try {
             when(projectService.getProjectById(1)).thenReturn(project);
             when(deadlineService.getDeadline(1)).thenReturn(deadline);
@@ -233,7 +233,7 @@ public class DeadlineControllerTest {
      * Test call to deadlineEditForm to assert exception redirects to the project page with the correct message
      */
     @Test
-    public void givenProjectDoesNotExist_whenDeadlineEditFormRequested_thenErrorIsHandledAppropriately() {
+     void givenProjectDoesNotExist_whenDeadlineEditFormRequested_thenErrorIsHandledAppropriately() {
         try {
             when(projectService.getProjectById(1)).thenReturn(project);
             when(deadlineService.getDeadline(1)).thenReturn(deadline);
@@ -244,36 +244,6 @@ public class DeadlineControllerTest {
                     .andExpect(flash().attribute("messageDanger", "Project not found"))
                     .andExpect(view().name("redirect:/project/{projectId}"));
         } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Test call to newDeadline redirects to the new deadline form with the correct data
-     */
-    @Test
-    public void givenDeadlineDoesNotExist_whenNewDeadlineFormRequested_thenAppropriateFormAndFormDataIsReturned() {
-        try {
-            when(projectService.getProjectById(1)).thenReturn(project);
-            when(deadlineService.getNewDeadline(project)).thenReturn(deadline);
-            when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-            this.mockMvc.perform(MockMvcRequestBuilders
-                    .get("/project/1/newDeadline"))
-                    .andExpect(model().attribute("project", project))
-                    .andExpect(model().attribute("deadline", deadline))
-                    .andExpect(model().attribute("pageTitle", "Add New Deadline"))
-                    .andExpect(model().attribute("submissionName", "Create"))
-                    .andExpect(model().attribute("image",  "/icons/create-icon.svg"))
-                    .andExpect(model().attribute("user", userResponse.build()))
-                    .andExpect(model().attribute("projectDateMin", project.getStartDate().toString() + "T00:00"))
-                    .andExpect(model().attribute("projectDateMax", project.getEndDate().toString() + "T00:00"))
-                    .andExpect(view().name("deadlineForm"));
-
-            when(projectService.getProjectById(2)).thenThrow(new IncorrectDetailsException("Project not found"));
-            this.mockMvc.perform(MockMvcRequestBuilders
-                    .get("/project/2/newDeadline"))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
-        } catch(Exception e) {
             e.printStackTrace();
         }
     }

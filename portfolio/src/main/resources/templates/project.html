@@ -80,7 +80,7 @@
             Events</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+          <button class="nav-link" id="deadline-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
             <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
             Deadlines</button>
         </li>
@@ -120,13 +120,13 @@
                     <!--If a user is a STUDENT do not show the 'edit', 'delete' calendar object buttons !-->
                     <div class="col-7" th:if="${adminOrTeacher}">
                       <br>
-    
+
                   <a class="btn btn-outline-primary mr-2 my-2" id = "event-btn" data-toggle="modal" data-target="#eventFormModal" data-backdrop="static" data-keyboard="false" th:data-id =
                           "${event.eventId}" th:data-name = "${event.eventName}" th:data-startDate =
                           "${event.startDate}" th:data-endDate =
                           "${event.endDate}" th:onclick="populateEventModal(true, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'))">
                         <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
-    
+
                   <button type="button" class="btn btn-outline-secondary my-2" id = "event-delete-btn"  data-toggle="modal" data-target="#conformationModalEvent" th:data-id =
                               "${event.eventId}" th:data-name = "${event.eventName}" th:data-prefix = "${apiPrefix}" th:data-projectId = "${project.projectId}" th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'))">
                       <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
@@ -138,17 +138,35 @@
            </th:block>
           </div>
         </div>
-        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
+        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="deadline-tab">
           <div th:if="${adminOrTeacher}">
             <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
             <div class = "createBtn">
-              <a class="btn btn-outline-primary" id = "deadline-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newDeadline'}">
-                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</a>
+              <button type="button" class="btn btn-outline-primary btn-sm" id = "deadline-btn" data-backdrop="static" data-keyboard="false" th:onclick="createDeadline()">
+                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</button>
             </div>
           </div>
-          <div class="card" id = "deadlineCard">
-            <h6 class="card-title">End of Sprint 5: </h6>
-            <p class="eventDates">End Date: 21 July 2022 5pm</p>
+          <div class="card shadow-sm bg-white rounded" id = "deadlineCard" th:each="deadline : ${listDeadlines}">
+            <div class="container-fluid">
+<!--              <div class="row mt-2">-->
+                <div class="d-flex justify-content-between pt-2">
+                  <div>
+                    <h6 class="card-title" th:id="'deadline' + ${deadline.deadlineId} + 'Name'">[[${deadline.name}]]</h6>
+                    <p class="eventDates" th:id="'deadline' + ${deadline.deadlineId} + 'date'"><b>Date:</b> [[${#dates.format(deadline.date, 'dd MMM yyyy hh:mm a')}]]
+                  </div>
+                  <div class="d-flex align-items-baseline pt-2 mt-2" th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+                    <button type="button" class="btn btn-outline-primary btn-sm mr-1" th:id = "${deadline.deadlineId} + 'edit-btn'"
+                            th:data-deadlineId="${deadline.deadlineId}" th:data-deadlineName="${deadline.name}"
+                            th:data-deadlineDate="${deadline.date}" th:onclick="editDeadline(this.getAttribute('data-deadlineName'), this.getAttribute('data-deadlineDate'), this.getAttribute('data-deadlineId'))">
+                      <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</button>
+
+                    <button type="button" class="btn btn-outline-secondary btn-sm" th:id = "${deadline.deadlineId} + 'delete-btn'"  data-toggle="modal" data-target="#conformationModalDeadline"
+                            th:data-deadlineId="${deadline.deadlineId}" th:data-deadlineName="${deadline.name}" th:onclick="deleteDeadline(this.getAttribute('data-deadlineId'), this.getAttribute('data-deadlineName'))">
+                      <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+                    <br>
+                  </div>
+              </div>
+            </div>
           </div>
         </div>
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
@@ -317,6 +335,29 @@
   </div>
 </div>
 
+<div class="modal fade" id="conformationModalDeadline" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Delete Deadline</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p id="messageDeadline"></p>
+      </div>
+      <div class="modal-footer">
+        <form action="" method="post" id="deleteDeadline">
+          <button type= "submit" class="btn btn-outline-primary" id="deleteDeadlineModalBtn"><img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
+        </form>
+        <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+          <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="conformationModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
     <div class="modal-content">
@@ -341,6 +382,7 @@
 </div>
 
 <div th:replace="forms :: eventsForm"></div>
+<div th:replace="forms :: deadlineForm"></div>
 <script th:inline="javascript">
   let userRoles = [[${roles}]];
   const projectId = [[${project.projectId}]];
@@ -354,6 +396,5 @@
 <script th:src="@{{apiPrefix}/javascript/project.js(apiPrefix=${apiPrefix})}"></script>
 <script th:src="@{{apiPrefix}/javascript/dashboard.js(apiPrefix=${apiPrefix})}"></script>
 <script th:src='@{{apiPrefix}/javascript/calendar.js(apiPrefix=${apiPrefix})}'></script>
-<script th:src='@{{apiPrefix}/javascript/eventForm.js(apiPrefix=${apiPrefix})}'></script>
 </body>
 </html>

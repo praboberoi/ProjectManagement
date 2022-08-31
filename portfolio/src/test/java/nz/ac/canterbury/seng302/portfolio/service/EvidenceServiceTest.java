@@ -78,7 +78,7 @@ class EvidenceServiceTest {
                 .description(null)
                 .dateOccurred(null)
                 .project(null)
-                .ownerId(null)
+                .ownerId(1)
                 .build();
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(incorrectEvidence));
@@ -203,17 +203,18 @@ class EvidenceServiceTest {
         when(evidenceRepository.save(evidence1)).thenThrow(new PersistenceException("This is a test"));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.saveEvidence(evidence1));
-        assertEquals("Failure saving evidence", exception.getMessage());
+        assertEquals("Failure Saving Evidence", exception.getMessage());
 
     }
 
     /**
-     * Asserts that no exception is thrown when saveEvidence is called with a correct evidence object
+     * Asserts that success string is returned when saveEvidence is called with a correct evidence object
      * @throws IncorrectDetailsException If there is an error saving the evidence
      */
     @Test
-    void givenCorrectEvidence_whenSaveEvidenceCalled_thenNothingThrown() throws IncorrectDetailsException {
-        evidenceService.saveEvidence(evidence1);
+    void givenCorrectEvidence_whenSaveEvidenceCalled_thenStringReturned() throws IncorrectDetailsException {
+        String success = evidenceService.saveEvidence(evidence1);
+        assertEquals("Successfully Created " + evidence1.getTitle(), success);
 
     }
 
