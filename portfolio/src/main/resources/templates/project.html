@@ -228,28 +228,27 @@
                         <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
                           Events </div><br>
                         <th:block th:each="event : ${listEvents}">
-                            <div th:if="${event.startDate >= sprint.startDate and event.startDate <= sprint.endDate}">
+                            <div th:if="${(event.startDate >= sprint.startDate or event.endDate <= sprint.endDate) and (event.startDate <= sprint.endDate and event.endDate >= sprint.startDate)}">
                             <b>[[${event.eventName}]]</b>
                             <br><b>Start Date:</b> [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
                             <br><b>End Date:</b> [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]<br><br>
                            </div>
-                           <div th:if="${event.endDate >= sprint.endDate and event.endDate <= sprint.endDate}">
-                            <b>[[${event.eventName}]]</b>
-                            <br><b>Start Date:</b> [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
-                            <br><b>End Date:</b> [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]<br>
-                           </div>
                         </th:block>
                       </div>
                       </div>
-                      <div id="deadline-display">
+                      <div class="outer-box" id="deadline-display">
+                        <div class="inner-box">
                         <div class="heading-size">
                         <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
                         Deadlines</div><br>
+                        </div>
                       </div>
-                      <div id="milestone-display">
+                      <div class="outer-box" id="milestone-display">
+                        <div class="inner-box">
                         <div class="heading-size">
                         <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
                           Milestones</div><br>
+                        </div>
                       </div>
                   </div>
                 </td>
