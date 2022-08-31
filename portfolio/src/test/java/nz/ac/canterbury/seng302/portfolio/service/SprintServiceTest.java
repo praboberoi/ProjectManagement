@@ -136,8 +136,8 @@ class SprintServiceTest {
 
         List<Sprint> sprintList = List.of(sprint2);
         sprintService.updateSprintLabelsAndColor(sprintList);
-        assertEquals(sprint2.getColor(), "purple");
-        assertEquals(sprint2.getSprintLabel(), "Sprint 1");
+        assertEquals("purple", sprint2.getColor());
+        assertEquals("Sprint 1", sprint2.getSprintLabel());
     }
 
 }
