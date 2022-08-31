@@ -45,6 +45,7 @@ class SprintRepositoryTest {
                 .project(project)
                 .startDate(new Date(2021,1,1))
                 .endDate(new Date(2021, 3, 1))
+                .color("green")
                 .build();
 
         sprint2 = new Sprint.Builder()
@@ -54,6 +55,7 @@ class SprintRepositoryTest {
                 .project(project)
                 .startDate(new Date(2021,3,1))
                 .endDate(new Date(2021, 6, 1))
+                .color("purple")
                 .build();
         projectRepository.save(project);
         sprintRepository.save(sprint1);

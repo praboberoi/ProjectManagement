@@ -24,6 +24,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SprintService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintRepository sprintRepository;
+    private final List<String> SPRINT_COLOURS = List.of("green", "purple", "darkSlateGrey", "firebrick", "mediumVioletRed","mediumSeaGreen", "orangeRed");
+
+
 
     public SprintService(ProjectRepository projectRepository, SprintRepository sprintRepository) {
         this.projectRepo = projectRepository;
@@ -40,7 +43,9 @@ public class SprintService {
         int sprintNo = countByProjectId(project.getProjectId()) + 1;
         Sprint sprint = new Sprint.Builder()
                                   .sprintLabel("Sprint " + sprintNo)
-                                  .sprintName("Sprint " + sprintNo).build();
+                                  .sprintName("Sprint " + sprintNo)
+                                  .color(SPRINT_COLOURS.get(sprintNo%7)).build();
+
 
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.isEmpty()) {
@@ -114,13 +119,14 @@ public class SprintService {
     }
 
     /**
-     * If the project sprint list is edited in some way, change the names of sprints accordingly.
+     * If the project sprint list is edited in some way, change the names and colors of sprints accordingly.
      * @param sprintList a list of all the sprints
      */
-    public void updateSprintLabels(List<Sprint> sprintList) {
+    public void updateSprintLabelsAndColor(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.forEach(sprint -> {
             sprint.setSprintLabel("Sprint " + count.getAndIncrement());
+            sprint.setColor(SPRINT_COLOURS.get((count.get()-1) % 7));
             sprintRepository.save(sprint);
         });
     }
