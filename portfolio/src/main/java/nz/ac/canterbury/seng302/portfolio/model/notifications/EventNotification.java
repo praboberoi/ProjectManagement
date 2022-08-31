@@ -2,6 +2,9 @@ package nz.ac.canterbury.seng302.portfolio.model.notifications;
 
 import java.util.Objects;
 
+/**
+ * Edit notifications for events. Keeps track of who is editing which event and the project it is associated with
+ */
 public class EventNotification {
     private int eventId;
     private int projectId;
