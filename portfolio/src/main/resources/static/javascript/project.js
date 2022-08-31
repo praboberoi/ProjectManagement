@@ -183,22 +183,24 @@ function handleEventNotification(message) {
     let event = array[0]
     let action = array[1]
 
+    let eventCard = document.getElementById(event + "-card");
+
     if (action === "edited") {
         loadEventCards()
-    } else if (action === "deleted") {
-        document.getElementById(event+ "-card").outerHTML = ""
+    } else if (action === "deleted" && eventCard) {
+        eventCard.outerHTML = ""
         return
-    } else if (action === "editing") {
+    } else if (action === "editing" && eventCard) {
         let user = array[2]
         document.getElementById(event + '-notification').innerText = user + " is currently editing."
         document.getElementById(event + '-edit-btn').disabled = true
         document.getElementById(event + '-delete-btn').disabled = true
-    } else if (action === "finished") {
+    } else if (action === "finished" && eventCard) {
         document.getElementById(event + '-notification').innerText = ""
         document.getElementById(event + '-edit-btn').disabled = false
         document.getElementById(event + '-delete-btn').disabled = false
     } else {
-        console.log("Unknown command: " + action)
+        console.log("Unknown event or command: " + event + " " + action)
     }
 }
 
