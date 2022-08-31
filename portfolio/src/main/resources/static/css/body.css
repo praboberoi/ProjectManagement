@@ -223,35 +223,26 @@ a.project-name {
     float: left;
     padding-top: 10px;
     padding-bottom: 10px;
-    /*text-align: center;*/
     font-size: 13px;
-    /*justify-content:center;*/
-    /*text-align: left;*/
-
 }
 
 .outer-box {
     display: flex;
     flex-direction: column;
     align-items: center;
-    /*text-align: left;*/
 }
 
 .inner-box{
     text-align: left;
     min-width: 60%;
 }
-/*.flex-container {*/
-/*    !*display:flex;*!*/
-/*    justify-content:center;*/
-/*    text-align: left;*/
-/*}*/
+
 .heading-size{
     font-size: 15px;
 }
 
 td.hidden-row {
-    background-color: #f5f5f5; /* Assuming you want the hover color to be white */
+    background-color: #f5f5f5;
 }
 
 
