@@ -78,17 +78,6 @@ public class EventService {
                 .orElse(List.of());
     }
 
-    public List<Event> getEventBySprint(int projectId) {
-        Optional<Project> current = projectRepository.findById(projectId);
-        return current.map(project -> eventRepository
-                        .findByProject(project)
-                        .stream()
-                        .filter()
-                        .sorted(Comparator.comparing(Event::getStartDate))
-
-                        .toList())
-                .orElse(List.of());
-    }
 
     /**
      * Verifies the event date and time
