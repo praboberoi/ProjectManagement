@@ -113,8 +113,8 @@ function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
     if (isEdit) {
         document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
         document.getElementById('eventFormSubmitButton').innerText =  'Save';
-        document.getElementById('eventStartDate').value = startDate;
-        document.getElementById('eventEndDate').value =  endDate;
+        document.getElementById('eventStartDate').value = startDate.replace(" ", "T");
+        document.getElementById('eventEndDate').value =  endDate.replace(" ", "T");
     } else {
         document.getElementById('eventFormTitle').innerText =  'Create New Event';
         document.getElementById('eventFormSubmitButton').innerText =  'Create';
