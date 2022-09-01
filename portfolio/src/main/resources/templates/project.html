@@ -146,9 +146,10 @@
                 <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create Deadline</button>
             </div>
           </div>
-          <div class="card shadow-sm bg-white rounded" id = "deadlineCard" th:each="deadline : ${listDeadlines}">
-            <div class="container-fluid">
-<!--              <div class="row mt-2">-->
+          <th:block th:each="deadline : ${listDeadlines}" id="listDeadlines">
+            <div class="card shadow-sm bg-white rounded" th:id = "${deadline.deadlineId} + '-card'" >
+              <div class="container-fluid">
+                <!--              <div class="row mt-2">-->
                 <div class="d-flex justify-content-between pt-2">
                   <div>
                     <h6 class="card-title" th:id="'deadline' + ${deadline.deadlineId} + 'Name'">[[${deadline.name}]]</h6>
@@ -165,9 +166,11 @@
                       <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
                     <br>
                   </div>
+                </div>
               </div>
             </div>
-          </div>
+          </th:block>
+
         </div>
         <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
           <div th:if="${adminOrTeacher}">

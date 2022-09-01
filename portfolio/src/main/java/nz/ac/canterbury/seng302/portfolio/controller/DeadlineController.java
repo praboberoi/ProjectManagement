@@ -128,9 +128,6 @@ public class DeadlineController {
             logger.info("Deadline {} has been deleted.", deadlineId);
             ra.addFlashAttribute(SUCCESS_MESSAGE, message);
             notifyDeadline(projectId, deadlineId, "deleted");
-            // TODO REMOVE ONCE WEB SOCKETS WORKING
-            List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
-            model.addAttribute("listDeadlines", listDeadlines);
             return PROJECT_REDIRECT;
         } catch (IncorrectDetailsException e) {
             logger.info("Deadline {} could not be deleted.", deadlineId);
