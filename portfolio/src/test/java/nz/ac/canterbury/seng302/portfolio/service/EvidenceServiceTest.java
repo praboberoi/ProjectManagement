@@ -1,21 +1,23 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.Evidence;
-import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupRequest;
+import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.persistence.PersistenceException;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 /**
@@ -216,6 +218,30 @@ class EvidenceServiceTest {
         String success = evidenceService.saveEvidence(evidence1);
         assertEquals("Successfully Created " + evidence1.getTitle(), success);
 
+    }
+
+    /**
+     * Test that when a piece of evidence exists, its ID is specified and delete evidence is called, then it is successfully deleted.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenAPieceOfEvidence_whenDeleteEvidenceIsCalled_thenEvidenceNoLongerExists() throws IncorrectDetailsException {
+        when(evidenceRepository.getEvidenceByEvidenceId(evidence1.getEvidenceId())).thenReturn(evidence1);
+        String messageResponse = evidenceService.deleteEvidence(evidence1.getEvidenceId());
+
+        assertEquals("Successfully Deleted " + evidence1.getEvidenceId(), messageResponse);
+        System.out.println(evidenceRepository.getEvidenceByEvidenceId(evidence1.getEvidenceId()).getEvidenceId());
+        assertNull(evidenceRepository.getEvidenceByEvidenceId(evidence1.getEvidenceId()));
+    }
+
+    /**
+     * Test that when a piece of evidence does not exist, and delete evidence is called, then an Illegal Argument exception is thrown.
+     */
+    @Test
+    void givenNoEvidence_whenDeleteEvidenceIsCalled_thenAnExceptionIsThrown(){
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                evidenceService.deleteEvidence(99));
+        assertEquals("Could not find an existing piece of evidence", exception.getMessage() );
     }
 
 }
