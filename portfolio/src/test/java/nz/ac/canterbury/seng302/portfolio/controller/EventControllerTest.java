@@ -135,28 +135,37 @@ public class EventControllerTest {
 
     /**
      * Test verification of event object and check that it redirect the user to the project page.
+     * @throws IncorrectDetailsException
      */
     @Test
-    void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() {
+    void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() throws Exception {
+        when(eventService.saveEvent(event)).thenReturn("Successfully Created " + event.getEventName());
+        when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
 
-        try {
-            when(eventService.saveEvent(event)).thenReturn("Successfully Created " + event.getEventName());
-            when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
+        this.mockMvc
+                .perform(post("/project/1/saveEvent").flashAttr("event", event))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Successfully Created " + event.getEventName()));
 
-            this.mockMvc
-                    .perform(post("/project/1/saveEvent").flashAttr("event", event))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", nullValue()))
-                    .andExpect(flash().attribute("messageSuccess", "Successfully Created " + event.getEventName()));
+        this.mockMvc
+                .perform(post("/project/1/saveEvent").flashAttr("event", event1))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string("Failure Saving Event"));
+    }
 
-            this.mockMvc
-                    .perform(post("/project/1/saveEvent").flashAttr("event", event1))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger",("Failure Saving Event")))
-                    .andExpect(flash().attribute("messageSuccess",  nullValue()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    /**
+     * Test that request returns failure when an event fails to save.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenServer_WhenSaveValidEvent_ThenEventFailedSuccessfully() throws Exception {
+        when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
+
+        this.mockMvc
+                .perform(post("/project/1/saveEvent").flashAttr("event", event1))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string("Failure Saving Event"));
+
     }
 
     /**
