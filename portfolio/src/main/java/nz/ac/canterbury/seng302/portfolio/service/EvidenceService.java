@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import javax.persistence.criteria.CriteriaBuilder;
 import java.util.Date;
 import java.util.List;
 
@@ -111,6 +112,23 @@ public class EvidenceService {
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);
             throw new IncorrectDetailsException("Failure Saving Evidence");
+        }
+    }
+
+    /**
+     * Delete a specific piece of evidence
+     * @param evidenceId id of evidence to be deleted
+     * @return Message of the outcome of the delete operation
+     * @throws IncorrectDetailsException
+     */
+    public String deleteEvidence(int evidenceId) {
+        if (evidenceRepository.getEvidenceByEvidenceId(evidenceId) != null) {
+            evidenceRepository.deleteById(evidenceId);
+            logger.info("Successfully deleted evidence {}", evidenceId);
+            return "Successfully Deleted " + evidenceId;
+        } else {
+            logger.error("Failure deleting evidence");
+            throw new IllegalArgumentException("Could not find an existing piece of evidence");
         }
     }
 
