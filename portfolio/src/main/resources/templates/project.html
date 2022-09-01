@@ -107,7 +107,7 @@
             <div th:if="${adminOrTeacher}">
               <!-- If a user is a STUDENT do not show the 'create' event button !-->
               <div class="createBtn">
-                <a class="btn btn-outline-primary" id="event-btn" data-bs-toggle="modal"
+                <a class="btn btn-outline-primary" id="create-event-btn" data-bs-toggle="modal"
                   data-bs-target="#eventFormModal" data-bs-backdrop="static" data-bs-keyboard="false"
                   th:data-id="${event.eventId}" th:data-name="${event.eventName}" th:data-startDate="${event.startDate}"
                   th:data-endDate="${event.endDate}"
