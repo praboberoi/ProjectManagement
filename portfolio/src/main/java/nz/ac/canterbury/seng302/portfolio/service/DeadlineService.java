@@ -109,8 +109,6 @@ public class DeadlineService {
                 message = "Successfully Created " + deadline.getName();
             else
                 message = "Successfully Updated " + deadline.getName();
-            String deadlineName = String.join(" ", List.of(deadline.getName().strip().split("\s+")));
-            deadline.setName(deadlineName);
             deadlineRepository.save(deadline);
             return message;
         } catch (PersistenceException e) {

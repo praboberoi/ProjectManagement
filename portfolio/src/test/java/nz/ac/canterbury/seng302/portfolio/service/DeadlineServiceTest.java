@@ -226,25 +226,6 @@ class DeadlineServiceTest {
     }
 
     /**
-     * Test to make sure that the extra white spaces are removed when saving a deadline
-     */
-    @Test
-    void givenDeadlineExistsWithExtraWhiteSpace_whenSaveDeadlineRequested_ThenExtraWhiteSpaceIsRemoved() {
-        Deadline deadline1 = new Deadline.Builder()
-                .deadlineId(0)
-                .date(new Date())
-                .name(" New     Deadline     Test ")
-                .project(project)
-                .build();
-        try {
-            deadlineService.saveDeadline(deadline1);
-        } catch (IncorrectDetailsException e) {
-             e.printStackTrace();
-        }
-        assertEquals("New Deadline Test", deadline1.getName());
-    }
-
-    /**
      * Test to make sure deadline verification throws an error with appropriate error message for deadlines with incorrect
      * dates
      */
