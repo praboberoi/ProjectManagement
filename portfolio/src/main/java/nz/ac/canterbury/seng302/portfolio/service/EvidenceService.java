@@ -131,6 +131,4 @@ public class EvidenceService {
             throw new IllegalArgumentException("Could not find an existing piece of evidence");
         }
     }
-
-
 }

@@ -230,7 +230,6 @@ class EvidenceServiceTest {
         String messageResponse = evidenceService.deleteEvidence(evidence1.getEvidenceId());
 
         assertEquals("Successfully Deleted " + evidence1.getEvidenceId(), messageResponse);
-        System.out.println(evidenceRepository.getEvidenceByEvidenceId(evidence1.getEvidenceId()).getEvidenceId());
         assertNull(evidenceRepository.getEvidenceByEvidenceId(evidence1.getEvidenceId()));
     }
 
