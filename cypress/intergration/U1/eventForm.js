@@ -15,7 +15,7 @@ Then("The new event {string} is created with a success message", (event) => {
 
 
 When("I edit the event {string}",(event) => {
-    cy.contains(event).parent('.event-card').find('#event-btn').find('img').click()
+    cy.contains(event).parents('.event-card').find('#event-btn').find('img').click()
     cy.get('#event-name').clear().type('Updated Coding Competition', {"delay":0})
     cy.get('#eventFormSubmitButton').click()
 })
