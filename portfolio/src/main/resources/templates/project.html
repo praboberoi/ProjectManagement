@@ -248,53 +248,6 @@
       </div>
     </div>
 
-
-    <div class="mobile-only">
-      <!-- Table for sprints -->
-      <div class="table-border table-responsive bdr">
-        <table class="table table-hover">
-          <thead class="table-light">
-            <tr>
-              <th scope="col" style="width:auto">Sprint Label</th>
-              <th scope="col" style="width:auto">Sprint Name</th>
-              <th scope="col" style="width:auto">Start Date</th>
-              <th scope="col" style="width:auto">End Date</th>
-              <th style="width:auto"></th>
-            </tr>
-          </thead>
-          <tbody>
-
-            <th:block th:each="sprint : ${listSprints}">
-              <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'">
-                <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">[[${sprint.sprintLabel}]]</td>
-                <td th:id="'sprint' + ${sprint.sprintId} + 'Name'">[[${sprint.sprintName}]]</td>
-                <td th:id="'sprint' + ${sprint.sprintId} + 'StartDate'">[[${#dates.format(sprint.startDate, 'dd MMM
-                  yyyy')}]]</td>
-                <td th:id="'sprint' + ${sprint.sprintId} + 'EndDate'">[[${#dates.format(sprint.endDate, 'dd MMM
-                  yyyy')}]]</td>
-                <td>
-                  <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
-                  <div th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-                    <a type="button" class="btn btn-outline-primary mr-2" id="sprint-edit-btn-mobile"
-                      th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
-                      <img class="icon img-color-primary"
-                        th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" /></a>
-                    <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn-mobile"
-                      data-bs-toggle="modal" data-bs-target="#conformationModal"
-                      th:data-projectId="${project.projectId}" th:data-prefix="${apiPrefix}"
-                      th:data-sprintId="${sprint.sprintId}" th:data-name="${sprint.sprintName}"
-                      th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'));">
-                      <img class="icon img-color-secondary"
-                        th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /></button>
-                  </div>
-                </td>
-              </tr>
-            </th:block>
-          </tbody>
-        </table>
-      </div>
-    </div>
-
     <div id="showEventLabel" hidden>
 
     </div>

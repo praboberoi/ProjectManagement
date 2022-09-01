@@ -69,22 +69,26 @@ function deletingEvent(eventId, eventName) {
  */
 function deleteEvent(eventId) {
     let httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function (){
-        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                messageSuccess.hidden = false
-                messageDanger.hidden = true;
-                messageSuccess.innerText = httpRequest.responseText;
-            } else {
-                messageDanger.hidden = false;
-                messageSuccess.hidden = true;
-                messageDanger.innerText = httpRequest.responseText;
-            }
-        }
-    }
+    httpRequest.onreadystatechange = () => processAction(httpRequest)
 
     httpRequest.open('DELETE', apiPrefix + `/project/${projectId}/event/${eventId}/delete`);
     httpRequest.send();
+}
+
+/**
+ * Calls the server to delete the selected event and provide an error message on failure
+ * @param eventId Id of the group to delete
+ */
+ function saveEvent() {
+    let httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = () => processAction(httpRequest)
+    
+    httpRequest.open('POST', apiPrefix + `/project/${projectId}/saveEvent`);
+
+    let formData = new FormData(document.forms.eventForm)
+
+    httpRequest.send(formData);
 }
 
 /**
@@ -275,6 +279,28 @@ function updateElement(httpRequest, element){
             messageDanger.hidden = false;
             messageSuccess.hidden = true;
             messageDanger.innerText = "Bad Request";
+        } else {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Something went wrong.";
+        }
+    }
+}
+
+/**
+ * Replaces the old messages with the new one contained in the request
+ * @param httpRequest Request containing a model view element
+ */
+ function processAction(httpRequest){
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            messageSuccess.hidden = false
+            messageDanger.hidden = true;
+            messageSuccess.innerText = httpRequest.responseText;
+        } else if (httpRequest.status === 400) {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = httpRequest.responseText;
         } else {
             messageDanger.hidden = false;
             messageSuccess.hidden = true;

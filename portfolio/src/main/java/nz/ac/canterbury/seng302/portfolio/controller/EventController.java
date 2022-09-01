@@ -73,24 +73,25 @@ public class EventController {
      * @return link of html page to display
      */
     @PostMapping(path = "/project/{projectId}/saveEvent")
-    public String saveEvent(
+    public ResponseEntity<String> saveEvent(
             @ModelAttribute Event event,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal,
             @PathVariable ("projectId") int projectId) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
+        if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }   
         String message = "";
         try {
             event.setProject(projectService.getProjectById(projectId));
             eventService.verifyEvent(event);
             message = eventService.saveEvent(event);
             notifyEvent(projectId, event.getEventId(), "edited");
-            ra.addFlashAttribute(SUCCESS_MESSAGE, message);
-
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute(FAILURE_MESSAGE, e.getMessage());
+            logger.info("Event {} was unable to save", event.getEventId());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return PROJECT_REDIRECT;
     }
 
     /**
