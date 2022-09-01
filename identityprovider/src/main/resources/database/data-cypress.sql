@@ -31,12 +31,12 @@ INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285322,
 INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285322,2,1);
 -- U5 test users
 INSERT IGNORE INTO user (user_id, bio,date_created,email,first_name,last_name,nickname,password,profile_image_path,pronouns,salt,username) VALUES (1285321, 'Automated test guinea pig','2022-07-15 21:45:57.287000000','automated@cypress.com','Guinea','pig','','JRqHHIu2hllQo8uswun8chNpkSnX2ERuhyhToKmSdYc=',null,'','aNAKNt2LHIfchQoLQ0Aryg==','CypressGroupGuineaPig');
-INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285323,0,0);
-INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285323,1,1);
+INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285321,0,0);
+INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285321,1,1);
 INSERT IGNORE INTO user (user_id, bio,date_created,email,first_name,last_name,nickname,password,profile_image_path,pronouns,salt,username) VALUES (1285320, 'Automated test guinea pig','2022-07-15 21:45:57.287000000','automated@cypress.com','Guinea','pig','','JRqHHIu2hllQo8uswun8chNpkSnX2ERuhyhToKmSdYc=',null,'','aNAKNt2LHIfchQoLQ0Aryg==','CypressUnassignedGuineaPig');
-INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285324,0,0);
+INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285320,0,0);
 
 -- Create group and add member into it
 INSERT IGNORE INTO groups (group_id, short_name, long_name) VALUES (1285322, 'Cypress1', 'Cypress test group 1');
 INSERT IGNORE INTO groups (group_id, short_name, long_name) VALUES (1285323, 'Cypress2', 'Cypress test group 2');
-INSERT IGNORE INTO users_groups (user_id, group_id) VALUES (1285323, 1285322);
+INSERT IGNORE INTO users_groups (user_id, group_id) VALUES (1285321, 1285322);
