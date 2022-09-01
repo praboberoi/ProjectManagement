@@ -4,13 +4,13 @@ Given("I select the create event button", ()=> {
     cy.get('#create-event-btn').click()
 })
 
-When("I create a new event", () => {
-    cy.get('#event-name').clear().type('Coding Competition', {"delay":0})
+When("I create a new event {string}", (event) => {
+    cy.get('#event-name').clear().type(event, {"delay":0})
     cy.get('#eventFormSubmitButton').click()
 })
 
-Then("A new event is created with a success message", () => {
-    cy.get('.alert-success').should('contain.text', 'Successfully Created Coding Competition')
+Then("The new event {string} is created with a success message", (event) => {
+    cy.get('.alert-success').should('contain.text', 'Successfully Created ' + event)
 })
 
 
@@ -20,16 +20,16 @@ When("I edit the event {string}",(event) => {
     cy.get('#eventFormSubmitButton').click()
 })
 
-Then("The event is successfully updated",() => {
-    cy.get('.alert-success').should('contain.text', 'Successfully Saved Updated Coding Competition')
+Then("The event name is successfully updated to {string}",(name) => {
+    cy.get('.alert-success').should('contain.text', 'Successfully Saved ' + name)
 })
 
-When("I type in an event name", ()=> {
-    cy.get('#event-name').clear().type('Tech Meeting', {"delay":0})
+When("I type in an event name {string}", (name)=> {
+    cy.get('#event-name').clear().type(name, {"delay":0})
 })
 
-Then('I am told how many characters I have used', ()=> {
-    cy.get('#charCount').should('have.text', '12 ')
+Then('I am told I have used {string} characters', (number)=> {
+    cy.get('#charCount').should('have.text', number )
 })
 
 When("I type in an event name that is very long", ()=> {
