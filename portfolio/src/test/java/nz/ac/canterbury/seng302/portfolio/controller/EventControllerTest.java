@@ -3,11 +3,13 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 
 import org.junit.jupiter.api.AfterAll;
@@ -20,12 +22,21 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.web.servlet.MockMvc;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.HexFormat;
+import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,8 +66,12 @@ public class EventControllerTest {
 
     @MockBean
     private EventRepository eventRepository;
+
     @MockBean
     private ProjectRepository projectRepository;
+
+    @Autowired
+    private EventController eventController;
 
     Event event;
 
@@ -69,6 +84,8 @@ public class EventControllerTest {
     UserResponse.Builder userResponse;
 
     private static MockedStatic<PrincipalUtils> utilities;
+
+    private WebSocketPrincipal mockedWebSocketPrincipal;
 
     @BeforeAll
     private static void beforeAllInit() {
@@ -112,32 +129,43 @@ public class EventControllerTest {
                 .setCreated(Timestamp.newBuilder()
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
+
+        mockedWebSocketPrincipal = mock(WebSocketPrincipal.class);
     }
 
     /**
      * Test verification of event object and check that it redirect the user to the project page.
+     * @throws IncorrectDetailsException
      */
     @Test
-    void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() {
+    void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() throws Exception {
+        when(eventService.saveEvent(event)).thenReturn("Successfully Created " + event.getEventName());
+        when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
 
-        try {
-            when(eventService.saveEvent(event)).thenReturn("Successfully Created " + event.getEventName());
-            when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
+        this.mockMvc
+                .perform(post("/project/1/saveEvent").flashAttr("event", event))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Successfully Created " + event.getEventName()));
 
-            this.mockMvc
-                    .perform(post("/project/1/saveEvent").flashAttr("event", event))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", nullValue()))
-                    .andExpect(flash().attribute("messageSuccess", "Successfully Created " + event.getEventName()));
+        this.mockMvc
+                .perform(post("/project/1/saveEvent").flashAttr("event", event1))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string("Failure Saving Event"));
+    }
 
-            this.mockMvc
-                    .perform(post("/project/1/saveEvent").flashAttr("event", event1))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger",("Failure Saving Event")))
-                    .andExpect(flash().attribute("messageSuccess",  nullValue()));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    /**
+     * Test that request returns failure when an event fails to save.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenServer_WhenSaveValidEvent_ThenEventFailedSuccessfully() throws Exception {
+        when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
+
+        this.mockMvc
+                .perform(post("/project/1/saveEvent").flashAttr("event", event1))
+                .andExpect(status().is4xxClientError())
+                .andExpect(content().string("Failure Saving Event"));
+
     }
 
     /**
@@ -167,7 +195,7 @@ public class EventControllerTest {
      * @throws Exception
      */
     @Test
-    public void givenEventDoesNotExist_whenDeleteEventCalled_thenExceptionIsThrown() throws Exception {
+    void givenEventDoesNotExist_whenDeleteEventCalled_thenExceptionIsThrown() throws Exception {
         when(eventService.deleteEvent(99))
                 .thenThrow(new IncorrectDetailsException("Failure deleting Event"));
 
@@ -176,6 +204,81 @@ public class EventControllerTest {
             .flashAttr("eventId", 99))
             .andExpect(status().is4xxClientError())
             .andExpect(content().string("Failure deleting Event"));
+    }
+
+    /**
+     * Test get events and check that it returns the correct response.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetEvents_ThenEventsReturnedSuccessfully() throws Exception{
+        when(eventService.getEventByProjectId(anyInt())).thenReturn(List.of());
+        this.mockMvc
+            .perform(get("/project/1/events"))
+            .andExpect(status().isOk());
+    }
+
+    /**
+     * Tests that the user is added to the list of editing users when they start editing
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void whenAUserStartsEditing_thenNotificationIsPresent() throws Exception {
+        Set<EventNotification> expectedNotifications = new HashSet<>(Arrays.asList(new EventNotification(1, 1, "Tester", true, "0")));
+        
+        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+        eventController.editing(new EventNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+        
+        this.mockMvc
+            .perform(get("/project/1/events"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("editNotifications", expectedNotifications));
+    }
+
+    /**
+     * Check that the user is removed from the list of editing users when they finish editing
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenAUserIsEditing_whenTheyFinishEditing_thenUserIsNotEditing() throws Exception {
+        Set<EventNotification> expectedNotifications = new HashSet<>();
+        
+        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+        eventController.editing(new EventNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+        eventController.editing(new EventNotification(1, 1, "Tester", false, "0"), mockedWebSocketPrincipal, "0");
+        
+
+        this.mockMvc
+            .perform(get("/project/1/events"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("editNotifications", expectedNotifications));
+    }
+
+    /**
+     * Check that the user is removed from the list of editing users when they are disconnected
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenAUserIsEditing_whenDisconnectEvent_thenUserIsNotEditing() throws Exception {
+        Set<EventNotification> expectedNotifications = new HashSet<>();
+
+        StompSubProtocolHandler testSource = new StompSubProtocolHandler();
+        GenericMessage<byte[]> testMessage = new GenericMessage<byte[]>(HexFormat.of().parseHex("FF"));
+
+        SessionDisconnectEvent disconnectEvent = new SessionDisconnectEvent(testSource, testMessage, "0", CloseStatus.TLS_HANDSHAKE_FAILURE);
+        
+        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+        eventController.editing(new EventNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+        
+        eventController.onApplicationEvent(disconnectEvent);
+
+        this.mockMvc
+            .perform(get("/project/1/events"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("editNotifications", expectedNotifications));
     }
 
     @AfterAll

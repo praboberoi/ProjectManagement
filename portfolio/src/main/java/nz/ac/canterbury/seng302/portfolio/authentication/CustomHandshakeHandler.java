@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.portfolio;
+package nz.ac.canterbury.seng302.portfolio.authentication;
 
 import java.security.Principal;
 import java.util.Map;
