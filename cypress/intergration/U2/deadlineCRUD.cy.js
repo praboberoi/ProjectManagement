@@ -21,7 +21,7 @@ When('I select save on the deadline form',  () => {
 })
 
 When("I select edit for {string} deadline", (deadline) => {
-    cy.contains(`[data-deadlinename="${deadline}"]`, " Edit").click()
+    cy.contains(deadline).parents('.deadline-card').contains("Edit").click()
 })
 
 When("I change the name to {string}", (deadlineName) => {
@@ -29,8 +29,8 @@ When("I change the name to {string}", (deadlineName) => {
     cy.get('#deadline-name').type(deadlineName,{ delay: 0 }).should('have.value', deadlineName)
 })
 
-When("I select delete for {string} deadline", (deadlineName) => {
-    cy.contains(`[data-deadlinename="${deadlineName}"]`, " Delete").click()
+When("I select delete for {string} deadline", (deadline) => {
+    cy.contains(deadline).parents('.deadline-card').contains("Delete").click()
 })
 
 When('I select delete again on the conformation modal', ()=> {
