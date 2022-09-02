@@ -1,4 +1,4 @@
-package nz.ac.canterbury.seng302.portfolio.services;
+package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
@@ -24,7 +24,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for methods on DeadlineService class
  */
 @SpringBootTest
-public class DeadlineServiceTest {
+class DeadlineServiceTest {
 
     @MockBean
     private DeadlineRepository deadlineRepository;
@@ -95,7 +95,7 @@ public class DeadlineServiceTest {
      * Test to make sure no exception is thrown when a deadline requested exists
      */
     @Test
-    public void givenDeadlineExists_whenDeadlineRequested_thenNoExceptionThrown() {
+     void givenDeadlineExists_whenDeadlineRequested_thenNoExceptionThrown() {
         assertDoesNotThrow(() -> {
             deadlineService.getDeadline(1);
         });
@@ -105,7 +105,7 @@ public class DeadlineServiceTest {
      * Test to make sure that an exception is thrown when a requested deadline does not exist
      */
     @Test
-    public void givenDeadlineDoesNotExist_whenDeadlineRequested_thenExceptionThrown() {
+     void givenDeadlineDoesNotExist_whenDeadlineRequested_thenExceptionThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.getDeadline(2));
         Assertions.assertEquals("Failed to locate deadline in the database" , exception.getMessage());
@@ -116,7 +116,7 @@ public class DeadlineServiceTest {
      * Test to make sure an expected list of deadlines is returned when deadlines are requested by project id that exists
      */
     @Test
-    public void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlinesIsReturned() {
+     void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlinesIsReturned() {
         Assertions.assertEquals(List.of(deadline), deadlineService.getDeadlineByProject(1));
     }
 
@@ -133,7 +133,7 @@ public class DeadlineServiceTest {
      * Test to make sure an empty list is returned when deadlines are requested by a project id that does not exist
      */
     @Test
-    public void givenDeadlineAndProjectDoesNotExist_whenDeadlineByProjectRequested_thenAnEmptyListIsReturned() {
+     void givenDeadlineAndProjectDoesNotExist_whenDeadlineByProjectRequested_thenAnEmptyListIsReturned() {
         Assertions.assertEquals(List.of(), deadlineService.getDeadlineByProject(2));
     }
 
@@ -141,7 +141,7 @@ public class DeadlineServiceTest {
      * Test to make sure that no exception is thrown when a deadline is deleted and an appropriate message is received
      */
     @Test
-    public void givenDeadlineExists_whenDeleteDeadlineByIdRequested_thenAMessageIsReturned(){
+     void givenDeadlineExists_whenDeleteDeadlineByIdRequested_thenAMessageIsReturned(){
         assertDoesNotThrow(() -> {
             Assertions.assertEquals("Successfully deleted " + deadline.getName(), deadlineService.deleteDeadline(1));
         });
@@ -151,7 +151,7 @@ public class DeadlineServiceTest {
      * Test to ensure an exception is thrown when a deadline that does not exist is requested.
      */
     @Test
-    public void givenDeadlineDoesNotExist_whenDeleteDeadlineByIdRequested_thenAnExceptionIsThrown() {
+     void givenDeadlineDoesNotExist_whenDeleteDeadlineByIdRequested_thenAnExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.deleteDeadline(2));
         Assertions.assertEquals("Could not find given Deadline" , exception.getMessage());
@@ -166,7 +166,7 @@ public class DeadlineServiceTest {
      * Test to make sure that an appropriate message is received when a deadline is saved after updating its details
      */
     @Test
-    public void givenDeadlineExist_whenSaveDeadlineRequested_successfulUpdateMessageDisplayed() {
+     void givenDeadlineExist_whenSaveDeadlineRequested_successfulUpdateMessageDisplayed() {
         deadline.setName("Updated");
         try {
             Assertions.assertEquals("Successfully Updated " + deadline.getName(), deadlineService.saveDeadline(deadline));
@@ -179,7 +179,7 @@ public class DeadlineServiceTest {
      * Test to make sure an appropriate message is received when a new deadline is saved
      */
     @Test
-    public void givenNewDeadlineCreated_whenSaveDeadlineRequested_thenSuccessfullyCreatedMessageDisplayed() {
+     void givenNewDeadlineCreated_whenSaveDeadlineRequested_thenSuccessfullyCreatedMessageDisplayed() {
         Deadline deadline1 = new Deadline.Builder()
                                     .deadlineId(0)
                                     .date(new Date())
@@ -199,7 +199,7 @@ public class DeadlineServiceTest {
      * sent for verifying a deadline
      */
     @Test
-    public void givenADeadlineDoesNotExist_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
+     void givenADeadlineDoesNotExist_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(null));
         Assertions.assertEquals("No deadline", exception.getMessage());
@@ -210,7 +210,7 @@ public class DeadlineServiceTest {
      * with one of the fields left empty
      */
     @Test
-    public void givenDeadlineExistWithoutName_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
+     void givenDeadlineExistWithoutName_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         Deadline deadline1 = new Deadline.Builder()
                                     .deadlineId(0)
                                     .date(new Date())
@@ -241,7 +241,7 @@ public class DeadlineServiceTest {
      * names
      */
     @Test
-    public void givenDeadlineExistWithIncorrectName_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
+     void givenDeadlineExistWithIncorrectName_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         Deadline deadline1 = new Deadline.Builder()
                 .deadlineId(0)
                 .date(new Date())
@@ -277,7 +277,7 @@ public class DeadlineServiceTest {
      * dates
      */
     @Test
-    public void givenDeadlineExistWithIncorrectDate_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
+     void givenDeadlineExistWithIncorrectDate_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
         try {
             deadline.setDate(dateformat.parse("10/01/2024"));
@@ -299,7 +299,7 @@ public class DeadlineServiceTest {
      * Test no error is thrown for deadline verification for a deadline with correct values
      */
     @Test
-    public void givenDeadlineExistWithCorrectDetail_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
+     void givenDeadlineExistWithCorrectDetail_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         assertDoesNotThrow(() -> deadlineService.verifyDeadline(deadline));
     }
 
@@ -308,7 +308,7 @@ public class DeadlineServiceTest {
      * for the remaining attributes.
      */
     @Test
-    public void givenDeadlineServiceExist_whenGetDeadlineRequested_thenANewDeadlineIsReturned() {
+     void givenDeadlineServiceExist_whenGetDeadlineRequested_thenANewDeadlineIsReturned() {
         Deadline newDeadline = deadlineService.getNewDeadline(project);
         LocalDate now = LocalDate.now();
 
@@ -323,7 +323,7 @@ public class DeadlineServiceTest {
      * Test to check an appropriate error message is thrown when save deadline is requested due to JPA Persistence error
      */
     @Test
-    public void givenDeadlineExists_whenSaveDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
+     void givenDeadlineExists_whenSaveDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
         when(deadlineRepository.save(deadline)).thenThrow(PersistenceException.class);
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
             deadlineService.saveDeadline(deadline));

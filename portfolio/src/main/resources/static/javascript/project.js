@@ -88,6 +88,14 @@ function deleteEvent(eventId) {
 }
 
 /**
+ * Updates the conformation message and action of the form to delete the deadline
+ */
+function deleteDeadline(deadlineId, deadlineName) {
+    document.getElementById('messageDeadline').innerText =  `Are you sure you want to delete ${deadlineName}`;
+    document.getElementById('deleteDeadline').setAttribute('action', `${apiPrefix}/${projectId}/deleteDeadline/${deadlineId}`);
+}
+
+/**
  * Runs when the page is loaded and hide calendar
  */
 document.addEventListener('DOMContentLoaded', function() {
@@ -198,6 +206,57 @@ function updateEvent(message) {
 document.addEventListener('DOMContentLoaded', function() {
     connect();
 })
+
+/**
+ * Updates the deadline modal form to edit the chosen deadline and shows the modal
+ */
+function editDeadline(name, date, id) {
+    document.getElementById('deadlineFormSubmitButton').disabled = false;
+    document.getElementById('deadline-name').classList.remove("formError");
+    document.getElementById('deadlineNameError').innerText = null;
+    document.getElementById('deadlineDateError');
+    document.getElementById('deadline-name').value = name;
+    document.getElementById('deadlineId').value = id;
+    document.getElementById('deadlineCharCount').value = name.length;
+    document.getElementById('deadlineDate').value = date;
+    document.getElementById('deadlineFormTitle').textContent = "Edit deadline";
+    const modalElement = document.getElementById('deadlineFormModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
+        keyword: false,
+        backdrop: "static"
+    });
+    modal.show();
+}
+
+/**
+ * Closes the modal
+ */
+function closeDeadlineModal() {
+    const modalElement = document.getElementById('deadlineFormModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
+    modal.hide();
+}
+
+/**
+ *  Updates the deadline modal form to create a new deadline and shows the modal
+ */
+function createDeadline() {
+    document.getElementById('deadline-name').classList.remove("formError");
+    document.getElementById('deadlineNameError').innerText = null;
+    document.getElementById('deadlineFormSubmitButton').disabled = false;
+    document.getElementById('deadline-name').value = "New Deadline";
+    document.getElementById('deadlineCharCount').value = "12";
+    document.getElementById('deadlineDate').value = new Date().toLocaleDateString().split('/').reverse().join('-') + 'T00:00';
+    document.getElementById('deadlineFormTitle').textContent = "Create New Deadline";
+    const modalElement = document.getElementById('deadlineFormModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
+        keyword: false,
+        backdrop: "static"
+    });
+    modal.show();
+
+
+}
 
 /**
  * Replaces the old http component with the new one contained in the request

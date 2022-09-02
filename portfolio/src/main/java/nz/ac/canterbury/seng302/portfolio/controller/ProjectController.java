@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
@@ -36,6 +37,8 @@ public class ProjectController {
     @Autowired private ProjectService projectService;
     @Autowired private EventService eventService;
     @Autowired private UserAccountClientService userAccountClientService;
+    @Autowired private DeadlineService deadlineService;
+
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
     @Value("${apiPrefix}") private String apiPrefix;
 
@@ -77,12 +80,16 @@ public class ProjectController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
+            List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             Project project = projectService.getProjectById(projectId);
             Event newEvent = eventService.getNewEvent(project);
+            Deadline newDeadline = deadlineService.getNewDeadline(project);
             model.addAttribute("listEvents", listEvents);
+            model.addAttribute("listDeadlines", listDeadlines);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
             model.addAttribute("event", newEvent);
+            model.addAttribute("deadline", newDeadline);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", userAccountClientService.getUser(principal));
             model.addAttribute("projectDateMin", project.getStartDate());
