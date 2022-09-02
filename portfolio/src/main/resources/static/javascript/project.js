@@ -69,22 +69,26 @@ function deletingEvent(eventId, eventName) {
  */
 function deleteEvent(eventId) {
     let httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function (){
-        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                messageSuccess.hidden = false
-                messageDanger.hidden = true;
-                messageSuccess.innerText = httpRequest.responseText;
-            } else {
-                messageDanger.hidden = false;
-                messageSuccess.hidden = true;
-                messageDanger.innerText = httpRequest.responseText;
-            }
-        }
-    }
+    httpRequest.onreadystatechange = () => processAction(httpRequest)
 
     httpRequest.open('DELETE', apiPrefix + `/project/${projectId}/event/${eventId}/delete`);
     httpRequest.send();
+}
+
+/**
+ * Calls the server to delete the selected event and provide an error message on failure
+ * @param eventId Id of the group to delete
+ */
+ function saveEvent() {
+    let httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = () => processAction(httpRequest)
+
+    httpRequest.open('POST', apiPrefix + `/project/${projectId}/saveEvent`);
+
+    let formData = new FormData(document.forms.eventForm)
+
+    httpRequest.send(formData);
 }
 
 /**
@@ -127,7 +131,7 @@ function connect() {
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
     });
-
+    
     stompClient.onConnect = function () {
         console.log('Active updating enabled');
         subscribe()
@@ -141,40 +145,40 @@ function connect() {
     stompClient.activate();
 }
 
-
 /**
  * Subscribes to the required websocket notification channels
  */
 function subscribe() {
-    // stompClient.subscribe('/element/project/' + projectId + '/sprints', updateSprint);
+    stompClient.subscribe('/element/project/' + projectId + '/sprints', updateSprint);
+    stompClient.subscribe('/element/project/' + projectId + '/events', handleEventNotification);
     stompClient.subscribe('/element/project/' + projectId + '/deadlines', handleDeadlineNotification);
+    loadEventCards()
     loadDeadlineCards()
 }
 
+/**
+ * Replaces the relevant component of the sprint table
+ * @param message Message with sprint and edit type
+ */
+function updateSprint(message) {
+    let array = message.body.split(' ')
+    let sprint = array[0]
+    let action = array[1]
+    let httpRequest = new XMLHttpRequest();
+    if (action === "edited") {
+        element = document.getElementById("sprint-list")
+        httpRequest.open('GET', window.location.pathname + `/sprints`);
+    } else if (action === "deleted") {
+        document.getElementById(sprint + "Row").outerHTML = ""
+        return
+    } else {
+        console.log("Unknown command: " + action)
+        return
+    }
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
 
-// /**
-//  * Replaces the relevant component of the sprint table
-//  * @param message Message with sprint and edit type
-//  */
-// function updateSprint(message) {
-//     let array = message.body.split(' ')
-//     let sprint = array[0]
-//     let action = array[1]
-//     let httpRequest = new XMLHttpRequest();
-//     if (action === "edited") {
-//         element = document.getElementById("sprint-list")
-//         httpRequest.open('GET', window.location.pathname + `/sprints`);
-//     } else if (action === "deleted") {
-//         document.getElementById(sprint + "Row").outerHTML = ""
-//         return
-//     }else {
-//         console.log("Unknown command: " + action)
-//         return
-//     }
-//     httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
-//
-//     httpRequest.send();
-// }
+    httpRequest.send();
+}
 
 /**
  * Handles deadline updates from the server
@@ -207,32 +211,34 @@ function handleDeadlineNotification(message) {
     }
 }
 
-
 /**
- * Replaces the relevant component of the event table
+ * Handles event updates from the server
  * @param message Message with event and edit type
  */
-function updateEvent(message) {
+function handleEventNotification(message) {
     let array = message.body.split(' ')
     let event = array[0]
     let action = array[1]
-    let httpRequest = new XMLHttpRequest();
-    let element;
+
+    let eventCard = document.getElementById(event + "-card");
 
     if (action === "edited") {
-        element = document.getElementById("event-list")
-        httpRequest.open('GET', window.location.pathname + `/events`);
-    } else if (action === "deleted") {
-        document.getElementById(event+ "-card").outerHTML = ""
+        loadEventCards()
+    } else if (action === "deleted" && eventCard) {
+        eventCard.outerHTML = ""
         return
+    } else if (action === "editing" && eventCard) {
+        let user = array[2]
+        document.getElementById(event + '-notification').innerText = user + " is currently editing."
+        document.getElementById(event + '-edit-btn').disabled = true
+        document.getElementById(event + '-delete-btn').disabled = true
+    } else if (action === "finished" && eventCard) {
+        document.getElementById(event + '-notification').innerText = ""
+        document.getElementById(event + '-edit-btn').disabled = false
+        document.getElementById(event + '-delete-btn').disabled = false
     } else {
-        console.log("Unknown command: " + action)
-        return
+        console.log("Unknown event or command: " + event + " " + action)
     }
-
-    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
-
-    httpRequest.send();
 }
 
 /**
@@ -255,9 +261,26 @@ function loadDeadlineCards() {
     httpRequest.send();
 }
 
+/**
+ *  Updates the deadline modal form to create a new deadline and shows the modal
+ */
+function createDeadline() {
+    document.getElementById('deadline-name').classList.remove("formError");
+    document.getElementById('deadlineNameError').innerText = null;
+    document.getElementById('deadlineFormSubmitButton').disabled = false;
+    document.getElementById('deadline-name').value = "New Deadline";
+    document.getElementById('deadlineCharCount').value = "12";
+    document.getElementById('deadlineDate').value = new Date().toLocaleDateString().split('/').reverse().join('-') + 'T00:00';
+    document.getElementById('deadlineFormTitle').textContent = "Create New Deadline";
+    const modalElement = document.getElementById('deadlineFormModal');
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
+        keyword: false,
+        backdrop: "static"
+    });
+    modal.show();
 
 
-
+}
 
 /**
  * Replaces the old http component with the new one contained in the request
@@ -278,4 +301,39 @@ function updateElement(httpRequest, element){
             messageDanger.innerText = "Something went wrong.";
         }
     }
+}
+
+/**
+ * Replaces the old messages with the new one contained in the request
+ * @param httpRequest Request containing a model view element
+ */
+ function processAction(httpRequest){
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            messageSuccess.hidden = false
+            messageDanger.hidden = true;
+            messageSuccess.innerText = httpRequest.responseText;
+        } else if (httpRequest.status === 400) {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = httpRequest.responseText;
+        } else {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Something went wrong.";
+        }
+    }
+}
+
+/**
+ * Loads the list of events cards under the event tab
+ */
+function loadEventCards() {
+    let httpRequest = new XMLHttpRequest();
+
+    element = document.getElementById("event-list")
+    httpRequest.open('GET', window.location.pathname + `/events`);
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
+
+    httpRequest.send();
 }

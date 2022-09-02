@@ -10,7 +10,7 @@ import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 
 /**
- * Overrides the default websocket handshake to return a custom websocket username
+ * Overrides the default websocket handshake to return a custom websocket username 
  */
 public class CustomHandshakeHandler extends DefaultHandshakeHandler {
 
