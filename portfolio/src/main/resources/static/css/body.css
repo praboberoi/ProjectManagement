@@ -164,10 +164,6 @@ a.project-name {
     /*width: 600px;*/
 }
 
-#projectCard {
-    display: flex;
-    height: 300px;
-}
 
 #myTab{
     padding-left: 15px;
@@ -177,13 +173,7 @@ a.project-name {
     width: 800px;
 }
 
-#calendarOb {
-    margin-left: 80px;
-    width: 800px;
-    padding-top: 8px;
 
-
-}
 #myTabContent{
     overflow-y: auto;
 }
@@ -231,13 +221,6 @@ td.hiddenRow {
 }
 
 
-#calendarOb {
-    margin-left: 80px;
-    width: 800px;
-    padding-top: 8px;
-
-
-}
 #myTabContent{
     overflow-y: auto;
 }
