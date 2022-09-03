@@ -5,6 +5,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -68,8 +69,12 @@ public class Deadline {
         return name;
     }
 
+    /**
+     * Removes the extra whitespace from the given name and updates then deadline name
+     * @param name of type String
+     */
     public void setName(String name) {
-        this.name = name;
+        this.name = String.join(" ", List.of(name.strip().split("\s+")));
     }
 
 
