@@ -1,15 +1,6 @@
-<div id="deadline-list" th:fragment="deadlineTab">
-    <div th:if="${adminOrTeacher}">
-        <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
-        <div class="createBtn">
-            <button type="button" class="btn btn-outline-primary btn-sm" id="deadline-btn" data-backdrop="static"
-                data-keyboard="false" th:onclick="createDeadline()">
-                <img class="icon img-color-primary"
-                    th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" />
-                Create Deadline</button>
-        </div>
-    </div>
-    <div class="card shadow-sm bg-white rounded deadline-card" th:each="deadline : ${listDeadlines}">
+<div th:fragment="deadlineTab">
+
+    <div class="card shadow-sm bg-white rounded deadline-card" th:id="'deadline' + ${deadline.deadlineId} + '-card'" th:each="deadline : ${listDeadlines}">
         <div class="container-fluid">
             <div class="d-flex justify-content-between pt-2">
                 <div>
@@ -19,7 +10,7 @@
                         [[${#dates.format(deadline.date, 'dd MMM yyyy hh:mm a')}]]
                 </div>
                 <div class="d-flex align-items-baseline pt-2 mt-2"
-                    th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
+                     th:if="${adminOrTeacher}">
                     <button type="button" class="btn btn-outline-primary btn-sm mr-1"
                         th:id="${deadline.deadlineId} + 'edit-btn'" th:data-deadlineId="${deadline.deadlineId}"
                         th:data-deadlineName="${deadline.name}" th:data-deadlineDate="${deadline.date}"

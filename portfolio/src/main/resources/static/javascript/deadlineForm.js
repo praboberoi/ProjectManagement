@@ -109,12 +109,12 @@ function createDeadline() {
  * Sends a notification to the server when a user starts editing an event
  */
 document.getElementById('deadlineFormModal').addEventListener('shown.bs.modal', function () {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'deadlineId': currentDeadlineId})})
+    stompClient.publish({destination: "/app/deadline/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'deadlineId': currentDeadlineId})})
 });
 
 /**
  * Sends a notification to the server when a user stops editing an event
  */
 document.getElementById('deadlineFormModal').addEventListener('hidden.bs.modal', function () {
-    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'deadlineId': currentDeadlineId})})
+    stompClient.publish({destination: "/app/deadline/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'deadlineId': currentDeadlineId})})
 });

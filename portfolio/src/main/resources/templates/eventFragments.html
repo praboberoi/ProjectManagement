@@ -7,6 +7,7 @@
                 <div class="col-5">
                     <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
                     <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date:
+                    <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date:
                         [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]]
                         <br>
                         End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]]

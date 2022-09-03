@@ -67,9 +67,10 @@ public class DeadlineController {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
         Project project = new Project();
         project.setProjectId(projectId);
-        ModelAndView mv = new ModelAndView("project::deadlines");
+        ModelAndView mv = new ModelAndView("deadlineFragments::deadlineTab");
         mv.addObject("project", project);
         mv.addObject("listDeadlines", listDeadlines);
+        mv.addObject("editDeadlineNotifications", editing);
         return mv;
     }
 

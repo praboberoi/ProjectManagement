@@ -166,7 +166,7 @@ function updateSprint(message) {
     let action = array[1]
     let httpRequest = new XMLHttpRequest();
     if (action === "edited") {
-        element = document.getElementById("sprint-list")
+        sprintElement = document.getElementById("sprint-list")
         httpRequest.open('GET', window.location.pathname + `/sprints`);
     } else if (action === "deleted") {
         document.getElementById(sprint + "Row").outerHTML = ""
@@ -175,7 +175,7 @@ function updateSprint(message) {
         console.log("Unknown command: " + action)
         return
     }
-    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, sprintElement)
 
     httpRequest.send();
 }
@@ -216,6 +216,7 @@ function handleDeadlineNotification(message) {
  * @param message Message with event and edit type
  */
 function handleEventNotification(message) {
+    console.log(message)
     let array = message.body.split(' ')
     let event = array[0]
     let action = array[1]
@@ -248,18 +249,7 @@ document.addEventListener('DOMContentLoaded', function() {
     connect();
 })
 
-/**
- * Loads the list of deadlines cards under the event tab
- */
-function loadDeadlineCards() {
-    let httpRequest = new XMLHttpRequest();
 
-    element = document.getElementById("listDeadlines")
-    httpRequest.open('GET', window.location.pathname + `/deadlines`);
-    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
-
-    httpRequest.send();
-}
 
 /**
  *  Updates the deadline modal form to create a new deadline and shows the modal
@@ -331,9 +321,21 @@ function updateElement(httpRequest, element){
 function loadEventCards() {
     let httpRequest = new XMLHttpRequest();
 
-    element = document.getElementById("event-list")
+    let eventElement = document.getElementById("event-list")
     httpRequest.open('GET', window.location.pathname + `/events`);
-    httpRequest.onreadystatechange = () => updateElement(httpRequest, element)
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, eventElement)
 
+    httpRequest.send();
+}
+
+/**
+ * Loads the list of deadlines cards under the event tab
+ */
+function loadDeadlineCards() {
+    let httpRequest = new XMLHttpRequest();
+
+    let deadlineElement = document.getElementById("deadline-list")
+    httpRequest.open('GET', window.location.pathname + `/deadlines`);
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, deadlineElement)
     httpRequest.send();
 }
