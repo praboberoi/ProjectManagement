@@ -2,27 +2,32 @@ package nz.ac.canterbury.seng302.portfolio.utils;
 
 import java.security.Principal;
 
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
+
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+
 /**
  * New principal to override the authstate one that is being used and provide a name for the user
  */
 public class WebSocketPrincipal implements Principal{
 
-    Principal authState = null;
+    AuthState authState = null;
 
     public WebSocketPrincipal(Principal authState) {
-        this.authState = authState;
+        PreAuthenticatedAuthenticationToken auth = (PreAuthenticatedAuthenticationToken) authState;
+        this.authState = (AuthState) auth.getPrincipal();
     }
 
     @Override
     public String getName() {
-        return "User";
+        return authState.getName();
     }
 
     /**
      * Gets the authstate principal that this is replacing
      * @return
      */
-    public Principal getPrincipal(){
+    public AuthState getPrincipal(){
         return authState;
     }
 
