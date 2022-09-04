@@ -42,3 +42,7 @@ Then("{string} doesn't exist", (string) => {
 Then("{string} exists", (string) => {
     cy.contains(string).should('exist')
 })
+
+Then("I am directed to {string} URL", (url) => {
+    cy.url().should('include', url)
+})
