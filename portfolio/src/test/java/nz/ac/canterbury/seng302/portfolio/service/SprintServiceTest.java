@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -115,7 +116,7 @@ class SprintServiceTest {
     @Test
     void givenProject_whenGetNewSprintCalled_thenColorSetCorrectly() throws IncorrectDetailsException {
         Sprint sprint2 = sprintService.getNewSprint(project);
-        assertEquals("purple", sprint2.getColor());
+        assertEquals("green", sprint2.getColor().getColor());
     }
 
     /**
@@ -128,7 +129,7 @@ class SprintServiceTest {
                 .sprintName("Sprint 2")
                 .description("This is a sprint description")
                 .project(project)
-                .color("darkSlateGrey")
+                .color(SprintColor.PURPLE)
                 .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
                 .endDate(new Date(Calendar.getInstance().getTimeInMillis())).build();
 
@@ -136,7 +137,7 @@ class SprintServiceTest {
 
         List<Sprint> sprintList = List.of(sprint2);
         sprintService.updateSprintLabelsAndColor(sprintList);
-        assertEquals("purple", sprint2.getColor());
+        assertEquals("green", sprint2.getColor().getColor());
         assertEquals("Sprint 1", sprint2.getSprintLabel());
     }
 

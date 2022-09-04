@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -45,7 +46,7 @@ class SprintRepositoryTest {
                 .project(project)
                 .startDate(new Date(2021,1,1))
                 .endDate(new Date(2021, 3, 1))
-                .color("green")
+                .color(SprintColor.GREEN)
                 .build();
 
         sprint2 = new Sprint.Builder()
@@ -55,7 +56,7 @@ class SprintRepositoryTest {
                 .project(project)
                 .startDate(new Date(2021,3,1))
                 .endDate(new Date(2021, 6, 1))
-                .color("purple")
+                .color(SprintColor.PURPLE)
                 .build();
         projectRepository.save(project);
         sprintRepository.save(sprint1);

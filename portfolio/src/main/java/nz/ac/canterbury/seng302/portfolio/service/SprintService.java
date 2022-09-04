@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,9 +25,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class SprintService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintRepository sprintRepository;
-    private final List<String> SPRINT_COLOURS = List.of("green", "purple", "darkSlateGrey", "firebrick", "mediumVioletRed","mediumSeaGreen", "orangeRed");
-
-
 
     public SprintService(ProjectRepository projectRepository, SprintRepository sprintRepository) {
         this.projectRepo = projectRepository;
@@ -44,7 +42,7 @@ public class SprintService {
         Sprint sprint = new Sprint.Builder()
                                   .sprintLabel("Sprint " + sprintNo)
                                   .sprintName("Sprint " + sprintNo)
-                                  .color(SPRINT_COLOURS.get(sprintNo%7)).build();
+                                  .color(SprintColor.valueOf(sprintNo%7)).build();
 
 
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
@@ -126,7 +124,7 @@ public class SprintService {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.forEach(sprint -> {
             sprint.setSprintLabel("Sprint " + count.getAndIncrement());
-            sprint.setColor(SPRINT_COLOURS.get((count.get()-1) % 7));
+            sprint.setColor(SprintColor.valueOf((count.get()-1) % 7));
             sprintRepository.save(sprint);
         });
     }
