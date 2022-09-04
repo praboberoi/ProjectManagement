@@ -51,7 +51,7 @@
     <br>
   </nav>
   <div class="container-flex row mx-0" id ="projectCard" hidden>
-    <div class="card col-lg-5 col-12 mh-100 px-0 mb-5 mb-lg-0 mr-5" style="overflow-y: auto; height: 300px" id ="detailsCard">
+    <div class="card col-lg-5 col-12 mh-100 px-0 mb-5 mb-lg-0 mr-5" id ="detailsCard">
 
       <div class="card-header">
         <input type="hidden" id="startDate" th:value="*{project.startDate}" />
@@ -77,7 +77,7 @@
       </div>
 
       <!--    Tabs for events/deadlines/milestones-->
-      <div class="card col-lg-6 col-12 mh-100 px-0 ml-lg-5" style="overflow-y: auto; height: 300px" id="calendarOb" >
+      <div class="card col-lg-6 col-12 mh-100 px-0 ml-lg-5" id="calendarOb" >
         <ul class="nav nav-tabs" id="myTab" role="tablist">
           <li class="nav-item" role="presentation" href="#home">
 
@@ -102,13 +102,13 @@
             <div th:if="${adminOrTeacher}">
               <!-- If a user is a STUDENT do not show the 'create' event button !-->
               <div class="createBtn">
-                <a class="btn btn-outline-primary" id="create-event-btn" data-bs-toggle="modal"
+                <button class="btn btn-outline-primary btn-sm" id="create-event-btn" data-bs-toggle="modal"
                   data-bs-target="#eventFormModal" data-bs-backdrop="static" data-bs-keyboard="false"
                   th:data-id="${event.eventId}" th:data-name="${event.eventName}" th:data-startDate="${event.startDate}"
                   th:data-endDate="${event.endDate}"
                   th:onclick="populateEventModal(false, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'))">
                   <img class="icon img-color-primary"
-                    th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /> Create Event</a>
+                    th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /> Create Event</button>
               </div>
             </div>
 

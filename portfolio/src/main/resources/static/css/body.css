@@ -342,6 +342,10 @@ a.desc.sort:after {
 .alert:empty {
     display: none;
 }
+#detailsCard, #calendarOb {
+    overflow-y: auto;
+    height: 300px;
+}
 
 @media only screen and (max-width: 768px) {
     #selectedGroupDropdown {
