@@ -26,7 +26,8 @@
                         data-bs-keyboard="false" th:data-id="${event.eventId}" th:data-name="${event.eventName}"
                         th:data-startDate="${event.startDate}" th:data-endDate="${event.endDate}"
                         th:onclick="populateEventModal(true, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'))">
-                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" /> Edit
+                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Edit</span>
                     </button>
 
                     <button th:disabled="${editNotifications.^[eventId == #root.event.eventId]}" type="button" class="btn btn-outline-secondary my-2"
@@ -34,7 +35,8 @@
                         data-bs-target="#conformationModalEvent" th:data-id="${event.eventId}"
                         th:data-name="${event.eventName}"
                         th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'))">
-                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete
+                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Delete</span>
                     </button>
                 </div>
             </div>

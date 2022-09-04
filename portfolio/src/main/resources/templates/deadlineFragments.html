@@ -9,7 +9,7 @@
                 Create Deadline</button>
         </div>
     </div>
-    <div class="card shadow-sm bg-white rounded deadline-card" th:each="deadline : ${listDeadlines}">
+    <div class="card shadow-sm bg-white rounded deadline-card mx-2" th:each="deadline : ${listDeadlines}">
         <div class="container-fluid">
             <div class="d-flex justify-content-between pt-2">
                 <div>
@@ -20,12 +20,14 @@
                 </div>
                 <div class="d-flex align-items-baseline pt-2 mt-2"
                     th:if="${roles.contains('TEACHER')} or ${roles.contains('COURSE_ADMINISTRATOR')}">
-                    <button type="button" class="btn btn-outline-primary btn-sm mr-1"
+                    <button type="button" class="btn btn-outline-primary btn-sm mr-2"
                         th:id="${deadline.deadlineId} + 'edit-btn'" th:data-deadlineId="${deadline.deadlineId}"
                         th:data-deadlineName="${deadline.name}" th:data-deadlineDate="${deadline.date}"
                         th:onclick="editDeadline(this.getAttribute('data-deadlineName'), this.getAttribute('data-deadlineDate'), this.getAttribute('data-deadlineId'))">
                         <img class="icon img-color-primary"
-                            th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" /> Edit</button>
+                            th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Edit</span>
+                    </button>
 
                     <button type="button" class="btn btn-outline-secondary btn-sm"
                         th:id="${deadline.deadlineId} + 'delete-btn'" data-toggle="modal"
@@ -33,7 +35,9 @@
                         th:data-deadlineName="${deadline.name}"
                         th:onclick="deleteDeadline(this.getAttribute('data-deadlineId'), this.getAttribute('data-deadlineName'))">
                         <img class="icon img-color-secondary"
-                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete</button>
+                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Delete</span>
+                    </button>
                     <br>
                 </div>
             </div>
