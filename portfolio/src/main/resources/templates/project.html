@@ -51,7 +51,7 @@
     <br>
   </nav>
   <div class="container-flex row mx-0" id ="projectCard" hidden>
-    <div class="card col-lg-5 col-12 mh-100 px-0 mb-5 mb-lg-0 mr-5" id ="detailsCard">
+    <div class="card col-lg-5 col-12 mh-100 px-0 mb-5 mb-lg-0 mr-3" id ="detailsCard">
 
       <div class="card-header">
         <input type="hidden" id="startDate" th:value="*{project.startDate}" />
@@ -78,20 +78,20 @@
 
       <!--    Tabs for events/deadlines/milestones-->
       <div class="card col-lg-6 col-12 mh-100 px-0 ml-lg-5" id="calendarOb" >
-        <ul class="nav nav-tabs" id="myTab" role="tablist">
+        <ul class="nav nav-tabs pt-1 pl-1" id="myTab" role="tablist">
           <li class="nav-item" role="presentation" href="#home">
 
-          <button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
+          <button class="nav-link active px-2 px-sm-3" id="home-tab" data-bs-toggle="tab" data-bs-target="#home" type="button" role="tab" aria-controls="home" aria-selected="true">
             <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
             Events</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="deadline-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
+          <button class="nav-link px-2 px-sm-3" id="deadline-tab" data-bs-toggle="tab" data-bs-target="#profile" type="button" role="tab" aria-controls="profile" aria-selected="false">
             <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
             Deadlines</button>
         </li>
         <li class="nav-item" role="presentation">
-          <button class="nav-link" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="Milestones" aria-selected="false">
+          <button class="nav-link px-2 px-sm-3" id="contact-tab" data-bs-toggle="tab" data-bs-target="#contact" type="button" role="tab" aria-controls="Milestones" aria-selected="false">
             <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
             Milestones</button>
         </li>
