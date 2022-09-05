@@ -122,11 +122,11 @@ public class EvidenceService {
      * @throws IncorrectDetailsException
      */
     public String deleteEvidence(int evidenceId) {
-        if (evidenceRepository.getEvidenceByEvidenceId(evidenceId) != null) {
+        try {
             evidenceRepository.deleteById(evidenceId);
             logger.info("Successfully deleted evidence {}", evidenceId);
             return "Successfully Deleted " + evidenceId;
-        } else {
+        } catch (IllegalArgumentException ex) {
             logger.error("Failure deleting evidence");
             throw new IllegalArgumentException("Could not find an existing piece of evidence");
         }

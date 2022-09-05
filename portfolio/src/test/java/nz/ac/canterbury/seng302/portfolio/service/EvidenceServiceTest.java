@@ -18,6 +18,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 /**
@@ -236,8 +237,9 @@ class EvidenceServiceTest {
      */
     @Test
     void givenNoEvidence_whenDeleteEvidenceIsCalled_thenAnExceptionIsThrown(){
+        doThrow(new IllegalArgumentException()).when(evidenceRepository).deleteById(evidence1.getEvidenceId());
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                evidenceService.deleteEvidence(99));
+                evidenceService.deleteEvidence(evidence1.getEvidenceId()));
         assertEquals("Could not find an existing piece of evidence", exception.getMessage() );
     }
 
