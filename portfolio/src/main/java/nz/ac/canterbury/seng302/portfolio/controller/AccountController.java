@@ -36,6 +36,7 @@ public class AccountController {
     @Value("${apiPrefix}") private String apiPrefix;
 
     private static final String EDIT_ACCOUNT_PAGE = "editAccount";
+    private static final String ACCOUNT_PAGE = "account";
 
     public AccountController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
@@ -53,7 +54,7 @@ public class AccountController {
             Model model
     ) {
         this.addAttributesToModel(principal, model);
-        return "account";
+        return ACCOUNT_PAGE;
     }
 
     /**
@@ -174,7 +175,7 @@ public class AccountController {
             String msgString;
             msgString = "Successfully updated details";
             ra.addFlashAttribute("messageSuccess", msgString);
-            return "account";
+            return "redirect:" + ACCOUNT_PAGE;
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));

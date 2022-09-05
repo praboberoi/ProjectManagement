@@ -1,0 +1,43 @@
+<!-- Event list for project page -->
+<th:block th:each="event: ${listEvents}" th:fragment="projectList">
+    <div class="card event-card" th:id="'event' + ${event.eventId} + '-card'">
+        <input class="hiddenEventId" hidden th:value="${event.eventId}">
+        <div class="container">
+            <div class="row">
+                <div class="col-5">
+                    <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
+                    <p class="eventDates" th:id="'event' + ${event.eventId} + 'StartDate'">Start Date:
+                        [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]]
+                        <br>
+                        End Date: [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]]
+                    </p>
+                </div>
+                <!--If a user is a STUDENT do not show the 'edit', 'delete' calendar object buttons !-->
+                <div class="col-7" th:if="${adminOrTeacher}">
+                    <th:block th:each="notification : ${editNotifications}" th:object="${notification}"
+                    th:if="${notification.eventId} == ${event.eventId}">
+                        <p th:id="'event' + ${event.eventId} + '-notification'" th:text="${notification.username} + ' is currently editing.'"></p>
+                    </th:block>
+                    <th:block th:with="check=${event.eventId}">
+                        <p th:if="!${editNotifications.^[eventId == #root.event.eventId]}" th:id="'event' + ${event.eventId} + '-notification'"></p>
+                    </th:block>
+                    <button th:disabled="${editNotifications.^[eventId == #root.event.eventId]}" class="btn btn-outline-primary mr-2 my-2" th:id="'event' + ${event.eventId} + '-edit-btn'"
+                        data-bs-toggle="modal" data-bs-target="#eventFormModal" data-bs-backdrop="static"
+                        data-bs-keyboard="false" th:data-id="${event.eventId}" th:data-name="${event.eventName}"
+                        th:data-startDate="${event.startDate}" th:data-endDate="${event.endDate}"
+                        th:onclick="populateEventModal(true, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'))">
+                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" /> Edit
+                    </button>
+
+                    <button th:disabled="${editNotifications.^[eventId == #root.event.eventId]}" type="button" class="btn btn-outline-secondary my-2"
+                        th:id="'event' + ${event.eventId} + '-delete-btn'" data-bs-toggle="modal"
+                        data-bs-target="#conformationModalEvent" th:data-id="${event.eventId}"
+                        th:data-name="${event.eventName}"
+                        th:onclick="deletingEvent(this.getAttribute('data-id'), this.getAttribute('data-name'))">
+                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>

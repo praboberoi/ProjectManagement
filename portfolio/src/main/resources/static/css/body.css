@@ -317,19 +317,6 @@ div.upcomingEvents  {
     margin-bottom: 7px;
 }
 
-.mobile-only{
-    display:none
-}
-.desktop-only{
-    display:table;
-    width: 100%
-}
-
-@media (max-width:850px){
-    .desktop-only{display:none}
-    .mobile-only{display:block}
-}
-
 /* Sort button styles from https://codepen.io/xaprio/pen/NWPXwOj */
 th a.sort {
     padding-right: 18px;
