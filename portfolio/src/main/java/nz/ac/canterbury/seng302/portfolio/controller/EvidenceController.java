@@ -45,6 +45,19 @@ public class EvidenceController {
         model.addAttribute("apiPrefix", apiPrefix);
     }
 
+    /**
+     * Updates the model with the correct list of evidence
+     * @param userId UserId containing the desired evidence
+     * @return Page fragment containing events
+     */
+    @GetMapping(path="/user/{userId}/evidences")
+    public Model evidences(
+            @PathVariable("userId") int userId,
+            Model mv) {
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+        mv.addAttribute("listEvidence", listEvidence);
+        return mv;
+    }
 
     /** Checks if evidence variables are valid and if it is then saves the evidence
      * @param evidenceDTO EvidenceDTO object

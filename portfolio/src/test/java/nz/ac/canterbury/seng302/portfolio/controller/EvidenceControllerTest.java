@@ -110,6 +110,15 @@ public class EvidenceControllerTest {
 
     }
 
+//    @Test
+//    void givenServer_whenEvidenceEditForm_thenEvidenceCorrectlyRetrieved() throws IncorrectDetailsException {
+//        Evidence evidence1 = new Evidence(evidenceDTO);
+//        when(evidenceService.getEvidence(evidence1.getEvidenceId())).thenReturn(evidence1);
+//
+//        this.mockMvc
+//                .perform(get("/editEvidence/" + evidence1.getEvidenceId()).flashAttr())
+//    }
+
     @AfterAll
     public static void afterAll() {
         utilities.close();
