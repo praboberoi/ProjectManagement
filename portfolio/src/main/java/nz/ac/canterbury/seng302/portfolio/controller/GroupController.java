@@ -268,4 +268,9 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
         }
     }
+
+    @GetMapping(path="/group/{groupId}")
+    public String groupPage(@PathVariable int groupId) {
+        return "group";
+    }
 }

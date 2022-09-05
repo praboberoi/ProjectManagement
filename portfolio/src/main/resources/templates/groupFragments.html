@@ -1,0 +1,16 @@
+<div th:fragment="repoSettings">
+    <form onsubmit="connectTest(event)">
+        <div class="form-group">
+            <label for="project-id" class="col-form-label required">Project Id</label>
+            <input type="number" class="form-control" id="project-id" required></input>
+
+            <label for="access-token" class="col-form-label">Project access token</label>
+            <input type="text" class="form-control" id="access-token"></input>
+
+            <label for="host-address" class="col-form-label required">Project host address</label>
+            <input type="text" class="form-control" id="host-address" required></input>
+        </div>
+        <button type="submit" class="btn btn-outline-primary">Submit</button>
+    </form>
+    <p id="connection-message">No connection attempt has been made.</p>
+</div>

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+
+<head>
+    <title>LENSfolio - Groups</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Custom css for body-->
+    <link th:href="@{{apiPrefix}/css/body.css(apiPrefix=${apiPrefix})}" rel="stylesheet" type="text/css" />
+    <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
+</head>
+<!--fragments-->
+<header>
+    <div th:replace="fragments :: header"></div>
+</header>
+<div th:replace="fragments :: sidebar"></div>
+
+<body class="main">
+    <div th:replace="groupFragments::repoSettings"></div>
+    <script th:src="@{{apiPrefix}/javascript/group.js(apiPrefix=${apiPrefix})}"></script>
+</body>
+
+</html>
