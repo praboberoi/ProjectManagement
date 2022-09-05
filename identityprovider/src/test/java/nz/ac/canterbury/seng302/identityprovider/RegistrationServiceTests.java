@@ -112,7 +112,7 @@ class RegistrationServiceTests {
     }
 
     /**
-     * Tests blue sky data for registering a user
+     * Tests a user can have spaces in their first and last names.
      */
     @Test
     void givenValidUserRequestWithSpaceInNames_whenUserValidation_thenNoValidationErrors() {
@@ -126,7 +126,7 @@ class RegistrationServiceTests {
     }
 
     /**
-     * Tests blue sky data for registering a user
+     * Tests that a user can have hyphens '-' in their first and last names.
      */
     @Test
     void givenValidUserRequestWithHyphensInNames_whenUserValidation_thenNoValidationErrors() {
@@ -140,7 +140,7 @@ class RegistrationServiceTests {
     }
 
     /**
-     * Tests that a sprint with too long a description will not be valid
+     * Tests that a bio with too long a description will not be valid
      */
     @Test
     public void givenInvalidBio_whenUserValidated_thenFailsValidation() {
@@ -152,7 +152,7 @@ class RegistrationServiceTests {
     }
 
     /**
-     * Tests that a sprint with the maximum character count will be valid
+     * Tests that a bio with the maximum character count will be valid
      */
     @Test
     public void givenValidBio_whenUserValidated_thenSucceedsValidation() {
