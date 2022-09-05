@@ -237,9 +237,10 @@ class EvidenceServiceTest {
      */
     @Test
     void givenNoEvidence_whenDeleteEvidenceIsCalled_thenAnExceptionIsThrown(){
-        doThrow(new IllegalArgumentException()).when(evidenceRepository).deleteById(evidence1.getEvidenceId());
+        int evidenceId = evidence1.getEvidenceId();
+        doThrow(new IllegalArgumentException()).when(evidenceRepository).deleteById(evidenceId);
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
-                evidenceService.deleteEvidence(evidence1.getEvidenceId()));
+                evidenceService.deleteEvidence(evidenceId));
         assertEquals("Could not find an existing piece of evidence", exception.getMessage() );
     }
 
