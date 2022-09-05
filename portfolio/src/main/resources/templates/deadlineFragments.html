@@ -1,6 +1,5 @@
-<div th:fragment="deadlineTab">
-
-    <div class="card shadow-sm bg-white rounded deadline-card" th:id="'deadline' + ${deadline.deadlineId} + '-card'" th:each="deadline : ${listDeadlines}">
+<th:block th:each="deadline : ${listDeadlines}" th:fragment="deadlineTab">
+    <div class="card shadow-sm bg-white rounded deadline-card" th:id="'deadline' + ${deadline.deadlineId} + '-card'">
         <div class="container-fluid">
             <div class="d-flex justify-content-between pt-2">
                 <div>
@@ -9,17 +8,25 @@
                     <p class="eventDates" th:id="'deadline' + ${deadline.deadlineId} + 'date'"><b>Date:</b>
                         [[${#dates.format(deadline.date, 'dd MMM yyyy hh:mm a')}]]
                 </div>
-                <div class="d-flex align-items-baseline pt-2 mt-2"
-                     th:if="${adminOrTeacher}">
+                <div class="d-flex align-items-baseline pt-2 mt-2" th:if="${adminOrTeacher}">
+                    <th:block th:each="notification : ${editDeadlineNotifications}" th:object="${notification}"
+                              th:if="${notification.deadlineId} == ${deadline.deadlineId}">
+                        <p th:id="'deadline' + ${deadline.deadlineId} + '-notification'" th:text="${notification.username} + ' is currently editing.'"></p>
+                    </th:block>
+                    <th:block th:with="check=${deadline.deadlineId}">
+                        <p th:if="!${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}" th:id="'deadline' + ${deadline.deadlineId} + '-notification'"></p>
+                    </th:block>
                     <button type="button" class="btn btn-outline-primary btn-sm mr-1"
-                        th:id="${deadline.deadlineId} + 'edit-btn'" th:data-deadlineId="${deadline.deadlineId}"
+                        th:disabled="${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}"
+                        th:id="'deadline' + ${deadline.deadlineId} + '-edit-btn'" th:data-deadlineId="${deadline.deadlineId}"
                         th:data-deadlineName="${deadline.name}" th:data-deadlineDate="${deadline.date}"
                         th:onclick="editDeadline(this.getAttribute('data-deadlineName'), this.getAttribute('data-deadlineDate'), this.getAttribute('data-deadlineId'))">
                         <img class="icon img-color-primary"
                             th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" /> Edit</button>
 
                     <button type="button" class="btn btn-outline-secondary btn-sm"
-                        th:id="${deadline.deadlineId} + 'delete-btn'" data-toggle="modal"
+                        th:disabled="${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}"
+                        th:id="'deadline' + ${deadline.deadlineId} + '-delete-btn'" data-toggle="modal"
                         data-target="#conformationModalDeadline" th:data-deadlineId="${deadline.deadlineId}"
                         th:data-deadlineName="${deadline.name}"
                         th:onclick="deleteDeadline(this.getAttribute('data-deadlineId'), this.getAttribute('data-deadlineName'))">
@@ -45,11 +52,10 @@
                     <p id="messageDeadline"></p>
                 </div>
                 <div class="modal-footer">
-                    <form action="" method="post" id="deleteDeadline">
-                        <button type="submit" class="btn btn-outline-primary" id="deleteDeadlineModalBtn"><img
-                                class="icon img-color-secondary"
-                                th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete</button>
-                    </form>
+                    <button type="button" class="btn btn-outline-primary" id="deleteDeadlineModalBtn" data-dismiss="modal">
+                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                            Delete
+                    </button>
                     <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
                         <img class="icon img-color-secondary"
                             th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" /> Close</button>
@@ -57,4 +63,4 @@
             </div>
         </div>
     </div>
-</div>
+</th:block>

@@ -15,6 +15,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -63,7 +65,7 @@ public class DeadlineController {
      * @return Page fragment containing deadlines
      */
     @GetMapping(path="/project/{projectId}/deadlines")
-    public ModelAndView events(@PathVariable("projectId") int projectId) {
+    public ModelAndView deadlines(@PathVariable("projectId") int projectId) {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
         Project project = new Project();
         project.setProjectId(projectId);
@@ -75,7 +77,7 @@ public class DeadlineController {
     }
 
     private void notifyDeadline(int projectId, int deadlineId, String action) {
-        template.convertAndSend("element/project/" + projectId + "/deadlines", ("deadline" + deadlineId + " " + action));
+        template.convertAndSend("/element/project/" + projectId + "/deadlines", ("deadline" + deadlineId + " " + action));
     }
 
     /**
@@ -116,24 +118,24 @@ public class DeadlineController {
      * @param ra Of type {@link RedirectAttributes}
      * @return project.html or error.html
      */
-    @PostMapping(path="/{projectId}/deleteDeadline/{deadlineId}")
-    public String deleteDeadline(
+    @DeleteMapping(path="/{projectId}/deleteDeadline/{deadlineId}")
+    public ResponseEntity<String> deleteDeadline(
             @PathVariable("deadlineId") int deadlineId,
             Model model,
             @PathVariable int projectId,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+
         try {
             String message = deadlineService.deleteDeadline(deadlineId);
             logger.info("Deadline {} has been deleted.", deadlineId);
-            ra.addFlashAttribute(SUCCESS_MESSAGE, message);
             notifyDeadline(projectId, deadlineId, "deleted");
-            return PROJECT_REDIRECT;
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (IncorrectDetailsException e) {
             logger.info("Deadline {} could not be deleted.", deadlineId);
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return PROJECT_REDIRECT;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -148,11 +150,11 @@ public class DeadlineController {
         notification.setUsername(principal.getName());
         notification.setSessionId(sessionId);
         if (notification.isActive()) {
-            template.convertAndSend("element/project/" + notification.getProjectId() + "/deadlines",
+            template.convertAndSend("/element/project/" + notification.getProjectId() + "/deadlines",
                     ("deadline" + notification.getDeadlineId() + " editing " + notification.getUsername()));
             editing.add(notification);
         } else {
-            template.convertAndSend("element/project/" + notification.getProjectId() + "/deadlines",
+            template.convertAndSend("/element/project/" + notification.getProjectId() + "/deadlines",
                     ("deadline" + notification.getDeadlineId() + " finished"));
             editing.remove(notification);
         }

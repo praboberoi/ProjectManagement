@@ -96,7 +96,12 @@ function deleteEvent(eventId) {
  */
 function deleteDeadline(deadlineId, deadlineName) {
     document.getElementById('messageDeadline').innerText =  `Are you sure you want to delete ${deadlineName}`;
-    document.getElementById('deleteDeadline').setAttribute('action', `${apiPrefix}/${projectId}/deleteDeadline/${deadlineId}`);
+    document.getElementById('deleteDeadlineModalBtn').onclick = function() {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = () => processAction(httpRequest)
+        httpRequest.open('DELETE', apiPrefix + `/${projectId}/deleteDeadline/${deadlineId}`);
+        httpRequest.send();
+    }
 }
 
 /**
@@ -185,7 +190,6 @@ function updateSprint(message) {
  * @param message Message with deadline and edit type
  */
 function handleDeadlineNotification(message) {
-    console.log(message)
     let array = message.body.split(' ')
     let deadline = array[0]
     let action = array[1]
@@ -248,29 +252,6 @@ function handleEventNotification(message) {
 document.addEventListener('DOMContentLoaded', function() {
     connect();
 })
-
-
-
-/**
- *  Updates the deadline modal form to create a new deadline and shows the modal
- */
-function createDeadline() {
-    document.getElementById('deadline-name').classList.remove("formError");
-    document.getElementById('deadlineNameError').innerText = null;
-    document.getElementById('deadlineFormSubmitButton').disabled = false;
-    document.getElementById('deadline-name').value = "New Deadline";
-    document.getElementById('deadlineCharCount').value = "12";
-    document.getElementById('deadlineDate').value = new Date().toLocaleDateString().split('/').reverse().join('-') + 'T00:00';
-    document.getElementById('deadlineFormTitle').textContent = "Create New Deadline";
-    const modalElement = document.getElementById('deadlineFormModal');
-    const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
-        keyword: false,
-        backdrop: "static"
-    });
-    modal.show();
-
-
-}
 
 /**
  * Replaces the old http component with the new one contained in the request

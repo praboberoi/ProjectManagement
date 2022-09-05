@@ -80,7 +80,6 @@ function editDeadline(name, date, id) {
  * Closes the modal
  */
 function closeDeadlineModal() {
-    currentDeadlineId = null;
     const modalElement = document.getElementById('deadlineFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
     modal.hide();
