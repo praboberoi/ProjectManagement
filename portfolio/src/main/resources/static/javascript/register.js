@@ -3,7 +3,7 @@ var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var username = /[ `!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~'-]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
-var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
+var pronoun = /[`!@#$%^*()_+\-&,\=\[\]{};':"\\|.<>\?~]/;
 var dash = /^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$/;
 var space = /^[A-Za-z0-9\-]+( [A-Za-z0-9\-]+)*$/;
 
@@ -121,9 +121,9 @@ function checkPronouns() {
         pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
         pronounsElement.setCustomValidity("Invalid field.");
     } else if (digit.test(pronounsElement.value)
-        || special.test(pronounsElement.value)) {
+        || pronoun.test(pronounsElement.value)) {
         pronounsElement.classList.add("formError")
-        pronounsErrorElement.innerText = "Personal pronouns can only contain special characters + & - , and no digits."
+        pronounsErrorElement.innerText = "Personal pronouns can only contain / special character and no digits."
         pronounsElement.setCustomValidity("Invalid field.");
     } else {
         pronounsElement.classList.remove("formError");
