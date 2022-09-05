@@ -269,6 +269,11 @@ public class GroupController {
         }
     }
 
+    /**
+     * Gets the individual group page. This is currently the same page for every group.
+     * @param groupId The pages group id for future implementation
+     * @return The group page
+     */
     @GetMapping(path="/group/{groupId}")
     public String groupPage(@PathVariable int groupId) {
         return "group";
