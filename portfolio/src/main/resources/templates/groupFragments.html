@@ -2,15 +2,22 @@
     <form onsubmit="connectTest(event)">
         <div class="form-group">
             <label for="git-project-id" class="col-form-label required">Project Id</label>
-            <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is found under the repo's name.">?</span>
+            <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is found under the repo's name."><img
+                    class="icon img-color-primary"
+                    th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
             <input type="number" class="form-control" id="git-project-id" required></input>
 
             <label for="git-access-token" class="col-form-label">Project access token</label>
-            <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is needed for private repos. Generate this in your repo's settings page.">?</span>
+            <span data-bs-toggle="tooltip" data-bs-placement="top"
+                title="This is needed for private repos. Generate this in your repo's settings page."><img
+                    class="icon img-color-primary"
+                    th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
             <input type="text" class="form-control" id="git-access-token"></input>
 
             <label for="git-host-address" class="col-form-label required">Project host address</label>
-            <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is the host of your repo (e.g. https://github.com).">?</span>
+            <span data-bs-toggle="tooltip" data-bs-placement="top"
+                title="This is the host of your repo (e.g. https://github.com)."><img class="icon img-color-primary"
+                    th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
             <input type="text" class="form-control" id="git-host-address" required></input>
         </div>
         <button type="submit" class="btn btn-outline-primary" id="submit-repo">Submit</button>
