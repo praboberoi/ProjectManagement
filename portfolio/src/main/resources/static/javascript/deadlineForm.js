@@ -2,6 +2,7 @@ const deadlineDateElement = document.getElementById('deadlineDate');
 const deadlineDateError = document.getElementById('deadlineDateError');
 const deadlineCreateBtn = document.getElementById('deadlineFormSubmitButton');
 let currentDeadlineId;
+let editingDeadline = false;
 
 
 /**
@@ -55,10 +56,12 @@ function checkDeadlineDates(){
 }
 
 /**
- * Updates the deadline modal form to edit the chosen deadline and shows the modal
+ * Notifies the server about the deadline being edited and updates the deadline modal with the selected deadline.
  */
 function editDeadline(name, date, id) {
+    editingDeadline = true;
     currentDeadlineId = id;
+    stompClient.publish({destination: "/app/deadline/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'deadlineId': currentDeadlineId})})
     document.getElementById('deadlineFormSubmitButton').disabled = false;
     document.getElementById('deadline-name').classList.remove("formError");
     document.getElementById('deadlineNameError').innerText = null;
@@ -77,19 +80,24 @@ function editDeadline(name, date, id) {
 }
 
 /**
- * Closes the modal
+ *  Notifies the server about the end of the edit and closes the modal
  */
 function closeDeadlineModal() {
+    if (editingDeadline) {
+        stompClient.publish({destination: "/app/deadline/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'deadlineId': currentDeadlineId})});
+        editingDeadline = false
+    }
     const modalElement = document.getElementById('deadlineFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
     modal.hide();
 }
 
 /**
- *  Updates the deadline modal form to create a new deadline and shows the modal
+ *  Updates the  deadline modal form to create a new deadline
  */
 function createDeadline() {
     document.getElementById('deadline-name').classList.remove("formError");
+    document.getElementById('deadlineId').value = 0;
     document.getElementById('deadlineNameError').innerText = null;
     document.getElementById('deadlineFormSubmitButton').disabled = false;
     document.getElementById('deadline-name').value = "New Deadline";
@@ -105,15 +113,20 @@ function createDeadline() {
 }
 
 /**
- * Sends a notification to the server when a user starts editing an event
+ * Send a request to the server to save the newly created deadline
  */
-document.getElementById('deadlineFormModal').addEventListener('shown.bs.modal', function () {
-    stompClient.publish({destination: "/app/deadline/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'deadlineId': currentDeadlineId})})
-});
+function saveDeadline() {
+    if ( validateForm() ) {
+        let httpRequest = new XMLHttpRequest();
 
-/**
- * Sends a notification to the server when a user stops editing an event
- */
-document.getElementById('deadlineFormModal').addEventListener('hidden.bs.modal', function () {
-    stompClient.publish({destination: "/app/deadline/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'deadlineId': currentDeadlineId})})
-});
+        httpRequest.onreadystatechange = () => processAction(httpRequest)
+
+        httpRequest.open('POST', apiPrefix + `/project/${projectId}/saveDeadline`);
+
+        let formData = new FormData(document.forms.createDeadlineForm)
+
+        httpRequest.send(formData);
+
+    }
+}
+

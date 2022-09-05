@@ -89,12 +89,13 @@ public class DeadlineController {
      * @return the project page
      */
     @PostMapping(path = "/project/{projectId}/saveDeadline")
-    public String saveDeadline(
+    public ResponseEntity<String> saveDeadline(
             @ModelAttribute Deadline deadline,
             @AuthenticationPrincipal AuthState principal,
             @PathVariable ("projectId") int projectId,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/project/" + projectId;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         String message = "";
         try {
             deadline.setProject(projectService.getProjectById(projectId));
@@ -102,12 +103,11 @@ public class DeadlineController {
             message = deadlineService.saveDeadline(deadline);
             logger.info("Deadline {} has been edited", deadline.getDeadlineId());
             notifyDeadline(projectId, deadline.getDeadlineId(), "edited");
-            ra.addFlashAttribute(SUCCESS_MESSAGE, message);
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (IncorrectDetailsException ex) {
             logger.info("Deadline {} could not be edited", deadline.getDeadlineId());
-            ra.addFlashAttribute(FAILURE_MESSAGE, ex.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
-        return PROJECT_REDIRECT;
     }
     /**
      * Deletes the deadline and redirects back to project page
