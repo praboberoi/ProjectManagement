@@ -32,12 +32,6 @@ Feature: UPi Project Details
     When I select the CypressProject project
     Then Create sprint button exists
 
-  Scenario: AC6: As a teacher, I can create a sprint easily.
-    Given I login as an admin
-    When I select the CypressProject project
-    And I create a sprint "Cypress Sprint 1"
-    Then Sprint "Cypress Sprint 1" has label "Sprint 1"
-
   Scenario: AC7: When a new sprint is first created, defaults for the mandatory fields are automatically added to help the teacher. The default sprint name is the sprint label. A default sprint start date is either the project start date or the day after the previous sprint end. A default sprint end date is 3 weeks after the default start date.
     Given I login as an admin
     When I select the CypressProject project
@@ -45,6 +39,12 @@ Feature: UPi Project Details
     Then The default sprint name is the sprint label
     And The sprint start date is '2022-07-15'
     And The sprint end date is '2022-08-05'
+
+  Scenario: AC6: As a teacher, I can create a sprint easily.
+    Given I login as an admin
+    When I select the CypressProject project
+    And I create a sprint "Cypress Sprint 1"
+    Then Sprint "Cypress Sprint 1" has label "Sprint 1"
 
   Scenario: AC 8: As a teacher, I can edit any of the details except for sprint labels.  All changes are persistent.
     Given I login as an admin
