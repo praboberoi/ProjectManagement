@@ -12,9 +12,9 @@ async function connectTest(event) {
 
     let message = document.getElementById("connection-message")
 
-    let projectId = document.getElementById("project-id").value
-    let accessToken = document.getElementById("access-token").value
-    let hostAddress = document.getElementById("host-address").value
+    let projectId = document.getElementById("git-project-id").value
+    let accessToken = document.getElementById("git-access-token").value
+    let hostAddress = document.getElementById("git-host-address").value
 
     const response = await fetch(hostAddress + "/api/v4/projects/" + projectId, {
         method: 'GET',
@@ -25,6 +25,7 @@ async function connectTest(event) {
     });
 
     const repo = await response.json();
+    console.log(repo)
     if (!repo.hasOwnProperty('id')) {
         message.innerText = "Repo not found"
         return

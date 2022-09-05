@@ -1,19 +1,19 @@
 <div th:fragment="repoSettings">
     <form onsubmit="connectTest(event)">
         <div class="form-group">
-            <label for="project-id" class="col-form-label required">Project Id</label>
+            <label for="git-project-id" class="col-form-label required">Project Id</label>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is found under the repo's name.">?</span>
-            <input type="number" class="form-control" id="project-id" required></input>
+            <input type="number" class="form-control" id="git-project-id" required></input>
 
-            <label for="access-token" class="col-form-label">Project access token</label>
+            <label for="git-access-token" class="col-form-label">Project access token</label>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is needed for private repos. Generate this in your repo's settings page.">?</span>
-            <input type="text" class="form-control" id="access-token"></input>
+            <input type="text" class="form-control" id="git-access-token"></input>
 
-            <label for="host-address" class="col-form-label required">Project host address</label>
+            <label for="git-host-address" class="col-form-label required">Project host address</label>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is the host of your repo (e.g. https://github.com).">?</span>
-            <input type="text" class="form-control" id="host-address" required></input>
+            <input type="text" class="form-control" id="git-host-address" required></input>
         </div>
-        <button type="submit" class="btn btn-outline-primary">Submit</button>
+        <button type="submit" class="btn btn-outline-primary" id="submit-repo">Submit</button>
     </form>
     <p id="connection-message">No connection attempt has been made.</p>
 </div>
