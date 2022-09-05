@@ -3,6 +3,9 @@ package nz.ac.canterbury.seng302.portfolio.utils;
 import java.util.Arrays;
 import java.util.Optional;
 
+/**
+ * Enum containing all possible sprint colors
+ */
 public enum SprintColor {
     DEFAULT_BLUE("blue", 0),
     GREEN("green",1),

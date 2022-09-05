@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.model;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 
 import javax.persistence.*;
-import javax.xml.bind.annotation.XmlType;
 import java.sql.Date;
 import java.util.Objects;
 
@@ -63,7 +62,7 @@ public class Sprint {
      * Colour of the sprint
      */
     @Column()
-    @Enumerated(EnumType.STRING)
+    @Enumerated(value = EnumType.STRING)
     private SprintColor color;
 
     /**
