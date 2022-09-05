@@ -225,12 +225,10 @@ class EvidenceServiceTest {
      * @throws IncorrectDetailsException
      */
     @Test
-    void givenAPieceOfEvidence_whenDeleteEvidenceIsCalled_thenEvidenceNoLongerExists() throws IncorrectDetailsException {
-        when(evidenceRepository.getEvidenceByEvidenceId(evidence1.getEvidenceId())).thenReturn(evidence1);
+    void givenAPieceOfEvidence_whenDeleteEvidenceIsCalled_thenEvidenceNoLongerExists() {
+        when(evidenceRepository.findById(evidence1.getEvidenceId())).thenReturn(Optional.ofNullable(evidence1));
         String messageResponse = evidenceService.deleteEvidence(evidence1.getEvidenceId());
-
         assertEquals("Successfully Deleted " + evidence1.getEvidenceId(), messageResponse);
-        assertNull(evidenceRepository.getEvidenceByEvidenceId(evidence1.getEvidenceId()));
     }
 
     /**
