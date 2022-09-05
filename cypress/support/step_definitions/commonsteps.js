@@ -8,7 +8,7 @@ Given("I login as a student", () => {
     cy.login("CypressStudent", "CypressUser1")
 });
 
-Given("I navigate to {word}", (location) => {
+Given("I navigate to {string}", (location) => {
     cy.contains(".nav-link", location).click()
 });
 
@@ -41,4 +41,8 @@ Then("{string} doesn't exist", (string) => {
 
 Then("{string} exists", (string) => {
     cy.contains(string).should('exist')
+})
+
+Then("I am directed to {string} URL", (url) => {
+    cy.url().should('include', url)
 })

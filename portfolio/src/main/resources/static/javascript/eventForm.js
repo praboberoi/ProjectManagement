@@ -2,6 +2,7 @@ const eventStartDateElement = document.getElementById('eventStartDate');
 const eventEndDateElement = document.getElementById('eventEndDate');
 const startDateError = document.getElementById('eventStartDateError');
 const endDateError = document.getElementById('eventEndDateError');
+let currentEventId;
 
 /**
  * Function for error validation of Event Name field.
@@ -110,11 +111,12 @@ function checkEndDate() {
  * @param endDate Event end date and time
  */
 function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
+    currentEventId = eventId
     if (isEdit) {
         document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
         document.getElementById('eventFormSubmitButton').innerText =  'Save';
-        document.getElementById('eventStartDate').value = startDate;
-        document.getElementById('eventEndDate').value =  endDate;
+        document.getElementById('eventStartDate').value = startDate.replace(" ", "T");
+        document.getElementById('eventEndDate').value =  endDate.replace(" ", "T");
     } else {
         document.getElementById('eventFormTitle').innerText =  'Create New Event';
         document.getElementById('eventFormSubmitButton').innerText =  'Create';
@@ -127,4 +129,16 @@ function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
     checkEventDates()
 }
 
+/**
+ * Sends a notification to the server when a user starts editing an event
+ */
+document.getElementById('eventFormModal').addEventListener('shown.bs.modal', function () {
+    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'eventId': currentEventId})})
+});
 
+/**
+ * Sends a notification to the server when a user stops editing an event
+ */
+document.getElementById('eventFormModal').addEventListener('hidden.bs.modal', function () {
+    stompClient.publish({destination: "/app/event/edit", body: JSON.stringify({'active': false, 'projectId': projectId, 'eventId': currentEventId})})
+});
