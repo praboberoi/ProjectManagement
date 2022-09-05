@@ -2,12 +2,15 @@
     <form onsubmit="connectTest(event)">
         <div class="form-group">
             <label for="project-id" class="col-form-label required">Project Id</label>
+            <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is found under the repo's name.">?</span>
             <input type="number" class="form-control" id="project-id" required></input>
 
             <label for="access-token" class="col-form-label">Project access token</label>
+            <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is needed for private repos. Generate this in your repo's settings page.">?</span>
             <input type="text" class="form-control" id="access-token"></input>
 
             <label for="host-address" class="col-form-label required">Project host address</label>
+            <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is the host of your repo (e.g. https://github.com).">?</span>
             <input type="text" class="form-control" id="host-address" required></input>
         </div>
         <button type="submit" class="btn btn-outline-primary">Submit</button>
