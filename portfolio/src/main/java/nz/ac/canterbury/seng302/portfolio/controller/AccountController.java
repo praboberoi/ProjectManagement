@@ -186,6 +186,11 @@ public class AccountController {
     }
 
 
+    /**
+     * Add attributes to the model to be used with Thymeleaf
+     * @param principal the current user
+     * @param model the thymeleaf model
+     */
     private void addAttributesToModel(AuthState principal, Model model) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
