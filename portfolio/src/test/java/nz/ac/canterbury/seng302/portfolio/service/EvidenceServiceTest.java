@@ -173,7 +173,7 @@ class EvidenceServiceTest {
      * Asserts that when getNewEvidence is called then a new evidence object with correct information is returned
      */
     @Test
-    void given_whenGetNewEvidenceIsCalled_thenNewEvidenceObjectReturned() {
+    void whenGetNewEvidenceIsCalled_thenNewEvidenceObjectReturned() {
         User user = new User.Builder().userId(999).build();
         Evidence expectedEvidence = new Evidence.Builder()
                 .evidenceId(999)

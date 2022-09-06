@@ -2,17 +2,20 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+import static org.mockito.Mockito.when;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.sql.Date;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * Unit tests for methods in the sprintService class
@@ -104,6 +107,38 @@ class SprintServiceTest {
         Sprint sprint = sprintBuilder.sprintName("this is going to be more than 50 characters so an error message should be thrown")
                 .build();
         assertThrows(IncorrectDetailsException.class, () -> sprintService.verifySprint(sprint));
+    }
+
+    /**
+     * Asserts that a color is correctly given when getNewSprint is called
+     * @throws IncorrectDetailsException If a new sprint is out of the project date range
+     */
+    @Test
+    void givenProject_whenGetNewSprintCalled_thenColorSetCorrectly() throws IncorrectDetailsException {
+        Sprint sprint2 = sprintService.getNewSprint(project);
+        assertEquals("green", sprint2.getColor().getColor());
+    }
+
+    /**
+     * Asserts that a sprint color changes when the sprint label changes
+     */
+    @Test
+    void givenSprints_whenUpdateSprintLabelsAndColor_thenColorUpdatedCorrectly() {
+        Sprint sprint2 = new Sprint.Builder()
+                .sprintLabel("Sprint 2")
+                .sprintName("Sprint 2")
+                .description("This is a sprint description")
+                .project(project)
+                .color(SprintColor.PURPLE)
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(Calendar.getInstance().getTimeInMillis())).build();
+
+        when(sprintService.saveSprint(sprint2)).thenReturn(null);
+
+        List<Sprint> sprintList = List.of(sprint2);
+        sprintService.updateSprintLabelsAndColor(sprintList);
+        assertEquals("green", sprint2.getColor().getColor());
+        assertEquals("Sprint 1", sprint2.getSprintLabel());
     }
 
 }
