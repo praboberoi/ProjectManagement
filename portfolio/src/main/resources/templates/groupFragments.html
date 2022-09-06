@@ -27,22 +27,37 @@
 
 <div class="table-border table-responsive bdr" th:fragment="groupUserList" id="userListDataTable">
     <table class="table table-bordered table-hover">
-        <thead class = "table-light">
+        <thead class="table-light">
             <tr>
                 <th scope="col" style="width:auto">Username</th>
                 <th scope="col" style="width:auto">Name</th>
+                <th scope="col" style="width:auto">Roles</th>
             </tr>
         </thead>
         <tbody>
             <th:block th:each="user : ${group.members}">
-                <tr th:draggable="${adminOrTeacher?true:false}" ondragstart="userDragStart(event)" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" th:role="${adminOrTeacher?'button':''}" th:onclick="'selectUser(event)'">
+                <tr class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment">
                     <td hidden class="userId" th:text="${user.userId}"></td>
                     <td th:id="'user' + ${user.userId} + 'username'">
-                        <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
+                        <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'"
+                            height="28 width=20" class="d-inline-block align-text-top profile-photo">
                         [[${user.username}]]
                     </td>
                     <td th:id="'user' + ${user.userId} + 'fullname'">
                         [[${user.firstName}]] [[${user.lastName}]]
+                    </td>
+                    <td th:id="'user' + ${user.userId} + 'Roles'">
+                        <ul style="list-style-type: none">
+                            <th:block th:each="role : ${user.getRoles()}">
+                                <li style="padding-bottom:3%; display:inline"
+                                    th:id="'user' + ${user.userId} + 'Role' + ${role}">
+                                    <button class="btn btn-outline-secondary btn-sm" disabled>
+                                        [[${role.getNumber() == 2 ? 'Course Admin' : role.name().substring(0,1) +
+                                        role.name().substring(1, role.name.length()).toLowerCase()}]]
+                                    </button>
+                                </li>
+                            </th:block>
+                        </ul>
                     </td>
             </th:block>
         </tbody>
