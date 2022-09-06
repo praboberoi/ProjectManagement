@@ -163,10 +163,6 @@ a.project-name {
     display: flex;
 }
 
-#projectCard {
-    display: flex;
-    height: 300px;
-}
 
 #myTab{
     padding-left: 15px;
@@ -176,11 +172,6 @@ a.project-name {
     width: 800px;
 }
 
-#calendarOb {
-    margin-left: 80px;
-    width: 800px;
-    padding-top: 8px;
-}
 
 /* styling for cards - events/deadlines/milestones */
 
@@ -191,8 +182,20 @@ a.project-name {
     padding-left: 10px;
 }
 
+#detailsCard, #calendarOb {
+    overflow-y: auto;
+    height: 300px;
+}
+
 #myTabContent{
     overflow-y: auto;
+}
+
+#eventCard, #deadlineCard, #milestoneCard {
+    margin-left: 20px;
+    margin-right: 20px;
+    margin-bottom: 15px;
+    padding-left: 10px;
 }
 
 .calendarIcons{
@@ -276,19 +279,6 @@ div.upcomingEvents  {
     margin-left: 20px;
     margin-top: 7px;
     margin-bottom: 7px;
-}
-
-.mobile-only{
-    display:none
-}
-.desktop-only{
-    display:table;
-    width: 100%
-}
-
-@media (max-width:850px){
-    .desktop-only{display:none}
-    .mobile-only{display:block}
 }
 
 /* Sort button styles from https://codepen.io/xaprio/pen/NWPXwOj */

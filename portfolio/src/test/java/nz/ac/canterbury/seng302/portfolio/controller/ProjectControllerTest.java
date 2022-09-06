@@ -50,6 +50,9 @@ public class ProjectControllerTest {
     private EventService eventService;
 
     @MockBean
+    private DeadlineService deadlineService;
+
+    @MockBean
     private DashboardService dashboardService;
 
     @MockBean
@@ -124,17 +127,21 @@ public class ProjectControllerTest {
      */
     @Test
     void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
+        Deadline newDeadline = new Deadline.Builder().project(project).name("Test").build();
         Event newEvent = new Event.Builder().eventName("Test").build();
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
         when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         when(eventService.getNewEvent(any())).thenReturn(newEvent);
+        when(deadlineService.getNewDeadline(any())).thenReturn(newDeadline);
 
         this.mockMvc
                 .perform(get("/project/1"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listSprints", testSprintList))
                 .andExpect(model().attribute("listEvents", List.of()))
+                .andExpect(model().attribute("listDeadlines", List.of()))
+                .andExpect(model().attribute("deadline", newDeadline))
                 .andExpect(model().attribute("project", project))
                 .andExpect(model().attribute("event", newEvent))
                 .andExpect(model().attribute("roles", testList))
@@ -190,18 +197,6 @@ public class ProjectControllerTest {
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         this.mockMvc
                 .perform(get("/project/1/sprints"))
-                .andExpect(status().isOk());
-    }
-
-    /**
-     * Test get events and check that it returns the correct response.
-     * @throws Exception Thrown during mockmvc run time
-     */
-    @Test
-    void givenServer_WhenGetEvents_ThenEventsReturnedSuccessfully() throws Exception{
-        when(eventService.getEventByProjectId(anyInt())).thenReturn(List.of());
-        this.mockMvc
-                .perform(get("/project/1/events"))
                 .andExpect(status().isOk());
     }
 }

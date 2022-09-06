@@ -59,7 +59,6 @@ public class RegistrationService {
             errorBuilder.setErrorText("First name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
         }
-
         //Last name validation
         if (lastName.isBlank()) {
             errorBuilder.setFieldName("lastNameError");

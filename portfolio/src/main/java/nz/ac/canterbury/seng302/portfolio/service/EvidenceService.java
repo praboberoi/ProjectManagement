@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.model.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -77,7 +80,7 @@ public class EvidenceService {
         if (evidence == null)
             throw new IncorrectDetailsException ("No evidence to verify");
 
-        else if (evidence.getDateOccurred() == null || evidence.getDescription() == null || evidence.getOwnerId() == null ||
+        else if (evidence.getDateOccurred() == null || evidence.getDescription() == null ||
                 evidence.getTitle() == null || evidence.getProject() == null)
             throw new IncorrectDetailsException ("Evidence values are null");
 
@@ -103,15 +106,31 @@ public class EvidenceService {
      * @param evidence The evidence object to be saved
      * @throws IncorrectDetailsException If the evidence has incorrect
      */
-    public void saveEvidence(Evidence evidence) throws IncorrectDetailsException {
+    public String saveEvidence(Evidence evidence) throws IncorrectDetailsException {
         try {
-            verifyEvidence(evidence);
             evidenceRepository.save(evidence);
+            logger.info("Successfully created evidence {} for user with ID: {}", evidence.getEvidenceId(),evidence.getOwnerId());
+            return "Successfully Created " + evidence.getTitle();
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);
-            throw new IncorrectDetailsException("Failure saving evidence");
+            throw new IncorrectDetailsException("Failure Saving Evidence");
         }
     }
 
-
+    /**
+     * Delete a specific piece of evidence
+     * @param evidenceId id of evidence to be deleted
+     * @return Message of the outcome of the delete operation
+     * @throws IncorrectDetailsException
+     */
+    public String deleteEvidence(int evidenceId) {
+        try {
+            evidenceRepository.deleteById(evidenceId);
+            logger.info("Successfully deleted evidence {}", evidenceId);
+            return "Successfully Deleted " + evidenceId;
+        } catch (IllegalArgumentException ex) {
+            logger.error("Failure deleting evidence");
+            throw new IllegalArgumentException("Could not find an existing piece of evidence");
+        }
+    }
 }

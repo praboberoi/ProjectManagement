@@ -1,21 +1,24 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.Evidence;
-import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupRequest;
+import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.persistence.PersistenceException;
+import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
 /**
@@ -78,7 +81,7 @@ class EvidenceServiceTest {
                 .description(null)
                 .dateOccurred(null)
                 .project(null)
-                .ownerId(null)
+                .ownerId(1)
                 .build();
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(incorrectEvidence));
@@ -203,18 +206,42 @@ class EvidenceServiceTest {
         when(evidenceRepository.save(evidence1)).thenThrow(new PersistenceException("This is a test"));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.saveEvidence(evidence1));
-        assertEquals("Failure saving evidence", exception.getMessage());
+        assertEquals("Failure Saving Evidence", exception.getMessage());
 
     }
 
     /**
-     * Asserts that no exception is thrown when saveEvidence is called with a correct evidence object
+     * Asserts that success string is returned when saveEvidence is called with a correct evidence object
      * @throws IncorrectDetailsException If there is an error saving the evidence
      */
     @Test
-    void givenCorrectEvidence_whenSaveEvidenceCalled_thenNothingThrown() throws IncorrectDetailsException {
-        evidenceService.saveEvidence(evidence1);
+    void givenCorrectEvidence_whenSaveEvidenceCalled_thenStringReturned() throws IncorrectDetailsException {
+        String success = evidenceService.saveEvidence(evidence1);
+        assertEquals("Successfully Created " + evidence1.getTitle(), success);
 
+    }
+
+    /**
+     * Test that when a piece of evidence exists, its ID is specified and delete evidence is called, then it is successfully deleted.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenAPieceOfEvidence_whenDeleteEvidenceIsCalled_thenEvidenceNoLongerExists() {
+        when(evidenceRepository.findById(evidence1.getEvidenceId())).thenReturn(Optional.ofNullable(evidence1));
+        String messageResponse = evidenceService.deleteEvidence(evidence1.getEvidenceId());
+        assertEquals("Successfully Deleted " + evidence1.getEvidenceId(), messageResponse);
+    }
+
+    /**
+     * Test that when a piece of evidence does not exist, and delete evidence is called, then an Illegal Argument exception is thrown.
+     */
+    @Test
+    void givenNoEvidence_whenDeleteEvidenceIsCalled_thenAnExceptionIsThrown(){
+        int evidenceId = evidence1.getEvidenceId();
+        doThrow(new IllegalArgumentException()).when(evidenceRepository).deleteById(evidenceId);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+                evidenceService.deleteEvidence(evidenceId));
+        assertEquals("Could not find an existing piece of evidence", exception.getMessage() );
     }
 
 }

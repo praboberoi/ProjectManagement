@@ -17,7 +17,7 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="eventFormTitle">Create New Event</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
@@ -25,7 +25,7 @@
 
                     <!--                    Show event form-->
                     <div class="projectForm">
-                        <form id="createEventForm" onsubmit="return validateForm()" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveEvent'}" method="post" th:object="${event}" >
+                        <form id="createEventForm" name="eventForm" onsubmit="saveEvent();return false" th:object="${event}" >
                             <input type="hidden" id="projectId" th:field="${project.projectId}"/>
                             <input type="hidden" id="eventId" th:field="*{eventId}" />
                             <div class="mb-3">
@@ -63,9 +63,9 @@
                             </div>
                             <br>
                             <div class="modal-footer">
-                                <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton">
+                                <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton" data-bs-dismiss="modal">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create</button>
-                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                             </div>
                         </form>
@@ -77,6 +77,51 @@
     </div>
     <script type="text/javascript" th:src="@{{apiPrefix}/javascript/eventForm.js(apiPrefix=${apiPrefix})}"></script>
     <script type="text/javascript" th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
+</div>
+<div th:fragment="deadlineForm">
+    <div class="modal fade" id="deadlineFormModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deadlineFormTitle">Create New Deadline</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" th:onclick="closeDeadlineModal()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="projectForm">
+                        <form id="createDeadlineForm" onsubmit="return validateForm()" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveDeadline'}" method="post" th:object="${deadline}" >
+                            <input type="hidden" id="deadlineId" th:field="*{deadlineId}">
+                            <div class="mb-3">
+                                <label for="deadline-name" class="col-form-label required">Deadline Name</label>
+                                <input style="font-size:20px;" type="text"  class="form-control required" id="deadline-name" maxlength="50" th:field="*{name}" onkeyup="checkDeadlineName()" required>
+                                <div>
+                                    <span id="deadlineCharCount" th:value="${charCount}">[[*{name.length}]] </span> / 50 characters used.
+                                </div>
+                                <p id="deadlineNameError" th:text="${deadlineNameError}" class="error-msg"></p>
+                            </div>
+                            <!-- Date & Time-->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <label  for="deadlineDate" class="form-label date-font required">Date</label>
+                                    <input type="datetime-local" class="form-control date-font" id="deadlineDate" th:field="*{date}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax}+'T00:00'}" onchange="checkDeadlineDates()" required>
+                                    <p id="deadlineDateError" class="error-msg"></p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" name="submit" id="deadlineFormSubmitButton" class="btn btn-outline-primary">
+                                    <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
+                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" th:onclick="closeDeadlineModal()">
+                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{{apiPrefix}/javascript/deadlineForm.js(apiPrefix=${apiPrefix})}"></script>
+    <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
 </div>
 </body>
 </html>

@@ -8,7 +8,7 @@ Given("I login as a student", () => {
     cy.login("CypressStudent", "CypressUser1")
 });
 
-Given("I navigate to {word}", (location) => {
+Given("I navigate to {string}", (location) => {
     cy.contains(".nav-link", location).click()
 });
 
@@ -19,7 +19,7 @@ When("I select the {word} project", (project) => {
 
 /**
  * Waits for the websocket to subscribe to the required channels (Might move to commands if websockets gets used more)
- * @param {number} counter 
+ * @param {number} counter
  */
 function waitForWebSocket(counter=0) {
     cy.get('#websocket-status').then((el) => {
@@ -41,4 +41,8 @@ Then("{string} doesn't exist", (string) => {
 
 Then("{string} exists", (string) => {
     cy.contains(string).should('exist')
+})
+
+Then("I am directed to {string} URL", (url) => {
+    cy.url().should('include', url)
 })
