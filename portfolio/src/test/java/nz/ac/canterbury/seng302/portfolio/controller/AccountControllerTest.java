@@ -223,7 +223,7 @@ class AccountControllerTest {
         MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "image/png", "some image".getBytes());
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-        assertEquals( "account", accountController.editUser(principal, testFile,testString,
+        assertEquals( "redirect:account", accountController.editUser(principal, testFile,testString,
                 testString, testString, testString, testString, testString, false, mockModel, ra ));
     }
 }
