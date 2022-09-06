@@ -5,17 +5,17 @@ import nz.ac.canterbury.seng302.portfolio.controller.DeadlineController;
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.DeadlineNotification;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +23,21 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import java.util.Date;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.StompSubProtocolHandler;
+
+import java.util.*;
+
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -45,6 +55,9 @@ class DeadlineControllerTest {
     private DeadlineService deadlineService;
 
     @MockBean
+    private SimpMessagingTemplate template;
+
+    @MockBean
     private ProjectService projectService;
 
     @MockBean
@@ -52,6 +65,9 @@ class DeadlineControllerTest {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+
+    @Autowired
+    private DeadlineController deadlineController;
 
     @Value("${apiPrefix}")
     private String apiPrefix;
@@ -66,9 +82,13 @@ class DeadlineControllerTest {
 
     private static MockedStatic<PrincipalUtils> utilities;
 
+    private WebSocketPrincipal mockedWebSocketPrincipal;
+
     private User user;
 
     private UserResponse.Builder userResponse;
+
+    private MvcResult result;
 
 
     @BeforeAll
@@ -112,7 +132,7 @@ class DeadlineControllerTest {
 
         user = new User.Builder()
                 .userId(0)
-                .username("TimeTester")
+                .username("Tester")
                 .firstName("Time")
                 .lastName("Tester")
                 .email("Test@tester.nz")
@@ -127,6 +147,8 @@ class DeadlineControllerTest {
         userResponse.setCreated(Timestamp.newBuilder()
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
+
+        mockedWebSocketPrincipal = mock(WebSocketPrincipal.class);
     }
 
     /**
@@ -141,26 +163,31 @@ class DeadlineControllerTest {
 
             when(deadlineService.saveDeadline(deadline3)).thenThrow(new IncorrectDetailsException("Failure to save the deadline"));
 
-            this.mockMvc.perform(MockMvcRequestBuilders
+            result = this.mockMvc.perform(MockMvcRequestBuilders
                         .post("/project/1/saveDeadline")
                         .flashAttr("deadline", deadline))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageSuccess", "Successfully Updated " + deadline.getName()))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
+                    .andExpect(status().isOk())
+                    .andReturn();
 
-            this.mockMvc.perform(MockMvcRequestBuilders
+            Assertions.assertEquals("Successfully Updated Deadline 1", result.getResponse().getContentAsString());
+
+
+            result = this.mockMvc.perform(MockMvcRequestBuilders
                             .post("/project/1/saveDeadline")
                             .flashAttr("deadline", deadline2))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageSuccess", "Successfully Created " + deadline2.getName()))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
+                    .andExpect(status().isOk())
+                    .andReturn();
 
-            this.mockMvc.perform(MockMvcRequestBuilders
+            Assertions.assertEquals("Successfully Created Deadline 2", result.getResponse().getContentAsString());
+
+
+            result = this.mockMvc.perform(MockMvcRequestBuilders
                             .post("/project/1/saveDeadline")
                             .flashAttr("deadline", deadline3))
-                    .andExpect(status().is3xxRedirection())
-                    .andExpect(flash().attribute("messageDanger", "Failure to save the deadline"))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
+                            .andExpect(status().isBadRequest())
+                            .andReturn();
+
+            Assertions.assertEquals("Failure to save the deadline", result.getResponse().getContentAsString());
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -180,19 +207,21 @@ class DeadlineControllerTest {
             when(deadlineService.deleteDeadline(3))
                     .thenThrow(new IncorrectDetailsException("Failure deleting Deadline"));
 
-                this.mockMvc.perform(MockMvcRequestBuilders
-                                .post("/1/deleteDeadline/1")
-                                .flashAttr("deadlineId", 1))
-                        .andExpect(status().is3xxRedirection())
-                        .andExpect(flash().attribute("messageSuccess", "Successfully deleted " + deadline.getName()))
-                        .andExpect(view().name("redirect:/project/{projectId}"));
+            result = this.mockMvc.perform(MockMvcRequestBuilders
+                            .delete("/1/deleteDeadline/1")
+                            .flashAttr("deadlineId", 1))
+                        .andExpect(status().isOk())
+                        .andReturn();
 
-                this.mockMvc.perform(MockMvcRequestBuilders
-                                .post("/1/deleteDeadline/3")
-                                .flashAttr("deadlineId", 3))
-                        .andExpect(status().is3xxRedirection())
-                        .andExpect(flash().attribute("messageDanger", "Failure deleting Deadline"))
-                        .andExpect(view().name("redirect:/project/{projectId}"));
+            Assertions.assertEquals("Successfully deleted Deadline 1", result.getResponse().getContentAsString());
+
+            result = this.mockMvc.perform(MockMvcRequestBuilders
+                                .delete("/1/deleteDeadline/3")
+                            .flashAttr("deadlineId", 3))
+                        .andExpect(status().isBadRequest())
+                        .andReturn();
+
+            Assertions.assertEquals("Failure deleting Deadline", result.getResponse().getContentAsString());
 
             } catch (Exception e) {
                 e.printStackTrace();
@@ -201,51 +230,67 @@ class DeadlineControllerTest {
     }
 
     /**
-     * Tests to make sure the appropriate attributes are added and the correct redirection is made when calling the deadlineEditForm
+     * Tests that the user is added to the list of editing users when they start editing
+     * @throws Exception Thrown during mockmvc run time
      */
     @Test
-     void givenDeadlineExists_whenDeadlineEditFormRequested_thenAnAppropriateMessageIsDisplayed() {
-        try {
-            when(projectService.getProjectById(1)).thenReturn(project);
-            when(deadlineService.getDeadline(1)).thenReturn(deadline);
+    void whenAUserStartsEditing_thenNotificationIsPresent() throws Exception {
+        Set<DeadlineNotification> expectedNotifications = new HashSet<>(Arrays.asList(new DeadlineNotification(1, 1, "Tester", true,
+                "0")));
 
+        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
 
-            this.mockMvc.perform(MockMvcRequestBuilders
-                    .get("/project/1/editDeadline/1"))
-                    .andExpect(status().isOk())
-                    .andExpect(model().attribute("deadline", deadline))
-                    .andExpect(model().attribute("project", project))
-                    .andExpect(model().attribute("deadlineMin", project.getStartDate()))
-                    .andExpect(model().attribute("deadlineMax", project.getEndDate()))
-                    .andExpect(model().attribute("submissionName", "Save"))
-                    .andExpect(model().attribute("image", apiPrefix + "/icons/save-icon.svg"))
-                    .andExpect(model().attribute("pageTitle", "Edit Deadline: " + deadline.getName()))
-                    .andExpect(view().name("deadlineForm"));
+        deadlineController.editing(new DeadlineNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
 
-
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        this.mockMvc
+                .perform(get("/project/1/deadlines"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("editDeadlineNotifications", expectedNotifications));
     }
 
     /**
-     * Test call to deadlineEditForm to assert exception redirects to the project page with the correct message
+     * Check that the user is removed from the list of editing users when they finish editing
+     * @throws Exception Thrown during mockmvc run time
      */
     @Test
-     void givenProjectDoesNotExist_whenDeadlineEditFormRequested_thenErrorIsHandledAppropriately() {
-        try {
-            when(projectService.getProjectById(1)).thenReturn(project);
-            when(deadlineService.getDeadline(1)).thenReturn(deadline);
-            when(projectService.getProjectById(2)).thenThrow(IncorrectDetailsException.class);
+    void givenAUserIsEditing_whenTheyFinishEditing_thenUserIsNotEditing() throws Exception {
+        Set<DeadlineNotification> expectedNotifications = new HashSet<>();
 
-            this.mockMvc.perform(MockMvcRequestBuilders
-                            .get("/project/1/editDeadline/2"))
-                    .andExpect(flash().attribute("messageDanger", "Project not found"))
-                    .andExpect(view().name("redirect:/project/{projectId}"));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+        deadlineController.editing(new DeadlineNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+        deadlineController.editing(new DeadlineNotification(1, 1, "Tester", false, "0"), mockedWebSocketPrincipal, "0");
+
+
+        this.mockMvc
+                .perform(get("/project/1/deadlines"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("editDeadlineNotifications", expectedNotifications));
+    }
+
+    /**
+     * Check that the user is removed from the list of editing users when they are disconnected
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenAUserIsEditing_whenDisconnectEvent_thenUserIsNotEditing() throws Exception {
+        Set<DeadlineNotification> expectedNotifications = new HashSet<>();
+
+        StompSubProtocolHandler testSource = new StompSubProtocolHandler();
+        GenericMessage<byte[]> testMessage = new GenericMessage<byte[]>(HexFormat.of().parseHex("FF"));
+
+        SessionDisconnectEvent disconnectEvent = new SessionDisconnectEvent(testSource, testMessage, "0", CloseStatus.TLS_HANDSHAKE_FAILURE);
+
+        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+        deadlineController.editing(new DeadlineNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+
+        deadlineController.onApplicationEvent(disconnectEvent);
+
+        this.mockMvc
+                .perform(get("/project/1/deadlines"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("editDeadlineNotifications", expectedNotifications));
     }
 
     @AfterAll
