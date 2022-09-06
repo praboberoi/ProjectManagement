@@ -22,7 +22,9 @@
                         th:data-deadlineName="${deadline.name}" th:data-deadlineDate="${deadline.date}"
                         th:onclick="editDeadline(this.getAttribute('data-deadlineName'), this.getAttribute('data-deadlineDate'), this.getAttribute('data-deadlineId'))">
                         <img class="icon img-color-primary"
-                            th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" /> Edit</button>
+                            th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Edit</span>
+                    </button>
 
                     <button type="button" class="btn btn-outline-secondary btn-sm"
                         th:disabled="${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}"
@@ -31,7 +33,9 @@
                         th:data-deadlineName="${deadline.name}"
                         th:onclick="deleteDeadline(this.getAttribute('data-deadlineId'), this.getAttribute('data-deadlineName'))">
                         <img class="icon img-color-secondary"
-                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete</button>
+                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Delete</span>
+                    </button>
                     <br>
                 </div>
             </div>
