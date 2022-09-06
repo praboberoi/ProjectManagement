@@ -204,12 +204,12 @@ function handleDeadlineNotification(message) {
     } else if (action === "editing" && deadlineCard) {
         let user = array[2]
         document.getElementById(deadline + '-notification').innerText =`${user} is currently editing`
-        document.getElementById(deadline + '-edit-btn').disabled = true
-        document.getElementById(deadline + '-delete-btn').disabled = true
+        document.getElementById(deadline + '-edit-btn').hidden = true
+        document.getElementById(deadline + '-delete-btn').hidden = true
     } else if (action === "finished" && deadlineCard) {
-        document.getElementById(deadline + '-notification').innerText = "                           "
-        document.getElementById(deadline + '-edit-btn').disabled = false
-        document.getElementById(deadline + '-delete-btn').disabled = false
+        document.getElementById(deadline + '-notification').innerText = ""
+        document.getElementById(deadline + '-edit-btn').hidden = false
+        document.getElementById(deadline + '-delete-btn').hidden= false
     } else {
         console.log("Unknown event or command: " + deadline + " " + action)
     }
