@@ -6,6 +6,7 @@ When("I register a new user", () => {
     cy.get('#firstName').type('Cypress')
     cy.get('#lastName').type('Register')
     cy.get('#nickname').type('Cypress')
+    cy.get('#pronouns').type('she/her')
     cy.get('#email').type('automated@cypress.com')
     cy.get('#password').type('CypressUser1')
     cy.get('#confirmPassword').type('CypressUser1')
@@ -50,6 +51,15 @@ When("I enter an invalid password", () => {
 
 });
 
+When("I enter invalid pronouns", () => {
+    cy.get('#pronouns').type('she-her')
+    cy.get("#submit").click()
+});
+
 Then("An appropriate password error message is displayed", () => {
     cy.get("#passwordError").should('have.text', "Password must contain 8-16 characters, a digit and uppercase character.")
+});
+
+Then("An appropriate pronouns error message is displayed", () => {
+    cy.get("#personalPronounsError").should('have.text', "Personal pronouns can only contain / special character and no digits.")
 });
