@@ -57,7 +57,7 @@ public class ValidationUtilities {
 
     /**
      * Checks if a string has a special character that aren't allowed in pronouns e.g !?@
-     * allows ',',  ' ',  '-'  '+',  '&'.
+     * allows '/'.
      * @param str String to be checked.
      * @return true if str contains disallowed characters.
      */
