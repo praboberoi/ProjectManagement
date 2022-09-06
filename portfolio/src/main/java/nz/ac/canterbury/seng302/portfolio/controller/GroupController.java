@@ -69,7 +69,7 @@ public class GroupController {
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         model.addAttribute("listGroups", groups);
-        model.addAttribute("selectedGroup", groupService.getMembersWithoutAGroup());
+        model.addAttribute("group", groupService.getMembersWithoutAGroup());
         return "groups";
     }
 
@@ -113,15 +113,15 @@ public class GroupController {
      * @return The selected group fragment
      */
     @GetMapping("/groups/{groupId}")
-    public ModelAndView selectedGroup(
+    public ModelAndView group(
             @PathVariable int groupId
     ) {
-        Groups selectedGroup = groupService.getGroupById(groupId);
+        Groups group = groupService.getGroupById(groupId);
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView("groups::group");
         mv.addObject("listGroups", groups);
-        mv.addObject("selectedGroup", selectedGroup);
+        mv.addObject("group", group);
         return mv;
     }
 
@@ -131,12 +131,12 @@ public class GroupController {
      */
     @GetMapping("/groups/unassigned")
     public ModelAndView unassignedGroup() {
-        Groups selectedGroup = groupService.getMembersWithoutAGroup();
+        Groups group = groupService.getMembersWithoutAGroup();
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView("groups::group");
         mv.addObject("listGroups", groups);
-        mv.addObject("selectedGroup", selectedGroup);
+        mv.addObject("group", group);
         return mv;
     }
 
@@ -146,12 +146,12 @@ public class GroupController {
      */
     @GetMapping("/groups/teachers")
     public ModelAndView teachersGroup() {
-        Groups selectedGroup = groupService.getTeachingStaffGroup();
+        Groups group = groupService.getTeachingStaffGroup();
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView("groups::group");
         mv.addObject("listGroups", groups);
-        mv.addObject("selectedGroup", selectedGroup);
+        mv.addObject("group", group);
         return mv;
     }
 
@@ -272,10 +272,13 @@ public class GroupController {
     /**
      * Gets the individual group page. This is currently the same page for every group.
      * @param groupId The pages group id for future implementation
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @return The group page
      */
     @GetMapping(path="/group/{groupId}")
-    public String groupPage(@PathVariable int groupId) {
+    public String groupPage(@PathVariable int groupId, Model model) {
+        Groups group = groupService.getGroupById(groupId);
+        model.addAttribute("group", group);
         return "group";
     }
 }

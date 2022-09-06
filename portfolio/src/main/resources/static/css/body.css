@@ -336,7 +336,7 @@ a.desc.sort:after {
     border: unset;
 }
 
-#selectedGroupDropdown {
+#groupDropdown {
     display: none;
 }
 
@@ -349,11 +349,11 @@ a.desc.sort:after {
 }
 
 @media only screen and (max-width: 768px) {
-    #selectedGroupDropdown {
+    #groupDropdown {
         display: initial;
     }
 
-    #selectedGroupName {
+    #groupName {
         display: none;
     }
 
