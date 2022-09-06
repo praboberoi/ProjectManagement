@@ -61,5 +61,5 @@ Then("An appropriate password error message is displayed", () => {
 });
 
 Then("An appropriate pronouns error message is displayed", () => {
-    cy.get("#personalPronounsError").should('have.text', "Personal pronouns can only contain / special character and no digits.")
+    cy.get("#personalPronounsError").should('have.text', "Personal pronouns can only contain special character / and no digits.")
 });

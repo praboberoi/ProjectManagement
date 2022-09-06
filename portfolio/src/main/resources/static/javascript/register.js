@@ -123,7 +123,7 @@ function checkPronouns() {
     } else if (digit.test(pronounsElement.value)
         || pronoun.test(pronounsElement.value)) {
         pronounsElement.classList.add("formError")
-        pronounsErrorElement.innerText = "Personal pronouns can only contain / special character and no digits."
+        pronounsErrorElement.innerText = "Personal pronouns can only contain special character / and no digits."
         pronounsElement.setCustomValidity("Invalid field.");
     } else {
         pronounsElement.classList.remove("formError");
