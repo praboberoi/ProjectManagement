@@ -1,21 +1,23 @@
 <th:block th:each="deadline : ${listDeadlines}" th:fragment="deadlineTab">
-    <div class="card shadow-sm bg-white rounded deadline-card" th:id="'deadline' + ${deadline.deadlineId} + '-card'">
+    <div class="card shadow-sm bg-white rounded deadline-card m-2" th:id="'deadline' + ${deadline.deadlineId} + '-card'">
         <div class="container-fluid">
-            <div class="d-flex justify-content-between pt-2">
+            <div class="d-flex justify-content-between py-2">
                 <div>
                     <h6 class="card-title" th:id="'deadline' + ${deadline.deadlineId} + 'Name'">[[${deadline.name}]]
                     </h6>
                     <p class="eventDates" th:id="'deadline' + ${deadline.deadlineId} + 'date'"><b>Date:</b>
                         [[${#dates.format(deadline.date, 'dd MMM yyyy hh:mm a')}]]
                 </div>
-                <div class="d-flex align-items-baseline pt-2 mt-2" th:if="${adminOrTeacher}">
+                <div class="pt-3 px-2 px-sm-0">
                     <th:block th:each="notification : ${editDeadlineNotifications}" th:object="${notification}"
                               th:if="${notification.deadlineId} == ${deadline.deadlineId}">
-                        <p th:id="'deadline' + ${deadline.deadlineId} + '-notification'" th:text="${notification.username} + ' is currently editing.'"></p>
+                        <p class="font-italic text-black-50 mb-0" th:id="'deadline' + ${deadline.deadlineId} + '-notification'" th:text="${notification.username} + ' is currently editing'"></p>
                     </th:block>
                     <th:block th:with="check=${deadline.deadlineId}">
-                        <p th:if="!${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}" th:id="'deadline' + ${deadline.deadlineId} + '-notification'"></p>
+                        <p class="font-italic text-black-50 mb-0" th:if="!${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}" th:id="'deadline' + ${deadline.deadlineId} + '-notification'"></p>
                     </th:block>
+                </div>
+                <div class="d-flex align-items-baseline pt-2 mt-2" th:if="${adminOrTeacher}">
                     <button type="button" class="btn btn-outline-primary btn-sm mr-1"
                         th:disabled="${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}"
                         th:id="'deadline' + ${deadline.deadlineId} + '-edit-btn'" th:data-deadlineId="${deadline.deadlineId}"
@@ -36,7 +38,6 @@
                             th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
                         <span class="d-none d-md-inline-block">Delete</span>
                     </button>
-                    <br>
                 </div>
             </div>
         </div>

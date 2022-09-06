@@ -203,11 +203,11 @@ function handleDeadlineNotification(message) {
         return
     } else if (action === "editing" && deadlineCard) {
         let user = array[2]
-        document.getElementById(deadline + '-notification').innerText = user + " is currently editing."
+        document.getElementById(deadline + '-notification').innerText =`${user} is currently editing`
         document.getElementById(deadline + '-edit-btn').disabled = true
         document.getElementById(deadline + '-delete-btn').disabled = true
     } else if (action === "finished" && deadlineCard) {
-        document.getElementById(deadline + '-notification').innerText = ""
+        document.getElementById(deadline + '-notification').innerText = "                           "
         document.getElementById(deadline + '-edit-btn').disabled = false
         document.getElementById(deadline + '-delete-btn').disabled = false
     } else {
@@ -234,7 +234,7 @@ function handleEventNotification(message) {
         return
     } else if (action === "editing" && eventCard) {
         let user = array[2]
-        document.getElementById(event + '-notification').innerText = user + " is currently editing."
+        document.getElementById(event + '-notification').innerText = user + " is currently editing"
         document.getElementById(event + '-edit-btn').disabled = true
         document.getElementById(event + '-delete-btn').disabled = true
     } else if (action === "finished" && eventCard) {
