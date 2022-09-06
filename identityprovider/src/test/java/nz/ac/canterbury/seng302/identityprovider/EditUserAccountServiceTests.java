@@ -78,7 +78,7 @@ public class EditUserAccountServiceTests {
     }
 
     /**
-     *  Tests personal pronoun with allowed special characters
+     *  Tests personal pronoun with allowed special character '/'
      */
     @Test
     void givenSpecialChar_whenPersonalPronounValidation_thenNoValidationError(){
