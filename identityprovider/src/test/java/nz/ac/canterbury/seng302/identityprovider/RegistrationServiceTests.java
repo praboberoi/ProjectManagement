@@ -162,4 +162,34 @@ class RegistrationServiceTests {
         + result.stream().map(ValidationError::getFieldName).collect(Collectors.joining(", "))
         + " are invalid");
     }
+
+    /**
+     * Test that pronoun validation allows a '/'.
+     */
+    @Test
+    public void givenValidPronouns_whenUserValidated_thenSucceedsValidation() {
+        requestBuilder.setPersonalPronouns("she/her");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+        assertEquals(0, result.size(), "User pronoun validation is incorrect.");
+    }
+
+    /**
+     * Test that pronoun validation doesn't allow special characters aside from '/'.
+     */
+    @Test
+    public void givenInvalidPronounsWithSpecialCharacters_whenUserValidated_thenErrorMessageReturned() {
+        requestBuilder.setPersonalPronouns("she&her-herself");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+        assertEquals(1, result.size(), "User pronoun validation is incorrect.");
+    }
+
+    /**
+     * Test that pronoun validation doesn't allow digits.
+     */
+    @Test
+    public void givenInvalidPronounsWithDigit_whenUserValidated_thenErrorMessageReturned() {
+        requestBuilder.setPersonalPronouns("she0her44herself");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+        assertEquals(1, result.size(), "User pronoun validation is incorrect.");
+    }
 }
