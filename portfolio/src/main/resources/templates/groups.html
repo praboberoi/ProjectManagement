@@ -19,22 +19,11 @@
 
 <body>
 <div class="main">
-    <br>
     <div class="page-title">
         <h2 id="name">Groups</h2>
     </div>
-    <div id="toRefresh">
-        <br>
-        <div th:if="${messageSuccess}" class="alert alert-success text-center">
-            [[${messageSuccess}]]
-        </div>
-        <div th:if="${messageDanger}" class="alert alert-danger text-center">
-            [[${messageDanger}]]
-        </div>
-    </div>
-    <br>
-    <div class="alert alert-danger text-center" id="messageDanger" hidden></div>
-    <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
+    <div class="alert alert-danger text-center" id="messageDanger" hidden>[[${messageDanger}]]</div>
+    <div class="alert alert-success text-center" id="messageSuccess" hidden>[[${messageSuccess}]]</div>
 
     <div th:if="${adminOrTeacher}">
         <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" data-target="#createModal" >
@@ -128,29 +117,7 @@
                                 </ul>
                                 <div class="tab-content" id="myTabContent">
                                     <div class="tab-pane show active" id="members" role="tabpanel" aria-labelledby="members-tab">
-                                        <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
-                                            <table class="table table-bordered table-hover">
-                                                <thead class = "table-light">
-                                                    <tr>
-                                                        <th scope="col" style="width:auto">Username</th>
-                                                        <th scope="col" style="width:auto">Name</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <th:block th:each="user : ${selectedGroup.members}">
-                                                        <tr th:draggable="${adminOrTeacher?true:false}" ondragstart="userDragStart(event)" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" th:role="${adminOrTeacher?'button':''}" th:onclick="'selectUser(event)'">
-                                                            <td hidden class="userId" th:text="${user.userId}"></td>
-                                                            <td th:id="'user' + ${user.userId} + 'username'">
-                                                                <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
-                                                                [[${user.username}]]
-                                                            </td>
-                                                            <td th:id="'user' + ${user.userId} + 'fullname'">
-                                                                [[${user.firstName}]] [[${user.lastName}]]
-                                                            </td>
-                                                    </th:block>
-                                                </tbody>
-                                            </table>
-                                        </div>
+                                        <span th:replace="groupFragments::groupUserList"></span>
                                     </div>
                                     <div class="tab-pane" id="edit-group" role="tabpanel" aria-labelledby="edit-group-tab">
                                         <div class="container-fluid pt-2">

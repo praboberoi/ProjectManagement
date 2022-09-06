@@ -35,6 +35,7 @@ css for the body of each page
 /*Holds the title of the page, consistent throughout the application*/
 .page-title {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
     background-color: #efb83c;
@@ -42,7 +43,7 @@ css for the body of each page
     color: #07173B;
 
     height: 120px;
-    padding-top: 6px;
+    margin: 25px 0px;
 }
 
 
@@ -164,10 +165,6 @@ a.project-name {
     /*width: 600px;*/
 }
 
-#projectCard {
-    display: flex;
-    height: 300px;
-}
 
 #myTab{
     padding-left: 15px;
@@ -177,13 +174,7 @@ a.project-name {
     width: 800px;
 }
 
-#calendarOb {
-    margin-left: 80px;
-    width: 800px;
-    padding-top: 8px;
 
-
-}
 #myTabContent{
     overflow-y: auto;
 }
@@ -231,13 +222,6 @@ td.hiddenRow {
 }
 
 
-#calendarOb {
-    margin-left: 80px;
-    width: 800px;
-    padding-top: 8px;
-
-
-}
 #myTabContent{
     overflow-y: auto;
 }
@@ -358,6 +342,10 @@ a.desc.sort:after {
 
 .alert:empty {
     display: none;
+}
+#detailsCard, #calendarOb {
+    overflow-y: auto;
+    height: 300px;
 }
 
 @media only screen and (max-width: 768px) {

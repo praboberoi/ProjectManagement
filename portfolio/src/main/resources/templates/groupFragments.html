@@ -24,3 +24,27 @@
     </form>
     <p id="connection-message">No connection attempt has been made.</p>
 </div>
+
+<div class="table-border table-responsive bdr" th:fragment="groupUserList" id="userListDataTable">
+    <table class="table table-bordered table-hover">
+        <thead class = "table-light">
+            <tr>
+                <th scope="col" style="width:auto">Username</th>
+                <th scope="col" style="width:auto">Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            <th:block th:each="user : ${selectedGroup.members}">
+                <tr th:draggable="${adminOrTeacher?true:false}" ondragstart="userDragStart(event)" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" th:role="${adminOrTeacher?'button':''}" th:onclick="'selectUser(event)'">
+                    <td hidden class="userId" th:text="${user.userId}"></td>
+                    <td th:id="'user' + ${user.userId} + 'username'">
+                        <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
+                        [[${user.username}]]
+                    </td>
+                    <td th:id="'user' + ${user.userId} + 'fullname'">
+                        [[${user.firstName}]] [[${user.lastName}]]
+                    </td>
+            </th:block>
+        </tbody>
+    </table>
+</div>
