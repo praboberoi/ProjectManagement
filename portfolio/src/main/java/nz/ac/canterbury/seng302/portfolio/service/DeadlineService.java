@@ -146,8 +146,6 @@ public class DeadlineService {
             throw new IncorrectDetailsException("No deadline");
         } else if (deadline.getName() == null || deadline.getDate() == null || deadline.getProject() == null) {
             throw new IncorrectDetailsException("Deadline values cannot be null");
-        } else if (deadline.getName().startsWith(" ") || deadline.getName().endsWith(" ")) {
-            throw new IncorrectDetailsException("Deadline name must not start or end with space characters");
         } else if (deadline.getName().length() > 50) {
             throw new IncorrectDetailsException("Deadline name cannot exceed 50 characters");
         } else if (deadline.getName().length() < 3) {

@@ -245,26 +245,9 @@ class DeadlineServiceTest {
         Deadline deadline1 = new Deadline.Builder()
                 .deadlineId(0)
                 .date(new Date())
-                .name(" incorrect ")
+                .name("This is testing the character limit for setting the name of deadline and the limit is 20 characters")
                 .project(project)
                 .build();
-        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
-                deadlineService.verifyDeadline(deadline1));
-        Assertions.assertEquals("Deadline name must not start or end with space characters", exception.getMessage());
-
-        deadline1.setName(" incorrect");
-
-        IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
-                deadlineService.verifyDeadline(deadline1));
-        Assertions.assertEquals("Deadline name must not start or end with space characters", exception1.getMessage());
-
-        deadline1.setName("incorrect ");
-
-        IncorrectDetailsException exception2 = assertThrows(IncorrectDetailsException.class, () ->
-                deadlineService.verifyDeadline(deadline1));
-        Assertions.assertEquals("Deadline name must not start or end with space characters", exception2.getMessage());
-
-        deadline1.setName("This is testing the character limit for setting the name of deadline and the limit is 20 characters");
 
         IncorrectDetailsException exception3 = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(deadline1));

@@ -164,10 +164,6 @@ a.project-name {
     /*width: 600px;*/
 }
 
-#projectCard {
-    display: flex;
-    height: 300px;
-}
 
 #myTab{
     padding-left: 15px;
@@ -177,13 +173,7 @@ a.project-name {
     width: 800px;
 }
 
-#calendarOb {
-    margin-left: 80px;
-    width: 800px;
-    padding-top: 8px;
 
-
-}
 #myTabContent{
     overflow-y: auto;
 }
@@ -231,13 +221,6 @@ td.hiddenRow {
 }
 
 
-#calendarOb {
-    margin-left: 80px;
-    width: 800px;
-    padding-top: 8px;
-
-
-}
 #myTabContent{
     overflow-y: auto;
 }
@@ -317,19 +300,6 @@ div.upcomingEvents  {
     margin-bottom: 7px;
 }
 
-.mobile-only{
-    display:none
-}
-.desktop-only{
-    display:table;
-    width: 100%
-}
-
-@media (max-width:850px){
-    .desktop-only{display:none}
-    .mobile-only{display:block}
-}
-
 /* Sort button styles from https://codepen.io/xaprio/pen/NWPXwOj */
 th a.sort {
     padding-right: 18px;
@@ -371,6 +341,10 @@ a.desc.sort:after {
 
 .alert:empty {
     display: none;
+}
+#detailsCard, #calendarOb {
+    overflow-y: auto;
+    height: 300px;
 }
 
 @media only screen and (max-width: 768px) {
