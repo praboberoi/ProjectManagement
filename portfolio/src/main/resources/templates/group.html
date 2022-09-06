@@ -21,7 +21,8 @@
 <body>
     <div class="main">
         <div class="page-title">
-            <h2 id="name">Groups</h2>
+            <h2 id="title">Group [shortName]'s page</h2>
+            <h4 id="longTitle">[longName]</h4>
         </div>
         <div class="alert alert-danger text-center" id="messageDanger" hidden>[[${messageDanger}]]</div>
         <div class="alert alert-success text-center" id="messageSuccess" hidden>[[${messageSuccess}]]</div>
@@ -49,8 +50,7 @@
 
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="members-tab-pane" role="tabpanel"
-                                            aria-labelledby="members-tab"></div>
-                                        <!-- th:insert="groupFragments::groupUserList  -->
+                                            aria-labelledby="members-tab" th:insert="groupFragments::groupUserList"></div>
                                         <div class="tab-pane fade" id="repo-settings-tab-pane" role="tabpanel"
                                             aria-labelledby="repo-settings-tab"
                                             th:insert="groupFragments::repoSettings"></div>
