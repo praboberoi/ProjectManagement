@@ -91,7 +91,7 @@ public class GroupControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
-    void givenTeacherUser_whenCreateGroupCalled_thenRedirectToGroupPage() throws Exception{
+    void givenTeacherUser_whenCreateGroupCalled_thenRedirectToGroupsPage() throws Exception{
         when(groupService.createGroup(anyString(), anyString())).thenReturn(CreateGroupResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
@@ -105,7 +105,7 @@ public class GroupControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
-    void givenTeacherUser_whenCreateGroupCalledIncorrectly_thenRedirectToGroupPage() throws Exception{
+    void givenTeacherUser_whenCreateGroupCalledIncorrectly_thenRedirectToGroupsPage() throws Exception{
         when(groupService.createGroup(anyString(), anyString())).thenReturn(CreateGroupResponse.newBuilder().setIsSuccess(false).setMessage("unsuccessful").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
@@ -133,7 +133,7 @@ public class GroupControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
-    void whenGroupPageRequested_thenAllGroupsReturned() throws Exception{
+    void whenGroupsPageRequested_thenAllGroupsReturned() throws Exception{
         when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, List.of()));
         when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, List.of()));
         mockMvc
@@ -264,7 +264,7 @@ public class GroupControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
-    void givenStudentUser_whenModifyGroupCalled_thenRedirectToGroupPage() throws Exception{
+    void givenStudentUser_whenModifyGroupCalled_thenRedirectToGroupsPage() throws Exception{
         when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         mockMvc
@@ -299,5 +299,19 @@ public class GroupControllerTest {
                 .perform(post("/groups?groupId=1&shortName=&longName="))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", "Fail"));
+    }
+
+    /**
+     * Checks that the group is added to the model when an individual groups page is requested
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void whenGroupPageRequested_thenGroupIsInModel() throws Exception{
+        Groups group = new Groups("Team: 400", "Bad Request", 1, List.of());
+        when(groupService.getGroupById(1)).thenReturn(group);
+        mockMvc
+            .perform(get("/group/1"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("group", group));
     }
 }
