@@ -65,7 +65,6 @@ function editDeadline(name, date, id) {
     document.getElementById('deadlineFormSubmitButton').disabled = false;
     document.getElementById('deadline-name').classList.remove("formError");
     document.getElementById('deadlineNameError').innerText = null;
-    document.getElementById('deadlineDateError');
     document.getElementById('deadline-name').value = name;
     document.getElementById('deadlineId').value = id;
     document.getElementById('deadlineCharCount').value = name.length;
@@ -100,6 +99,7 @@ function createDeadline() {
     document.getElementById('deadlineId').value = 0;
     document.getElementById('deadlineNameError').innerText = null;
     document.getElementById('deadlineFormSubmitButton').disabled = false;
+    document.getElementById('deadlineDateError').innerText = null;
     document.getElementById('deadline-name').value = "New Deadline";
     document.getElementById('deadlineCharCount').value = "12";
     document.getElementById('deadlineDate').value = new Date().toLocaleDateString().split('/').reverse().join('-') + 'T00:00';
