@@ -248,6 +248,12 @@ td.hidden-row {
     background-color: #f5f5f5;
 }
 
+#toggle-display {
+    border: none;
+    background-color: #fff;
+    outline: none;
+    padding: 0;
+}
 
 td {
     word-wrap: break-word;
