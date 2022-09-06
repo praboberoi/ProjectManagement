@@ -82,10 +82,10 @@ public class EditUserAccountServiceTests {
      */
     @Test
     void givenSpecialChar_whenPersonalPronounValidation_thenNoValidationError(){
-        requestBuilder.setPersonalPronouns("she + me & my");
+        requestBuilder.setPersonalPronouns("she/her");
         List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
 
-        assertEquals(0, result.size(), "+ & special characters is allowed\n"
+        assertEquals(0, result.size(), "/ special characters is allowed\n"
                 + result.stream().map(ValidationError:: getFieldName).collect(Collectors.joining(", ")));
     }
 
