@@ -8,6 +8,7 @@ When("I set valid repo settings", () => {
             name: "Cypress git repo",
         },
     })
+    cy.get("#repo-settings-tab").click()
     cy.get("#git-project-id").clear().type("13964")
     cy.get("#git-access-token").clear().type("sVMvHmHxhJeqdZBBchDB")
     cy.get("#git-host-address").clear().type("https://eng-git.canterbury.ac.nz/")
