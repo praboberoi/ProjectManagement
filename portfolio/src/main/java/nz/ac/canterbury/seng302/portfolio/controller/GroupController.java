@@ -276,8 +276,12 @@ public class GroupController {
      * @return The group page
      */
     @GetMapping(path="/group/{groupId}")
-    public String groupPage(@PathVariable int groupId, Model model) {
+    public String groupPage(@PathVariable int groupId, Model model, RedirectAttributes ra) {
         Groups group = groupService.getGroupById(groupId);
+        if (group.getGroupId() == 0) {
+            ra.addFlashAttribute("messageDanger", "Group " + groupId + " does not exist.");
+            return "redirect:/groups";
+        }
         model.addAttribute("group", group);
         return "group";
     }

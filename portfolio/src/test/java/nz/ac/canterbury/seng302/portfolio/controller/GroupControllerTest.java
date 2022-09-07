@@ -306,12 +306,25 @@ public class GroupControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
-    void whenGroupPageRequested_thenGroupIsInModel() throws Exception{
+    void givenGroupExists_whenGroupPageRequested_thenGroupIsInModel() throws Exception{
         Groups group = new Groups("Team: 400", "Bad Request", 1, List.of());
         when(groupService.getGroupById(1)).thenReturn(group);
         mockMvc
             .perform(get("/group/1"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("group", group));
+    }
+
+    /**
+     * Checks that the group is added to the model when an individual groups page is requested
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenGroupDoesNotExist_whenGroupPageRequested_thenGroupIsNotInModel() throws Exception{
+        when(groupService.getGroupById(1)).thenReturn(new Groups());
+        mockMvc
+            .perform(get("/group/1"))
+            .andExpect(status().is3xxRedirection())
+            .andExpect(flash().attribute("messageDanger", "Group 1 does not exist."));
     }
 }
