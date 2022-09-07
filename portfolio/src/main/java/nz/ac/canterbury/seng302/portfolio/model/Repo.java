@@ -13,12 +13,13 @@ public class Repo {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int repoId;
 
+
     /**
      * Group that the repo is contained in
      * Foreign key
      */
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "groupId", nullable = false)
+    @Column(unique = true)
+    @Lob
     private Groups groups;
 
     /**
@@ -92,6 +93,19 @@ public class Repo {
 
     public void setHostAddress(String hostAddress) {this.repoName = hostAddress;}
 
+
+
+    @Override
+    public String toString() {
+        return "Repo{" +
+                "repoId=" + repoId +
+                ", groups=" + groups +
+                ", repoName='" + repoName + '\'' +
+                ", gitlabProjectId=" + gitlabProjectId +
+                ", accessToken='" + accessToken + '\'' +
+                ", hostAddress='" + hostAddress + '\'' +
+                '}';
+    }
 
     /**
      * Overrides for comparing repo objects
