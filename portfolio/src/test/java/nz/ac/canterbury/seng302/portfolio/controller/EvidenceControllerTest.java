@@ -45,7 +45,6 @@ public class EvidenceControllerTest {
 
     private EvidenceDTO evidenceDTO;
     private EvidenceDTO evidenceDTO1;
-    private Project project;
 
     private static MockedStatic<PrincipalUtils> utilities;
 
@@ -58,7 +57,7 @@ public class EvidenceControllerTest {
     @BeforeEach
     public void setup() {
         LocalDate now = LocalDate.now();
-        project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
+        Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
 
         evidenceDTO = new EvidenceDTO.Builder()
             .title("New Evidence")
@@ -87,7 +86,7 @@ public class EvidenceControllerTest {
         when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidenceDTO.getTitle());
 
         this.mockMvc
-                .perform(post("/evidence/save").flashAttr("evidenceDTO", evidenceDTO))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", evidenceDTO))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", nullValue()))
                 .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidenceDTO.getTitle()));
@@ -104,7 +103,7 @@ public class EvidenceControllerTest {
         when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
 
         this.mockMvc
-                .perform(post("/evidence/save").flashAttr("evidenceDTO", evidenceDTO1))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", evidenceDTO1))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
                 .andExpect(flash().attribute("messageSuccess", nullValue()));
