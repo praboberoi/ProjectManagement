@@ -202,7 +202,7 @@ public class SprintController {
         try {
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
-            sprintService.updateSprintLabels(sprintService.getSprintByProject(projectId));
+            sprintService.updateSprintLabelsAndColor(sprintService.getSprintByProject(projectId));
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             model.addAttribute("listSprints", listSprints);
             return "redirect:/project/{projectId}";
