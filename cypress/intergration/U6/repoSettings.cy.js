@@ -9,6 +9,7 @@ When("I set valid repo settings", () => {
         },
     })
     cy.get("#repo-settings-tab").click()
+    cy.get("#git-project-alias").clear().type("Cypress git project")
     cy.get("#git-project-id").clear().type("13964")
     cy.get("#git-access-token").clear().type("sVMvHmHxhJeqdZBBchDB")
     cy.get("#git-host-address").clear().type("https://eng-git.canterbury.ac.nz/")
@@ -18,3 +19,7 @@ When("I set valid repo settings", () => {
 Then("A repo is connected", () => {
     cy.contains("Connected to repo:").should('exist')
 });
+
+Then("I cannot see repo settings", () => {
+    cy.get("#repo-settings-tab").should('not.exist')
+})
