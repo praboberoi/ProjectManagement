@@ -316,7 +316,7 @@ public class GroupControllerTest {
     }
 
     /**
-     * Checks that the group is added to the model when an individual groups page is requested
+     * Checks that the group page is redirected when the group doesn't exist
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
