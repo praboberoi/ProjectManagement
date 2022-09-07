@@ -86,7 +86,7 @@ public class EvidenceControllerTest {
         when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidenceDTO.getTitle());
 
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", evidenceDTO))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidence", evidence))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", nullValue()))
                 .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidenceDTO.getTitle()));
@@ -103,21 +103,28 @@ public class EvidenceControllerTest {
         when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
 
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", evidenceDTO1))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidence", evidence1))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
                 .andExpect(flash().attribute("messageSuccess", nullValue()));
 
     }
 
-//    @Test
-//    void givenServer_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() {
-//        Evidence evidence = new Evidence(evidenceDTO);
-//        Evidence evidence1 = new Evidence(evidenceDTO1);
-//        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
-//        this.mockMvc
-//                .perform(get("/"))
-//    }
+    /**
+     * Tests that when EvidenceList is called then the list of evidence is correctly added to the ModelAndView return object
+     * @throws Exception when userId doesn't exist
+     */
+    @Test
+    void givenServer_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
+        Evidence evidence = new Evidence(evidenceDTO);
+        Evidence evidence1 = new Evidence(evidenceDTO1);
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        this.mockMvc
+                .perform(get("/evidence/99"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("listEvidence", List.of(evidence, evidence1)));
+    }
+
 
     @AfterAll
     public static void afterAll() {
