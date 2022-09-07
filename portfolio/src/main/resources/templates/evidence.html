@@ -1,0 +1,216 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>LENSfolio - Evidence</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!-- Custom css for body-->
+    <link th:href="@{{apiPrefix}/css/body.css(apiPrefix=${apiPrefix})}" rel="stylesheet" type="text/css"/>
+    <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
+</head>
+
+<!--fragments-->
+<header>
+    <div th:replace="fragments :: header"></div>
+</header>
+<div th:replace="fragments :: sidebar"></div>
+
+<body>
+<div class="main">
+    <br>
+    <div class="page-title">
+        <h2 id="name">Evidence</h2>
+    </div>
+    <div id="toRefresh">
+        <br>
+        <div th:if="${messageSuccess}" class="alert alert-success text-center">
+            [[${messageSuccess}]]
+        </div>
+        <div th:if="${messageDanger}" class="alert alert-danger text-center">
+            [[${messageDanger}]]
+        </div>
+    </div>
+    <br>
+    <div class="alert alert-danger text-center" id="messageDanger" hidden></div>
+    <div class="alert alert-success text-center" id="messageSuccess" hidden></div>
+
+
+    <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" data-target="#createModal" >
+        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
+        Create Evidence
+    </a>
+
+    <div class="" id="group-container">
+        <div class="row mt-3">
+            <div id="group-list" class="col-4" th:fragment="evidenceList">
+                <th:block th:each="group : ${listGroups}">
+                    <div class="card project-card mb-3" th:id="'group' + ${group.groupId} + 'Card'" th:ondrop="'dropUsers(event, ' + ${group.groupId} + ')'" ondragover="allowDrop(event)">
+                        <div class="container-fluid">
+                            <div class="row">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <div th:if="${group.groupId == 0} and ${group.shortName.contains('Teaching Staff')}">
+                                            <a id="select-teachers" role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
+                                        </div>
+                                        <div th:if="${group.getGroupId() == 0} and ${group.shortName.contains('Members without a group')}">
+                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
+                                        </div>
+                                        <div th:if="${group.getGroupId() != 0}">
+                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="'getSelectedGroup(' + ${group.groupId} + ')'" th:text="${group.shortName}" ></a>
+                                        </div>
+                                    </h5>
+                                    <p th:text="${group.longName}" class="mb-0"></p>
+                                    <p th:text="${#lists.size(group.members)} + ' member' + ${#lists.size(group.members) == 1 ?'':'s'}" class="mb-0"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </th:block>
+            </div>
+
+            <div id="group-display" class="col-sm-12 col-md-8">
+                <div class="card project-card" id="selectedGroup" th:fragment="selectedGroup">
+                    <div class="container-fluid">
+                        <div class="row">
+                            <div class="card-body">
+                                <div class="container mb-2">
+                                    <div class="row">
+                                        <div class="col-auto me-auto">
+                                            <h3 id="selectedGroupName" class="card-title" th:text="${selectedGroup.shortName}" />
+
+                                            <div id="selectedGroupDropdown" class="dropdown">
+                                                <button class="btn btn-secondary" href="javascript:void(0);" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <h5 class="dropdown-toggle" th:text="${selectedGroup.shortName}" role="button"></h5>
+                                                </button>
+
+                                                <ul class="dropdown-menu">
+                                                    <th:block th:each="group : ${listGroups}">
+
+                                                        <li class="dropdown-item" th:if="${group.groupId == 0} and ${group.shortName.contains('Teaching Staff')}">
+                                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('teachers')" th:text="${group.shortName}" ></a>
+                                                        </li>
+                                                        <li class="dropdown-item" th:if="${group.getGroupId() == 0} and ${group.shortName.contains('Members without a group')}">
+                                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="getSelectedGroup('unassigned')" th:text="${group.shortName}" ></a>
+                                                        </li>
+                                                        <li class="dropdown-item" th:if="${group.getGroupId() != 0}">
+                                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="'getSelectedGroup(' + ${group.groupId} + ')'" th:text="${group.shortName}" ></a>
+                                                        </li>
+                                                    </th:block>
+                                                </ul>
+                                            </div>
+
+                                            <h5 class="card-title d-none d-md-block" th:text="${selectedGroup.longName}" />
+                                        </div>
+                                        <div th:if="${selectedGroup.groupId != 0}" class="container-fluid my-2 p-0 d-none d-md-block">
+                                            <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(' + ${selectedGroup.groupId} + ')'" disabled>
+                                                Remove selected users
+                                            </button>
+                                        </div>
+                                        <div th:if="${selectedGroup.shortName.contains('Teaching Staff')}" class="container-fluid p-0 my-2">
+                                            <button id="remove-users" type="button" class="btn btn-outline-secondary" th:onclick="'removeUsers(-1)'" disabled>
+                                                Remove selected users
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <ul class="nav nav-tabs" id="myTab" role="tablist">
+                                    <li class="nav-item" role="presentation">
+                                        <button class="nav-link active" id="members-tab" data-bs-toggle="tab" data-bs-target="#members" type="button" role="tab" aria-controls="members" aria-selected="true">Members</button>
+                                    </li>
+
+                                    <li th:if="${adminOrTeacher && selectedGroup.groupId != 0}" class="nav-item" role="presentation">
+                                        <button class="nav-link" id="edit-group-tab" data-bs-toggle="tab" data-bs-target="#edit-group" type="button" role="tab" aria-controls="edit-group" aria-selected="false">Edit Group</button>
+                                    </li>
+                                </ul>
+                                <div class="tab-content" id="myTabContent">
+                                    <div class="tab-pane show active" id="members" role="tabpanel" aria-labelledby="members-tab">
+                                        <div class="table-border table-responsive bdr" th:fragment="userListDataTable" id="userListDataTable">
+                                            <table class="table table-bordered table-hover">
+                                                <thead class = "table-light">
+                                                <tr>
+                                                    <th scope="col" style="width:auto">Username</th>
+                                                    <th scope="col" style="width:auto">Name</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <th:block th:each="user : ${selectedGroup.members}">
+                                                    <tr th:draggable="${adminOrTeacher?true:false}" ondragstart="userDragStart(event)" class="user-row" th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment" th:role="${adminOrTeacher?'button':''}" th:onclick="'selectUser(event)'">
+                                                        <td hidden class="userId" th:text="${user.userId}"></td>
+                                                        <td th:id="'user' + ${user.userId} + 'username'">
+                                                            <img th:src="${user.profileImagePath}" th:alt="'User' + ${user.userId} + 'profile photo'" height="28 width=20" class="d-inline-block align-text-top profile-photo">
+                                                            [[${user.username}]]
+                                                        </td>
+                                                        <td th:id="'user' + ${user.userId} + 'fullname'">
+                                                            [[${user.firstName}]] [[${user.lastName}]]
+                                                        </td>
+                                                </th:block>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                    <div class="tab-pane" id="edit-group" role="tabpanel" aria-labelledby="edit-group-tab">
+                                        <div class="container-fluid pt-2">
+                                            <button id="edit-group-btn" type="button" class="btn btn-outline-primary me-2" data-toggle="modal" data-target="#editModal">
+                                                <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/> Edit</a>
+
+                                                <button id="delete-group-btn" type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#deleteModal" >
+                                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"> Delete</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="conformationModalLongTitle" th:text="'Edit Group' + ${selectedGroup.shortName}">Edit Group</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="groupForm">
+                                        <form id="editGroupForm" method="post" th:object="${selectedGroup}" th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}" >
+                                            <div class="mb-3">
+                                                <input hidden type="number" name="groupId" th:value="${selectedGroup.groupId}" required>
+                                                <label class="col-form-label required">Group Short Name</label>
+                                                <input type="text" class="form-control required" name="shortName" onkeyup="checkShortName(event)" th:value="${selectedGroup.shortName}" id="shortName" maxlength="50" placeholder="Short Group Name" required>
+                                                <span id="charCount" th:value="${charCount}" th:text="${#strings.length(selectedGroup.shortName)}"> </span> / 50 characters used.
+                                                <p id="shortNameError" th:text="${shortNameError}" class="error-msg"></p>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label required">Group Long Name</label>
+                                                <input type="text" class="form-control mt-50" th:value="${selectedGroup.longName}" name="longName" id="longName" placeholder="Long Group Name" maxlength="100" rows="6" onkeyup="checkLongName(event)" required/>
+                                                <span id="charCountLong" th:value="${charCount}" th:text="${selectedGroup.longName!=null?#strings.length(selectedGroup.longName):0}"> </span> / 100 characters used.
+                                                <p id="longNameError" th:text="${longNameError}" class="error-msg"></p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type= "submit" id="save-submit-button" class="btn btn-outline-primary me-3">
+                                                    <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
+                                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+    let apiPrefix = [[${apiPrefix}]];
+</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
+<script th:src="@{{apiPrefix}/javascript/groups.js(apiPrefix=${apiPrefix})}"></script>
+</body>
+</html>
