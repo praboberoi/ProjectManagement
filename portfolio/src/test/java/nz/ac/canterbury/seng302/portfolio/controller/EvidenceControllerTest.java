@@ -21,6 +21,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -55,7 +56,7 @@ public class EvidenceControllerTest {
     }
 
     @BeforeEach
-    public void init() {
+    public void setup() {
         LocalDate now = LocalDate.now();
         project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
 
@@ -81,7 +82,7 @@ public class EvidenceControllerTest {
      * Test verification of evidence object when a valid evidence is saved and checks it redirects the user
      */
     @Test
-    void givenServer_WhenSaveValidEvidence_ThenEvidenceVerifiedSuccessfully() throws Exception {
+    void givenServer_whenSaveValidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
         Evidence evidence = new Evidence(evidenceDTO);
         when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidenceDTO.getTitle());
 
@@ -98,7 +99,7 @@ public class EvidenceControllerTest {
      * Tests verification of evidence object when an invalid evidence is saved and checks it redirects the user
      */
     @Test
-    void givenServer_WhenSaveInvalidEvidence_ThenEvidenceVerifiedSuccessfully() throws Exception {
+    void givenServer_whenSaveInvalidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
         Evidence evidence1 = new Evidence(evidenceDTO1);
         when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
 
@@ -111,12 +112,12 @@ public class EvidenceControllerTest {
     }
 
 //    @Test
-//    void givenServer_whenEvidenceEditForm_thenEvidenceCorrectlyRetrieved() throws IncorrectDetailsException {
-//        Evidence evidence1 = new Evidence(evidenceDTO);
-//        when(evidenceService.getEvidence(evidence1.getEvidenceId())).thenReturn(evidence1);
-//
+//    void givenServer_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() {
+//        Evidence evidence = new Evidence(evidenceDTO);
+//        Evidence evidence1 = new Evidence(evidenceDTO1);
+//        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
 //        this.mockMvc
-//                .perform(get("/editEvidence/" + evidence1.getEvidenceId()).flashAttr())
+//                .perform(get("/"))
 //    }
 
     @AfterAll

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
@@ -50,26 +51,53 @@ public class EvidenceController {
      * @param userId UserId containing the desired evidence
      * @return Page fragment containing events
      */
-    @GetMapping(path="/user/{userId}/evidences")
-    public Model evidences(
+    @GetMapping(path="/evidence/{userId}")
+    public ModelAndView evidenceList(
             @PathVariable("userId") int userId,
-            Model mv) {
+            @AuthenticationPrincipal AuthState principal) {
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-        mv.addAttribute("listEvidence", listEvidence);
+        ModelAndView mv = new ModelAndView("evidence::evidenceList");
+        mv.addObject("listEvidence", listEvidence);
+        return mv;
+    }
+
+    /**
+     * Updates the model with the correct list of evidence and a selected evidence
+     * @param userId User ID containing the evidence
+     * @param evidenceId ID of the selected evidence object
+     * @param ra Redirect Attribute, a frontend message object
+     * @return The selected evidence fragment
+     */
+    @GetMapping(path="/evidence/{userId}/{evidenceId}")
+    public ModelAndView selectedEvidence(
+            @PathVariable int userId,
+            @PathVariable int evidenceId,
+            RedirectAttributes ra) {
+        ModelAndView mv = new ModelAndView("evidence::evidenceList");
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+        mv.addObject("listEvidence", listEvidence);
+        try {
+            Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
+            mv.addObject("selectedEvidence", selectedEvidence);
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+        }
         return mv;
     }
 
     /** Checks if evidence variables are valid and if it is then saves the evidence
-     * @param evidenceDTO EvidenceDTO object
+     * @param evidence Evidence object
      * @param ra Redirect Attribute frontend message object
      * @return link of html page to display
      */
-    @PostMapping(path="/evidence/save")
+    @PostMapping(path="/evidence/{userId}/saveEvidence")
     public String saveEvidence(
-            EvidenceDTO evidenceDTO,
-            RedirectAttributes ra) {
-        Evidence evidence = new Evidence(evidenceDTO);
+            @ModelAttribute Evidence evidence,
+            @PathVariable("userId") int userId,
+            RedirectAttributes ra,
+            @AuthenticationPrincipal AuthState principal) {
         try {
+            evidence.setOwnerId(userId);
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
             ra.addFlashAttribute("messageSuccess", message);
@@ -128,7 +156,7 @@ public class EvidenceController {
             ra.addFlashAttribute("messageSuccess", message);
             List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
             model.addAttribute("listEvidence", listEvidence);
-        } catch (IncorrectDetailsException e) {
+        } catch (IllegalArgumentException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
         return "redirect:/evidence";
