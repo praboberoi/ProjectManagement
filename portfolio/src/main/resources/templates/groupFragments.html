@@ -1,6 +1,12 @@
 <div th:fragment="repoSettings">
     <form onsubmit="connectTest(event)">
         <div class="form-group">
+            <label for="git-project-name" class="col-form-label">Project Name</label>
+            <input type="text" class="form-control" id="git-project-name" disabled></input>
+
+            <label for="git-alias" class="col-form-label required">Project Alias</label>
+            <input type="text" class="form-control" id="git-project-alias" required></input>
+
             <label for="git-project-id" class="col-form-label required">Project Id</label>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is found under the repo's name."><img
                     class="icon img-color-primary"
