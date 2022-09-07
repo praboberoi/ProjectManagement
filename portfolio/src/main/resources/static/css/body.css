@@ -4,9 +4,11 @@ css for the body of each page
 
 .main{
     padding-left: min(15%, 250px);
-    padding-top: 60px;
+    margin-top: 8vh;
     margin-left: 20px;
-    margin-right: 20px;
+    padding-right: 20px;
+    height: 92vh;
+    overflow-y: scroll;
 }
 
 .project-card{
