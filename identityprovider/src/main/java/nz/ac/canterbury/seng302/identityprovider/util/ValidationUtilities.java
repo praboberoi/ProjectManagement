@@ -57,12 +57,12 @@ public class ValidationUtilities {
 
     /**
      * Checks if a string has a special character that aren't allowed in pronouns e.g !?@
-     * allows ',',  ' ',  '-'  '+',  '&'.
+     * allows '/'.
      * @param str String to be checked.
      * @return true if str contains disallowed characters.
      */
     public static boolean hasPronounSpecial(String str) {
-        Pattern pattern = Pattern.compile("[^a-zA-Z0-9 ,+&-]");
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9/]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }

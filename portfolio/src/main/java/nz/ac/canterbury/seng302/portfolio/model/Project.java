@@ -50,6 +50,9 @@ public class Project {
     private Set<Event> events;
 
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<Deadline> deadlines;
+
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private Set<Evidence> evidences;
 
     /**

@@ -74,8 +74,8 @@ public class GroupController {
     }
 
     /**
-     * Get message for empty registration page
-     * @return Registration html page
+     * Get list of groups
+     * @return List of groups
      */
     @GetMapping(path="/groups/list")
     public ModelAndView groupsList() {
@@ -84,7 +84,7 @@ public class GroupController {
         ModelAndView mv = new ModelAndView("groups::groupList");
         mv.addObject("listGroups", groups);
         return mv;
-}
+    }
 
     /**
      * Attempts to delete a group from the idp server
