@@ -40,7 +40,7 @@
                                                 data-bs-target="#members-tab-pane" type="button" role="tab"
                                                 aria-controls="members-tab-pane" aria-selected="true">Members</button>
                                         </li>
-                                        <li class="nav-item" role="presentation">
+                                        <li class="nav-item" role="presentation" th:if="${adminOrTeacher || group.members.contains(user)}">
                                             <button class="nav-link" id="repo-settings-tab" data-bs-toggle="tab"
                                                 data-bs-target="#repo-settings-tab-pane" type="button" role="tab"
                                                 aria-controls="repo-settings-tab-pane" aria-selected="false">Repo
@@ -53,7 +53,7 @@
                                             aria-labelledby="members-tab" th:insert="groupFragments::groupUserList"></div>
                                         <div class="tab-pane fade" id="repo-settings-tab-pane" role="tabpanel"
                                             aria-labelledby="repo-settings-tab"
-                                            th:insert="groupFragments::repoSettings"></div>
+                                            th:insert="groupFragments::repoSettings" th:if="${adminOrTeacher || group.members.contains(user)}"></div>
                                     </div>
                                 </div>
                             </div>
