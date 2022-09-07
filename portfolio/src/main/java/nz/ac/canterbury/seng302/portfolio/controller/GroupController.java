@@ -39,6 +39,11 @@ public class GroupController {
 
     @Autowired private UserAccountClientService userAccountClientService;
 
+    private static final String GROUP = "group";
+    private static final String GROUP_FRAGMENT = "groups::group";
+    private static final String GROUPS_REDIRECT = "redirect:/groups";
+    private static final String WARNING_MESSAGE = "messageDanger";
+
     /**
      * Get message for empty registration page
      * @param request HTTP request sent to this endpoint
@@ -57,7 +62,7 @@ public class GroupController {
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         model.addAttribute("listGroups", groups);
-        model.addAttribute("group", groupService.getMembersWithoutAGroup());
+        model.addAttribute(GROUP, groupService.getMembersWithoutAGroup());
         return "groups";
     }
 
@@ -107,9 +112,9 @@ public class GroupController {
         Groups group = groupService.getGroupById(groupId);
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::group");
+        ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
-        mv.addObject("group", group);
+        mv.addObject(GROUP, group);
         return mv;
     }
 
@@ -122,9 +127,9 @@ public class GroupController {
         Groups group = groupService.getMembersWithoutAGroup();
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::group");
+        ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
-        mv.addObject("group", group);
+        mv.addObject(GROUP, group);
         return mv;
     }
 
@@ -137,9 +142,9 @@ public class GroupController {
         Groups group = groupService.getTeachingStaffGroup();
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::group");
+        ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
-        mv.addObject("group", group);
+        mv.addObject(GROUP, group);
         return mv;
     }
 
@@ -161,8 +166,8 @@ public class GroupController {
         RedirectAttributes ra
     ) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
-            ra.addFlashAttribute("messageDanger", "Insufficient permissions to create group.");
-            return "redirect:/groups";
+            ra.addFlashAttribute(WARNING_MESSAGE, "Insufficient permissions to create group.");
+            return GROUPS_REDIRECT;
         }
         boolean status;
         String message;
@@ -180,9 +185,9 @@ public class GroupController {
         if (status) {
             ra.addFlashAttribute("messageSuccess", message);
         } else {
-            ra.addFlashAttribute("messageDanger", message);
+            ra.addFlashAttribute(WARNING_MESSAGE, message);
         }
-        return "redirect:/groups";
+        return GROUPS_REDIRECT;
     }
 
     /**
@@ -268,10 +273,10 @@ public class GroupController {
     public String groupPage(@PathVariable int groupId, Model model, RedirectAttributes ra) {
         Groups group = groupService.getGroupById(groupId);
         if (group.getGroupId() == 0) {
-            ra.addFlashAttribute("messageDanger", "Group " + groupId + " does not exist.");
-            return "redirect:/groups";
+            ra.addFlashAttribute(WARNING_MESSAGE, "Group " + groupId + " does not exist.");
+            return GROUPS_REDIRECT;
         }
-        model.addAttribute("group", group);
-        return "group";
+        model.addAttribute(GROUP, group);
+        return GROUP;
     }
 }
