@@ -39,6 +39,16 @@
                     </button>
                 </div>
             </div>
+            <div class="row" style="height: 5px;">
+                <div class="col" th:if="${event.getColors().contains(T(nz.ac.canterbury.seng302.portfolio.utils.SprintColor).DEFAULT_BLUE)}" style="background-color: blue"></div>
+                <div class="col" th:if="${event.getColors().contains(T(nz.ac.canterbury.seng302.portfolio.utils.SprintColor).GREEN)}" style="background-color: green"></div>
+                <div class="col" th:if="${event.getColors().contains(T(nz.ac.canterbury.seng302.portfolio.utils.SprintColor).PURPLE)}" style="background-color: purple"></div>
+                <div class="col" th:if="${event.getColors().contains(T(nz.ac.canterbury.seng302.portfolio.utils.SprintColor).DARK_SLATE_GREY)}" style="background-color: darkSlateGrey"></div>
+                <div class="col" th:if="${event.getColors().contains(T(nz.ac.canterbury.seng302.portfolio.utils.SprintColor).FIREBRICK)}" style="background-color: firebrick"></div>
+                <div class="col" th:if="${event.getColors().contains(T(nz.ac.canterbury.seng302.portfolio.utils.SprintColor).VIOLET_RED)}" style="background-color: mediumVioletRed"></div>
+                <div class="col" th:if="${event.getColors().contains(T(nz.ac.canterbury.seng302.portfolio.utils.SprintColor).SEA_GREEN)}" style="background-color: mediumSeaGreen"></div>
+                <div class="col" th:if="${event.getColors().contains(T(nz.ac.canterbury.seng302.portfolio.utils.SprintColor).ORANGE_RED)}" style="background-color: orangeRed"></div>
+            </div>
         </div>
     </div>
 </th:block>

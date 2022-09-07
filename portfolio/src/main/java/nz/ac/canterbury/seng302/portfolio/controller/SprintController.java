@@ -1,7 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -28,6 +30,7 @@ public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
+    @Autowired private EventService eventService;
     @Value("${apiPrefix}") private String apiPrefix;
 
     @Autowired
@@ -134,6 +137,14 @@ public class SprintController {
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
+            List<Event> events = eventService.getEventByProjectId(projectId);
+            events.forEach(event -> {
+                try {
+                    eventService.saveEvent(event);
+                } catch (IncorrectDetailsException e) {
+                    e.printStackTrace();
+                }
+            });
             String message = sprintService.saveSprint(sprint);
             notifySprint(projectId, sprint.getSprintId(), "edited");
             ra.addFlashAttribute("messageSuccess", message);
@@ -204,6 +215,14 @@ public class SprintController {
             ra.addFlashAttribute("messageSuccess", message);
             sprintService.updateSprintLabelsAndColor(sprintService.getSprintByProject(projectId));
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            List<Event> events = eventService.getEventByProjectId(projectId);
+            events.forEach(event -> {
+                try {
+                    eventService.saveEvent(event);
+                } catch (IncorrectDetailsException e) {
+                    e.printStackTrace();
+                }
+            });
             model.addAttribute("listSprints", listSprints);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {

@@ -1,10 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
+import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.Objects;
 
 import javax.persistence.*;
 
@@ -42,6 +42,12 @@ public class Event {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startDate;
+
+    @Column
+    @ElementCollection
+    private final Set<SprintColor> colors = new HashSet<SprintColor>();
+
+
 
     /**
      * End date and time for the event
@@ -111,14 +117,27 @@ public class Event {
         this.endDate = endDate;
     }
 
-    public String getDateOnly() {
+    public String getStartDateOnly() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         return formatter.format(startDate);
     }
 
-    public String getTime() {
+    public String getEndDateOnly() {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        return formatter.format(endDate);
+    }
+
+    public String getStartTime() {
         SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
         return formatter.format(startDate);
+    }
+
+    public Set<SprintColor> getColors() {
+        return this.colors;
+    }
+
+    public void setColours(SprintColor color) {
+        this.colors.add(color);
     }
 
 

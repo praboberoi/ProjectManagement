@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
@@ -57,7 +58,7 @@ public class EventController {
       * @return Page fragment containing events
       */
       @GetMapping(path="/project/{projectId}/events")
-      public ModelAndView events(@PathVariable("projectId") int projectId) {
+      public ModelAndView events(@PathVariable("projectId") int projectId) throws IncorrectDetailsException {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
