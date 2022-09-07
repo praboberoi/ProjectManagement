@@ -6,7 +6,6 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -39,17 +38,6 @@ public class GroupController {
     private GroupService groupService;
 
     @Autowired private UserAccountClientService userAccountClientService;
-
-    @Value("${apiPrefix}") private String apiPrefix;
-
-
-    /**
-     * Adds common model elements used by all controller methods.
-     */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
 
     /**
      * Get message for empty registration page
@@ -113,7 +101,7 @@ public class GroupController {
      * @return The selected group fragment
      */
     @GetMapping("/groups/{groupId}")
-    public ModelAndView group(
+    public ModelAndView selectedGroup(
             @PathVariable int groupId
     ) {
         Groups group = groupService.getGroupById(groupId);
@@ -273,6 +261,7 @@ public class GroupController {
      * Gets the individual group page. This is currently the same page for every group.
      * @param groupId The pages group id for future implementation
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param ra Redirect Attribute frontend message object
      * @return The group page
      */
     @GetMapping(path="/group/{groupId}")
