@@ -81,17 +81,17 @@ public class Repo {
 
     public void setRepoName(String repoName) {this.repoName = repoName;}
 
-    public int getGitlabProjectID() {return this.gitlabProjectId;}
+    public int getGitlabProjectId() {return this.gitlabProjectId;}
 
-    public void setGitlabProjectID(int gitlabProjectID) {this.gitlabProjectId = gitlabProjectId;}
+    public void setGitlabProjectId(int gitlabProjectId) {this.gitlabProjectId = gitlabProjectId;}
 
     public String getAccessToken() {return this.accessToken;}
 
-    public void setAccessToken(String accessToken) {this.repoName = accessToken;}
+    public void setAccessToken(String accessToken) {this.accessToken = accessToken;}
 
     public String getHostAddress() {return this.hostAddress;}
 
-    public void setHostAddress(String hostAddress) {this.repoName = hostAddress;}
+    public void setHostAddress(String hostAddress) {this.hostAddress = hostAddress;}
 
 
 
