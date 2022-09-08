@@ -13,7 +13,7 @@ When("I enter {string} deadline name and {string} date", (deadlineName, deadline
     cy.get('#deadlineNameError').should('have.text', 'Deadline Name must not be empty')
     cy.get('#deadline-name').type(deadlineName,{ delay: 0 }).should('have.value', deadlineName)
     cy.get('#deadlineNameError').should('have.text', '')
-    cy.get('#deadlineDate').type(deadlineDate).should('have.value', deadlineDate)
+    cy.get('#deadlineDate').clear().type(deadlineDate).should('have.value', deadlineDate)
 })
 
 When('I select save on the deadline form',  () => {
