@@ -107,7 +107,7 @@ public class RegistrationService {
             result.add(errorBuilder.build());
         }else if (ValidationUtilities.hasPronounSpecial(personalPronouns) || ValidationUtilities.hasDigit(personalPronouns)) {
             errorBuilder.setFieldName("personalPronounsError");
-            errorBuilder.setErrorText("Personal pronouns can only contain special characters + & - , and no digits.");
+            errorBuilder.setErrorText("Personal pronouns can only contain special character / and no digits.");
             result.add(errorBuilder.build());
         }
 
