@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
@@ -46,14 +47,15 @@ public class DashboardController {
     @GetMapping(path = "/dashboard")
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
+        User user = new User(userAccountClientService.getUser(principal));
         try {
             List<Project> listProjects = dashboardService.getAllProjects();
             model.addAttribute("listProjects", listProjects);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
-            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("user", user);
             return "dashboard";
         } catch (Exception e) {
-            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("user",user);
             return ERROR_PAGE;
         }
     }
