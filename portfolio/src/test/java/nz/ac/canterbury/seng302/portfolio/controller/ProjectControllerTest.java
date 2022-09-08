@@ -145,7 +145,7 @@ public class ProjectControllerTest {
                 .andExpect(model().attribute("project", project))
                 .andExpect(model().attribute("event", newEvent))
                 .andExpect(model().attribute("roles", testList))
-                .andExpect(model().attribute("user", userResponse.build()))
+                .andExpect(model().attribute("user", new User(userResponse.build())))
                 .andExpect(model().attribute("projectDateMin", project.getStartDate()))
                 .andExpect(model().attribute("projectDateMax", project.getEndDate()))
                 .andExpect(view().name("project"));
@@ -197,18 +197,6 @@ public class ProjectControllerTest {
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         this.mockMvc
                 .perform(get("/project/1/sprints"))
-                .andExpect(status().isOk());
-    }
-
-    /**
-     * Test get events and check that it returns the correct response.
-     * @throws Exception Thrown during mockmvc run time
-     */
-    @Test
-    void givenServer_WhenGetEvents_ThenEventsReturnedSuccessfully() throws Exception{
-        when(eventService.getEventByProjectId(anyInt())).thenReturn(List.of());
-        this.mockMvc
-                .perform(get("/project/1/events"))
                 .andExpect(status().isOk());
     }
 }

@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.model.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -114,5 +117,20 @@ public class EvidenceService {
         }
     }
 
-
+    /**
+     * Delete a specific piece of evidence
+     * @param evidenceId id of evidence to be deleted
+     * @return Message of the outcome of the delete operation
+     * @throws IncorrectDetailsException
+     */
+    public String deleteEvidence(int evidenceId) {
+        try {
+            evidenceRepository.deleteById(evidenceId);
+            logger.info("Successfully deleted evidence {}", evidenceId);
+            return "Successfully Deleted " + evidenceId;
+        } catch (IllegalArgumentException ex) {
+            logger.error("Failure deleting evidence");
+            throw new IllegalArgumentException("Could not find an existing piece of evidence");
+        }
+    }
 }
