@@ -106,6 +106,7 @@ deploy-staging-identityprovider:
       - identityprovider/build/libs
   only:
     - develop
+    - vmTesting
 
 deploy-staging-portfolio:
   stage: deploy
@@ -124,6 +125,7 @@ deploy-staging-portfolio:
       - portfolio/build/libs
   only:
     - develop
+    - vmTesting
 
 deploy-production-identityprovider:
   stage: deploy
@@ -162,3 +164,4 @@ deploy-production-portfolio:
       - portfolio/build/libs
   only:
     - tags
+
