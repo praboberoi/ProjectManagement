@@ -359,5 +359,9 @@ a.desc.sort:after {
     #accountPage-font, #editAccountPage-font, #projectForm-font{
         font-size: 25px !important;
     }
-} 
+}
+
+.evidenceCardText {
+    display: inline;
+}
  
