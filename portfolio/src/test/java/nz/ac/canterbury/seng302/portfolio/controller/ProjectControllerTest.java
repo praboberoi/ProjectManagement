@@ -145,7 +145,7 @@ public class ProjectControllerTest {
                 .andExpect(model().attribute("project", project))
                 .andExpect(model().attribute("event", newEvent))
                 .andExpect(model().attribute("roles", testList))
-                .andExpect(model().attribute("user", userResponse.build()))
+                .andExpect(model().attribute("user", new User(userResponse.build())))
                 .andExpect(model().attribute("projectDateMin", project.getStartDate()))
                 .andExpect(model().attribute("projectDateMax", project.getEndDate()))
                 .andExpect(view().name("project"));
