@@ -196,16 +196,13 @@ class DeadlineControllerTest {
     }
 
     /**
-     * Tests to make sure an appropriate message is displayed when a post request is made to delete the given deadline
+     * Tests to make sure successfully deleted message is displayed when a post request is made to delete the given deadline
      */
     @Test
-     void givenDeadlineExists_whenDeleteDeadlineIsRequested_thenAnAppropriateMessageIsDisplayed() {
+     void givenDeadlineExists_whenDeleteDeadlineIsRequested_thenSuccessfullyDeletedMessageIsDisplayed() {
         try {
             when(deadlineService.deleteDeadline(1))
                     .thenReturn("Successfully deleted " + deadline.getName());
-
-            when(deadlineService.deleteDeadline(3))
-                    .thenThrow(new IncorrectDetailsException("Failure deleting Deadline"));
 
             result = this.mockMvc.perform(MockMvcRequestBuilders
                             .delete("/1/deleteDeadline/1")
@@ -215,16 +212,31 @@ class DeadlineControllerTest {
 
             Assertions.assertEquals("Successfully deleted Deadline 1", result.getResponse().getContentAsString());
 
-            result = this.mockMvc.perform(MockMvcRequestBuilders
-                                .delete("/1/deleteDeadline/3")
-                            .flashAttr("deadlineId", 3))
-                        .andExpect(status().isBadRequest())
-                        .andReturn();
-
-            Assertions.assertEquals("Failure deleting Deadline", result.getResponse().getContentAsString());
-
             } catch (Exception e) {
                 e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Tests to make sure failure deleting message is displayed when a post request is made to delete the given deadline
+     */
+    @Test
+    void givenDeadlineExists_whenDeleteDeadlineIsRequested_thenFailureDeletingMessageIsDisplayed() {
+
+        try {
+            when(deadlineService.deleteDeadline(3))
+                    .thenThrow(new IncorrectDetailsException("Failure deleting Deadline"));
+
+            result = this.mockMvc.perform(MockMvcRequestBuilders
+                            .delete("/1/deleteDeadline/3")
+                            .flashAttr("deadlineId", 3))
+                    .andExpect(status().isBadRequest())
+                    .andReturn();
+            Assertions.assertEquals("Failure deleting Deadline", result.getResponse().getContentAsString());
+
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
     }
