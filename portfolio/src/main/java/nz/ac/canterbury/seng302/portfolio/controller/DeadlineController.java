@@ -112,6 +112,7 @@ public class DeadlineController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
     /**
      * Deletes the deadline and redirects back to project page
      * @param model Of type {@link Model}
