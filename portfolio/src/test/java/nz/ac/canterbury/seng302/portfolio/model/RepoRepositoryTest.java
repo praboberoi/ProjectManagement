@@ -27,7 +27,7 @@ class RepoRepositoryTest {
                 .repoId(1)
                 .repoName("No Groups")
                 .hostAddress("http://Test.com")
-                .Groups(group)
+                .groups(group)
                 .gitlabProjectId(1)
                 .accessToken("New Token")
                 .build();

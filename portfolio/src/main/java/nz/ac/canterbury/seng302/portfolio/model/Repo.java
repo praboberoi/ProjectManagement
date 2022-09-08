@@ -152,7 +152,7 @@ public class Repo {
          * @param groups The group of the repo
          * @return Repo builder
          */
-        public Builder Groups(Groups groups) {
+        public Builder groups(Groups groups) {
             this.groups = groups;
             return this;
         }
