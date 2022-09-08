@@ -27,9 +27,8 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = EvidenceController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -119,8 +118,8 @@ public class EvidenceControllerTest {
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         this.mockMvc
                 .perform(get("/evidence/99"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("listEvidence", List.of(evidence, evidence1)));
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)));
     }
 
 
