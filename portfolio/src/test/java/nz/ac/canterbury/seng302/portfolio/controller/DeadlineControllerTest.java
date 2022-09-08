@@ -234,8 +234,8 @@ class DeadlineControllerTest {
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
-    void whenAUserStartsEditing_thenNotificationIsPresent() throws Exception {
-        Set<DeadlineNotification> expectedNotifications = new HashSet<>(Arrays.asList(new DeadlineNotification(1, 1, "Tester", true,
+    void givenUserDecidesToEditADeadline_whenDeadlineListIsRequested_thenNotificationIsPresent() throws Exception {
+        Set<DeadlineNotification> expectedNotifications = new HashSet<>(List.of(new DeadlineNotification(1, 1, "Tester", true,
                 "0")));
 
         when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
