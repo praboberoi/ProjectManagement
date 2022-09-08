@@ -34,6 +34,8 @@ public class SprintController {
     @Autowired
     private SimpMessagingTemplate template;
 
+    private final String redirectDashboard =  "redirect:/dashboard";
+
     /**
      * Adds common model elements used by all controller methods.
      */
@@ -56,7 +58,7 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             Model model,
             RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
@@ -131,7 +133,7 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         Model model,
         RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
@@ -164,10 +166,8 @@ public class SprintController {
             Model model,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        System.out.println("DJHSKAFHDJKSFHJKDHF");
-
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
-            return "redirect:/dashboard";
+            return redirectDashboard;
         }
         try {
 
@@ -204,7 +204,7 @@ public class SprintController {
         @PathVariable int projectId,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
