@@ -161,7 +161,6 @@ a.project-name {
 
 .card-header {
     display: flex;
-    /*width: 600px;*/
 }
 
 
@@ -174,9 +173,7 @@ a.project-name {
 }
 
 
-#myTabContent{
-    overflow-y: auto;
-}
+/* styling for cards - events/deadlines/milestones */
 
 .event-card, #deadlineCard, #milestoneCard {
     margin-left: 20px;
@@ -185,41 +182,10 @@ a.project-name {
     padding-left: 10px;
 }
 
-.calendarIcons{
-    padding-bottom: 3px;
+#detailsCard, #calendarOb {
+    overflow-y: auto;
+    height: 300px;
 }
-
-.eventDates {
-    line-height: 0.6;
-    font-size: 12px;
-}
-
-#projectDuration {
-    font-size: 13px;
-}
-
-.hiddenRow {
-    padding: 0 !important;
-}
-
-#no{
-    background-color: #ffffff
-}
-
-#cce, #ccm,#cco {
-    width: 33.33%;
-    float: left;
-    padding-top: 10px;
-    padding-bottom: 10px;
-    text-align: center;
-    font-size: 14px;
-
-}
-
-td.hiddenRow {
-    background-color: #ececec; /* Assuming you want the hover color to be white */
-}
-
 
 #myTabContent{
     overflow-y: auto;
@@ -241,32 +207,53 @@ td.hiddenRow {
     font-size: 12px;
 }
 
+/* styling for display under sprints */
+
 #projectDuration {
     font-size: 13px;
 }
 
-.hiddenRow {
+.hidden-row {
     padding: 0 !important;
 }
 
-#no{
+#hidden-display{
     background-color: #ffffff
 }
 
-#cce, #ccm,#cco {
+#event-display, #deadline-display, #milestone-display {
     width: 33.33%;
     float: left;
     padding-top: 10px;
     padding-bottom: 10px;
-    text-align: center;
-    font-size: 14px;
-
+    font-size: 13px;
 }
 
-td.hiddenRow {
-    background-color: #ececec; /* Assuming you want the hover color to be white */
+.outer-box {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
+.inner-box{
+    text-align: left;
+    min-width: 60%;
+}
+
+.heading-size{
+    font-size: 15px;
+}
+
+td.hidden-row {
+    background-color: #f5f5f5;
+}
+
+#toggle-display {
+    border: none;
+    background-color: #fff;
+    outline: none;
+    padding: 0;
+}
 
 td {
     word-wrap: break-word;
@@ -342,10 +329,6 @@ a.desc.sort:after {
 .alert:empty {
     display: none;
 }
-#detailsCard, #calendarOb {
-    overflow-y: auto;
-    height: 300px;
-}
 
 @media only screen and (max-width: 768px) {
     #selectedGroupDropdown {
@@ -372,5 +355,9 @@ a.desc.sort:after {
     #accountPage-font, #editAccountPage-font, #projectForm-font{
         font-size: 25px !important;
     }
-} 
+}
+
+.evidenceCardText {
+    display: inline;
+}
  

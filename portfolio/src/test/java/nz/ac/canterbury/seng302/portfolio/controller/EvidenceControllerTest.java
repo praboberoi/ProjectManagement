@@ -90,8 +90,6 @@ public class EvidenceControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", nullValue()))
                 .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidenceDTO.getTitle()));
-
-
     }
 
     /**
