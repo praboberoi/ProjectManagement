@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
+
 import javax.persistence.*;
 import java.util.Objects;
 
@@ -12,7 +14,6 @@ public class Repo {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int repoId;
-
 
     /**
      * Group that the repo is contained in
@@ -46,28 +47,6 @@ public class Repo {
     @Column(nullable = false)
     private String hostAddress;
 
-    /**
-     * No args Constructor of the repo.
-     */
-    public Repo() {}
-
-    /**
-     * Constructor for a repo object
-     * @param repoId The ID of the repo
-     * @param groups Group of the repo
-     * @param repoName Name of the repo
-     * @param gitlabProjectId The ID of the gitlab project
-     * @param accessToken The access token
-     * @param hostAddress The host address
-     */
-    public Repo(int repoId, Groups groups, String repoName, int gitlabProjectId, String accessToken, String hostAddress){
-        this.repoId = repoId;
-        this.groups = groups;
-        this.repoName = repoName;
-        this.gitlabProjectId = gitlabProjectId;
-        this.accessToken = accessToken;
-        this.hostAddress = hostAddress;
-    }
 
     public Groups getGroups() {return this.groups;}
 
@@ -94,6 +73,41 @@ public class Repo {
     public void setHostAddress(String hostAddress) {this.hostAddress = hostAddress;}
 
 
+    /**
+     * No args Constructor of the repo.
+     */
+    public Repo() {}
+
+    /**
+     * Constructor for a repo object
+     * @param repoId The ID of the repo
+     * @param groups Group of the repo
+     * @param repoName Name of the repo
+     * @param gitlabProjectId The ID of the gitlab project
+     * @param accessToken The access token
+     * @param hostAddress The host address
+     */
+    public Repo(int repoId, Groups groups, String repoName, int gitlabProjectId, String accessToken, String hostAddress){
+        this.repoId = repoId;
+        this.groups = groups;
+        this.repoName = repoName;
+        this.gitlabProjectId = gitlabProjectId;
+        this.accessToken = accessToken;
+        this.hostAddress = hostAddress;
+    }
+
+    /**
+     * Creates a new repo object with the repoDTO
+     * @param repoDTO the DTO of the repo object
+     */
+    public Repo(RepoDTO repoDTO) {
+        setRepoId(repoDTO.getRepoId());
+        setGroups(repoDTO.getGroups());
+        setRepoName(repoDTO.getRepoName());
+        setGitlabProjectId(repoDTO.getGitlabProjectId());
+        setAccessToken(repoDTO.getAccessToken());
+        setHostAddress(repoDTO.getHostAddress());
+    }
 
     @Override
     public String toString() {
