@@ -27,7 +27,7 @@ public class WebSocketPrincipal implements Principal{
      * Gets the authstate principal that this is replacing
      * @return
      */
-    public AuthState getPrincipal(){
+    public AuthState getPrincipal() {
         return authState;
     }
 

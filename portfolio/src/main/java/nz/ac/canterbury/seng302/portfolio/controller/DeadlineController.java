@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
-import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.DeadlineNotification;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
@@ -13,7 +12,6 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -49,9 +47,8 @@ public class DeadlineController {
     private SimpMessagingTemplate template;
     private Logger logger = LoggerFactory.getLogger(DeadlineController.class);
     private static Set<DeadlineNotification> editing = new HashSet<>();
-    private static final String PROJECT_REDIRECT = "redirect:/project/{projectId}";
-    private static final String SUCCESS_MESSAGE = "messageSuccess";
-    private static final String FAILURE_MESSAGE = "messageDanger";
+    private static final String NOTIFICATION_DESTINATION = "/element/project/%d/deadlines";
+    private static final String NOTIFICATION_WITHOUT_USERNAME = "deadline%d %s";
 
 
     public DeadlineController(DeadlineService deadlineService, ProjectService projectService) {
@@ -77,13 +74,13 @@ public class DeadlineController {
     }
 
     /**
-     * Sends an update message to elements connected to the websocket.
-     * @param projectId Id of the project the update deadline is related to
-     * @param deadlineId Id of the deadline edited
-     * @param action The action taken (deleted, created, edited)
+     * Sends an update message to all clients connected to the websocket
+     * @param projectId Id of the event's project updated
+     * @param deadlineId Id of the event edited
+     * @param action The action taken (delete, created, edited)
      */
     private void notifyDeadline(int projectId, int deadlineId, String action) {
-        template.convertAndSend("/element/project/" + projectId + "/deadlines", ("deadline" + deadlineId + " " + action));
+        template.convertAndSend(String.format(NOTIFICATION_DESTINATION,projectId),String.format(NOTIFICATION_WITHOUT_USERNAME,deadlineId,action));
     }
 
     /**
@@ -147,7 +144,8 @@ public class DeadlineController {
     }
 
     /**
-     * Sends an update message to every client subscribed to /deadline/edit when a user starts editing a deadline
+     * Receives update messages from the client where the changes to the deadlines are made and notifies all the other
+     * clients subscribed for updates
      * @param notification Notification containing the deadline ID and project ID that is being edited
      * @param principal Authentication information containing user info
      * @param sessionId Session ID of the websocket communication
@@ -157,12 +155,12 @@ public class DeadlineController {
         notification.setUsername(principal.getName());
         notification.setSessionId(sessionId);
         if (notification.isActive()) {
-            template.convertAndSend("/element/project/" + notification.getProjectId() + "/deadlines",
-                    ("deadline" + notification.getDeadlineId() + " editing " + notification.getUsername()));
+            template.convertAndSend(String.format(NOTIFICATION_DESTINATION,notification.getProjectId()),
+                    String.format("deadline%d %s %s", notification.getDeadlineId(),"editing", notification.getUsername()));
             editing.add(notification);
         } else {
-            template.convertAndSend("/element/project/" + notification.getProjectId() + "/deadlines",
-                    ("deadline" + notification.getDeadlineId() + " finished"));
+            template.convertAndSend(String.format(NOTIFICATION_DESTINATION,notification.getProjectId()),
+                    String.format(NOTIFICATION_WITHOUT_USERNAME,notification.getDeadlineId(), "finished"));
             editing.remove(notification);
         }
     }
