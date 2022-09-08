@@ -76,6 +76,12 @@ public class DeadlineController {
         return mv;
     }
 
+    /**
+     * Sends an update message to elements connected to the websocket.
+     * @param projectId Id of the project the update deadline is related to
+     * @param deadlineId Id of the deadline edited
+     * @param action The action taken (deleted, created, edited)
+     */
     private void notifyDeadline(int projectId, int deadlineId, String action) {
         template.convertAndSend("/element/project/" + projectId + "/deadlines", ("deadline" + deadlineId + " " + action));
     }
@@ -109,6 +115,7 @@ public class DeadlineController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
         }
     }
+
     /**
      * Deletes the deadline and redirects back to project page
      * @param model Of type {@link Model}
