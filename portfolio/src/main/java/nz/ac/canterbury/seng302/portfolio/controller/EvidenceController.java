@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -29,7 +28,6 @@ public class EvidenceController {
     private String apiPrefix;
     @Autowired
     private EvidenceService evidenceService;
-    private final static String RedirectToAccountPage = "redirect:/account";
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
