@@ -152,25 +152,12 @@ class DeadlineControllerTest {
     }
 
     /**
-     * Tests to make sure an appropriate message is displayed when a post request is made to save the deadline.
+     * Tests to make sure an appropriate message is displayed when a post request is made to create a deadline.
      */
     @Test
-     void givenDeadlineExists_whenSaveDeadlineIsRequested_anAppropriateMessageIsDisplayed()  {
+    void givenDeadlineDoesNotExist_whenDeadlineCreated_thenAppropriateMessageIsDisplayed() {
         try {
-            when(deadlineService.saveDeadline(deadline)).thenReturn("Successfully Updated " + deadline.getName());
-
             when(deadlineService.saveDeadline(deadline2)).thenReturn("Successfully Created " + deadline2.getName());
-
-            when(deadlineService.saveDeadline(deadline3)).thenThrow(new IncorrectDetailsException("Failure to save the deadline"));
-
-            result = this.mockMvc.perform(MockMvcRequestBuilders
-                        .post("/project/1/saveDeadline")
-                        .flashAttr("deadline", deadline))
-                    .andExpect(status().isOk())
-                    .andReturn();
-
-            Assertions.assertEquals("Successfully Updated Deadline 1", result.getResponse().getContentAsString());
-
 
             result = this.mockMvc.perform(MockMvcRequestBuilders
                             .post("/project/1/saveDeadline")
@@ -179,20 +166,48 @@ class DeadlineControllerTest {
                     .andReturn();
 
             Assertions.assertEquals("Successfully Created Deadline 2", result.getResponse().getContentAsString());
-
-
-            result = this.mockMvc.perform(MockMvcRequestBuilders
-                            .post("/project/1/saveDeadline")
-                            .flashAttr("deadline", deadline3))
-                            .andExpect(status().isBadRequest())
-                            .andReturn();
-
-            Assertions.assertEquals("Failure to save the deadline", result.getResponse().getContentAsString());
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+
+    /**
+     * Tests to make sure an appropriate message is displayed when a post request is made to update a deadline.
+     */
+    @Test
+     void givenDeadlineExists_whenDeadlineUpdated_thenAppropriateMessageIsDisplayed()  {
+        try {
+            when(deadlineService.saveDeadline(deadline)).thenReturn("Successfully Updated " + deadline.getName());
+            result = this.mockMvc.perform(MockMvcRequestBuilders
+                            .post("/project/1/saveDeadline")
+                            .flashAttr("deadline", deadline))
+                    .andExpect(status().isOk())
+                    .andReturn();
+
+            Assertions.assertEquals("Successfully Updated Deadline 1", result.getResponse().getContentAsString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    /**
+     * Tests to make sure an appropriate message is displayed when an invalid post request is made to update a deadline.
+     */
+    @Test
+    void givenBadDeadlineRequest_whenSubmitted_thenAppropriateMessageIsDisplayed() {
+        try {
+            when(deadlineService.saveDeadline(deadline3)).thenThrow(new IncorrectDetailsException("Failure to save the deadline"));
+            result = this.mockMvc.perform(MockMvcRequestBuilders
+                            .post("/project/1/saveDeadline")
+                            .flashAttr("deadline", deadline3))
+                    .andExpect(status().isBadRequest())
+                    .andReturn();
+            Assertions.assertEquals("Failure to save the deadline", result.getResponse().getContentAsString());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
