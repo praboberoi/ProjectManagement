@@ -32,7 +32,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         registry.addEndpoint("/lensfolio-websocket")
-                .setAllowedOriginPatterns("wss://*.canterbury.ac.nz")
+                .setAllowedOriginPatterns("*")
                 .setHandshakeHandler(new CustomHandshakeHandler());
     }
 
