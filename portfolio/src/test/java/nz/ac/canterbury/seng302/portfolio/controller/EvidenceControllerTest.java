@@ -90,8 +90,6 @@ public class EvidenceControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", nullValue()))
                 .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidenceDTO.getTitle()));
-
-
     }
 
     /**
@@ -108,21 +106,6 @@ public class EvidenceControllerTest {
                 .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
                 .andExpect(flash().attribute("messageSuccess", nullValue()));
 
-    }
-
-    /**
-     * Tests that when EvidenceList is called then the list of evidence is correctly added to the ModelAndView return object
-     * @throws Exception when userId doesn't exist
-     */
-    @Test
-    void givenServer_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
-        Evidence evidence = new Evidence(evidenceDTO);
-        Evidence evidence1 = new Evidence(evidenceDTO1);
-        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
-        this.mockMvc
-                .perform(get("/evidence/99"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("listEvidence", List.of(evidence, evidence1)));
     }
 
 

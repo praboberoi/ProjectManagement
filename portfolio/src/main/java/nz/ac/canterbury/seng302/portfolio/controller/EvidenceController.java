@@ -52,19 +52,32 @@ public class EvidenceController {
     }
 
     /**
-     * Updates the model with the correct list of evidence
-     * @param userId UserId containing the desired evidence
-     * @return Page fragment containing events
+     * Get message for empty registration page
+     * @param request HTTP request sent to this endpoint
+     * @param response HTTP response that will be returned by this endpoint
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @return Registration html page
      */
     @GetMapping(path="/evidence/{userId}")
-    public ModelAndView evidenceList(
-            @PathVariable("userId") int userId,
-            @AuthenticationPrincipal AuthState principal) {
-        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-        ModelAndView mv = new ModelAndView("evidence::evidenceList");
-        mv.addObject("listEvidence", listEvidence);
-        return mv;
+    public String evidence(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Model model,
+            @AuthenticationPrincipal AuthState principal
+
+    ) {
+        LocalDate now = LocalDate.now();
+        Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now),
+                java.sql.Date.valueOf(now.plusDays(50)));
+        Evidence evidence1 = new Evidence(1, project, new Date(), "Test Evidence 1", "testing", 1);
+        Evidence evidence2 = new Evidence(2, project, new Date(), "Test Evidence 2", "testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing ", 1);
+        Evidence[] evidences = {evidence1, evidence2};
+        List<Evidence> listEvidences = Arrays.asList(evidences);
+        model.addAttribute("listEvidence", listEvidences);
+        model.addAttribute("selectedEvidence", evidence2);
+        return "evidence";
     }
+
 
     /**
      * Updates the model with the correct list of evidence and a selected evidence
@@ -90,21 +103,6 @@ public class EvidenceController {
         return mv;
     }
 
-//    /**
-//     * Get list of groups
-//     * @return List of groups
-//     */
-//    @GetMapping(path="/groups/list")
-//    public ModelAndView evidenceList() {
-//        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
-//        groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-//        ModelAndView mv = new ModelAndView("groups::groupList");
-//        mv.addObject("listGroups", groups);
-//        return mv;
-//    }
-
-
-
     /** Checks if evidence variables are valid and if it is then saves the evidence
      * @param evidence Evidence object
      * @param ra Redirect Attribute frontend message object
@@ -122,61 +120,6 @@ public class EvidenceController {
             String message = evidenceService.saveEvidence(evidence);
             ra.addFlashAttribute("messageSuccess", message);
         } catch(IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-        }
-        return "redirect:/evidence";
-    }
-
-    /**
-     * Maps an existing evidence info to the evidence form
-     * @param evidenceId Of type int
-     * @param model Of type {@link Model}
-     * @param principal Of type {@link AuthState}
-     * @param ra Of type {@link RedirectAttributes}
-     * @return evidenceForm.html or project.html
-     */
-    @GetMapping(path="/editEvidence/{evidenceId}")
-    public String evidenceEditForm(
-            @PathVariable("evidenceId") int evidenceId,
-            Model model,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return RedirectToAccountPage;
-        try {
-            Evidence evidence = evidenceService.getEvidence(evidenceId);
-            Project currentProject = evidence.getProject();
-            model.addAttribute("evidence", evidence);
-            model.addAttribute("evidenceMin", currentProject.getStartDate());
-            model.addAttribute("evidenceMax", currentProject.getEndDate());
-            return "evidenceForm";
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return RedirectToAccountPage;
-        }
-    }
-
-    /**
-     * Deletes the evidence and redirects back to the evidence page
-     * @param model Of type {@link Model}
-     * @param evidenceId Of type int
-     * @param principal Of type {@link AuthState}
-     * @param ra Of type {@link RedirectAttributes}
-     * @return project.html or error.html
-     */
-    @PostMapping(path="/deleteEvidence/{evidenceId}")
-    public String deleteEvidence(
-            @PathVariable("evidenceId") int evidenceId,
-            Model model,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return RedirectToAccountPage;
-        try {
-            int userId = PrincipalUtils.getUserId(principal);
-            String message = evidenceService.deleteEvidence(evidenceId);
-            ra.addFlashAttribute("messageSuccess", message);
-            List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-            model.addAttribute("listEvidence", listEvidence);
-        } catch (IllegalArgumentException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
         return "redirect:/evidence";
