@@ -77,7 +77,7 @@ public class DashboardController {
         model.addAttribute("pageTitle", "Add New Project");
         model.addAttribute("submissionName", "Create");
         model.addAttribute("image", apiPrefix + "/icons/create-icon.svg");
-        model.addAttribute("user", userAccountClientService.getUser(principal));
+        model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
         model.addAttribute("projectStartDateMin", dateRange.get(0));
         model.addAttribute("projectStartDateMax", Date.valueOf(newProject.getEndDate().toLocalDate().minusDays(1)));
         model.addAttribute("projectEndDateMin", Date.valueOf(newProject.getStartDate().toLocalDate().plusDays(1)));
@@ -139,7 +139,7 @@ public class DashboardController {
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
-            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             model.addAttribute("projectStartDateMin", dateRange.get(0));
             model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
             model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
