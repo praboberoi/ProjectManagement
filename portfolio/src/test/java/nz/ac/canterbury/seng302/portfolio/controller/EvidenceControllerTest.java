@@ -83,6 +83,7 @@ public class EvidenceControllerTest {
     void givenServer_whenSaveValidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
         Evidence evidence = new Evidence(evidenceDTO);
         when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidenceDTO.getTitle());
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
                 .perform(post("/evidence/99/saveEvidence").flashAttr("evidence", evidence))
@@ -98,6 +99,7 @@ public class EvidenceControllerTest {
     void givenServer_whenSaveInvalidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
         Evidence evidence1 = new Evidence(evidenceDTO1);
         when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
                 .perform(post("/evidence/99/saveEvidence").flashAttr("evidence", evidence1))
