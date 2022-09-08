@@ -95,6 +95,11 @@ public class EvidenceController {
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal) {
         try {
+            int editingUser = PrincipalUtils.getUserId(principal);
+            if (editingUser != userId) {
+                throw new IncorrectDetailsException("You may only create evidence on your own evidence page");
+            }
+
             evidence.setOwnerId(userId);
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
@@ -102,63 +107,7 @@ public class EvidenceController {
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        return "redirect:/evidence";
+        return "redirect:/evidence/{userId}";
     }
-
-    /**
-     * Maps an existing evidence info to the evidence form
-     * @param evidenceId Of type int
-     * @param model Of type {@link Model}
-     * @param principal Of type {@link AuthState}
-     * @param ra Of type {@link RedirectAttributes}
-     * @return evidenceForm.html or project.html
-     */
-    @GetMapping(path="/editEvidence/{evidenceId}")
-    public String evidenceEditForm(
-            @PathVariable("evidenceId") int evidenceId,
-            Model model,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return RedirectToAccountPage;
-        try {
-            Evidence evidence = evidenceService.getEvidence(evidenceId);
-            Project currentProject = evidence.getProject();
-            model.addAttribute("evidence", evidence);
-            model.addAttribute("evidenceMin", currentProject.getStartDate());
-            model.addAttribute("evidenceMax", currentProject.getEndDate());
-            return "evidenceForm";
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return RedirectToAccountPage;
-        }
-    }
-
-    /**
-     * Deletes the evidence and redirects back to the evidence page
-     * @param model Of type {@link Model}
-     * @param evidenceId Of type int
-     * @param principal Of type {@link AuthState}
-     * @param ra Of type {@link RedirectAttributes}
-     * @return project.html or error.html
-     */
-    @PostMapping(path="/deleteEvidence/{evidenceId}")
-    public String deleteEvidence(
-            @PathVariable("evidenceId") int evidenceId,
-            Model model,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return RedirectToAccountPage;
-        try {
-            int userId = PrincipalUtils.getUserId(principal);
-            String message = evidenceService.deleteEvidence(evidenceId);
-            ra.addFlashAttribute("messageSuccess", message);
-            List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-            model.addAttribute("listEvidence", listEvidence);
-        } catch (IllegalArgumentException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-        }
-        return "redirect:/evidence";
-    }
-
 
 }
