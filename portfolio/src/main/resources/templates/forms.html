@@ -111,7 +111,8 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" name="submit" id="deadlineFormSubmitButton" class="btn btn-outline-primary" th:onclick="closeDeadlineModal()">
-                                    <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
+                                    <img class="icon img-color-primary" id="deadlineFromSubmitImg" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                    <span id="deadlineFormSubmitLabel">Create</span></button>
                                 <button type="button" class="btn btn-outline-secondary" th:onclick="closeDeadlineModal()">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                             </div>

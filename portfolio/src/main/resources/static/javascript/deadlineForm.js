@@ -62,6 +62,8 @@ function editDeadline(name, date, id) {
     editingDeadline = true;
     currentDeadlineId = id;
     stompClient.publish({destination: "/app/deadline/edit", body: JSON.stringify({'active': true, 'projectId': projectId, 'deadlineId': currentDeadlineId})})
+    document.getElementById('deadlineFormSubmitLabel').innerText = 'Save';
+    document.getElementById('deadlineFromSubmitImg').src = `${apiPrefix}/icons/save-icon.svg`;
     document.getElementById('deadlineFormSubmitButton').disabled = false;
     document.getElementById('deadline-name').classList.remove("formError");
     document.getElementById('deadlineNameError').innerText = null;
@@ -96,6 +98,8 @@ function closeDeadlineModal() {
  */
 function createDeadline() {
     document.getElementById('deadline-name').classList.remove("formError");
+    document.getElementById('deadlineFormSubmitLabel').innerText = 'Create';
+    document.getElementById('deadlineFromSubmitImg').src = `${apiPrefix}/icons/create-icon.svg`;
     document.getElementById('deadlineId').value = 0;
     document.getElementById('deadlineNameError').innerText = null;
     document.getElementById('deadlineFormSubmitButton').disabled = false;
