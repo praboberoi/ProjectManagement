@@ -17,3 +17,16 @@ Feature: UUii Editing a user account
     And My nickname is 'CypressNickname'
     And My email is 'CypressEdit@cypress.com'
     And My bio is 'Cypress Bio'
+
+    Given I login as a student
+    And I navigate to 'Account Page'
+    When I edit my account
+    And I change my firstname to 'ÇyprœssFirst'
+    And I change my lastname to 'ÇyprœssLast'
+    And I change my nickname to 'Aççěnt'
+    And I save my account
+    Then I am redirected to my account page
+    And My firstname is 'ÇyprœssFirst'
+    And My lastname is 'ÇyprœssLast'
+    And My nickname is 'Aççěnt'
+    And My bio is 'Cypress Bio'
