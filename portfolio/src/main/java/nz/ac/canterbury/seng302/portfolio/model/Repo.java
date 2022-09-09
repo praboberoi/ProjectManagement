@@ -5,6 +5,9 @@ import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
 import javax.persistence.*;
 import java.util.Objects;
 
+/**
+ * Creates a Repo class required for creating a table in the databse
+ */
 @Entity
 public class Repo {
 
