@@ -45,9 +45,30 @@ class RepoRepositoryTest {
         List<Repo> searchResult2 = repoRepository.findByGroups(group1);
 
         assertTrue(searchResult1.size() == 1);
-        assertTrue(searchResult1.get(0).equals(repo));
-
         assertTrue(searchResult2.size() == 0);
+
+    }
+
+    /**
+     * Asserts that when findByGroups() is called, the correct repo is returned
+     */
+    @Test
+    @Transactional
+    void givenRepoExists_whenFindByGroup_thenCorrectTheCorrectRepoIsReturned() {
+        Groups group = new Groups("New group", "This is a long name", 0, List.of());
+        Repo repo = new Repo.Builder()
+                .repoId(2)
+                .repoName("New Groups")
+                .hostAddress("http://Test.com")
+                .groups(group)
+                .gitlabProjectId(2)
+                .accessToken("New Token")
+                .build();
+        repoRepository.save(repo);
+
+        List<Repo> searchResult3 = repoRepository.findByGroups(group);
+
+        assertTrue(searchResult3.get(0).equals(repo));
 
     }
 
