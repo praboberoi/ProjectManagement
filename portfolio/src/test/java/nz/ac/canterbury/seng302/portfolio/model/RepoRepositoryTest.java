@@ -37,7 +37,6 @@ class RepoRepositoryTest {
                 .hostAddress("http://Test.com")
                 .groups(group)
                 .gitlabProjectId(1)
-                .accessToken("New Token")
                 .build();
         repoRepository.save(repo);
 
@@ -62,7 +61,6 @@ class RepoRepositoryTest {
                 .hostAddress("http://Test.com")
                 .groups(group)
                 .gitlabProjectId(2)
-                .accessToken("New Token")
                 .build();
         repoRepository.save(repo);
 

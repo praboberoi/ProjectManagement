@@ -37,11 +37,6 @@ public class Repo {
     @Column(nullable = false)
     private int gitlabProjectId;
 
-    /**
-     * Access token
-     */
-    @Column(nullable = false)
-    private String accessToken;
 
     /**
      * The host address
@@ -66,10 +61,6 @@ public class Repo {
 
     public void setGitlabProjectId(int gitlabProjectId) {this.gitlabProjectId = gitlabProjectId;}
 
-    public String getAccessToken() {return this.accessToken;}
-
-    public void setAccessToken(String accessToken) {this.accessToken = accessToken;}
-
     public String getHostAddress() {return this.hostAddress;}
 
     public void setHostAddress(String hostAddress) {this.hostAddress = hostAddress;}
@@ -86,15 +77,13 @@ public class Repo {
      * @param groups Group of the repo
      * @param repoName Name of the repo
      * @param gitlabProjectId The ID of the gitlab project
-     * @param accessToken The access token
      * @param hostAddress The host address
      */
-    public Repo(int repoId, Groups groups, String repoName, int gitlabProjectId, String accessToken, String hostAddress){
+    public Repo(int repoId, Groups groups, String repoName, int gitlabProjectId, String hostAddress){
         this.repoId = repoId;
         this.groups = groups;
         this.repoName = repoName;
         this.gitlabProjectId = gitlabProjectId;
-        this.accessToken = accessToken;
         this.hostAddress = hostAddress;
     }
 
@@ -107,7 +96,6 @@ public class Repo {
         setGroups(repoDTO.getGroups());
         setRepoName(repoDTO.getRepoName());
         setGitlabProjectId(repoDTO.getGitlabProjectId());
-        setAccessToken(repoDTO.getAccessToken());
         setHostAddress(repoDTO.getHostAddress());
     }
 
@@ -118,7 +106,6 @@ public class Repo {
                 ", groups=" + groups +
                 ", repoName='" + repoName + '\'' +
                 ", gitlabProjectId=" + gitlabProjectId +
-                ", accessToken='" + accessToken + '\'' +
                 ", hostAddress='" + hostAddress + '\'' +
                 '}';
     }
@@ -133,12 +120,12 @@ public class Repo {
         if (this == o) return true;
         if (!(o instanceof Repo)) return false;
         Repo repo = (Repo) o;
-        return repoId == repo.repoId && Objects.equals(groups, repo.groups) && Objects.equals(repoName, repo.repoName) && Objects.equals(gitlabProjectId, repo.gitlabProjectId) && Objects.equals(accessToken, repo.accessToken) && Objects.equals(hostAddress, repo.hostAddress);
+        return repoId == repo.repoId && Objects.equals(groups, repo.groups) && Objects.equals(repoName, repo.repoName) && Objects.equals(gitlabProjectId, repo.gitlabProjectId) && Objects.equals(hostAddress, repo.hostAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(repoId, groups, repoName, gitlabProjectId, accessToken, hostAddress);
+        return Objects.hash(repoId, groups, repoName, gitlabProjectId, hostAddress);
     }
 
 
@@ -150,7 +137,6 @@ public class Repo {
         private Groups groups;
         private String repoName;
         private int gitlabProjectId;
-        private String accessToken;
         private String hostAddress;
 
         /**
@@ -193,15 +179,6 @@ public class Repo {
             return this;
         }
 
-        /**
-         * Updates the access token
-         * @param accessToken The access token
-         * @return Repo builder
-         */
-        public Builder accessToken(String accessToken) {
-            this.accessToken = accessToken;
-            return this;
-        }
 
         /**
          * Updates the repo's hostAddress
@@ -218,7 +195,7 @@ public class Repo {
          * @return The built repo
          */
         public Repo build(){
-            return new Repo(repoId, groups, repoName, gitlabProjectId, accessToken, hostAddress);
+            return new Repo(repoId, groups, repoName, gitlabProjectId, hostAddress);
         }
     }
 }

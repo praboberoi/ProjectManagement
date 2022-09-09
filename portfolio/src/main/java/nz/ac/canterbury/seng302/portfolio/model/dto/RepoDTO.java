@@ -18,8 +18,6 @@ public class RepoDTO {
 
     private int gitlabProjectId;
 
-    private String accessToken;
-
     private String hostAddress;
 
 
@@ -30,8 +28,6 @@ public class RepoDTO {
     public String getRepoName() {return this.repoName;}
 
     public int getGitlabProjectId() {return this.gitlabProjectId;}
-
-    public String getAccessToken() {return this.accessToken;}
 
     public String getHostAddress() {return this.hostAddress;}
 
@@ -44,15 +40,13 @@ public class RepoDTO {
      * @param groups Group of the repo object
      * @param repoName Name of the repo object
      * @param gitlabProjectId The ID of the gitlab project
-     * @param accessToken The access token
      * @param hostAddress The host address
      */
-    public RepoDTO(int repoId, Groups groups, String repoName, int gitlabProjectId, String accessToken, String hostAddress){
+    public RepoDTO(int repoId, Groups groups, String repoName, int gitlabProjectId, String hostAddress){
         this.repoId = repoId;
         this.groups = groups;
         this.repoName = repoName;
         this.gitlabProjectId = gitlabProjectId;
-        this.accessToken = accessToken;
         this.hostAddress = hostAddress;
     }
 
@@ -66,12 +60,12 @@ public class RepoDTO {
         if (this == o) return true;
         if (!(o instanceof RepoDTO)) return false;
         RepoDTO repoDTO = (RepoDTO) o;
-        return repoId == repoDTO.repoId && Objects.equals(groups, repoDTO.groups) && Objects.equals(repoName, repoDTO.repoName) && Objects.equals(gitlabProjectId, repoDTO.gitlabProjectId) && Objects.equals(accessToken, repoDTO.accessToken) && Objects.equals(hostAddress, repoDTO.hostAddress);
+        return repoId == repoDTO.repoId && Objects.equals(groups, repoDTO.groups) && Objects.equals(repoName, repoDTO.repoName) && Objects.equals(gitlabProjectId, repoDTO.gitlabProjectId) && Objects.equals(hostAddress, repoDTO.hostAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(repoId, groups, repoName, gitlabProjectId, accessToken, hostAddress);
+        return Objects.hash(repoId, groups, repoName, gitlabProjectId, hostAddress);
     }
 
     /**
@@ -82,7 +76,6 @@ public class RepoDTO {
         private Groups groups;
         private String repoName;
         private int gitlabProjectId;
-        private String accessToken;
         private String hostAddress;
 
         /**
@@ -126,16 +119,6 @@ public class RepoDTO {
         }
 
         /**
-         * Builds the current Builder with the given access token
-         * @param accessToken The access token
-         * @return The current Builder.
-         */
-        public RepoDTO.Builder accessToken(String accessToken) {
-            this.accessToken = accessToken;
-            return this;
-        }
-
-        /**
          * Builds the current Builder with the given host address
          * @param hostAddress The host address of the repo
          * @return The current Builder.
@@ -150,7 +133,7 @@ public class RepoDTO {
          * @return The RepoDTO object
          */
         public RepoDTO build(){
-            return new RepoDTO(repoId, groups, repoName, gitlabProjectId, accessToken, hostAddress);
+            return new RepoDTO(repoId, groups, repoName, gitlabProjectId, hostAddress);
         }
     }
 
