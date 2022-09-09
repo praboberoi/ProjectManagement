@@ -20,7 +20,6 @@ public class Repo {
 
     /**
      * Group that the repo is contained in
-     * Foreign key
      */
     @Column(unique = true)
     @Lob
