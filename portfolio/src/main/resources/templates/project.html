@@ -59,13 +59,10 @@
         <h5>Project Description</h5>
         <div id ="edit-del-buttons">
           <div class="container-fluid d-flex justify-content-end px-0" th:if="${adminOrTeacher}">
-            <button type="button" class="btn btn-outline-primary mx-1"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
-              <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
-              <span class="d-none d-md-inline-block">Edit</span></button>
-                <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-target="#conformationModalProject" th:data-id = "${projectId}"
-                    th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
-              <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/>
-                  <span class="d-none d-md-inline-block">Delete</span></button>
+            <a type="button" class="btn btn-outline-primary mx-1"   th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
+              <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>Edit</a>
+            <button type="button" class="btn btn-outline-secondary" data-toggle="modal" data-target="#conformationModalProject" th:data-id = "${project.projectId}" th:data-prefix = "${apiPrefix}" th:data-name = "${project.projectName}" th:onclick="updateProjectDetails(this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-prefix'))">
+              <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
           </div>
         </div>
       </div>
@@ -193,10 +190,10 @@
                   <td>
                     <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
                     <div th:if="${adminOrTeacher}">
-                      <button type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
+                      <a type="button" class="btn btn-outline-primary mr-2" id = "sprint-edit-btn" th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
                         <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
-                        <span class="d-none d-md-inline-block">Edit</span></button>
-                      <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModal" th:data-projectId = "${project.projectId}"
+                        <span class="d-none d-md-inline-block">Edit</span></a>
+                      <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn" data-toggle="modal" data-target="#conformationModalSprint" th:data-projectId = "${project.projectId}"
                               th:data-prefix="${apiPrefix}" th:data-sprintId = "${sprint.sprintId}" th:data-name = "${sprint.sprintName}" th:onclick="updateSprintDetails(this.getAttribute('data-sprintId'), this.getAttribute('data-name'), this.getAttribute('data-projectId'), this.getAttribute('data-prefix'))" >
                         <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/>
                         <span class="d-none d-md-inline-block">Delete</span></button>
@@ -219,13 +216,12 @@
     </div>
   </div>
 
-  <div class="modal fade" id="conformationModalProject" tabindex="-1" role="dialog"
-    aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+  <div class="modal fade" id="conformationModalProject" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="conformationModalLongTitleProject">Delete Project</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -234,12 +230,10 @@
         </div>
         <div class="modal-footer">
           <form action="" method="post" id="deleteProject">
-            <button type="submit" class="btn btn-outline-primary"><img class="icon img-color-secondary"
-                th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete</button>
+            <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
           </form>
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-            <img class="icon img-color-secondary"
-              th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" /> Close</button>
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
         </div>
       </div>
     </div>
@@ -270,13 +264,12 @@
     </div>
   </div>
 
-  <div class="modal fade" id="conformationModal" tabindex="-1" role="dialog"
-    aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+  <div class="modal fade" id="conformationModalSprint" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
       <div class="modal-content">
         <div class="modal-header">
           <h5 class="modal-title" id="conformationModalLongTitle">Delete Sprint</h5>
-          <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
@@ -285,12 +278,10 @@
         </div>
         <div class="modal-footer">
           <form action="" method="post" id="deleteSprint">
-            <button type="submit" class="btn btn-outline-primary"><img class="icon img-color-secondary"
-                th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete</button>
+            <button type= "submit" class="btn btn-outline-primary"><img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/> Delete</button>
           </form>
-          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-            <img class="icon img-color-secondary"
-              th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" /> Close</button>
+          <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
         </div>
       </div>
     </div>
