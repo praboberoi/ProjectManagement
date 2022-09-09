@@ -15,6 +15,10 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @DataJpaTest
 @ActiveProfiles("test")
+
+/**
+ * Test class for the repo repository
+ */
 class RepoRepositoryTest {
     @Autowired private RepoRepository repoRepository;
 
