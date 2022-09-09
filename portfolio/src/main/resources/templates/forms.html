@@ -64,7 +64,8 @@
                             <br>
                             <div class="modal-footer">
                                 <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton" data-bs-dismiss="modal">
-                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create</button>
+                                    <img class="icon img-color-secondary" id="eventFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                    <span id="eventFormSubmitLabel">Create</span></button>
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                             </div>

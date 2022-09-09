@@ -7,7 +7,6 @@ const sprintLabels = document.getElementById('sprintLabel')
 const calendarElements = document.getElementById('calendarOb')
 const eventLabel = document.getElementById('showEventLabel')
 
-
 /**
  * Updates the conformation message to delete the sprint with appropriate sprint name
  */
