@@ -12,7 +12,7 @@ public class RepoDTO {
 
     private int repoId;
 
-    private Groups groups;
+    private int groupId;
 
     private String repoName;
 
@@ -21,7 +21,7 @@ public class RepoDTO {
     private String hostAddress;
 
 
-    public Groups getGroups() {return this.groups;}
+    public int getGroupId() {return this.groupId;}
 
     public int getRepoId() {return this.repoId;}
 
@@ -37,14 +37,14 @@ public class RepoDTO {
     /**
      * Creates a new repoDTO object with the provided details
      * @param repoId The ID of the repo object
-     * @param groups Group of the repo object
+     * @param groupId GroupId of the repo object
      * @param repoName Name of the repo object
      * @param gitlabProjectId The ID of the gitlab project
      * @param hostAddress The host address
      */
-    public RepoDTO(int repoId, Groups groups, String repoName, int gitlabProjectId, String hostAddress){
+    public RepoDTO(int repoId, int groupId, String repoName, int gitlabProjectId, String hostAddress){
         this.repoId = repoId;
-        this.groups = groups;
+        this.groupId = groupId;
         this.repoName = repoName;
         this.gitlabProjectId = gitlabProjectId;
         this.hostAddress = hostAddress;
@@ -60,12 +60,12 @@ public class RepoDTO {
         if (this == o) return true;
         if (!(o instanceof RepoDTO)) return false;
         RepoDTO repoDTO = (RepoDTO) o;
-        return repoId == repoDTO.repoId && Objects.equals(groups, repoDTO.groups) && Objects.equals(repoName, repoDTO.repoName) && Objects.equals(gitlabProjectId, repoDTO.gitlabProjectId) && Objects.equals(hostAddress, repoDTO.hostAddress);
+        return repoId == repoDTO.repoId && Objects.equals(groupId, repoDTO.groupId) && Objects.equals(repoName, repoDTO.repoName) && Objects.equals(gitlabProjectId, repoDTO.gitlabProjectId) && Objects.equals(hostAddress, repoDTO.hostAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(repoId, groups, repoName, gitlabProjectId, hostAddress);
+        return Objects.hash(repoId, groupId, repoName, gitlabProjectId, hostAddress);
     }
 
     /**
@@ -73,7 +73,7 @@ public class RepoDTO {
      */
     public static class Builder{
         private int repoId;
-        private Groups groups;
+        private int groupId;
         private String repoName;
         private int gitlabProjectId;
         private String hostAddress;
@@ -90,11 +90,11 @@ public class RepoDTO {
 
         /**
          * Builds the current Builder with the given group
-         * @param groups The group of the repo
+         * @param groupId The groupId of the repo
          * @return The current Builder.
          */
-        public RepoDTO.Builder groups(Groups groups) {
-            this.groups = groups;
+        public RepoDTO.Builder groupId(int groupId) {
+            this.groupId = groupId;
             return this;
         }
 
@@ -133,7 +133,7 @@ public class RepoDTO {
          * @return The RepoDTO object
          */
         public RepoDTO build(){
-            return new RepoDTO(repoId, groups, repoName, gitlabProjectId, hostAddress);
+            return new RepoDTO(repoId, groupId, repoName, gitlabProjectId, hostAddress);
         }
     }
 

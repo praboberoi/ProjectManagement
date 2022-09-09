@@ -10,10 +10,10 @@ public interface RepoRepository extends CrudRepository <Repo, Integer> {
 
     /**
      * Obtains a list of repos with the given group
-     * @param group of type Groups
+     * @param groupId of type int
      * @return a List of Repo objects
      */
-    public List<Repo> findByGroups(Groups group);
+    public List<Repo> findByGroupId(int groupId);
 
 
 }

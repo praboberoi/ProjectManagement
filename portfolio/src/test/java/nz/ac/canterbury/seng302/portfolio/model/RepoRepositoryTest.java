@@ -28,20 +28,19 @@ class RepoRepositoryTest {
      */
     @Test
     @Transactional
-    void givenRepoExists_whenFindByGroup_thenCorrectNumberOfReposReturned() {
-        Groups group = new Groups("Members without a group", "This is a long name", 0, List.of());
-        Groups group1 = new Groups("Members of teachers group", "This is a new long name", 1, List.of());
+    void givenRepoExists_whenFindByGroupId_thenCorrectNumberOfReposReturned() {
         Repo repo = new Repo.Builder()
                 .repoId(1)
                 .repoName("No Groups")
                 .hostAddress("http://Test.com")
-                .groups(group)
+                .groupId(0)
                 .gitlabProjectId(1)
                 .build();
         repoRepository.save(repo);
 
-        List<Repo> searchResult1 = repoRepository.findByGroups(group);
-        List<Repo> searchResult2 = repoRepository.findByGroups(group1);
+        List<Repo> searchResult1 = repoRepository.findByGroupId(0);
+        List<Repo> searchResult2 = repoRepository.findByGroupId(1);
+
 
         assertTrue(searchResult1.size() == 1);
         assertTrue(searchResult2.size() == 0);
@@ -53,20 +52,19 @@ class RepoRepositoryTest {
      */
     @Test
     @Transactional
-    void givenRepoExists_whenFindByGroup_thenCorrectTheCorrectRepoIsReturned() {
-        Groups group = new Groups("New group", "This is a long name", 0, List.of());
-        Repo repo = new Repo.Builder()
-                .repoId(2)
-                .repoName("New Groups")
+    void givenRepoExists_whenFindByGroupId_thenCorrectTheCorrectRepoIsReturned() {
+        Repo repo2 = new Repo.Builder()
+                .repoId(1)
+                .repoName("New Repo")
                 .hostAddress("http://Test.com")
-                .groups(group)
+                .groupId(2)
                 .gitlabProjectId(2)
                 .build();
-        repoRepository.save(repo);
+        repoRepository.save(repo2);
 
-        List<Repo> searchResult3 = repoRepository.findByGroups(group);
+        List<Repo> searchResult3 = repoRepository.findByGroupId(2);
 
-        assertTrue(searchResult3.get(0).equals(repo));
+        assertEquals(repo2, searchResult3.get(0));
 
     }
 

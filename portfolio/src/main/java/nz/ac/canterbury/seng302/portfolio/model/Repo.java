@@ -19,11 +19,10 @@ public class Repo {
     private int repoId;
 
     /**
-     * Group that the repo is contained in
+     * GroupId that the repo is contained in
      */
-    @Column(unique = true)
-    @Lob
-    private Groups groups;
+    @Column(nullable = false)
+    private int groupId;
 
     /**
      * Name of the repo
@@ -45,9 +44,9 @@ public class Repo {
     private String hostAddress;
 
 
-    public Groups getGroups() {return this.groups;}
+    public int getGroupId() {return this.groupId;}
 
-    public void setGroups(Groups groups) {this.groups = groups;}
+    public void setGroupId(int groupId) {this.groupId = groupId;}
 
     public int getRepoId() {return this.repoId;}
 
@@ -74,14 +73,14 @@ public class Repo {
     /**
      * Constructor for a repo object
      * @param repoId The ID of the repo
-     * @param groups Group of the repo
+     * @param groupId GroupId of the repo
      * @param repoName Name of the repo
      * @param gitlabProjectId The ID of the gitlab project
      * @param hostAddress The host address
      */
-    public Repo(int repoId, Groups groups, String repoName, int gitlabProjectId, String hostAddress){
+    public Repo(int repoId, int groupId, String repoName, int gitlabProjectId, String hostAddress){
         this.repoId = repoId;
-        this.groups = groups;
+        this.groupId = groupId;
         this.repoName = repoName;
         this.gitlabProjectId = gitlabProjectId;
         this.hostAddress = hostAddress;
@@ -93,7 +92,7 @@ public class Repo {
      */
     public Repo(RepoDTO repoDTO) {
         setRepoId(repoDTO.getRepoId());
-        setGroups(repoDTO.getGroups());
+        setGroupId(repoDTO.getGroupId());
         setRepoName(repoDTO.getRepoName());
         setGitlabProjectId(repoDTO.getGitlabProjectId());
         setHostAddress(repoDTO.getHostAddress());
@@ -103,7 +102,7 @@ public class Repo {
     public String toString() {
         return "Repo{" +
                 "repoId=" + repoId +
-                ", groups=" + groups +
+                ", groupId=" + groupId +
                 ", repoName='" + repoName + '\'' +
                 ", gitlabProjectId=" + gitlabProjectId +
                 ", hostAddress='" + hostAddress + '\'' +
@@ -120,12 +119,12 @@ public class Repo {
         if (this == o) return true;
         if (!(o instanceof Repo)) return false;
         Repo repo = (Repo) o;
-        return repoId == repo.repoId && Objects.equals(groups, repo.groups) && Objects.equals(repoName, repo.repoName) && Objects.equals(gitlabProjectId, repo.gitlabProjectId) && Objects.equals(hostAddress, repo.hostAddress);
+        return repoId == repo.repoId && Objects.equals(groupId, repo.groupId) && Objects.equals(repoName, repo.repoName) && Objects.equals(gitlabProjectId, repo.gitlabProjectId) && Objects.equals(hostAddress, repo.hostAddress);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(repoId, groups, repoName, gitlabProjectId, hostAddress);
+        return Objects.hash(repoId, groupId, repoName, gitlabProjectId, hostAddress);
     }
 
 
@@ -134,7 +133,7 @@ public class Repo {
      */
     public static class Builder{
         private int repoId;
-        private Groups groups;
+        private int groupId;
         private String repoName;
         private int gitlabProjectId;
         private String hostAddress;
@@ -151,11 +150,11 @@ public class Repo {
 
         /**
          * Updates the group of the repo
-         * @param groups The group of the repo
+         * @param groupId The groupId of the repo
          * @return Repo builder
          */
-        public Builder groups(Groups groups) {
-            this.groups = groups;
+        public Builder groupId(int groupId) {
+            this.groupId = groupId;
             return this;
         }
 
@@ -195,7 +194,7 @@ public class Repo {
          * @return The built repo
          */
         public Repo build(){
-            return new Repo(repoId, groups, repoName, gitlabProjectId, hostAddress);
+            return new Repo(repoId, groupId, repoName, gitlabProjectId, hostAddress);
         }
     }
 }
