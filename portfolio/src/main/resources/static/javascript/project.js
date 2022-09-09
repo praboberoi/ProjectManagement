@@ -236,12 +236,12 @@ function handleEventNotification(message) {
     } else if (action === "editing" && eventCard) {
         let user = array[2]
         document.getElementById(event + '-notification').innerText = user + " is currently editing"
-        document.getElementById(event + '-edit-btn').disabled = true
-        document.getElementById(event + '-delete-btn').disabled = true
+        document.getElementById(event + '-edit-btn').hidden = true
+        document.getElementById(event + '-delete-btn').hidden = true
     } else if (action === "finished" && eventCard) {
         document.getElementById(event + '-notification').innerText = ""
-        document.getElementById(event + '-edit-btn').disabled = false
-        document.getElementById(event + '-delete-btn').disabled = false
+        document.getElementById(event + '-edit-btn').hidden = false
+        document.getElementById(event + '-delete-btn').hidden = false
     } else {
         console.log("Unknown event or command: " + event + " " + action)
     }
