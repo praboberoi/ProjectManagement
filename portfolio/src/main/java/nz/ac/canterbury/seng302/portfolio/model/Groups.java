@@ -11,7 +11,7 @@ import java.util.Objects;
  * Group entity for storing the idp group for use on the portfolio
  */
 
-public class Groups implements Serializable {
+public class Groups {
     private  String shortName;
     private String longName;
 
