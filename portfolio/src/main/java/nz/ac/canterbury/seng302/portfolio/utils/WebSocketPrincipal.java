@@ -20,14 +20,14 @@ public class WebSocketPrincipal implements Principal{
 
     @Override
     public String getName() {
-        return authState.getName();
+        return PrincipalUtils.getUserName(authState);
     }
 
     /**
      * Gets the authstate principal that this is replacing
      * @return
      */
-    public AuthState getPrincipal(){
+    public AuthState getPrincipal() {
         return authState;
     }
 

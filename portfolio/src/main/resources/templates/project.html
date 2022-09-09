@@ -116,7 +116,17 @@
             <div id="event-list"></div>
           </div>
           <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab">
-            <div th:replace="deadlineFragments::deadlineTab"></div>
+            <div th:if="${adminOrTeacher}">
+              <!-- If a user is a STUDENT do not show the 'create' deadline button !-->
+              <div class="createBtn">
+                <button type="button" class="btn btn-outline-primary btn-sm" id="deadline-btn" data-backdrop="static"
+                        data-keyboard="false" th:onclick="createDeadline()">
+                  <img class="icon img-color-primary"
+                       th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" />
+                  Create Deadline</button>
+              </div>
+            </div>
+            <div id="deadline-list"></div>
           </div>
           <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">
             <div th:if="${adminOrTeacher}">
@@ -170,12 +180,9 @@
           <tbody>
             <div id="sprint-list">
               <th:block th:each="sprint : ${listSprints}" th:fragment="sprints">
-                <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'">
-                  <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">
-                  <button class="accordion-button collapsed" type="button" id="toggle-display" data-bs-toggle="collapse"
-                      th:data-bs-target="'#showSprint' + ${sprint.sprintId}" aria-controls="collapseOne" aria-expanded="false">
-                    [[${sprint.sprintLabel}]]
-                  </button> </td>
+                <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'" data-bs-toggle="collapse"
+                  th:data-bs-target="'#R' + ${sprint.sprintId}" class="clickable">
+                  <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">[[${sprint.sprintLabel}]]</td>
                   <td th:id="'sprint' + ${sprint.sprintId} + 'Name'">[[${sprint.sprintName}]]</td>
                   <td class="d-none d-md-table-cell" th:id="'sprint' + ${sprint.sprintId} + 'Description'">
                     [[${sprint.description}]]</td>
@@ -197,49 +204,11 @@
                   </td>
                 </tr>
 
-                <tr id="hidden-display">
-                  <td colspan="100%" class="hidden-row">
-                    <div th:id="'showSprint'+ ${sprint.sprintId}" class="accordion-collapse collapse" data-bs-parent=".table">
-                      <div class="accordion-body">
-                      <div class="outer-box" id="event-display" >
-                        <div class="inner-box">
-                          <div class="heading-size">
-                            <img th:src="@{{apiPrefix}/icons/bookmark-heart.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
-                            Events </div><br>
-                          <th:block th:each="event : ${listEvents}">
-                            <div th:if="${(event.startDate <= sprint.endDate and event.endDate >= sprint.startDate)}">
-                              <b>[[${event.eventName}]]</b>
-                              <br><b>Start Date:</b> [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
-                              <br><b>End Date:</b> [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]<br><br>
-                            </div>
-                          </th:block>
-                        </div>
-                      </div>
-                      <div class="outer-box" id="deadline-display">
-                        <div class="inner-box">
-                          <div class="heading-size">
-                            <img th:src="@{{apiPrefix}/icons/calendar-check.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
-                            Deadlines</div><br>
-                        </div>
-                      </div>
-                      <div class="outer-box" id="milestone-display">
-                        <div class="inner-box">
-                          <div class="heading-size">
-                            <img hidden th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events" height=16 width=16 class="calendarIcons">
-                            </div><br>
-                        </div>
-                      </div>
-                    </div>
-                    </div>
-                  </td>
-                </tr>
               </th:block>
-            </div>
           </tbody>
         </table>
       </div>
     </div>
-
 
     <div id="showEventLabel" hidden>
 
