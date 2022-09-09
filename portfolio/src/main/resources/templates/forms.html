@@ -84,13 +84,13 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="deadlineFormTitle">Create New Deadline</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" th:onclick="closeDeadlineModal()">
+                    <button type="button" class="close" aria-label="Close" th:onclick="closeDeadlineModal()">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="projectForm">
-                        <form id="createDeadlineForm" onsubmit="return validateForm()" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveDeadline'}" method="post" th:object="${deadline}" >
+                        <form id="createDeadlineForm" name="createDeadlineForm" onsubmit="saveDeadline(); return false" th:object="${deadline}" >
                             <input type="hidden" id="deadlineId" th:field="*{deadlineId}">
                             <div class="mb-3">
                                 <label for="deadline-name" class="col-form-label required">Deadline Name</label>
@@ -109,9 +109,9 @@
                                 </div>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" name="submit" id="deadlineFormSubmitButton" class="btn btn-outline-primary">
+                                <button type="submit" name="submit" id="deadlineFormSubmitButton" class="btn btn-outline-primary" th:onclick="closeDeadlineModal()">
                                     <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
-                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal" th:onclick="closeDeadlineModal()">
+                                <button type="button" class="btn btn-outline-secondary" th:onclick="closeDeadlineModal()">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                             </div>
                         </form>
