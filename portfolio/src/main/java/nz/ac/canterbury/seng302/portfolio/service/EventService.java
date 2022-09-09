@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,10 +12,7 @@ import javax.persistence.PersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -115,29 +113,13 @@ public class EventService {
 
     }
 
-    private Boolean checkWithinDateRange(Event event, Sprint sprint) {
-
-        Date eventStartDate = event.getStartDate();
-        Date eventEndDate = event.getEndDate();
-
-        if ( sprint.getStartDate().equals(eventStartDate) )
-            return true;
-
-        else if ( sprint.getStartDate().before(eventStartDate) && !sprint.getEndDate().before(eventStartDate) )
-            return true;
-
-        else if (sprint.getStartDate().before(eventEndDate) && !sprint.getEndDate().before(eventEndDate))
-            return true;
-
-        else
-            return false;
-
-    }
-
-    private void updateEventColours(Event event) {
-        List<Sprint> sprintList = (List<Sprint>) sprintRepository.findByProject(event.getProject());
-        List<Sprint> sprintsDuringEvent = sprintList.stream().filter(sprint -> checkWithinDateRange(event, sprint)).toList();
-        sprintsDuringEvent.forEach(sprint -> event.setColours(sprint.getColor()));
+    public void updateEventColours(Event event) {
+        List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event);
+        event.clearColourList();
+        sprintList.forEach(sprint -> {
+            if ( !event.getColors().contains(sprint.getColor()) )
+                event.setColours(sprint.getColor());
+        });
     }
 
     /**
@@ -147,7 +129,6 @@ public class EventService {
      */
     public String saveEvent(Event event) throws IncorrectDetailsException {
         String message;
-        updateEventColours(event);
         if (event.getEventId() == 0) {
             message = "Successfully Created " + event.getEventName();
         } else {
