@@ -23,6 +23,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.PersistenceException;
 import java.sql.Date;
+
 import java.util.List;
 
 @Controller
@@ -137,14 +138,6 @@ public class SprintController {
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
-            List<Event> events = eventService.getEventByProjectId(projectId);
-            events.forEach(event -> {
-                try {
-                    eventService.saveEvent(event);
-                } catch (IncorrectDetailsException e) {
-                    e.printStackTrace();
-                }
-            });
             String message = sprintService.saveSprint(sprint);
             notifySprint(projectId, sprint.getSprintId(), "edited");
             ra.addFlashAttribute("messageSuccess", message);
@@ -215,14 +208,9 @@ public class SprintController {
             ra.addFlashAttribute("messageSuccess", message);
             sprintService.updateSprintLabelsAndColor(sprintService.getSprintByProject(projectId));
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
-            List<Event> events = eventService.getEventByProjectId(projectId);
-            events.forEach(event -> {
-                try {
-                    eventService.saveEvent(event);
-                } catch (IncorrectDetailsException e) {
-                    e.printStackTrace();
-                }
-            });
+            List<Event> listEvents = eventService.getEventByProjectId(projectId);
+            listEvents.forEach(eventService::updateEventColours);
+            ra.addFlashAttribute("listEvents", listEvents);
             model.addAttribute("listSprints", listSprints);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
@@ -248,20 +236,17 @@ public class SprintController {
     @PostMapping("/sprint/{sprintId}/editSprint")
     public ResponseEntity<String> editSprint(
         @PathVariable("sprintId") int sprintId,
-        String startDate,
-        String endDate,
+        Date startDate,
+        Date endDate,
         @AuthenticationPrincipal AuthState principal
     ) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
             return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
 
         try {
-            Date newStartDate = new Date(Long.parseLong(startDate));
-            Date newEndDate = new Date(Long.parseLong(endDate));
-
             Sprint sprint = sprintService.getSprint(sprintId);
-            sprint.setStartDate(newStartDate);
-            sprint.setEndDate(newEndDate);
+            sprint.setStartDate(startDate);
+            sprint.setEndDate(endDate);
             sprintService.verifySprint(sprint);
             sprintService.saveSprint(sprint);
         } catch (Exception e) {

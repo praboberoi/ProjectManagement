@@ -42,8 +42,7 @@ public class SprintService {
         Sprint sprint = new Sprint.Builder()
                                   .sprintLabel("Sprint " + sprintNo)
                                   .sprintName("Sprint " + sprintNo)
-                                  .color(SprintColor.valueOf(sprintNo%7)).build();
-
+                                  .color(SprintColor.valueOf(sprintNo % 8 == 0 ? 7 : sprintNo % 8)).build();
 
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.isEmpty()) {
@@ -124,7 +123,7 @@ public class SprintService {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.forEach(sprint -> {
             sprint.setSprintLabel("Sprint " + count.getAndIncrement());
-            sprint.setColor(SprintColor.valueOf((count.get()-1) % 7));
+            sprint.setColor(SprintColor.valueOf( (count.get() - 1) % 8 == 0 ? 7 : (count.get() - 1) % 8));
             sprintRepository.save(sprint);
         });
     }
