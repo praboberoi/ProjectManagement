@@ -45,8 +45,7 @@ public class Event {
 
     @Column
     @ElementCollection
-    private final Set<SprintColor> colors = new HashSet<SprintColor>();
-
+    private final List<SprintColor> colors = new ArrayList<>();;
 
 
     /**
@@ -132,12 +131,16 @@ public class Event {
         return formatter.format(startDate);
     }
 
-    public Set<SprintColor> getColors() {
+    public List<SprintColor> getColors() {
         return this.colors;
     }
 
     public void setColours(SprintColor color) {
         this.colors.add(color);
+    }
+
+    public void clearColourList() {
+        colors.clear();
     }
 
 
@@ -167,6 +170,7 @@ public class Event {
                 ", project=" + project +
                 ", eventName='" + eventName + '\'' +
                 ", startDate=" + startDate +
+                ", colors=" + colors +
                 ", endDate=" + endDate +
                 '}';
     }

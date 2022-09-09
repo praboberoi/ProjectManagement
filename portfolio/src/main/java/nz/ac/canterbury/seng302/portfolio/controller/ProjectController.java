@@ -70,6 +70,7 @@ public class ProjectController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
+            listEvents.forEach(eventService::updateEventColours);
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             Project project = projectService.getProjectById(projectId);
             Event newEvent = eventService.getNewEvent(project);

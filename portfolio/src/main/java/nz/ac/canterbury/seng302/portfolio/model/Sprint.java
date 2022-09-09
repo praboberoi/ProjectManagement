@@ -233,6 +233,19 @@ public class Sprint {
         return sprintId == sprint.sprintId && Objects.equals(project, sprint.project) && Objects.equals(sprintLabel, sprint.sprintLabel) && Objects.equals(sprintName, sprint.sprintName) && description.equals(sprint.description) && Objects.equals(startDate, sprint.startDate) && Objects.equals(endDate, sprint.endDate) && Objects.equals(color, sprint.color);
     }
 
+    @Override
+    public String toString() {
+        return "Sprint{" +
+                "sprintId=" + sprintId +
+                ", project=" + project +
+                ", sprintLabel='" + sprintLabel + '\'' +
+                ", sprintName='" + sprintName + '\'' +
+                ", description='" + description + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", color=" + color +
+                '}';
+    }
 
     /**
      * Builder class to build the sprint

@@ -60,6 +60,7 @@ public class EventController {
       @GetMapping(path="/project/{projectId}/events")
       public ModelAndView events(@PathVariable("projectId") int projectId) throws IncorrectDetailsException {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
+          listEvents.forEach(eventService::updateEventColours);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);
@@ -86,6 +87,7 @@ public class EventController {
         try {
             event.setProject(projectService.getProjectById(projectId));
             eventService.verifyEvent(event);
+            eventService.updateEventColours(event);
             message = eventService.saveEvent(event);
             notifyEvent(projectId, event.getEventId(), "edited");
             return ResponseEntity.status(HttpStatus.OK).body(message);
