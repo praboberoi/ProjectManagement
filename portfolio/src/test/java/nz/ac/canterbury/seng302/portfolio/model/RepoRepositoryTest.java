@@ -18,9 +18,13 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 class RepoRepositoryTest {
     @Autowired private RepoRepository repoRepository;
 
+
+    /**
+     * Asserts that when findByGroups() is called, the correct number of repos are returned
+     */
     @Test
     @Transactional
-    void givenRepoExists_FidByGroup() {
+    void givenRepoExists_whenFindByGroup_thenCorrectNumberOfReposReturned() {
         Groups group = new Groups("Members without a group", "This is a long name", 0, List.of());
         Groups group1 = new Groups("Members of teachers group", "This is a new long name", 1, List.of());
         Repo repo = new Repo.Builder()

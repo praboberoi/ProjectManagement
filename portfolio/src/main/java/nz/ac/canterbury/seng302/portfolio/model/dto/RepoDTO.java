@@ -36,10 +36,6 @@ public class RepoDTO {
     public String getHostAddress() {return this.hostAddress;}
 
 
-    /**
-     * Blank constructor required by JPA
-     */
-    public RepoDTO() {}
 
 
     /**

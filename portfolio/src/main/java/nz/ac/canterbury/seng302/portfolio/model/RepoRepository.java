@@ -9,9 +9,9 @@ import java.util.List;
 public interface RepoRepository extends CrudRepository <Repo, Integer> {
 
     /**
-     * Obtains a list repos with the given group
+     * Obtains a list of repos with the given group
      * @param group of type Groups
-     * @return a List of type Repo
+     * @return a List of Repo objects
      */
     public List<Repo> findByGroups(Groups group);
 
