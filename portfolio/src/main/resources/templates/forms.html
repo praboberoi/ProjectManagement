@@ -12,8 +12,8 @@
 </head>
 <body>
 <div th:fragment="eventsForm">
-    <div class="modal fade" id="eventFormModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+    <div class="modal fade" id="eventFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="eventFormTitle">Create New Event</h5>
@@ -64,7 +64,8 @@
                             <br>
                             <div class="modal-footer">
                                 <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton" data-bs-dismiss="modal">
-                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/> Create</button>
+                                    <img class="icon img-color-secondary" id="eventFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                    <span id="eventFormSubmitLabel">Create</span></button>
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                             </div>
@@ -110,7 +111,8 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" name="submit" id="deadlineFormSubmitButton" class="btn btn-outline-primary" th:onclick="closeDeadlineModal()">
-                                    <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
+                                    <img class="icon img-color-primary" id="deadlineFromSubmitImg" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                    <span id="deadlineFormSubmitLabel">Create</span></button>
                                 <button type="button" class="btn btn-outline-secondary" th:onclick="closeDeadlineModal()">
                                     <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                             </div>

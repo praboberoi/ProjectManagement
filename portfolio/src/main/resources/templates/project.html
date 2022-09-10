@@ -100,7 +100,7 @@
               <!-- If a user is a STUDENT do not show the 'create' event button !-->
               <div class="createBtn">
                 <button class="btn btn-outline-primary btn-sm" id="create-event-btn" data-bs-toggle="modal"
-                  data-bs-target="#eventFormModal" data-bs-backdrop="static" data-bs-keyboard="false"
+                  data-bs-target="#eventFormModal"
                   th:data-id="${event.eventId}" th:data-name="${event.eventName}" th:data-startDate="${event.startDate}"
                   th:data-endDate="${event.endDate}"
                   th:onclick="populateEventModal(false, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'))">
