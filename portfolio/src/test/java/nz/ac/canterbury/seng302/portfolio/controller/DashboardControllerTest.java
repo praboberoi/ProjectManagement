@@ -121,7 +121,7 @@ public class DashboardControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listProjects", listProjects))
                 .andExpect(model().attribute("roles", testList))
-                .andExpect(model().attribute("user", userResponse.build()));
+                .andExpect(model().attribute("user", new User(userResponse.build())));
     }
 
     /**
@@ -139,7 +139,7 @@ public class DashboardControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("project", defaultProject))
                 .andExpect(model().attribute("pageTitle", "Add New Project"))
-                .andExpect(model().attribute("user", userResponse.build()))
+                .andExpect(model().attribute("user", new User(userResponse.build())))
                 .andExpect(model().attribute("projectStartDateMin", dateRange.get(0)))
                 .andExpect(model().attribute("projectStartDateMax", Date.valueOf(defaultProject.getEndDate().toLocalDate().minusDays(1))))
                 .andExpect(model().attribute("projectEndDateMin", Date.valueOf(defaultProject.getStartDate().toLocalDate().plusDays(1))))
@@ -177,7 +177,7 @@ public class DashboardControllerTest {
                 .andExpect(model().attribute("project", defaultProject))
                 .andExpect(model().attribute("pageTitle", "Edit Project: " + defaultProject.getProjectName()))
                 .andExpect(model().attribute("submissionName", "Save"))
-                .andExpect(model().attribute("user", userResponse.build()))
+                .andExpect(model().attribute("user", new User(userResponse.build())))
                 .andExpect(model().attribute("projectStartDateMin", dateRange.get(0)))
                 .andExpect(model().attribute("projectStartDateMax", Date.valueOf(defaultProject.getEndDate().toLocalDate().minusDays(1))))
                 .andExpect(model().attribute("projectEndDateMin", Date.valueOf(defaultProject.getStartDate().toLocalDate().plusDays(1))))
