@@ -66,35 +66,79 @@ async function getRecentActions() {
         eventCard.appendChild(eventBody)
         eventBody.classList.add('d-flex', 'justify-content-between', 'py-2')
 
-        // Image component
-        var userImageContainer = document.createElement('div');
-        eventBody.appendChild(userImageContainer)
+        let dataContainer = document.createElement('div');
+        eventBody.appendChild(dataContainer)
 
-        // Profile photo
-        var userImage = document.createElement('img');
-        userImageContainer.appendChild(userImage)
-        userImage.src = event.author.avatar_url
-        userImage.height = 20
-        userImage.width = 20
-        userImage.classList.add('d-inline-block', 'align-text-top', 'profile-photo')
-
-        // Username
-        userImageContainer.insertAdjacentText('beforeend', " " + event.author.name)
+        addUserProfile(dataContainer, event)
 
         // Action component
         var actionContainer = document.createElement('div');
         eventBody.appendChild(actionContainer)
 
-        // Action
-        var action = document.createElement('p');
-        actionContainer.appendChild(action)
-        action.innerText = event.action_name
+        addDate(dataContainer, event)
 
-        // Time component
-        var timeContainer = document.createElement('div');
-        eventBody.appendChild(timeContainer)
-        timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric' })
+        if (event.action_name == 'joined') {
+            addJoined(actionContainer, event)
+        } else if (event.action_name == "pushed new") {
+            addBranch(actionContainer, event)
+        } else if (event.action_name == "pushed to") {
+            addCommit(actionContainer, event)
+        } else if (event.action_name == "created") {
+            addCreated(actionContainer, event)
+        }
     });
 
     console.log(events)
+}
+
+
+function addUserProfile(element, event) {
+    // Image component
+    var userImageContainer = document.createElement('div');
+    element.appendChild(userImageContainer)
+
+    // Profile photo
+    var userImage = document.createElement('img');
+    userImageContainer.appendChild(userImage)
+    userImage.src = event.author.avatar_url
+    userImage.height = 20
+    userImage.width = 20
+    userImage.classList.add('d-inline-block', 'align-text-top', 'profile-photo')
+
+    // Username
+    userImageContainer.insertAdjacentText('beforeend', " " + event.author_username)
+}
+
+function addDate(element, event) {
+    var timeContainer = document.createElement('div');
+    element.appendChild(timeContainer)
+    timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+function addCommit(element, event) {
+    var action = document.createElement('p');
+    element.appendChild(action)
+    action.innerText = "Pushed " + event.push_data.commit_count + " commits to " + event.push_data.ref
+}
+
+function addBranch(element, event) {
+    var action = document.createElement('p');
+    element.appendChild(action)
+    action.innerText = "Created branch: " + event.push_data.ref
+}
+
+function addJoined(element, event) {
+    var action = document.createElement('p');
+    element.appendChild(action)
+    action.innerText = "Joined the project"
+}
+
+function addCreated(element, event) {
+    var action = document.createElement('p');
+    element.appendChild(action)
+    if (event.target_type == "WikiPage::Meta") {
+        action.innerText = "Created wiki page: " + event.target_title
+    } else if (event.target_type == null) {
+        action.innerText = "Created the project"
+    }
 }
