@@ -1,5 +1,6 @@
-package nz.ac.canterbury.seng302.portfolio.model;
+package nz.ac.canterbury.seng302.portfolio.model.repository;
 
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -77,7 +78,7 @@ public class DeadlineRepositoryTest {
      * Asserts that given a deadline exists when findByName() with the correct deadline name is called, the correct deadline is returned
      */
     @Test
-    public void givenDeadlineExists_FindByDeadlineName() {
+    void givenDeadlineExists_FindByDeadlineName() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
         List<Deadline> testDeadline = deadlineRepository.findByName("DeadlineTest 2");
 
@@ -91,7 +92,7 @@ public class DeadlineRepositoryTest {
      * Asserts that given a deadline exists, when findByDate() is called with the correct date, then the correct deadline is returned
      */
     @Test
-    public void givenDeadlineExists_FindByDate() {
+    void givenDeadlineExists_FindByDate() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
         assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDate(new Date(2021,2,1)).toArray());
     }
@@ -100,7 +101,7 @@ public class DeadlineRepositoryTest {
      * Given the deadline exists, when findById() is called with a correct ID, then the correct deadline is returned
      */
     @Test
-    public void givenDeadlineExists_FindById() {
+    void givenDeadlineExists_FindById() {
         List<Deadline> deadlineList = Arrays.asList(deadline2);
         assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByDeadlineId(deadline2.getDeadlineId()).toArray());
     }
@@ -109,7 +110,7 @@ public class DeadlineRepositoryTest {
      * Asserts that the correct number of deadlines is returned when countByProject() is called
      */
     @Test
-    public void givenDeadlineExists_CountByProject() {
+    void givenDeadlineExists_CountByProject() {
         assertEquals(2, deadlineRepository.countByProject(project));
     }
 
@@ -117,7 +118,7 @@ public class DeadlineRepositoryTest {
      * Asserts that the correct deadlines are returned when findByProject() is called
      */
     @Test
-    public void givenDeadlineExists_FindByProject() {
+    void givenDeadlineExists_FindByProject() {
         List<Deadline> deadlineList = Arrays.asList(deadline1, deadline2);
         assertArrayEquals(deadlineList.toArray(), deadlineRepository.findByProject(project).toArray());
 
@@ -133,5 +134,18 @@ public class DeadlineRepositoryTest {
         assertArrayEquals(emptyList.toArray(), deadlineRepository.findByProject(project2).toArray());
 
         projectRepository.delete(project2);
+    }
+
+    /**
+     * Asserts that correct deadlines are returned when findDeadlinesBySprint is called.
+     */
+    @Test
+    void givenDeadlineExists_FindBySprint() {
+        List<Deadline> deadlineList = Arrays.asList(deadline1, deadline2);
+        Sprint sprint = new Sprint.Builder()
+                .startDate(new Date(2021, 1, 1))
+                .endDate(new Date(2021, 11, 21))
+                .build();
+        assertArrayEquals(deadlineList.toArray(), deadlineRepository.findDeadlinesBySprint(sprint).toArray());
     }
 }
