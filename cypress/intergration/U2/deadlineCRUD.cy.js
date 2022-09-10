@@ -13,7 +13,7 @@ When("I enter {string} deadline name and {string} date", (deadlineName, deadline
     cy.get('#deadlineNameError').should('have.text', 'Deadline Name must not be empty')
     cy.get('#deadline-name').type(deadlineName,{ delay: 0 }).should('have.value', deadlineName)
     cy.get('#deadlineNameError').should('have.text', '')
-    cy.get('#deadlineDate').type(deadlineDate).should('have.value', deadlineDate)
+    cy.get('#deadlineDate').clear().type(deadlineDate).should('have.value', deadlineDate)
 })
 
 When('I select save on the deadline form',  () => {
@@ -37,6 +37,11 @@ When('I select delete again on the conformation modal', ()=> {
     cy.get('#deleteDeadlineModalBtn').click()
 })
 
+When("I enter an invalid deadline date", () => {
+    cy.get('#deadlineDate').clear().type("2021-06-10T08:30")
+    cy.get('#deadlineFormSubmitButton').click()
+})
+
 Then('A new deadline is created', () => {
     cy.contains("#messageSuccess",'Successfully Created CypressTest1')
     cy.get('#deadline-tab').click()
@@ -49,4 +54,17 @@ Then("Deadline name is updated successfully to {string}", (deadlineName) => {
 
 Then("{string} deadline is successfully deleted", (deadlineName) => {
     cy.contains("#messageSuccess",`Successfully deleted ${deadlineName}`)
+})
+
+Then("I can see I have used {string} characters", (charLeft) => {
+    cy.contains('#deadlineCharCount',`${charLeft} `)
+})
+
+Then("An error message is displayed for the date being outside the project range", () => {
+    cy.get('#deadlineDateError').should('have.text', "Deadline must start on or after 15 Jul 2022")
+})
+
+Then("The current date is the deadline date", () => {
+    cy.get('#deadlineDate').should("have.value",
+        new Date().toLocaleDateString("en-CA") + 'T00:00')
 })
