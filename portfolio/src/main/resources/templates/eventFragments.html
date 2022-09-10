@@ -15,12 +15,12 @@
                 <div class="d-flex align-items-baseline pt-3 mt-2" th:if="${adminOrTeacher}">
                     <th:block th:each="notification : ${editNotifications}" th:object="${notification}"
                     th:if="${notification.eventId} == ${event.eventId}">
-                        <p th:id="'event' + ${event.eventId} + '-notification'" th:text="${notification.username} + ' is currently editing.'"></p>
+                        <p class="text-align-start font-italic text-black-50 mb-0 ml-5 ml-md-0" th:id="'event' + ${event.eventId} + '-notification'" th:text="${notification.username} + ' is currently editing.'"></p>
                     </th:block>
                     <th:block th:with="check=${event.eventId}">
-                        <p th:if="!${editNotifications.^[eventId == #root.event.eventId]}" th:id="'event' + ${event.eventId} + '-notification'"></p>
+                        <p class="text-align-start font-italic text-black-50 mb-0 ml-5 ml-md-0" th:if="!${editNotifications.^[eventId == #root.event.eventId]}" th:id="'event' + ${event.eventId} + '-notification'"></p>
                     </th:block>
-                    <button th:disabled="${editNotifications.^[eventId == #root.event.eventId]}" class="btn btn-outline-primary btn-sm mr-2 my-2" th:id="'event' + ${event.eventId} + '-edit-btn'"
+                    <button th:hidden="${editNotifications.^[eventId == #root.event.eventId]}" class="btn btn-outline-primary btn-sm mr-2 my-2" th:id="'event' + ${event.eventId} + '-edit-btn'"
                         data-bs-toggle="modal" data-bs-target="#eventFormModal" data-bs-backdrop="static"
                         data-bs-keyboard="false" th:data-id="${event.eventId}" th:data-name="${event.eventName}"
                         th:data-startDate="${event.startDate}" th:data-endDate="${event.endDate}"
@@ -29,7 +29,7 @@
                         <span class="d-none d-md-inline-block">Edit</span>
                     </button>
 
-                    <button th:disabled="${editNotifications.^[eventId == #root.event.eventId]}" type="button" class="btn btn-outline-secondary btn-sm my-2"
+                    <button th:hidden="${editNotifications.^[eventId == #root.event.eventId]}" type="button" class="btn btn-outline-secondary btn-sm my-2"
                         th:id="'event' + ${event.eventId} + '-delete-btn'" data-bs-toggle="modal"
                         data-bs-target="#conformationModalEvent" th:data-id="${event.eventId}"
                         th:data-name="${event.eventName}"

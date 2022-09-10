@@ -3,9 +3,10 @@ var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
 var username = /[ `!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~'-]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
+var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
+var dash = /^[^-]+(-[^-]+)*$/;
+var space = /^[^ ]+( [^ ]+)*$/;
 var pronoun = /[`!@#$%^*()_+\-&,\=\[\]{};':"\\|.<>\?~]/;
-var dash = /^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$/;
-var space = /^[A-Za-z0-9\-]+( [A-Za-z0-9\-]+)*$/;
 
 
 /**
@@ -19,7 +20,7 @@ function checkUsername() {
         || username.test(usernameElement.value))
     {
         usernameElement.classList.add("formError")
-        usernameErrorElement.innerText = "Username must be between 3 and 16 characters with no special characters."
+        usernameErrorElement.innerText = "Username must be between 3 and 16 characters with no space or special characters."
         usernameElement.setCustomValidity("Invalid field.");
     } else {
         usernameElement.classList.remove("formError");
@@ -80,12 +81,13 @@ function checkLastName() {
 function checkNickname() {
     let nicknameElement = document.getElementById("nickname");
     let nicknameErrorElement = document.getElementById("nicknameError");
-    if (nicknameElement.value.length > 32)
-        {
+    if (nicknameElement.value.length > 32
+        || username.test(nicknameElement.value))
+    {
         nicknameElement.classList.add("formError")
-        nicknameErrorElement.innerText = "Nickname must be less than 32 characters."
+        nicknameErrorElement.innerText = "Nickname must be less than 32 characters with no space or special characters."
             nicknameElement.setCustomValidity("Invalid field.");
-        } else {
+    } else {
         nicknameElement.classList.remove("formError");
         nicknameErrorElement.innerText = null;
         nicknameElement.setCustomValidity("");

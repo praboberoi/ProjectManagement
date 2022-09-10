@@ -3,7 +3,6 @@ const eventEndDateElement = document.getElementById('eventEndDate');
 const startDateError = document.getElementById('eventStartDateError');
 const endDateError = document.getElementById('eventEndDateError');
 let currentEventId;
-
 /**
  * Function for error validation of Event Name field.
  * Display error message if input is invalid.
@@ -112,14 +111,17 @@ function checkEndDate() {
  */
 function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
     currentEventId = eventId
+    let submitButtonInnerHtml =  document.getElementById('eventFormSubmitButton').innerText
     if (isEdit) {
         document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
-        document.getElementById('eventFormSubmitButton').innerText =  'Save';
+        document.getElementById('eventFormSubmitLabel').innerText = 'Save';
+        document.getElementById('eventFromSubmitImg').src = `${apiPrefix}/icons/save-icon.svg`;
         document.getElementById('eventStartDate').value = startDate.replace(" ", "T");
         document.getElementById('eventEndDate').value =  endDate.replace(" ", "T");
     } else {
         document.getElementById('eventFormTitle').innerText =  'Create New Event';
-        document.getElementById('eventFormSubmitButton').innerText =  'Create';
+        document.getElementById('eventFormSubmitLabel').innerText = 'Create'
+        document.getElementById('eventFromSubmitImg').src = `${apiPrefix}/icons/create-icon.svg`;
         document.getElementById('eventStartDate').value =  startDate + 'T00:00';
         document.getElementById('eventEndDate').value =  endDate + 'T00:00';
     }
