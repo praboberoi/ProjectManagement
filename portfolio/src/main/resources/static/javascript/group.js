@@ -100,15 +100,15 @@ async function getRecentActions() {
         } else if (event.action_name == "created") {
             addCreated(actionContainer, event)
         } else if (event.action_name == "opened") {
-            action.innerText = "Opened new " + event.target_type + ": " + event.target_title
+            action.innerText = "Opened new " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
         } else if (event.action_name == "commented on") {
-            action.innerText = "Commented on " + event.note.noteable_type + ": " + event.target_title
+            action.innerText = "Commented on " + event.note.noteable_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
         } else if (event.action_name == "approved") {
-            action.innerText = "Approved " + event.target_type + ": " + event.target_title
+            action.innerText = "Approved " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
         } else if (event.action_name == "accepted") {
-            action.innerText = "Merged " + event.target_type + ": " + event.target_title
+            action.innerText = "Merged " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
         } else if (event.action_name == "closed") {
-            action.innerText = "Closed " + event.target_type + ": " + event.target_title
+            action.innerText = "Closed " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
         }
     });
 
