@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.identityprovider.service;
 
 import nz.ac.canterbury.seng302.identityprovider.model.User;
 import nz.ac.canterbury.seng302.identityprovider.model.UserRepository;
+import nz.ac.canterbury.seng302.identityprovider.util.AccountUtilities;
 import nz.ac.canterbury.seng302.identityprovider.util.EncryptionUtilities;
 import nz.ac.canterbury.seng302.identityprovider.util.ValidationUtilities;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRegisterRequest;
@@ -10,6 +11,9 @@ import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Service class containing functionality to validate user account details upon registration
+ */
 public class RegistrationService {
 
     private final UserRepository userRepository;
@@ -37,86 +41,21 @@ public class RegistrationService {
         ValidationError.Builder errorBuilder = ValidationError.newBuilder();
         List<ValidationError> result = new ArrayList<>();
 
-        // Username validation
-        if (username.length() < 3 || username.length() > 16 || ValidationUtilities.hasSpecial(username))  {
-            errorBuilder.setFieldName("usernameError");
-            errorBuilder.setErrorText("Username must be between 3 and 16 characters with no special characters.");
-            result.add(errorBuilder.build());
-        }
+        AccountUtilities.validateUsername(username, errorBuilder, result);
 
-        // First name validation
-        if (firstName.isBlank()) {
-            errorBuilder.setFieldName("firstNameError");
-            errorBuilder.setErrorText("First name cannot be blank.");
-            result.add(errorBuilder.build());
-        } else if (firstName.length() < 2 || firstName.length() > 32) {
-            errorBuilder.setFieldName("firstNameError");
-            errorBuilder.setErrorText("First name must be between 2 and 32 characters.");
-            result.add(errorBuilder.build());
-        } else if (ValidationUtilities.hasNameSpecial(firstName) || ValidationUtilities.hasDigit(firstName)||
-                ValidationUtilities.hasMultipleDashes(firstName) || ValidationUtilities.hasMultipleSpaces(lastName)){
-            errorBuilder.setFieldName("firstNameError");
-            errorBuilder.setErrorText("First name cannot contain special characters or digits.");
-            result.add(errorBuilder.build());
-        }
-        //Last name validation
-        if (lastName.isBlank()) {
-            errorBuilder.setFieldName("lastNameError");
-            errorBuilder.setErrorText("Last name cannot be blank.");
-            result.add(errorBuilder.build());
-        } else if (lastName.length() < 2 || lastName.length() > 32) {
-            errorBuilder.setFieldName("lastNameError");
-            errorBuilder.setErrorText("Last name must be between 2 and 32 characters.");
-            result.add(errorBuilder.build());
-        } else if (ValidationUtilities.hasNameSpecial(lastName) || ValidationUtilities.hasDigit(lastName) ||
-                ValidationUtilities.hasMultipleDashes(lastName) || ValidationUtilities.hasMultipleSpaces(lastName)) {
-            errorBuilder.setFieldName("lastNameError");
-            errorBuilder.setErrorText("Last name cannot contain special characters or digits.");
-            result.add(errorBuilder.build());
-        }
+        AccountUtilities.validateFirstName(firstName, errorBuilder, result);
 
-        //Nickname validation
-        if (nickname.length() > 32) {
-            errorBuilder.setFieldName("nicknameError");
-            errorBuilder.setErrorText("Nickname cannot be more than 32 characters.");
-            result.add(errorBuilder.build());
-        }
+        AccountUtilities.validateLastName(lastName, errorBuilder, result);
 
-        //Email validation
-        if (email.isBlank()) {
-            errorBuilder.setFieldName("emailError");
-            errorBuilder.setErrorText("Email cannot be blank.");
-            result.add(errorBuilder.build());
-        } else if (!ValidationUtilities.isEmail(email)) {
-            errorBuilder.setFieldName("emailError");
-            errorBuilder.setErrorText("Email must be in the form username@domainName.domain.");
-            result.add(errorBuilder.build());
-        }
+        AccountUtilities.validateNickname(nickname, errorBuilder, result);
 
-        //Bio validation
-        if (bio.length() > 250) {
-            errorBuilder.setFieldName("bioError");
-            errorBuilder.setErrorText("Your bio is too long");
-            result.add(errorBuilder.build());
-        }
+        AccountUtilities.validateEmail(email, errorBuilder, result);
 
-        //Personal Pronoun validation
-        if (personalPronouns.length() > 32) {
-            errorBuilder.setFieldName("personalPronounsError");
-            errorBuilder.setErrorText("Personal pronouns must be less than 32 characters.");
-            result.add(errorBuilder.build());
-        }else if (ValidationUtilities.hasPronounSpecial(personalPronouns) || ValidationUtilities.hasDigit(personalPronouns)) {
-            errorBuilder.setFieldName("personalPronounsError");
-            errorBuilder.setErrorText("Personal pronouns can only contain special character / and no digits.");
-            result.add(errorBuilder.build());
-        }
+        AccountUtilities.validateBio(bio, errorBuilder, result);
 
-        //Password validation
-        if (password.isBlank() || password.length() < 8 || password.length() > 16 || !ValidationUtilities.hasUpper(password) || !ValidationUtilities.hasDigit(password)) {
-            errorBuilder.setFieldName("passwordError");
-            errorBuilder.setErrorText("Password must contain 8-16 characters, a digit and uppercase character.");
-            result.add(errorBuilder.build());
-        }
+        AccountUtilities.validatePronoun(personalPronouns, errorBuilder, result);
+
+        AccountUtilities.validatePassword(password, errorBuilder, result);
 
         return result;
     }
