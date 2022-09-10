@@ -79,9 +79,7 @@ async function getRecentActions() {
         userImage.classList.add('d-inline-block', 'align-text-top', 'profile-photo')
 
         // Username
-        var usersName = document.createElement('p');
-        userImageContainer.appendChild(usersName)
-        usersName.innerText = event.author.name
+        userImageContainer.insertAdjacentText('beforeend', " " + event.author.name)
 
         // Action component
         var actionContainer = document.createElement('div');
@@ -91,7 +89,11 @@ async function getRecentActions() {
         var action = document.createElement('p');
         actionContainer.appendChild(action)
         action.innerText = event.action_name
-        
+
+        // Time component
+        var timeContainer = document.createElement('div');
+        eventBody.appendChild(timeContainer)
+        timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric' })
     });
 
     console.log(events)
