@@ -2,11 +2,15 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 
+import javax.persistence.Embeddable;
+import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Group entity for storing the idp group for use on the portfolio
  */
+
 public class Groups {
     private  String shortName;
     private String longName;
@@ -73,4 +77,15 @@ public class Groups {
         this.longName = response.getLongName();
         this.members = response.getMembersList().stream().map(User::new).toList();
     }
+
+    @Override
+    public String toString() {
+        return "Groups{" +
+                "shortName='" + shortName + '\'' +
+                ", longName='" + longName + '\'' +
+                ", groupId=" + groupId +
+                ", members=" + members +
+                '}';
+    }
+
 }
