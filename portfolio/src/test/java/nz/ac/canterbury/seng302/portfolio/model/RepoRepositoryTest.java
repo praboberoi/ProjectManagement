@@ -1,17 +1,14 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;
-import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 @DataJpaTest
 @ActiveProfiles("test")
@@ -35,6 +32,7 @@ class RepoRepositoryTest {
                 .hostAddress("http://Test.com")
                 .groupId(0)
                 .gitlabProjectId(1)
+                .accessToken("token")
                 .build();
         repoRepository.save(repo);
 
@@ -42,8 +40,8 @@ class RepoRepositoryTest {
         List<Repo> searchResult2 = repoRepository.findByGroupId(1);
 
 
-        assertTrue(searchResult1.size() == 1);
-        assertTrue(searchResult2.size() == 0);
+        assertEquals(1,searchResult1.size());
+        assertEquals(0,searchResult2.size());
 
     }
 
@@ -59,6 +57,7 @@ class RepoRepositoryTest {
                 .hostAddress("http://Test.com")
                 .groupId(2)
                 .gitlabProjectId(2)
+                .accessToken("token")
                 .build();
         repoRepository.save(repo2);
 

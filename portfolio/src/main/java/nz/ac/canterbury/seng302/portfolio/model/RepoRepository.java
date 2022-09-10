@@ -13,7 +13,7 @@ public interface RepoRepository extends CrudRepository <Repo, Integer> {
      * @param groupId of type int
      * @return a List of Repo objects
      */
-    public List<Repo> findByGroupId(int groupId);
+    List<Repo> findByGroupId(int groupId);
 
 
 }
