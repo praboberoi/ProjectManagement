@@ -47,13 +47,12 @@ public class EvidenceController {
      * @return Page fragment containing events
      */
     @GetMapping(path="/evidence/{userId}")
-    public ModelAndView evidenceList(
+    public String evidenceList(
             @PathVariable("userId") int userId,
-            @AuthenticationPrincipal AuthState principal) {
+            Model model) {
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-        ModelAndView mv = new ModelAndView("evidence::evidenceList");
-        mv.addObject("listEvidence", listEvidence);
-        return mv;
+        model.addAttribute("listEvidence", listEvidence);
+        return "evidence";
     }
 
     /**

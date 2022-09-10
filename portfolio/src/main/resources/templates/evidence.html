@@ -65,7 +65,7 @@
                 </th:block>
             </div>
 
-            <div id="evidence-display" class="col-sm-12 col-md-8">
+            <div id="evidence-display" class="col-sm-12 col-md-8" th:if="${selectedEvidence}">
                 <div class="card project-card" id="selectedEvidence" th:fragment="selectedEvidence">
                     <div class="container-fluid">
                         <div class="row">
