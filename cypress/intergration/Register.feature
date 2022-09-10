@@ -3,6 +3,9 @@ Feature: UUi Registering and logging into a user account
     When I register a new user
     Then I am logged in
 
+    When I register a new user with accents in username, firstname, lastname, and nickname
+    Then I am logged in
+
   Scenario: Appropriate validation is carried out and errors are clearly conveyed.
     Given I am on the register page
     When I enter invalid details
