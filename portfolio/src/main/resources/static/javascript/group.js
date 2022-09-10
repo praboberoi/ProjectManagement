@@ -93,6 +93,12 @@ async function getRecentActions() {
             action.innerText = "Opened new " + event.target_type + ": " + event.target_title
         } else if (event.action_name == "commented on") {
             action.innerText = "Commented on " + event.note.noteable_type + ": " + event.target_title
+        } else if (event.action_name == "approved") {
+            action.innerText = "Approved " + event.target_type + ": " + event.target_title
+        } else if (event.action_name == "accepted") {
+            action.innerText = "Merged " + event.target_type + ": " + event.target_title
+        } else if (event.action_name == "closed") {
+            action.innerText = "Closed " + event.target_type + ": " + event.target_title
         }
     });
 
