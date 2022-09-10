@@ -88,11 +88,4 @@ public class Groups {
                 '}';
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Groups)) return false;
-        Groups groups = (Groups) o;
-        return groupId == groups.groupId && shortName.equals(groups.shortName) && longName.equals(groups.longName) && members.equals(groups.members);
-    }
 }
