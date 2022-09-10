@@ -23,3 +23,7 @@ Then("A repo is connected", () => {
 Then("I cannot see repo settings", () => {
     cy.get("#repo-settings-tab").should('not.exist')
 })
+
+Then("I can see repo settings", () => {
+    cy.get("#repo-settings-tab").should('exist')
+})
