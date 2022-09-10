@@ -78,14 +78,21 @@ async function getRecentActions() {
 
         addDate(dataContainer, event)
 
+        var action = document.createElement('p');
+        actionContainer.appendChild(action)
+
         if (event.action_name == 'joined') {
-            addJoined(actionContainer, event)
+            action.innerText = "Joined the project"
         } else if (event.action_name == "pushed new") {
-            addBranch(actionContainer, event)
+            action.innerText = "Created branch: " + event.push_data.ref
         } else if (event.action_name == "pushed to") {
-            addCommit(actionContainer, event)
+            action.innerText = "Pushed " + event.push_data.commit_count + " commits to " + event.push_data.ref
         } else if (event.action_name == "created") {
             addCreated(actionContainer, event)
+        } else if (event.action_name == "opened") {
+            action.innerText = "Opened new " + event.target_type + ": " + event.target_title
+        } else if (event.action_name == "commented on") {
+            action.innerText = "Commented on " + event.note.noteable_type + ": " + event.target_title
         }
     });
 
@@ -114,24 +121,6 @@ function addDate(element, event) {
     var timeContainer = document.createElement('div');
     element.appendChild(timeContainer)
     timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric' })
-}
-
-function addCommit(element, event) {
-    var action = document.createElement('p');
-    element.appendChild(action)
-    action.innerText = "Pushed " + event.push_data.commit_count + " commits to " + event.push_data.ref
-}
-
-function addBranch(element, event) {
-    var action = document.createElement('p');
-    element.appendChild(action)
-    action.innerText = "Created branch: " + event.push_data.ref
-}
-
-function addJoined(element, event) {
-    var action = document.createElement('p');
-    element.appendChild(action)
-    action.innerText = "Joined the project"
 }
 
 function addCreated(element, event) {
