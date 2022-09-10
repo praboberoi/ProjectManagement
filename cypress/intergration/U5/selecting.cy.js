@@ -41,6 +41,10 @@ When("I shift click on user {int}", (userIndex) => {
     cy.get('tr.user-row').eq(userIndex).click({shiftKey: true})
 });
 
+When("And I ctrl + shift click on user {int}", (userIndex) => {
+    cy.get('tr.user-row').eq(userIndex).click({shiftKey: true, ctrlKey: true})
+});
+
 Then("User {int} is highlighted", (userIndex) => {
     cy.get('tr.user-row').eq(userIndex).should('have.class', 'table-info')
 });
