@@ -74,6 +74,7 @@ async function getRecentActions() {
         // Action component
         var actionContainer = document.createElement('div');
         eventBody.appendChild(actionContainer)
+        actionContainer.classList.add('text-end')
 
         addDate(dataContainer, event)
 
