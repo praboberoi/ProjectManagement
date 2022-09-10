@@ -27,10 +27,20 @@ async function connectTest(event) {
     const repo = await response.json();
     if (!repo.hasOwnProperty('id')) {
         message.innerText = "Repo not found"
+        clearRecentActions()
         return
     }
     message.innerText = "Connected to repo: " + repo.name
     getRecentActions()
+}
+
+function clearRecentActions() {
+    let recentActions = document.getElementById("recent-action-cards")
+    recentActions.innerHTML = ""
+    var eventCard = document.createElement('div');
+    recentActions.appendChild(eventCard);
+    eventCard.classList.add('card', 'shadow-sm', 'bg-white', 'rounded', 'event-card', 'm-2', 'error-msg')
+    eventCard.textContent = "Invalid repo, unable to retrieve recent actions"
 }
 
 async function getRecentActions() {
