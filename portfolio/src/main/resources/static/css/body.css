@@ -337,6 +337,19 @@ a.desc.sort:after {
     display: none;
 }
 
+.page-container {
+    max-height: 200vh;
+    overflow: auto;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.page-container::-webkit-scrollbar {
+    display: none;
+}
+
+
 @media only screen and (max-width: 768px) {
     #groupDropdown {
         display: initial;
