@@ -48,7 +48,7 @@ public class GroupController {
     @Autowired
     private SimpMessagingTemplate template;
 
-    private static final String GROUP = "group";
+    private static final String GROUP = "groupSetting";
     private static final String GROUP_FRAGMENT = "groups::group";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
     private static final String WARNING_MESSAGE = "messageDanger";
@@ -285,7 +285,7 @@ public class GroupController {
             ra.addFlashAttribute(WARNING_MESSAGE, "Group " + groupId + " does not exist.");
             return GROUPS_REDIRECT;
         }
-        model.addAttribute(GROUP, group);
+        model.addAttribute("group", group);
         return GROUP;
     }
 

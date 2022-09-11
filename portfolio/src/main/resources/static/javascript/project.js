@@ -180,7 +180,6 @@ function updateSprint(message) {
         return
     }
     httpRequest.onreadystatechange = () => updateElement(httpRequest, sprintElement)
-
     httpRequest.send();
 }
 

@@ -4,10 +4,12 @@ import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -34,6 +36,9 @@ public class AccountController {
 
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     private static final String EDIT_ACCOUNT_PAGE = "editAccount";
     private static final String ACCOUNT_PAGE = "account";
@@ -111,6 +116,14 @@ public class AccountController {
     }
 
     /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of the user account updated
+     */
+    private void notifyUser(int userId) {
+        template.convertAndSend("/element/account/", ("account " + userId));
+    }
+
+    /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
      * @param multipartFile  The image file of the user
@@ -172,6 +185,7 @@ public class AccountController {
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
+            notifyUser(userId);
             msgString = "Successfully updated details";
             ra.addFlashAttribute("messageSuccess", msgString);
             return "redirect:" + ACCOUNT_PAGE;

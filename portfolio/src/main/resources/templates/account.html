@@ -31,7 +31,6 @@
                 </div>
             </div>
         </div>
-        <div id="userId" hidden="true" th:text="${user.userId}">[[${user.userId}]]</div>
         <div class="contentContainer">
             <div id="content">
                 <br>
@@ -112,9 +111,5 @@
         </div>
     </div>
 </div>
-    <script th:inline="javascript">
-        var apiPrefix = [[${apiPrefix}]];
-    </script>
-    <script th:src="@{{apiPrefix}/javascript/account.js(apiPrefix=${apiPrefix})}"></script>
 </body>
 </html>
