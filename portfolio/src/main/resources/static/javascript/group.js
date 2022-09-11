@@ -18,7 +18,7 @@ function connectTest(event) {
     let accessToken = document.getElementById("git-access-token").value
     let hostAddress = document.getElementById("git-host-address").value
 
-    fetch(hostAddress + GIT_API + "/api/v4/projects/" + projectId, {
+    fetch(hostAddress + GIT_API + "projects/" + projectId, {
         method: 'GET',
         headers: {
             'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
@@ -36,9 +36,13 @@ function connectTest(event) {
     }).catch((error) => {
         document.getElementById("git-project-name").value = ""
         message.innerText = "Error connecting to repository"
+        clearRecentActions()
     });
 }
 
+/**
+ * Clears the recent actions component and replaces it with an error message
+ */
 function clearRecentActions() {
     let recentActions = document.getElementById("recent-action-cards")
     recentActions.innerHTML = ""
@@ -48,6 +52,9 @@ function clearRecentActions() {
     eventCard.textContent = "Invalid repo, unable to retrieve recent actions"
 }
 
+/**
+ * Calls the git api to get events from the project that has been provided. Formats these into cards for the recent actions component
+ */
 async function getRecentActions() {
     let message = document.getElementById("connection-message")
 
@@ -114,13 +121,17 @@ async function getRecentActions() {
             action.innerText = "Merged " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
         } else if (event.action_name == "closed") {
             action.innerText = "Closed " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
+        } else {
+            action.innerText = "Performed a " + event.action_name
         }
     });
-
-    console.log(events)
 }
 
-
+/**
+ * Adds the user profile component to the provided element 
+ * @param element HTML element to append the profile to
+ * @param event GitLab api response
+ */
 function addUserProfile(element, event) {
     // Image component
     var userImageContainer = document.createElement('div');
@@ -138,12 +149,22 @@ function addUserProfile(element, event) {
     userImageContainer.insertAdjacentText('beforeend', " " + event.author_username)
 }
 
+/**
+ * Adds the date component to the provided element 
+ * @param element HTML element to append the date to
+ * @param event GitLab api response
+ */
 function addDate(element, event) {
     var timeContainer = document.createElement('div');
     element.appendChild(timeContainer)
     timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
+/**
+ * Add the text for the relevant create event
+ * @param element HTML element to add the text to
+ * @param event GitLab api response
+ */
 function addCreated(element, event) {
     var action = document.createElement('p');
     element.appendChild(action)
