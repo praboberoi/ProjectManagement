@@ -122,7 +122,19 @@ function selectUser(event) {
     }
     let userTable = document.querySelectorAll("#userListDataTable tr")
 
-    if (event.shiftKey) {
+    if (event.shiftKey && (event.ctrlKey || event.metaKey)) {
+        let selected = document.querySelector(".currently-selected")
+        let table_elements = [].slice.call(userTable);
+
+        let index_target = table_elements.indexOf(event.target.closest('tr'))
+        let index_selected = table_elements.indexOf(selected)
+        
+        table_elements.splice(Math.min(index_target, index_selected), Math.abs(index_target - index_selected) + 1).forEach(element => {
+            element.classList.add('table-info');
+            element.classList.add('selected')
+        });
+
+    } else if (event.shiftKey) {
         let selected = document.querySelector(".currently-selected")
         let table_elements = [].slice.call(userTable);
 

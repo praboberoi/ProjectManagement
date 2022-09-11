@@ -70,7 +70,7 @@ function editDeadline(name, date, id) {
     document.getElementById('deadline-name').value = name;
     document.getElementById('deadlineId').value = id;
     document.getElementById('deadlineCharCount').value = name.length;
-    document.getElementById('deadlineDate').value = date;
+    document.getElementById('deadlineDate').value = date.replace(" ", "T");
     document.getElementById('deadlineFormTitle').textContent = "Edit deadline";
     const modalElement = document.getElementById('deadlineFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
@@ -106,7 +106,7 @@ function createDeadline() {
     document.getElementById('deadlineDateError').innerText = null;
     document.getElementById('deadline-name').value = "New Deadline";
     document.getElementById('deadlineCharCount').value = "12";
-    document.getElementById('deadlineDate').value = new Date().toLocaleDateString().split('/').reverse().join('-') + 'T00:00';
+    document.getElementById('deadlineDate').value = new Date().toLocaleDateString("en-CA") + 'T00:00';
     document.getElementById('deadlineFormTitle').textContent = "Create New Deadline";
     const modalElement = document.getElementById('deadlineFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {

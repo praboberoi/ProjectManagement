@@ -66,5 +66,5 @@ Then("An error message is displayed for the date being outside the project range
 
 Then("The current date is the deadline date", () => {
     cy.get('#deadlineDate').should("have.value",
-        new Date().toLocaleDateString().split('/').reverse().join('-') + 'T00:00')
+        new Date().toLocaleDateString("en-CA") + 'T00:00')
 })
