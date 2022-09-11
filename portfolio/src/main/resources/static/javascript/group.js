@@ -37,3 +37,12 @@ function connectTest(event) {
 
     
 }
+
+/**
+ * Subscribes to the required websocket notification channels
+ */
+function subscribe() {
+    stompClient.subscribe('/element/account/' + projectId + '/sprints', updateSprint);
+    loadEventCards()
+    loadDeadlineCards()
+}

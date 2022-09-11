@@ -1,13 +1,19 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.AccountNotification;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +44,9 @@ public class GroupController {
     private GroupService groupService;
 
     @Autowired private UserAccountClientService userAccountClientService;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     private static final String GROUP = "group";
     private static final String GROUP_FRAGMENT = "groups::group";
@@ -278,5 +287,17 @@ public class GroupController {
         }
         model.addAttribute(GROUP, group);
         return GROUP;
+    }
+
+    /**
+     * Sends an update message to every client subscribed to /event/edit when a user starts editing an event
+     * @param notification Notification containing the event ID and project ID that is being edited
+     * @param principal Authentication information containing user info
+     * @param sessionId Session ID of the websocket communication
+     */
+    @MessageMapping("/account/edit")
+    public void editing(AccountNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal, @Header("simpSessionId") String sessionId) {
+        notification.setUserId(userAccountClientService.getUser(principal.getPrincipal()).getId());
+        template.convertAndSend("/element/account/" + notification.getUserId() + "/events", ("account" + notification.getUserId() + " edited "));
     }
 }
