@@ -26,7 +26,7 @@
                 <div class="page-title">
                     <h2 id="accountPage-font">Your LENSfolio Account</h2>
                 </div>
-                <div th:if="${messageSuccess}" class="alert alert-success text-center">
+                <div id="messageSuccess" th:if="${messageSuccess}" class="alert alert-success text-center">
                     [[${messageSuccess}]]
                 </div>
             </div>
@@ -111,5 +111,9 @@
         </div>
     </div>
 </div>
+    <script th:inline="javascript">
+        var apiPrefix = [[${apiPrefix}]];
+    </script>
+    <script th:src="@{{apiPrefix}/javascript/account.js(apiPrefix=${apiPrefix})}"></script>
 </body>
 </html>
