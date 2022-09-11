@@ -338,7 +338,7 @@ a.desc.sort:after {
 }
 
 .page-container {
-    max-height: 200vh;
+    max-height: 67vh;
     overflow: auto;
 
     -ms-overflow-style: none;
