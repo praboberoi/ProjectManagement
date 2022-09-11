@@ -7,14 +7,14 @@ import java.util.Optional;
  * Enum containing all possible sprint colors
  */
 public enum SprintColor {
-    DEFAULT_BLUE("blue", 0),
-    GREEN("green",1),
-    PURPLE("purple", 2),
-    DARK_SLATE_GREY("darkSlateGrey", 3),
-    FIREBRICK("firebrick", 4),
-    VIOLET_RED("mediumVioletRed", 5),
-    SEA_GREEN("mediumSeaGreen", 6),
-    ORANGE_RED("orangeRed", 7);
+    WHITE("white", 0),
+    BLUE("blue",1),
+    SYYBLUE("skyblue", 2),
+    PURPLE("purple", 3),
+    ORANGE("orange", 4),
+    GREEN("green", 5),
+    PINK("pink", 6),
+    NAVY("navy", 7);
 
     private String color;
     private int labelNum;

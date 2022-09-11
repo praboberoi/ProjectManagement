@@ -129,7 +129,7 @@ class SprintServiceTest {
                 .sprintName("Sprint 2")
                 .description("This is a sprint description")
                 .project(project)
-                .color(SprintColor.PURPLE)
+                .color(SprintColor.SYYBLUE)
                 .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
                 .endDate(new Date(Calendar.getInstance().getTimeInMillis())).build();
 

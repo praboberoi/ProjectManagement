@@ -63,7 +63,7 @@ public class Sprint {
      */
     @Column()
     @Enumerated(value = EnumType.STRING)
-    private SprintColor color = SprintColor.DEFAULT_BLUE;
+    private SprintColor color = SprintColor.WHITE;
 
     /**
      * Constructor for the Sprint class without arguments
