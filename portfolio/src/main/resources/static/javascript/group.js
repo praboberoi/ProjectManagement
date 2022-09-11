@@ -3,6 +3,9 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
+/**
+ * Toggles the visibility of the recent actions component
+ */
 function toggleRecentActions() {
     document.getElementById("recent-actions-container").classList.toggle('d-lg-none')
     document.getElementById("settings-content").classList.toggle('col-lg-12')
