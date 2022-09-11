@@ -269,7 +269,7 @@ public class GroupController {
      * @param ra Redirect Attribute frontend message object
      * @return The group page
      */
-    @GetMapping(path="/groups/{groupId}")
+    @GetMapping(path="/group/{groupId}")
     public String groupPage(@PathVariable int groupId, Model model, RedirectAttributes ra) {
         Groups group = groupService.getGroupById(groupId);
         if (group.getGroupId() == 0) {
