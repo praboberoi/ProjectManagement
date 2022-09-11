@@ -162,3 +162,4 @@ deploy-production-portfolio:
       - portfolio/build/libs
   only:
     - tags
+

@@ -12,6 +12,10 @@ Given("I navigate to {string}", (location) => {
     cy.contains(".nav-link", location).click()
 });
 
+Given("I navigate directly to {string}", (location) => {
+    cy.visit(location)
+});
+
 When("I select the {word} project", (project) => {
     cy.contains(project).click()
     waitForWebSocket()

@@ -1,5 +1,7 @@
-package nz.ac.canterbury.seng302.portfolio.model;
+package nz.ac.canterbury.seng302.portfolio.model.object;
 
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

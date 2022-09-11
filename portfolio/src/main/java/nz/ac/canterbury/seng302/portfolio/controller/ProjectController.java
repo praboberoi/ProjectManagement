@@ -1,9 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import nz.ac.canterbury.seng302.portfolio.model.Deadline;
-import nz.ac.canterbury.seng302.portfolio.model.Event;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
@@ -82,7 +79,7 @@ public class ProjectController {
             model.addAttribute("event", newEvent);
             model.addAttribute("deadline", newDeadline);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
-            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             model.addAttribute("projectDateMin", project.getStartDate());
             model.addAttribute("projectDateMax", project.getEndDate());
             return "project";

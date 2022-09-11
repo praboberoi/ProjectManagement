@@ -31,7 +31,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        registry.addEndpoint("/lensfolio-websocket").setHandshakeHandler(new CustomHandshakeHandler());
+        registry.addEndpoint("/lensfolio-websocket")
+                .setAllowedOriginPatterns("https://csse-s302g3.canterbury.ac.nz*")
+                .setHandshakeHandler(new CustomHandshakeHandler());
     }
 
     /**

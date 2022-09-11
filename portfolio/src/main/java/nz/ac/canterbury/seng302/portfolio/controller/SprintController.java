@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
@@ -23,7 +24,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.PersistenceException;
 import java.sql.Date;
-
 import java.util.List;
 
 @Controller
@@ -31,11 +31,12 @@ public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
-    @Autowired private EventService eventService;
     @Value("${apiPrefix}") private String apiPrefix;
 
     @Autowired
     private SimpMessagingTemplate template;
+
+    private final String redirectDashboard =  "redirect:/dashboard";
 
     /**
      * Adds common model elements used by all controller methods.
@@ -59,14 +60,14 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             Model model,
             RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
             model.addAttribute("pageTitle", "Add New Sprint");
             model.addAttribute("sprint", newSprint);
             model.addAttribute("project", currentProject);
-            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             List<String> dateRange = sprintService.getSprintDateRange(currentProject, newSprint);
 
             model.addAttribute("sprintDateMin", dateRange.get(0));
@@ -134,7 +135,7 @@ public class SprintController {
         @AuthenticationPrincipal AuthState principal,
         Model model,
         RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
@@ -146,7 +147,7 @@ public class SprintController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
-            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             return "error";
         }
     }
@@ -167,14 +168,17 @@ public class SprintController {
             Model model,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return redirectDashboard;
+        }
         try {
+
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
             model.addAttribute("sprint", sprint);
             model.addAttribute("project", currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
-            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             model.addAttribute("sprintDateMin", currentProject.getStartDate());
             model.addAttribute("sprintDateMax", currentProject.getEndDate());
             model.addAttribute("submissionName", "Save");
@@ -202,7 +206,7 @@ public class SprintController {
         @PathVariable int projectId,
         @AuthenticationPrincipal AuthState principal,
         RedirectAttributes ra){
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return "redirect:/dashboard";
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
@@ -217,7 +221,7 @@ public class SprintController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
-            model.addAttribute("user", userAccountClientService.getUser(principal));
+            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             return "error";
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());

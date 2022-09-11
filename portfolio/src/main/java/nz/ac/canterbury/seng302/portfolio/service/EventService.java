@@ -77,6 +77,7 @@ public class EventService {
                 .orElse(List.of());
     }
 
+
     /**
      * Verifies the event date and time
      * @param event The event object to verify

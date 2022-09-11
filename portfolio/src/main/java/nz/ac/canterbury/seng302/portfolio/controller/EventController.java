@@ -129,7 +129,7 @@ public class EventController {
      * Sends an update message to all clients connected to the websocket
      * @param projectId Id of the event's project updated
      * @param eventId Id of the event edited
-     * @param action The action taken (delete, created, edited)
+     * @param action The action taken (deleted, created, edited)
      */
     private void notifyEvent(int projectId, int eventId, String action) {
         template.convertAndSend("/element/project/" + projectId + "/events", ("event" + eventId + " " + action));
