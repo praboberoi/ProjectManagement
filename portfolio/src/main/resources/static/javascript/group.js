@@ -3,6 +3,8 @@ var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
+const GIT_API = "/api/v4/"
+
 /**
  * Attempts to connect to the git repository using the details provided
  * @param event Form submit event
@@ -16,7 +18,7 @@ async function connectTest(event) {
     let accessToken = document.getElementById("git-access-token").value
     let hostAddress = document.getElementById("git-host-address").value
 
-    const response = await fetch(hostAddress + "/api/v4/projects/" + projectId, {
+    const response = await fetch(hostAddress + GIT_API + "projects/" + projectId, {
         method: 'GET',
         headers: {
             'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
@@ -54,7 +56,7 @@ async function getRecentActions() {
     let accessToken = document.getElementById("git-access-token").value
     let hostAddress = document.getElementById("git-host-address").value
 
-    const response = await fetch(hostAddress + "/api/v4/projects/" + projectId + "/events", {
+    const response = await fetch(hostAddress + GIT_API + "projects/" + projectId + "/events", {
         method: 'GET',
         headers: {
             'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
