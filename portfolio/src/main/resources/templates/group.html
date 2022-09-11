@@ -27,9 +27,9 @@
         <div class="alert alert-danger text-center" id="messageDanger">[[${messageDanger}]]</div>
         <div class="alert alert-success text-center" id="messageSuccess">[[${messageSuccess}]]</div>
 
-        <div class="" id="group-container">
+        <div class="" id="settings-container">
             <div class="row mt-3">
-                <div id="group-list" class="col-8" th:fragment="groupList">
+                <div id="settings-content" class="col-8" th:fragment="groupList">
                     <div class="card project-card mb-3">
                         <div class="container-fluid">
                             <div class="row">
@@ -40,7 +40,7 @@
                                                 data-bs-target="#members-tab-pane" type="button" role="tab"
                                                 aria-controls="members-tab-pane" aria-selected="true">Members</button>
                                         </li>
-                                        <li class="nav-item" role="presentation">
+                                        <li class="nav-item" role="presentation" th:if="${adminOrTeacher || group.members.contains(user)}">
                                             <button class="nav-link" id="repo-settings-tab" data-bs-toggle="tab"
                                                 data-bs-target="#repo-settings-tab-pane" type="button" role="tab"
                                                 aria-controls="repo-settings-tab-pane" aria-selected="false">Repo
@@ -53,14 +53,14 @@
                                             aria-labelledby="members-tab" th:insert="groupFragments::groupUserList"></div>
                                         <div class="tab-pane fade" id="repo-settings-tab-pane" role="tabpanel"
                                             aria-labelledby="repo-settings-tab"
-                                            th:insert="groupFragments::repoSettings"></div>
+                                            th:insert="groupFragments::repoSettings" th:if="${adminOrTeacher || group.members.contains(user)}"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="group-list" class="col-4" th:fragment="groupList">
+                <div id="recent-actions-container" class="col-4" th:fragment="groupList">
                     <div class="card project-card mb-3">
                         <div class="container-fluid">
                             <div class="row">
