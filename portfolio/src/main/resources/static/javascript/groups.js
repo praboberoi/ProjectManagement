@@ -63,12 +63,12 @@ function checkLongName(event) {
 /**
  * Makes a call to the server and replaces the current group with the new one
  */
-function getSelectedGroup(selectedGroupId) {
+function getGroup(groupId) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
-                document.getElementById("selectedGroup").outerHTML = httpRequest.responseText;
+                document.getElementById("group").outerHTML = httpRequest.responseText;
             } else if (httpRequest.status === 400) {
                 messageDanger.hidden = false;
                 messageSuccess.hidden = true;
@@ -81,7 +81,7 @@ function getSelectedGroup(selectedGroupId) {
         }
     }
 
-    httpRequest.open('GET', apiPrefix + `/groups/${selectedGroupId}`);
+    httpRequest.open('GET', apiPrefix + `/groups/${groupId}`);
     httpRequest.send();
 }
 
@@ -97,7 +97,7 @@ function deleteGroup(groupId) {
                 messageSuccess.hidden = false
                 messageDanger.hidden = true;
                 messageSuccess.innerText = httpRequest.responseText;
-                getSelectedGroup("unassigned")
+                getGroup("unassigned")
                 updateGroupList()
             } else {
                 messageDanger.hidden = false;
@@ -207,9 +207,9 @@ function removeUsers(groupId) {
             }
 
             if (groupId == -1) {
-                getSelectedGroup('teachers')
+                getGroup('teachers')
             } else {
-                getSelectedGroup(groupId)
+                getGroup(groupId)
             }
             updateGroupList()
         }
@@ -300,9 +300,9 @@ function allowDrop(event) {
             }
             if (originGroupId != null) {
                 if (groupId == -1 && typeof originGroupId != 'string') {
-                    getSelectedGroup('teachers')
+                    getGroup('teachers')
                 } else {
-                    getSelectedGroup(originGroupId)
+                    getGroup(originGroupId)
                 }
             }
             updateGroupList()
