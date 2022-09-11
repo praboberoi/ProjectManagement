@@ -89,6 +89,10 @@ a.project-name {
 
 }
 
+.btn-evidence {
+    width: fit-content!important;
+}
+
 .required:after {
     content:"*";
     color: red;

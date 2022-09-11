@@ -36,6 +36,7 @@
             <th scope="col" style="width:auto"><a type="button" class="sort" th:classappend="${(order == 'firstName')? asc + ' table-active' : ''}" onclick="sortByField('firstName')">Name</a></th>
             <th scope="col" style="width:auto"><a type="button" class="sort" th:classappend="${(order == 'nickname')? asc + ' table-active' : ''}" onclick="sortByField('nickname')">Nickname</a></th>
             <th scope="col" style="width:auto"><a type="button" class="sort" th:classappend="${(order == 'roles')? asc + ' table-active' : ''}" onclick="sortByField('roles')">Roles</a></th>
+            <th scope="col" style="width:auto"><a type="button">Actions</a></th>
           </tr>
           </thead>
           <tbody>
@@ -76,6 +77,11 @@
                       </div>
                     </li>
                   </ul>
+                <td th:id="'user' + ${user.userId} + 'Action'">
+                <a class="nav-link btn btn-outline-primary btn-evidence" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/evidence/{user.userId}') ? 'active':''}" th:href="@{{apiPrefix}/evidence/{userId}(apiPrefix=${apiPrefix}, userId=${user.userId})}">
+                  <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/file-earmark-text.svg(apiPrefix=${apiPrefix})}"/>
+                  Evidence
+                </a>
               </tr>
             </th:block>
           </tbody>
