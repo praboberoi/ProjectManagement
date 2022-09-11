@@ -9,7 +9,7 @@ const GIT_API = "/api/v4/"
  * Attempts to connect to the git repository using the details provided
  * @param event Form submit event
  */
-function connectTest(event) {
+function connectToRepo(event) {
     event.preventDefault()
 
     let message = document.getElementById("connection-message")
@@ -157,7 +157,7 @@ function addUserProfile(element, event) {
 function addDate(element, event) {
     var timeContainer = document.createElement('div');
     element.appendChild(timeContainer)
-    timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric' })
+    timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' })
 }
 
 /**
