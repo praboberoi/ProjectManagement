@@ -50,7 +50,7 @@
                                 <div class="card-body">
                                     <h5 class="card-title">
                                         <div>
-                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="'getSelectedEvidence(' + ${evidence.evidenceId} + ')'" th:text="${evidence.title}" ></a>
+                                            <a role="button" class="project-name" href="javascript:void(0);" th:onclick="'getSelectedEvidence(' + ${evidence.evidenceId} + ', ' + ${evidence.ownerId} + ')'" th:text="${evidence.title}" ></a>
                                         </div>
                                     </h5>
                                     <b class="evidenceCardText">Project: </b>
@@ -103,6 +103,6 @@
     let apiPrefix = [[${apiPrefix}]];
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
-<script th:src="@{{apiPrefix}/javascript/groups.js(apiPrefix=${apiPrefix})}"></script>
+<script th:src="@{{apiPrefix}/javascript/evidence.js(apiPrefix=${apiPrefix})}"></script>
 </body>
 </html>

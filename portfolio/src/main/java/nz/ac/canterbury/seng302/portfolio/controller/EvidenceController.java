@@ -63,20 +63,20 @@ public class EvidenceController {
      * @return The selected evidence fragment
      */
     @GetMapping(path="/evidence/{userId}/{evidenceId}")
-    public ModelAndView selectedEvidence(
+    public Model selectedEvidence(
             @PathVariable int userId,
             @PathVariable int evidenceId,
+            Model model,
             RedirectAttributes ra) {
-        ModelAndView mv = new ModelAndView("evidence::evidenceList");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-        mv.addObject("listEvidence", listEvidence);
+        model.addAttribute("listEvidence", listEvidence);
         try {
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
-            mv.addObject("selectedEvidence", selectedEvidence);
+            model.addAttribute("selectedEvidence", selectedEvidence);
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        return mv;
+        return model;
     }
 
 
