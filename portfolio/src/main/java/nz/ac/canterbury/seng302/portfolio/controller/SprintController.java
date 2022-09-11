@@ -31,6 +31,7 @@ public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
+    @Autowired private EventService eventService;
     @Value("${apiPrefix}") private String apiPrefix;
 
     @Autowired
