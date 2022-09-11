@@ -3,6 +3,11 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
+function toggleRecentActions() {
+    document.getElementById("recent-actions-container").classList.toggle('d-lg-none')
+    document.getElementById("settings-content").classList.toggle('col-lg-12')
+}
+
 /**
  * Attempts to connect to the git repository using the details provided
  * @param event Form submit event
