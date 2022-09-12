@@ -33,14 +33,15 @@
                     <div class="card project-card mb-3 page-container">
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="card-body">
+                                <div class="card-head navbar">
                                     <ul class="nav nav-tabs" id="myTab" role="tablist">
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link active" id="members-tab" data-bs-toggle="tab"
                                                 data-bs-target="#members-tab-pane" type="button" role="tab"
                                                 aria-controls="members-tab-pane" aria-selected="true">Members</button>
                                         </li>
-                                        <li class="nav-item" role="presentation" th:if="${adminOrTeacher || group.members.contains(user)}">
+                                        <li class="nav-item" role="presentation"
+                                            th:if="${adminOrTeacher || group.members.contains(user)}">
                                             <button class="nav-link" id="repo-settings-tab" data-bs-toggle="tab"
                                                 data-bs-target="#repo-settings-tab-pane" type="button" role="tab"
                                                 aria-controls="repo-settings-tab-pane" aria-selected="false">Repo
@@ -48,26 +49,40 @@
                                         </li>
                                     </ul>
 
+                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab" role="tablist">
+                                        <li class="nav-item" role="presentation">
+                                            <button class="nav-link active" id="actions-toggle-tab" type="button" role="tab"
+                                                onclick="toggleRecentActions()">Recent Actions</button>
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="card-body">
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="members-tab-pane" role="tabpanel"
-                                            aria-labelledby="members-tab" th:insert="groupFragments::groupUserList"></div>
+                                            aria-labelledby="members-tab" th:insert="groupFragments::groupUserList">
+                                        </div>
                                         <div class="tab-pane fade" id="repo-settings-tab-pane" role="tabpanel"
-                                            aria-labelledby="repo-settings-tab"
-                                            th:insert="groupFragments::repoSettings" th:if="${adminOrTeacher || group.members.contains(user)}"></div>
+                                            aria-labelledby="repo-settings-tab" th:insert="groupFragments::repoSettings"
+                                            th:if="${adminOrTeacher || group.members.contains(user)}"></div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div id="recent-action-container" class="col-12 col-lg-4" th:fragment="groupList">
+                <div id="recent-actions-container" class="col-12 col-lg-4" th:fragment="groupList">
                     <div class="card project-card mb-3 page-container">
                         <div class="container-fluid">
                             <div class="row">
-                                <div class="card-body">
+                                <div id="recent-actions-header">
                                     <h5 class="text-center">Recent actions</h5>
+                                    <button type="button" class="close position-absolute top-0 end-0 d-none d-lg-block"
+                                        onclick="toggleRecentActions()">
+                                        <span aria-hidden="true">×</span>
+                                    </button>
+                                </div>
+                                <div class="card-body">
                                     <div id="recent-action-cards">
-
                                     </div>
                                 </div>
                             </div>

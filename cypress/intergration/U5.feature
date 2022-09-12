@@ -35,7 +35,7 @@ Feature: U5. Groups and group membership
 
   Scenario: AC5 Ctrl/command and shift keys work as expected when I am selecting students. It is visually obvious (e.g., background shading) which students are selected.
     Given I login as an admin
-    And I navigate to Groups
+    And I navigate to 'Groups'
     When I click on user 0
     And I ctrl click on user 5
     And I ctrl + shift click on user 8

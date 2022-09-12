@@ -6,6 +6,15 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 const GIT_API = "/api/v4/"
 
 /**
+ * Toggles the visibility of the recent actions component
+ */
+function toggleRecentActions() {
+    document.getElementById("recent-actions-container").classList.toggle('d-lg-none')
+    document.getElementById("main-content").classList.toggle('col-lg-12')
+    document.getElementById("actions-toggle-tab").classList.toggle('active')
+}
+
+/**
  * Attempts to connect to the git repository using the details provided
  * @param event Form submit event
  */
