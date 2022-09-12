@@ -49,7 +49,7 @@ class RepoRepositoryTest {
     @Test
     @Transactional
     void givenRepoExists_whenFindByGroupId_thenCorrectTheCorrectRepoIsReturned() {
-        Repo repo2 = new Repo.Builder()
+        Repo repo = new Repo.Builder()
                 .repoId(1)
                 .repoName("New Repo")
                 .hostAddress("http://Test.com")
@@ -57,11 +57,11 @@ class RepoRepositoryTest {
                 .gitlabProjectId(2)
                 .accessToken("token")
                 .build();
-        repoRepository.save(repo2);
+        repo = repoRepository.save(repo);
 
         Repo searchResult3 = repoRepository.getByGroupId(2);
 
-        assertEquals(repo2, searchResult3);
+        assertEquals(repo, searchResult3);
 
     }
 
