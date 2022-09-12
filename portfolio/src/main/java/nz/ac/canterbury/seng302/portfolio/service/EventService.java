@@ -117,26 +117,28 @@ public class EventService {
      * Updates the colours for the given event
      * @param event of type Event
      */
-    public void updateEventColours(Event event) {
+    public void updateEventColors(Event event) {
         event.clearColourList();
         List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event)
                 .stream().sorted(Comparator.comparingInt(Sprint::getSprintId))
                 .toList();
 
-        if (sprintList.size() > 0) {
-            if (sprintList.get(0).getStartDate().after(event.getStartDate()) )
-                event.addColor(SprintColor.WHITE);
-        }
+        AtomicInteger counter = new AtomicInteger(0);
 
         sprintList.forEach(sprint -> {
             if ( !event.getColors().contains(sprint.getColor()) ) {
-                event.addColor(sprint.getColor());
+                event.addColor(sprint.getColor(), counter.getAndIncrement());
+                System.out.println(event.getColors());
+                System.out.println(counter.get());
             }
         });
 
         if (sprintList.size() > 0) {
+            if ( sprintList.get(0).getStartDate().after(event.getStartDate()) )
+                event.addColor(SprintColor.WHITE, 0);
+
             if (sprintList.get(sprintList.size() - 1).getEndDate().before(event.getEndDate()))
-                event.addColor(SprintColor.WHITE);
+                event.addColor(SprintColor.WHITE, event.getColors().size());
         }
     }
 

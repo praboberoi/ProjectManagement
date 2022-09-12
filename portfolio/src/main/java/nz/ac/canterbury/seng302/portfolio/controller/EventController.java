@@ -5,7 +5,6 @@ import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
-import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
@@ -60,7 +59,7 @@ public class EventController {
       @GetMapping(path="/project/{projectId}/events")
       public ModelAndView events(@PathVariable("projectId") int projectId) throws IncorrectDetailsException {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
-          listEvents.forEach(eventService::updateEventColours);
+          listEvents.forEach(eventService::updateEventColors);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);
@@ -87,7 +86,7 @@ public class EventController {
         try {
             event.setProject(projectService.getProjectById(projectId));
             eventService.verifyEvent(event);
-            eventService.updateEventColours(event);
+            eventService.updateEventColors(event);
             message = eventService.saveEvent(event);
             notifyEvent(projectId, event.getEventId(), "edited");
             return ResponseEntity.status(HttpStatus.OK).body(message);

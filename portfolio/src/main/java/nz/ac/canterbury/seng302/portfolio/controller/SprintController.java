@@ -202,7 +202,7 @@ public class SprintController {
             sprintService.updateSprintLabelsAndColor(sprintService.getSprintByProject(projectId));
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
-            listEvents.forEach(eventService::updateEventColours);
+            listEvents.forEach(eventService::updateEventColors);
             ra.addFlashAttribute("listEvents", listEvents);
             model.addAttribute("listSprints", listSprints);
             return "redirect:/project/{projectId}";

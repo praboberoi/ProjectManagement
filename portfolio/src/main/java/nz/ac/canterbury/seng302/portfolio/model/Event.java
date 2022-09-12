@@ -135,8 +135,8 @@ public class Event {
         return this.colors;
     }
 
-    public void addColor(SprintColor color) {
-        this.colors.add(color);
+    public void addColor(SprintColor color, int index) {
+        this.colors.add(index, color);
     }
 
     public void clearColourList() {
