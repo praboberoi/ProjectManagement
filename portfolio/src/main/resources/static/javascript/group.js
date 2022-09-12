@@ -28,6 +28,7 @@ function connectToRepo(event) {
         const repo = await  response.json();
         if (!repo.hasOwnProperty('id')) {
             message.innerText = "Repo not found"
+            clearRecentActions()
             return
         }
         document.getElementById("git-project-name").value = repo.name
