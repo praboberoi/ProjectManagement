@@ -10,7 +10,7 @@ const GIT_API = "/api/v4/"
  */
 function toggleRecentActions() {
     document.getElementById("recent-actions-container").classList.toggle('d-lg-none')
-    document.getElementById("settings-content").classList.toggle('col-lg-12')
+    document.getElementById("main-content").classList.toggle('col-lg-12')
     document.getElementById("actions-toggle-tab").classList.toggle('active')
 }
 
