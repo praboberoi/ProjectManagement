@@ -47,7 +47,7 @@ function connectToRepo(event) {
 function clearRecentActions() {
     let recentActions = document.getElementById("recent-action-cards")
     recentActions.innerHTML = ""
-    var eventCard = document.createElement('div');
+    let eventCard = document.createElement('div');
     recentActions.appendChild(eventCard);
     eventCard.classList.add('card', 'shadow-sm', 'bg-white', 'rounded', 'event-card', 'm-2', 'error-msg')
     eventCard.textContent = "Invalid repo, unable to retrieve recent actions"
@@ -80,12 +80,12 @@ async function getRecentActions() {
     recentActions.innerHTML = ""
     events.forEach(event => {
         // Card
-        var eventCard = document.createElement('div');
+        let eventCard = document.createElement('div');
         recentActions.appendChild(eventCard);
         eventCard.classList.add('card', 'shadow-sm', 'bg-white', 'rounded', 'event-card', 'm-2')
 
         // Card container
-        var eventBody = document.createElement('div');
+        let eventBody = document.createElement('div');
         eventCard.appendChild(eventBody)
         eventBody.classList.add('d-flex', 'justify-content-between', 'py-2')
 
@@ -95,13 +95,13 @@ async function getRecentActions() {
         addUserProfile(dataContainer, event)
 
         // Action component
-        var actionContainer = document.createElement('div');
+        let actionContainer = document.createElement('div');
         eventBody.appendChild(actionContainer)
         actionContainer.classList.add('text-end')
 
         addDate(dataContainer, event)
 
-        var action = document.createElement('p');
+        let action = document.createElement('p');
         actionContainer.appendChild(action)
 
         if (event.action_name == 'joined') {
@@ -135,11 +135,11 @@ async function getRecentActions() {
  */
 function addUserProfile(element, event) {
     // Image component
-    var userImageContainer = document.createElement('div');
+    let userImageContainer = document.createElement('div');
     element.appendChild(userImageContainer)
 
     // Profile photo
-    var userImage = document.createElement('img');
+    let userImage = document.createElement('img');
     userImageContainer.appendChild(userImage)
     userImage.src = event.author.avatar_url
     userImage.height = 20
@@ -156,7 +156,7 @@ function addUserProfile(element, event) {
  * @param event GitLab api response
  */
 function addDate(element, event) {
-    var timeContainer = document.createElement('div');
+    let timeContainer = document.createElement('div');
     element.appendChild(timeContainer)
     timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' })
 }
@@ -167,7 +167,7 @@ function addDate(element, event) {
  * @param event GitLab api response
  */
 function addCreated(element, event) {
-    var action = document.createElement('p');
+    let action = document.createElement('p');
     element.appendChild(action)
     if (event.target_type == "WikiPage::Meta") {
         action.innerText = "Created wiki page: " + event.target_title
