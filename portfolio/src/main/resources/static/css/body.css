@@ -4,9 +4,11 @@ css for the body of each page
 
 .main{
     padding-left: min(15%, 250px);
-    padding-top: 60px;
+    margin-top: 8vh;
     margin-left: 20px;
-    margin-right: 20px;
+    padding-right: 20px;
+    height: 92vh;
+    overflow-y: scroll;
 }
 
 .project-card{
@@ -185,6 +187,7 @@ a.project-name {
     margin-right: 20px;
     margin-bottom: 15px;
     padding-left: 10px;
+    padding-right: 10px;
 }
 
 #detailsCard, #calendarOb {
@@ -339,6 +342,19 @@ a.desc.sort:after {
 .alert:empty {
     display: none;
 }
+
+.page-container {
+    max-height: 67vh;
+    overflow: auto;
+
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.page-container::-webkit-scrollbar {
+    display: none;
+}
+
 
 @media only screen and (max-width: 768px) {
     #groupDropdown {
