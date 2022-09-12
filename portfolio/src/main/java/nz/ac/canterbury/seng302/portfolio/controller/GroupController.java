@@ -48,7 +48,7 @@ public class GroupController {
     @Autowired
     private SimpMessagingTemplate template;
 
-    private static final String GROUP = "groupSetting";
+    private static final String GROUP = "group";
     private static final String GROUP_FRAGMENT = "groups::group";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
     private static final String WARNING_MESSAGE = "messageDanger";
@@ -85,6 +85,19 @@ public class GroupController {
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView("groups::groupList");
         mv.addObject("listGroups", groups);
+        return mv;
+    }
+
+    /**
+     * Gets the list of members of a selected group and returns it as a fragment
+     * @param groupId The id of the requested group
+     * @return A html fragment containing the group user list
+     */
+    @GetMapping(path="group/{groupId}/members")
+    public ModelAndView groupList(@PathVariable int groupId) {
+        Groups group = groupService.getGroupById(groupId);
+        ModelAndView mv = new ModelAndView("groupFragments::groupUserList");
+        mv.addObject("group", group);
         return mv;
     }
 
@@ -202,7 +215,6 @@ public class GroupController {
     /**
      * Removes the selected users from the selected group
      * @param listOfUserIds List of users to remove in csv format
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @param principal Authentication information containing user info
      * @return Response with status code and message
      */
@@ -210,7 +222,6 @@ public class GroupController {
     public ResponseEntity<String> removeMembersFromGroup(
             @PathVariable Integer groupId,
             String listOfUserIds,
-            Model model,
             @AuthenticationPrincipal AuthState principal){
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
@@ -242,7 +253,6 @@ public class GroupController {
     /**
      * Adds the selected users to the selected group
      * @param listOfUserIds List of users to add in csv format
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @param principal Authentication information containing user info
      * @return Response with status code and message
      */
@@ -250,7 +260,6 @@ public class GroupController {
     public ResponseEntity<String> addMembersToGroup(
             @PathVariable Integer groupId,
             String listOfUserIds,
-            Model model,
             @AuthenticationPrincipal AuthState principal){
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
@@ -286,18 +295,6 @@ public class GroupController {
             return GROUPS_REDIRECT;
         }
         model.addAttribute("group", group);
-        return GROUP;
-    }
-
-    /**
-     * Sends an update message to every client subscribed to /event/edit when a user starts editing an event
-     * @param notification Notification containing the event ID and project ID that is being edited
-     * @param principal Authentication information containing user info
-     * @param sessionId Session ID of the websocket communication
-     */
-    @MessageMapping("/account/edit")
-    public void editing(AccountNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal, @Header("simpSessionId") String sessionId) {
-        notification.setUserId(userAccountClientService.getUser(principal.getPrincipal()).getId());
-        template.convertAndSend("/element/account/" + notification.getUserId() + "/events", ("account" + notification.getUserId() + " edited "));
+        return "groupSetting";
     }
 }

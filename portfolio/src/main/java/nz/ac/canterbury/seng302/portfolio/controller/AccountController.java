@@ -158,11 +158,8 @@ public class AccountController {
             bio,
             pronouns,
             email);
-//        Start of image upload functionality
         if (!multipartFile.isEmpty()) {
-            // original filename of image user has uploaded
             String extension = multipartFile.getContentType();
-            // check if file is an accepted image type
             ArrayList<String> acceptedFileTypes = new ArrayList<>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
                 if (MediaType.IMAGE_GIF_VALUE.equals(multipartFile.getContentType())) {

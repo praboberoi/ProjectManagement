@@ -11,9 +11,9 @@ function connect() {
     let websocketProtocol = window.location.protocol === 'http:'?'ws://':'wss://'
     stompClient = new StompJs.Client({
         brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
-        debug: function(str) {
-            console.log(str);
-        },
+        // debug: function(str) {
+        //     console.log(str);
+        // },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
@@ -88,21 +88,38 @@ function subscribe() {
  * @param message Message with user id
  */
 function updateUser(message) {
-    console.log(message)
-    // let array = message.body.split(' ')
-    // let sprint = array[0]
-    // let action = array[1]
-    // let httpRequest = new XMLHttpRequest();
-    // if (action === "edited") {
-    //     sprintElement = document.getElementById("sprint-list")
-    //     httpRequest.open('GET', window.location.pathname + `/sprints`);
-    // } else if (action === "deleted") {
-    //     document.getElementById(sprint + "Row").outerHTML = ""
-    //     return
-    // } else {
-    //     console.log("Unknown command: " + action)
-    //     return
-    // }
-    // httpRequest.onreadystatechange = () => updateElement(httpRequest, sprintElement)
-    // httpRequest.send();
+    let array = message.body.split(' ')
+    let userId = array[1]
+    let httpRequest = new XMLHttpRequest();
+
+    const xpath = `//td[text()='` + userId + `']`
+    let groupListElement = document.getElementById("userListDataTable")
+    const changedUserId = document.evaluate(xpath, groupListElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue.textContent
+
+    if (changedUserId === userId) {
+        httpRequest.open('GET', window.location.pathname + `/members`);
+        httpRequest.onreadystatechange = () => updateElement(httpRequest, groupListElement)
+        httpRequest.send();
+    }
+}
+
+/**
+ * Replaces the old http component with the new one contained in the request
+ * @param httpRequest Request containing a model view element
+ * @param element The element to replace
+ */
+function updateElement(httpRequest, element){
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            element.innerHTML = httpRequest.responseText;
+        } else if (httpRequest.status === 400) {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Bad Request";
+        } else {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Something went wrong.";
+        }
+    }
 }

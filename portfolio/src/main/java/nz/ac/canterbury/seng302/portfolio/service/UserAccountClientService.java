@@ -4,12 +4,15 @@ import com.google.protobuf.ByteString;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.client.inject.GrpcClient;
+import nz.ac.canterbury.seng302.portfolio.controller.AccountController;
 import nz.ac.canterbury.seng302.portfolio.utils.UserField;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.FileUploadStatusResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,6 +34,7 @@ public class UserAccountClientService {
     private UserAccountServiceGrpc.UserAccountServiceStub userAccountServiceStub;
 
     private static Logger logger =LoggerFactory.getLogger(UserAccountClientService.class);
+
 
     /**
      * Sends a register request to the server
@@ -173,10 +177,8 @@ public class UserAccountClientService {
      * @throws IOException Failure to upload the image
      */
     public void uploadImage(final int id, final String ext, final MultipartFile file) throws IOException {
-        // request observer from UserAccountServiceGrpc
         StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountServiceStub.uploadUserProfilePhoto(new UserAccountClientService.FileUploadObserver());
 
-        // build metadata from proto in user_accounts.proto
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
                 .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
                         .setUserId(id)
@@ -185,7 +187,6 @@ public class UserAccountClientService {
 
         streamObserver.onNext(metadata);
 
-        // upload file in chunks and upload as a stream
         InputStream inputStream = file.getInputStream();
         byte[] bytes = new byte[4096];
         int size;
@@ -195,7 +196,7 @@ public class UserAccountClientService {
                     .build();
             streamObserver.onNext(uploadImage);
         }
-        // close stream
+
         inputStream.close();
         streamObserver.onCompleted();
     }
