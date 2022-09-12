@@ -47,18 +47,18 @@ public class EvidenceService {
 
     /**
      * Creates a new evidence object
-     * @param user User who the evidence relates to
+     * @param userId User ID who the evidence relates to
      * @param project Project which the evidence relates to
      * @return Evidence object
      */
-    public Evidence getNewEvidence(User user, Project project) {
+    public Evidence getNewEvidence(int userId, Project project) {
         return new Evidence.Builder()
-                .evidenceId(999)
+//                .evidenceId(999)
                 .project(project)
                 .dateOccurred(new Date())
-                .title("New evidence")
-                .description("A new piece of evidence")
-                .ownerId(user.getUserId())
+//                .title("New evidence")
+//                .description("A new piece of evidence")
+                .ownerId(userId)
                 .build();
     }
 

@@ -183,7 +183,7 @@ class EvidenceServiceTest {
                 .description("A new piece of evidence")
                 .ownerId(999)
                 .build();
-        Evidence testEvidence = evidenceService.getNewEvidence(user, project);
+        Evidence testEvidence = evidenceService.getNewEvidence(999, project);
         assertEquals(testEvidence, expectedEvidence);
     }
 

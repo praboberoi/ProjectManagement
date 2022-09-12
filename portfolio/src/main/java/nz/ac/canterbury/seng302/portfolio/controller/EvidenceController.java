@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
@@ -58,18 +59,21 @@ public class EvidenceController {
             HttpServletRequest request,
             HttpServletResponse response,
             Model model,
+            @PathVariable("userId") int userId,
             @AuthenticationPrincipal AuthState principal
 
     ) {
         LocalDate now = LocalDate.now();
         Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now),
                 java.sql.Date.valueOf(now.plusDays(50)));
-        Evidence evidence1 = new Evidence(1, project, new Date(), "Test Evidence 1", "testing", 1);
-        Evidence evidence2 = new Evidence(2, project, new Date(), "Test Evidence 2", "testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing ", 1);
-        Evidence[] evidences = {evidence1, evidence2};
-        List<Evidence> listEvidences = Arrays.asList(evidences);
-        model.addAttribute("listEvidence", listEvidences);
-        model.addAttribute("selectedEvidence", evidence2);
+//        Evidence evidence1 = new Evidence(1, project, new Date(), "Test Evidence 1", "testing", 1);
+//        Evidence evidence2 = new Evidence(2, project, new Date(), "Test Evidence 2", "testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing ", 1);
+//        Evidence[] evidences = {evidence1, evidence2};
+        Evidence newEvidence = evidenceService.getNewEvidence(userId, project);
+
+//        List<Evidence> listEvidences = Arrays.asList(evidences);
+        model.addAttribute("evidence", newEvidence);
+//        model.addAttribute("selectedEvidence", evidence2);
         return "evidence";
     }
 
