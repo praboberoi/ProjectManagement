@@ -3,18 +3,17 @@
         <div class="form-group">
             <label for="git-project-name" class="col-form-label">Project Name</label>
             <input type="text" class="form-control" id="git-project-name" disabled></input>
-            <p id="gitProjectNameError" th:text="${gitProjectNameError}" class="error-msg"></p>
 
             <label for="git-alias" class="col-form-label required">Project Alias</label>
-            <input type="text" class="form-control" id="git-project-alias" required></input>
-            <p id="gitProjectAliasError" th:text="${gitProjectAliasError}" class="error-msg"></p>
+            <input type="text" class="form-control" id="git-project-alias" required onkeyup="validateProjectAlias();"></input>
+            <p id="gitProjectAliasError" th:text="${gitProjectAliasError}" class="error-msg" ></p>
 
 
             <label for="git-project-id" class="col-form-label required">Project Id</label>
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is found under the repo's name."><img
                     class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
-            <input type="number" class="form-control" id="git-project-id" required></input>
+            <input type="number" class="form-control" id="git-project-id" required onkeyup="validateProjectID();"></input>
             <p id="gitProjectIdError" th:text="${gitProjectIdError}" class="error-msg"></p>
 
 
@@ -24,14 +23,13 @@
                     class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
             <input type="text" class="form-control" id="git-access-token"></input>
-            <p id="gitAccessTokenError" th:text="${gitAccessTokenError}" class="error-msg"></p>
 
 
             <label for="git-host-address" class="col-form-label required">Project host address</label>
             <span data-bs-toggle="tooltip" data-bs-placement="top"
                 title="This is the host of your repo (e.g. https://github.com)."><img class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
-            <input type="text" class="form-control" id="git-host-address" required></input>
+            <input type="text" class="form-control" id="git-host-address" required onkeyup="validateProjectHostAddress();"></input>
             <p id="gitHostAddressError" th:text="${gitHostAddressError}" class="error-msg"></p>
 
         </div>
