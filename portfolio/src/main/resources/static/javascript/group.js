@@ -184,3 +184,10 @@ function addCreated(element, event) {
         action.innerText = "Created the project"
     }
 }
+
+/**
+ * Runs when the page is loaded
+ */
+ document.addEventListener('DOMContentLoaded', function() {
+    connectTest()
+});

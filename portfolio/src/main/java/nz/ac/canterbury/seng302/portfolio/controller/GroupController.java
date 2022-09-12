@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.portfolio.model.Repo;
+import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -38,6 +40,9 @@ public class GroupController {
     private GroupService groupService;
 
     @Autowired private UserAccountClientService userAccountClientService;
+
+    @Autowired
+    private RepoRepository repoRepository;
 
     private static final String GROUP = "group";
     private static final String GROUP_FRAGMENT = "groups::group";
@@ -276,7 +281,16 @@ public class GroupController {
             ra.addFlashAttribute(WARNING_MESSAGE, "Group " + groupId + " does not exist.");
             return GROUPS_REDIRECT;
         }
+
+        Repo repo = repoRepository.findByGroupId(groupId);
+
+        if (repo == null) {
+            repo = new Repo(groupId, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
+            repo = repoRepository.save(repo);
+        }
+
         model.addAttribute(GROUP, group);
+        model.addAttribute("repo", repo);
         return GROUP;
     }
 }
