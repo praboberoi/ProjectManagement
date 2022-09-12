@@ -126,11 +126,8 @@ public class EventService {
         AtomicInteger counter = new AtomicInteger(0);
 
         sprintList.forEach(sprint -> {
-            if ( !event.getColors().contains(sprint.getColor()) ) {
+            if ( !event.getColors().contains(sprint.getColor()) )
                 event.addColor(sprint.getColor(), counter.getAndIncrement());
-                System.out.println(event.getColors());
-                System.out.println(counter.get());
-            }
         });
 
         if (sprintList.size() > 0) {
