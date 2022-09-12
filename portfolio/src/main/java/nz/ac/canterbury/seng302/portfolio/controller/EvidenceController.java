@@ -52,6 +52,9 @@ public class EvidenceController {
             Model model) {
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         model.addAttribute("listEvidence", listEvidence);
+        if (!listEvidence.isEmpty()) {
+            model.addAttribute("selectedEvidence", listEvidence.get(0));
+        }
         return "evidence";
     }
 
@@ -67,11 +70,11 @@ public class EvidenceController {
             @PathVariable int userId,
             @PathVariable int evidenceId,
             RedirectAttributes ra) {
-        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-
         ModelAndView mv = new ModelAndView("evidence::selectedEvidence");
 
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject("listEvidence", listEvidence);
+
         try {
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
             mv.addObject("selectedEvidence", selectedEvidence);
