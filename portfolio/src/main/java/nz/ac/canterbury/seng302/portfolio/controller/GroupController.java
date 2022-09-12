@@ -263,7 +263,7 @@ public class GroupController {
     }
 
     /**
-     * Gets the individual group page. This is currently the same page for every group.
+     * Gets the individual group page.
      * @param groupId The pages group id for future implementation
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @param ra Redirect Attribute frontend message object
