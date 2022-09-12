@@ -88,32 +88,20 @@ public class SprintController {
     /**
      * Checks if a sprints dates are valid and returns a Response containing a message
      * @param projectId ID of the project to check
-     * @param startDate New start date of the project
-     * @param endDate New end date of the project
      * @param principal Current user
-     * @param label Sprint label
-     * @param id Sprint Id
+     * @param sprint Current sprint
      * @return ResponseEntity containing a string message
      */
     @PostMapping("/project/{projectId}/verifySprint")
     public ResponseEntity<String> verifySprint(
             @PathVariable int projectId,
-            String startDate,
-            String endDate,
-            String label,
-            int id,
+            @RequestBody Sprint sprint,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = projectService.getProjectById(projectId);
-            Sprint currentSprint = new Sprint.Builder()
-                    .project(project)
-                    .sprintId(id)
-                    .sprintLabel(label)
-                    .startDate(Date.valueOf(startDate))
-                    .endDate(Date.valueOf(endDate))
-                    .build();
-            sprintService.verifySprint(currentSprint);
+            sprint.setProject(project);
+            sprintService.verifySprint(sprint);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());

@@ -9,10 +9,9 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 
 import javax.persistence.PersistenceException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 
 /**
@@ -114,26 +113,30 @@ public class EventService {
 
     }
 
+    /**
+     * Updates the colours for the given event
+     * @param event of type Event
+     */
     public void updateEventColours(Event event) {
         event.clearColourList();
         List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event)
                 .stream().sorted(Comparator.comparingInt(Sprint::getSprintId))
                 .toList();
 
-
         if (sprintList.size() > 0) {
             if (sprintList.get(0).getStartDate().after(event.getStartDate()) )
-                event.setColours(SprintColor.WHITE);
+                event.addColor(SprintColor.WHITE);
         }
 
         sprintList.forEach(sprint -> {
-            if ( !event.getColors().contains(sprint.getColor()) )
-                event.setColours(sprint.getColor());
+            if ( !event.getColors().contains(sprint.getColor()) ) {
+                event.addColor(sprint.getColor());
+            }
         });
 
         if (sprintList.size() > 0) {
             if (sprintList.get(sprintList.size() - 1).getEndDate().before(event.getEndDate()))
-                event.setColours(SprintColor.WHITE);
+                event.addColor(SprintColor.WHITE);
         }
     }
 
