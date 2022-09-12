@@ -6,7 +6,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 import static org.junit.Assert.*;
 
@@ -25,23 +24,22 @@ class RepoRepositoryTest {
      */
     @Test
     @Transactional
-    void givenRepoExists_whenFindByGroupId_thenCorrectNumberOfReposReturned() {
+    void givenRepoExists_whenFindByGroupId_thenCorrectRepoReturned() {
         Repo repo = new Repo.Builder()
-                .repoId(1)
                 .repoName("No Groups")
                 .hostAddress("http://Test.com")
-                .groupId(0)
+                .groupId(1)
                 .gitlabProjectId(1)
                 .accessToken("token")
                 .build();
-        repoRepository.save(repo);
+        repo = repoRepository.save(repo);
 
-        List<Repo> searchResult1 = repoRepository.findByGroupId(0);
-        List<Repo> searchResult2 = repoRepository.findByGroupId(1);
+        Repo searchResult1 = repoRepository.getByGroupId(1);
+        Repo searchResult2 = repoRepository.getByGroupId(0);
 
 
-        assertEquals(1,searchResult1.size());
-        assertEquals(0,searchResult2.size());
+        assertEquals(repo, searchResult1);
+        assertNull(searchResult2);
 
     }
 
@@ -61,9 +59,9 @@ class RepoRepositoryTest {
                 .build();
         repoRepository.save(repo2);
 
-        List<Repo> searchResult3 = repoRepository.findByGroupId(2);
+        Repo searchResult3 = repoRepository.getByGroupId(2);
 
-        assertEquals(repo2, searchResult3.get(0));
+        assertEquals(repo2, searchResult3);
 
     }
 

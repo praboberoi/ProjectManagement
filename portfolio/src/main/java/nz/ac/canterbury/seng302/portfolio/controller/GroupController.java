@@ -282,7 +282,7 @@ public class GroupController {
             return GROUPS_REDIRECT;
         }
 
-        Repo repo = repoRepository.findByGroupId(groupId);
+        Repo repo = repoRepository.getByGroupId(groupId);
 
         if (repo == null) {
             repo = new Repo(groupId, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
