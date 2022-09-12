@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
@@ -18,7 +19,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.gson.Gson;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -120,6 +126,59 @@ public class RepoControllerTest {
             .perform(get("/repo/1"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("repo", repo));
+    }
+
+    /**
+     * Checks that a student in the group is able to edit the repo information
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenGroupExists_andUserIsAMember_whenEditRepoCalled_thenRepoEdited() throws Exception{
+        User user = new User.Builder().userId(1).build();
+        Groups group = new Groups("Team: 400", "Bad Request", 1, List.of(user));
+        Repo repo = new Repo(1, 1, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
+
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        when(PrincipalUtils.getUserId(any())).thenReturn(1);
+        when(groupService.getGroupById(anyInt())).thenReturn(group);
+        when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
+
+        System.out.println(new ObjectMapper().writeValueAsString(repo));
+        mockMvc
+            .perform(post("/repo/1/save").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("repoId", "1")
+            .param("groupId", "1")
+            .param("repoName", "Team: 400's repo")
+            .param("gitlabProjectId", "0")
+            .param("accessToken", "")
+            .param("hostAddress", "https://gitlab.com"))
+            .andExpect(status().isOk());
+    }
+
+    /**
+     * Checks that a student not in the group is unable able to edit the repo information
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenGroupExists_andUserIsNotAMember_whenEditRepoCalled_thenRepoEdited() throws Exception{
+        Groups group = new Groups("Team: 400", "Bad Request", 1, List.of());
+        Repo repo = new Repo(1, 1, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
+
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        when(PrincipalUtils.getUserId(any())).thenReturn(1);
+        when(groupService.getGroupById(anyInt())).thenReturn(group);
+        when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
+
+        System.out.println(new ObjectMapper().writeValueAsString(repo));
+        mockMvc
+            .perform(post("/repo/1/save").contentType(MediaType.APPLICATION_FORM_URLENCODED)
+            .param("repoId", "1")
+            .param("groupId", "1")
+            .param("repoName", "Team: 400's repo")
+            .param("gitlabProjectId", "0")
+            .param("accessToken", "")
+            .param("hostAddress", "https://gitlab.com"))
+            .andExpect(status().isForbidden());
     }
 
 }

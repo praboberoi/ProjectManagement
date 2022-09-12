@@ -67,10 +67,13 @@ public class RepoController {
      * @return The group page
      */
     @PostMapping(path = "/repo/{groupId}/save")
-    public ResponseEntity<String> saveGroupRepo(@PathVariable int groupId, @ModelAttribute RepoDTO repoDTO) {
+    public ResponseEntity<String> saveGroupRepo(@PathVariable int groupId, @ModelAttribute RepoDTO repoDTO, @AuthenticationPrincipal AuthState principal) {
         Groups group = groupService.getGroupById(groupId);
-        if (group.getGroupId() == 0) {
+        if (group == null || group.getGroupId() == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Unable to find group");
+        } else if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) && group.getMembers().stream()
+                .noneMatch(user -> user.getUserId() == PrincipalUtils.getUserId(principal))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to edit these repo settings");
         }
 
         Repo repo = new Repo(repoDTO);
