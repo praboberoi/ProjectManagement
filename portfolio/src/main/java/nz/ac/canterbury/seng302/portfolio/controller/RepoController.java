@@ -59,12 +59,11 @@ public class RepoController {
     }
 
     /**
-     * Gets the individual group page.
-     * 
-     * @param groupId The pages group id for future implementation
-     * @param model   Parameters sent to thymeleaf template to be rendered into HTML
-     * @param ra      Redirect Attribute frontend message object
-     * @return The group page
+     * Saves the group's repo to the provided information
+     * @param groupId The group id for the repo to save
+     * @param repoDTO Object containing new repo information
+     * @param principal Authentication information containing user info
+     * @return If the repo saving was successful
      */
     @PostMapping(path = "/repo/{groupId}/save")
     public ResponseEntity<String> saveGroupRepo(@PathVariable int groupId, @ModelAttribute RepoDTO repoDTO, @AuthenticationPrincipal AuthState principal) {
