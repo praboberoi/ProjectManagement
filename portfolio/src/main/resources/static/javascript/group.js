@@ -1,4 +1,6 @@
 let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+let filterByUser = ""
+let filterByActionType = ""
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
@@ -82,9 +84,16 @@ async function getRecentActions() {
         },
     });
 
-    const events = await response.json();
+    let events = await response.json();
     let recentActions = document.getElementById("recent-action-cards")
+    updateFilters(events);
     recentActions.innerHTML = ""
+    if(filterByUser.length > 0)
+        events = events.filter(event => event.author_username === filterByUser)
+
+    if(filterByActionType.length > 0)
+        events = events.filter(event => event.action_name === filterByActionType)
+
     events.forEach(event => {
         // Card
         let eventCard = document.createElement('div');
@@ -229,3 +238,63 @@ function saveRepoSettings(event) {
  document.addEventListener('DOMContentLoaded', function() {
     connectToRepo()
 });
+
+ function updateFilters(events) {
+     let userFilter = document.getElementById('userFilter')
+     let actionType = document.getElementById('actionType')
+
+     const userSet = new Set();
+     const actionTypeSet = new Set();
+
+     userFilter.innerText = "";
+     actionType.innerText = "";
+
+     events.forEach(event => {
+         userSet.add(event.author_username);
+         actionTypeSet.add(event.action_name);
+     })
+
+     if (filterByUser.length === 0) {
+         userFilter.innerHTML = `<option selected>Filter By User</option>`
+         userSet.forEach(user => userFilter.innerHTML += `<option>${user}</option>`)
+
+     } else {
+         userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>`: `<option>${user}</option>`)
+         userFilter.innerHTML += `<option>Clear Filter</option>`
+     }
+
+     if (filterByActionType.length === 0) {
+         actionType.innerHTML = `<option selected>Filter By Action Type</option>`
+         actionTypeSet.forEach(action => actionType.innerHTML += `<option>${action}</option>`)
+
+     } else {
+         actionTypeSet.forEach(action => actionType.innerHTML +=
+             action === filterByActionType ? `<option selected>${action}</option>` :`<option>${action}</option>`)
+         actionType.innerHTML += `<option>Clear Filter</option>`
+
+
+     }
+
+ }
+
+ document.getElementById('userFilter').addEventListener('change', function () {
+     if (this.value === 'Clear Filter')
+         filterByUser = ""
+     else
+         filterByUser = this.value
+
+     getRecentActions()
+
+ } )
+
+document.getElementById('actionType').addEventListener('change', function () {
+     if (this.value === 'Clear Filter')
+         filterByActionType = ""
+     else
+         filterByActionType = this.value
+
+     getRecentActions()
+
+ } )
+
+
