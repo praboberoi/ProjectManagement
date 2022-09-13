@@ -77,7 +77,7 @@ public class EventController {
             @PathVariable ("projectId") int projectId) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
-        }   
+        }
         Event event = new Event(eventDTO);
         String message = "";
         try {

@@ -149,6 +149,15 @@ class DeadlineControllerTest {
         mockedWebSocketPrincipal = mock(WebSocketPrincipal.class);
     }
 
+    public DeadlineDTO toDTO(Deadline deadline){
+        return new DeadlineDTO(
+        deadline.getDeadlineId(),
+        deadline.getName(),
+        deadline.getProject(),
+        deadline.getDate()
+        );
+    }
+
     /**
      * Tests to make sure an appropriate message is displayed when a post request is made to create a deadline.
      * @throws IncorrectDetailsException
@@ -159,7 +168,7 @@ class DeadlineControllerTest {
 
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/project/1/saveDeadline")
-                        .flashAttr("deadlineDTO", new DeadlineDTO(deadline2)))
+                        .flashAttr("deadlineDTO", toDTO(deadline2)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Successfully Created Deadline 2"));
     }
@@ -172,7 +181,7 @@ class DeadlineControllerTest {
         when(deadlineService.saveDeadline(any())).thenReturn("Successfully Updated " + deadline.getName());
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/project/1/saveDeadline")
-                        .flashAttr("deadlineDTO", new DeadlineDTO(deadline)))
+                        .flashAttr("deadlineDTO", toDTO(deadline)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Successfully Updated Deadline 1"));
     }
@@ -185,7 +194,7 @@ class DeadlineControllerTest {
         when(deadlineService.saveDeadline(any())).thenThrow(new IncorrectDetailsException("Failure to save the deadline"));
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/project/1/saveDeadline")
-                        .flashAttr("deadlineDTO", new DeadlineDTO(deadline3)))
+                        .flashAttr("deadlineDTO", toDTO(deadline3)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Failure to save the deadline"));
     }

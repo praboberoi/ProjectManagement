@@ -1,9 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.model.dto;
 
-import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 
 import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 /**
  * The evidenceDTO entity stored in the database for the portfolio application
@@ -20,6 +21,7 @@ public class EvidenceDTO {
 
     private String description;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date dateOccurred;
 
     private int ownerId;
@@ -47,12 +49,6 @@ public class EvidenceDTO {
 
     public Project getProject() {return project;}
 
-
-    /**
-     * Blank constructor required by JPA
-     */
-    public EvidenceDTO() {}
-
     /**
      * Creates a new evidenceDTO object with the provided details
      * @param evidenceId id of the evidence object.
@@ -69,14 +65,4 @@ public class EvidenceDTO {
         this.description = description;
         this.ownerId = ownerId;
     }
-
-    public EvidenceDTO(Evidence evidence)  {
-        evidenceId = evidence.getEvidenceId();
-        project = evidence.getProject();
-        dateOccurred = evidence.getDateOccurred();
-        title = evidence.getTitle();
-        description = evidence.getDescription();
-        ownerId = evidence.getOwnerId();
-    }
-
 }

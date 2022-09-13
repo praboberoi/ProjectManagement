@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
@@ -75,6 +76,16 @@ public class EvidenceControllerTest {
 
     }
 
+    public EvidenceDTO toDTO(Evidence evidence)  {
+        return new EvidenceDTO(
+        evidence.getEvidenceId(),
+        evidence.getProject(),
+        evidence.getDateOccurred(),
+        evidence.getTitle(),
+        evidence.getDescription(),
+        evidence.getOwnerId());
+    }
+
     /**
      * Test verification of evidence object when a valid evidence is saved and checks it redirects the user
      */
@@ -83,7 +94,7 @@ public class EvidenceControllerTest {
         when(evidenceService.saveEvidence(any())).thenReturn("Successfully Created " + evidence.getTitle());
 
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", evidence))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", nullValue()))
                 .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getTitle()));
@@ -97,7 +108,7 @@ public class EvidenceControllerTest {
         when(evidenceService.saveEvidence(any())).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
 
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", evidence1))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence1)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
                 .andExpect(flash().attribute("messageSuccess", nullValue()));

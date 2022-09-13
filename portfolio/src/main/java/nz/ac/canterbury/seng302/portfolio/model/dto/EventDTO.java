@@ -2,7 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.model.dto;
 
 import java.util.Date;
 
-import nz.ac.canterbury.seng302.portfolio.model.Event;
+import org.springframework.format.annotation.DateTimeFormat;
+
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 
 /**
@@ -17,8 +18,10 @@ public class EventDTO {
 
     private String eventName;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startDate;
 
+    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date endDate;
 
     public int getEventId() {return eventId;}
@@ -31,30 +34,19 @@ public class EventDTO {
 
     public Date getEndDate() {return endDate;}
 
-    public EventDTO(){}
-
-    /**
-     * Creates a new repoDTO object with the provided details
-     * @param repoId The ID of the repo object
-     * @param groupId GroupId of the repo object
-     * @param repoName Name of the repo object
-     * @param gitlabProjectId The ID of the gitlab project
-     * @param accessToken The access token
-     * @param hostAddress The host address
-     */
+     /**
+      * Creates a new eventDTO object with the provided details
+      * @param eventId The ID of the of the event object
+      * @param project Project of the event object
+      * @param eventName Name of the of the event object
+      * @param startDate Start date of the event object
+      * @param endDate End date of the event object
+      */
     public EventDTO(int eventId, Project project, String eventName, Date startDate, Date endDate) {
         this.eventId = eventId;
         this.project = project;
         this.eventName = eventName;
         this.startDate = startDate;
         this.endDate = endDate;
-    }
-
-    public EventDTO(Event event) {
-        eventId = event.getEventId();
-        eventName = event.getEventName();
-        project = event.getProject();
-        startDate = event.getStartDate();
-        endDate = event.getEndDate();
     }
 }
