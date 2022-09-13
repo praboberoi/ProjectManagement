@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.model.dto;
 
 import java.util.Date;
 
+import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 
 /**
@@ -26,6 +27,8 @@ public class DeadlineDTO {
 
     public Date getDate() {return date;}
 
+    public DeadlineDTO() {}
+
     /**
      * Creates a new repoDTO object with the provided details
      * @param repoId The ID of the repo object
@@ -40,5 +43,12 @@ public class DeadlineDTO {
         this.name = name;
         this.project = project;
         this.date = date;
+    }
+
+    public DeadlineDTO(Deadline deadline){
+        deadlineId = deadline.getDeadlineId();
+        name = deadline.getName();
+        project = deadline.getProject();
+        date = deadline.getDate();
     }
 }
