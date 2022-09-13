@@ -33,6 +33,17 @@ Feature: U5. Groups and group membership
     And User 5 is highlighted
     And User 8 is highlighted
 
+  Scenario: AC5 Ctrl/command and shift keys work as expected when I am selecting students. It is visually obvious (e.g., background shading) which students are selected.
+    Given I login as an admin
+    And I navigate to 'Groups'
+    When I click on user 0
+    And I ctrl click on user 5
+    And I ctrl + shift click on user 8
+    Then User 0 is highlighted
+    And User 5 is highlighted
+    And User 6 is highlighted
+    And User 8 is highlighted
+
   Scenario: AC6 I can select user(s) from a group and remove them from the group.
     Given I login as an admin
     And I navigate to 'Groups'

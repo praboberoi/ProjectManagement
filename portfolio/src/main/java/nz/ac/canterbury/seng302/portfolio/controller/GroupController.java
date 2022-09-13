@@ -1,12 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.portfolio.model.Repo;
+import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,16 +41,13 @@ public class GroupController {
 
     @Autowired private UserAccountClientService userAccountClientService;
 
-    @Value("${apiPrefix}") private String apiPrefix;
+    @Autowired
+    private RepoRepository repoRepository;
 
-
-    /**
-     * Adds common model elements used by all controller methods.
-     */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
+    private static final String GROUP = "group";
+    private static final String GROUP_FRAGMENT = "groups::group";
+    private static final String GROUPS_REDIRECT = "redirect:/groups";
+    private static final String WARNING_MESSAGE = "messageDanger";
 
     /**
      * Get message for empty registration page
@@ -69,7 +67,7 @@ public class GroupController {
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         model.addAttribute("listGroups", groups);
-        model.addAttribute("selectedGroup", groupService.getMembersWithoutAGroup());
+        model.addAttribute(GROUP, groupService.getMembersWithoutAGroup());
         return "groups";
     }
 
@@ -116,12 +114,12 @@ public class GroupController {
     public ModelAndView selectedGroup(
             @PathVariable int groupId
     ) {
-        Groups selectedGroup = groupService.getGroupById(groupId);
+        Groups group = groupService.getGroupById(groupId);
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
-        mv.addObject("selectedGroup", selectedGroup);
+        mv.addObject(GROUP, group);
         return mv;
     }
 
@@ -131,12 +129,12 @@ public class GroupController {
      */
     @GetMapping("/groups/unassigned")
     public ModelAndView unassignedGroup() {
-        Groups selectedGroup = groupService.getMembersWithoutAGroup();
+        Groups group = groupService.getMembersWithoutAGroup();
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
-        mv.addObject("selectedGroup", selectedGroup);
+        mv.addObject(GROUP, group);
         return mv;
     }
 
@@ -146,12 +144,12 @@ public class GroupController {
      */
     @GetMapping("/groups/teachers")
     public ModelAndView teachersGroup() {
-        Groups selectedGroup = groupService.getTeachingStaffGroup();
+        Groups group = groupService.getTeachingStaffGroup();
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        ModelAndView mv = new ModelAndView("groups::selectedGroup");
+        ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
-        mv.addObject("selectedGroup", selectedGroup);
+        mv.addObject(GROUP, group);
         return mv;
     }
 
@@ -173,8 +171,8 @@ public class GroupController {
         RedirectAttributes ra
     ) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
-            ra.addFlashAttribute("messageDanger", "Insufficient permissions to create group.");
-            return "redirect:/groups";
+            ra.addFlashAttribute(WARNING_MESSAGE, "Insufficient permissions to create group.");
+            return GROUPS_REDIRECT;
         }
         boolean status;
         String message;
@@ -192,9 +190,9 @@ public class GroupController {
         if (status) {
             ra.addFlashAttribute("messageSuccess", message);
         } else {
-            ra.addFlashAttribute("messageDanger", message);
+            ra.addFlashAttribute(WARNING_MESSAGE, message);
         }
-        return "redirect:/groups";
+        return GROUPS_REDIRECT;
     }
 
     /**
@@ -267,5 +265,32 @@ public class GroupController {
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
         }
+    }
+
+    /**
+     * Gets the individual group page.
+     * @param groupId The pages group id for future implementation
+     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param ra Redirect Attribute frontend message object
+     * @return The group page
+     */
+    @GetMapping(path="/group/{groupId}")
+    public String groupPage(@PathVariable int groupId, Model model, RedirectAttributes ra) {
+        Groups group = groupService.getGroupById(groupId);
+        if (group.getGroupId() == 0) {
+            ra.addFlashAttribute(WARNING_MESSAGE, "Group " + groupId + " does not exist.");
+            return GROUPS_REDIRECT;
+        }
+
+        Repo repo = repoRepository.getByGroupId(groupId);
+
+        if (repo == null) {
+            repo = new Repo(groupId, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
+            repo = repoRepository.save(repo);
+        }
+
+        model.addAttribute(GROUP, group);
+        model.addAttribute("repo", repo);
+        return GROUP;
     }
 }

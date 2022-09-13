@@ -21,7 +21,7 @@ public class Repo {
     /**
      * GroupId that the repo is contained in
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private int groupId;
 
     /**
@@ -91,6 +91,14 @@ public class Repo {
      */
     public Repo(int repoId, int groupId, String repoName, int gitlabProjectId, String accessToken, String hostAddress){
         this.repoId = repoId;
+        this.groupId = groupId;
+        this.repoName = repoName;
+        this.gitlabProjectId = gitlabProjectId;
+        this.accessToken = accessToken;
+        this.hostAddress = hostAddress;
+    }
+
+    public Repo(int groupId, String repoName, int gitlabProjectId, String accessToken, String hostAddress){
         this.groupId = groupId;
         this.repoName = repoName;
         this.gitlabProjectId = gitlabProjectId;
