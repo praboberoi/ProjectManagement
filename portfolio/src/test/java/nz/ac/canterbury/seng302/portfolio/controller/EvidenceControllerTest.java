@@ -21,14 +21,14 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = EvidenceController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -92,6 +92,7 @@ public class EvidenceControllerTest {
     @Test
     void givenServer_whenSaveValidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
         when(evidenceService.saveEvidence(any())).thenReturn("Successfully Created " + evidence.getTitle());
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
                 .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence)))
@@ -106,6 +107,7 @@ public class EvidenceControllerTest {
     @Test
     void givenServer_whenSaveInvalidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
         when(evidenceService.saveEvidence(any())).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
                 .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence1)))
@@ -113,6 +115,66 @@ public class EvidenceControllerTest {
                 .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
                 .andExpect(flash().attribute("messageSuccess", nullValue()));
 
+    }
+
+    /**
+     * Asserts that when a user is attempting to create an evidence object under another users page, the correct error message is displayed
+     * @throws Exception when userId doesn't exist
+     */
+    @Test
+    void givenEvidenceObjectAndIncorrectUser_whenSaveEvidenceCalled_thenEvidenceSavedCorrectly() throws Exception {
+        when(PrincipalUtils.getUserId(any())).thenReturn(53);
+        this.mockMvc
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageDanger","You may only create evidence on your own evidence page" ));
+
+    }
+
+
+    /**
+     * Tests that when EvidenceList is called then the list of evidence is correctly added to the ModelAndView return object
+     * @throws Exception when userId doesn't exist
+     */
+    @Test
+    void givenEvidenceObject_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        this.mockMvc
+                .perform(get("/evidence/99"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)));
+    }
+
+    /**
+     * Asserts that given an evidence ID and a user ID when selectedEvidence called then returns a list of all evidence and the selected evidence
+     * @throws Exception when userId doesn't exist
+     */
+    @Test
+    void givenCorrectEvidenceAndUserIds_whenSelectedEvidenceCalled_thenReturnSelectedEvidence() throws Exception {
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        when(evidenceService.getEvidence(33)).thenReturn(evidence);
+
+        this.mockMvc
+                .perform(get("/evidence/99/33"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
+                .andExpect(model().attribute("selectedEvidence", evidence));
+    }
+
+    /**
+     * Asserts that no evidence is selected when a given evidence ID does not exist
+     * @throws Exception when userId doesn't exist
+     */
+    @Test
+    void givenIncorrectEvidence_whenSelectedEvidenceCalled_thenNoEvidenceSelected() throws Exception {
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        when(evidenceService.getEvidence(33)).thenThrow(new IncorrectDetailsException("Failed to locate the piece of evidence with ID: 33"));
+
+        this.mockMvc
+                .perform(get("/evidence/99/33"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
+                .andExpect(model().attributeDoesNotExist("selectedEvidence"));
     }
 
 

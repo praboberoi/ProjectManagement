@@ -1,10 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,11 +18,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 /**
@@ -48,32 +43,21 @@ public class EvidenceController {
     }
 
     /**
-     * Get message for empty registration page
-     * @param request HTTP request sent to this endpoint
-     * @param response HTTP response that will be returned by this endpoint
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return Registration html page
+     * Updates the model with the correct list of evidence
+     * @param userId UserId containing the desired evidence
+     * @return Page fragment containing events
      */
     @GetMapping(path="/evidence/{userId}")
-    public String evidence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Model model,
-            @AuthenticationPrincipal AuthState principal
-
-    ) {
-        LocalDate now = LocalDate.now();
-        Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now),
-                java.sql.Date.valueOf(now.plusDays(50)));
-        Evidence evidence1 = new Evidence(1, project, new Date(), "Test Evidence 1", "testing", 1);
-        Evidence evidence2 = new Evidence(2, project, new Date(), "Test Evidence 2", "testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing ", 1);
-        Evidence[] evidences = {evidence1, evidence2};
-        List<Evidence> listEvidences = Arrays.asList(evidences);
-        model.addAttribute("listEvidence", listEvidences);
-        model.addAttribute("selectedEvidence", evidence2);
+    public String evidenceList(
+            @PathVariable("userId") int userId,
+            Model model) {
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+        model.addAttribute("listEvidence", listEvidence);
+        if (!listEvidence.isEmpty()) {
+            model.addAttribute("selectedEvidence", listEvidence.get(0));
+        }
         return "evidence";
     }
-
 
     /**
      * Updates the model with the correct list of evidence and a selected evidence
@@ -87,9 +71,11 @@ public class EvidenceController {
             @PathVariable int userId,
             @PathVariable int evidenceId,
             RedirectAttributes ra) {
-        ModelAndView mv = new ModelAndView("evidence::evidenceList");
+        ModelAndView mv = new ModelAndView("evidence::selectedEvidence");
+
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject("listEvidence", listEvidence);
+
         try {
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
             mv.addObject("selectedEvidence", selectedEvidence);
@@ -98,6 +84,7 @@ public class EvidenceController {
         }
         return mv;
     }
+
 
     /** Checks if evidence variables are valid and if it is then saves the evidence
      * @param evidence Evidence object
@@ -112,6 +99,11 @@ public class EvidenceController {
             @AuthenticationPrincipal AuthState principal) {
         Evidence evidence = new Evidence(evidenceDTO);
         try {
+            int editingUser = PrincipalUtils.getUserId(principal);
+            if (editingUser != userId) {
+                throw new IncorrectDetailsException("You may only create evidence on your own evidence page");
+            }
+
             evidence.setOwnerId(userId);
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
@@ -119,6 +111,7 @@ public class EvidenceController {
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        return "redirect:/evidence";
+        return "redirect:/evidence/{userId}";
     }
+
 }
