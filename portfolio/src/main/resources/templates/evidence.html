@@ -35,13 +35,8 @@
     <br>
 
 
-    <a class="btn btn-outline-primary ms-0 mb-1" id = "create-btn" data-toggle="modal" datselectedEvidenceIda-target="#createModal" >
-        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
-        Create Evidence
-    </a>
-
     <div class="createBtn">
-        <button class="btn btn-outline-primary btn-sm" id="create-evidence-btn" data-bs-toggle="modal"
+        <button class="btn btn-outline-primary ms-0 mb-1" id="create-evidence-btn" data-bs-toggle="modal"
                 data-bs-target="#evidenceFormModal"
                 th:data-id="${evidence.evidenceId}" th:data-name="${evidence.title}" th:data-date="${evidence.dateOccurred}"
                 th:data-project="${evidence.project}"
@@ -109,68 +104,78 @@
         </div>
     </div>
 
-    <div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="evidenceFormTitle">Create New Evidence</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
 
-                    <!--                    Show evidence form-->
-                    <div class="evidenceForm">
-                        <form id="createEvidenceForm" name="evidenceForm" onsubmit="saveEvidence();return false" th:object="${evidence}" >
-                            <input type="hidden" id="projectId" th:field="${project.projectId}"/>
-                            <input type="hidden" id="eventId" th:field="*{evidenceId}" />
-                            <div class="mb-3">
-                                <label for="evidence-name" class="col-form-label required">Evidence Name</label>
-                                <input style="font-size:20px;" type="text" class="form-control required" id="evidence-name" th:field="*{title}" onkeyup="checkEvidenceName()" required>
-                                <div>
-                                    <span id="charCount" th:value="${charCount}">[[*{eventName.length}]] </span> / 50 characters used.
-                                </div>
-                                <p id="eventNameError" th:text="${eventNameError}" class="error-msg"></p>
-                            </div>
+</div>
 
-                            <div style="height:30px;" class="row">
 
-                                <div class="col-md-6 ms-auto">
-                                    <label  for="evidenceDate" class="form-label date-font required">Date</label>
-                                </div>
-                            </div>
-                            <!-- Start Date & Time-->
-                            <div class="row">
-                                <div class="col-md-6 ms-auto">
-                                    <input type="datetime-local" class="form-control date-font" id="evidenceDate" th:field="*{dateOccured}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax} + 'T00:00'}" onchange="checkEventDates()" required>
-                                    <p id="eventStartDateError"  class="error-msg"></p>
-                                </div>
-                                <br>
-                            </div>
-
-                            <div class="row">
-                            </div>
-                            <br>
-                            <div class="modal-footer">
-                                <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton" data-bs-dismiss="modal">
-                                    <img class="icon img-color-secondary" id="eventFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
-                                    <span id="eventFormSubmitLabel">Create</span></button>
-                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
+<div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="evidenceFormTitle">Create New Evidence</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
             </div>
+            <div class="modal-body">
+
+                <!--                    Show evidence form-->
+                <div class="evidenceForm">
+                    <form id="createEvidenceForm" name="evidenceForm" onsubmit="saveEvidence();return false" th:object="${evidence}" >
+                        <input type="hidden" id="userId" th:field="${evidence.ownerId}"/>
+                        <input type="hidden" id="projectId" th:field="${evidence.project.projectId}"/>
+                        <input type="hidden" id="eventId" th:field="*{evidenceId}" />
+                        <div class="mb-3">
+                            <label for="evidence-title" class="col-form-label required">Evidence Title</label>
+                            <input type="text" class="form-control required" id="evidence-title" th:field="*{title}" onkeyup="checkEvidenceName()" required>
+                            <div>
+                                <span id="charCount" th:value="${charCount}">[[*{title.length}]] </span> / 50 characters used.
+                            </div>
+                            <p id="eventTitleError" th:text="${eventTitleError}" class="error-msg"></p>
+                        </div>
+
+
+
+                        <div class="mb-3">
+                            <label for="evidence-date" class="col-form-label required">Date</label>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top" aria-label="The date of evidence creation." title="The date of evidence creation.">
+                                <img class="icon img-color-primary" src="/icons/question-circle.svg">
+                            </span>
+                            <input  type="date" class="form-control required" id="evidence-date" th:field="*{dateOccurred}" required>
+                            <p id="evidenceDateError" th:text="${eventDateError}" class="error-msg"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="evidence-description" class="col-form-label required">Description</label>
+                            <textarea type="evidence-description" style="font-size:20px;"  class="form-control required" id="evidence-description" th:field="*{description}" required></textarea>
+                            <p id="evidenceDescriptionError" th:text="${eventDescriptionError}" class="error-msg"></p>
+                        </div>
+
+
+                        <div class="row">
+                        </div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton" data-bs-dismiss="modal">
+                                <img class="icon img-color-secondary" id="eventFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                <span id="eventFormSubmitLabel">Create</span></button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+
         </div>
     </div>
 </div>
+
 <script th:inline="javascript">
     let apiPrefix = [[${apiPrefix}]];
 </script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa" crossorigin="anonymous"></script>
 <script th:src="@{{apiPrefix}/javascript/groups.js(apiPrefix=${apiPrefix})}"></script>
+<script th:src="@{{apiPrefix}/javascript/evidenceForm.js(apiPrefix=${apiPrefix})}"></script>
+
 </body>
 </html>
