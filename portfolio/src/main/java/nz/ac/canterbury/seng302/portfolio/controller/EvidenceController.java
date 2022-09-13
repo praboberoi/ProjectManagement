@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -105,10 +106,11 @@ public class EvidenceController {
      */
     @PostMapping(path="/evidence/{userId}/saveEvidence")
     public String saveEvidence(
-            @ModelAttribute Evidence evidence,
+            @ModelAttribute EvidenceDTO evidenceDTO,
             @PathVariable("userId") int userId,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal) {
+        Evidence evidence = new Evidence(evidenceDTO);
         try {
             evidence.setOwnerId(userId);
             evidenceService.verifyEvidence(evidence);
