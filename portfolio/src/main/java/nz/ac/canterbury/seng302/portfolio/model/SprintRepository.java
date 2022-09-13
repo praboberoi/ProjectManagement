@@ -72,6 +72,11 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      */
     int countByProject(Project project);
 
+    /**
+     * Obtains a list of sprint that fall under the given Event
+     * @param event of type Event
+     * @return a list of Sprint
+     */
     @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#event.startDate} <= sprint.endDate and :#{#event.endDate} >= sprint.startDate")
     List<Sprint> findSprintsByEvent(@Param("event") Event event);
 
