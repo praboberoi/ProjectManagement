@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -151,9 +152,7 @@ public class AccountController {
             Model model,
             RedirectAttributes ra
     ) throws IOException {
-        int userId = Integer.parseInt(principal.getClaimsList().stream()
-            .filter(claim -> claim.getType().equals("nameid"))
-            .findFirst().map(ClaimDTO::getValue).orElse("-1"));
+        int userId = PrincipalUtils.getUserId(principal);
         EditUserResponse idpResponse = userAccountClientService.edit(userId, firstName, lastName, nickname,
             bio,
             pronouns,

@@ -4,17 +4,24 @@ import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.core.AbstractMessageReceivingTemplate;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
@@ -23,12 +30,13 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
+import static nz.ac.canterbury.seng302.shared.identityprovider.UserRole.STUDENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -50,9 +58,27 @@ class AccountControllerTest {
     @MockBean
     private SimpMessagingTemplate template;
 
+
+    @Autowired
+    private AccountController testAccountController;
+
     User user;
 
     UserResponse.Builder reply;
+
+    private static MockedStatic<PrincipalUtils> utilities;
+
+    @BeforeAll
+    private static void beforeAllInit() {
+        utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        when(PrincipalUtils.getUserId(any(AuthState.class))).thenReturn(-1);
+    }
+
+    @AfterAll
+    public static void close() {
+        utilities.close();
+    }
 
 
     @BeforeEach
@@ -65,6 +91,7 @@ class AccountControllerTest {
         .email("Test@tester.nz")
         .creationDate(new Date())
         .build();
+
 
         reply = UserResponse.newBuilder();
         reply.setUsername(user.getUsername());
@@ -85,6 +112,8 @@ class AccountControllerTest {
     void getTimePassed_20Days() throws Exception{
         Calendar cal = new GregorianCalendar();
         cal.add(Calendar.DAY_OF_MONTH, -7);
+
+
 
         User user = new User.Builder()
                 .userId(0)
@@ -214,20 +243,38 @@ class AccountControllerTest {
      */
     @Test
     void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws IOException {
-        UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
+//        UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
 
-        when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
-        when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
+        when(userAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
+        UserResponse mockReply = Mockito.mock(UserResponse.class);
+        when(mockReply.getId()).thenReturn(-1);
+        when(mockReply.getUsername()).thenReturn("");
+        when(mockReply.getFirstName()).thenReturn("");
+        when(mockReply.getLastName()).thenReturn("");
+        when(mockReply.getNickname()).thenReturn("");
+        when(mockReply.getEmail()).thenReturn("");
+        when(mockReply.getBio()).thenReturn("");
+        when(mockReply.getPersonalPronouns()).thenReturn("");
+        when(mockReply.getProfileImagePath()).thenReturn("");
+        Timestamp mockTimeStamp = Mockito.mock(Timestamp.class);
+        when(mockTimeStamp.getSeconds()).thenReturn(12L);
+        when(mockReply.getCreated()).thenReturn(mockTimeStamp);
+        List <UserRole> roleList = new ArrayList<UserRole>();
+        roleList.add(STUDENT);
+        when(mockReply.getRolesList()).thenReturn(roleList);
+        when(userAccountClientService.getUser(any())).thenReturn(mockReply);
 
-        AccountController accountController = new AccountController(mockUserAccountClientService);
+
+
         AuthState principal = AuthState.newBuilder().build();
+
 
         String testString = "";
         MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "image/png", "some image".getBytes());
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-        assertEquals( "redirect:account", accountController.editUser(principal, testFile,testString,
+        assertEquals( "redirect:account", testAccountController.editUser(principal, testFile,testString,
                 testString, testString, testString, testString, testString, false, mockModel, ra ));
     }
 }
