@@ -2,7 +2,6 @@ const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'medium
 const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
 const adminRoles = ['TEACHER', 'COURSE_ADMINISTRATOR'];
-const DATE_OPTIONS = {year: 'numeric', month: 'short', day: 'numeric'};
 let calendar;
 let clicked = true;
 
@@ -69,7 +68,7 @@ function makeEventEditable(info) {
  * Makes the event uneditable on the calendar.
  * @param info
  */
- function removeEventEditable(info) {
+function removeEventEditable(info) {
     info.event.setProp('editable', false)
 }
 
@@ -156,9 +155,9 @@ function getSprintList(sprintJson) {
 }
 
 /**
- * Runs when the page is loaded and requests all the projects sprints from the server
+ * Requests all the projects sprints from the server and load calendar
  */
-document.addEventListener('DOMContentLoaded', function() {
+function loadCalendar() {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -169,4 +168,4 @@ document.addEventListener('DOMContentLoaded', function() {
 
     httpRequest.open('GET', apiPrefix  + '/project/' + projectId + '/getAllSprints')
     httpRequest.send()
-});
+}

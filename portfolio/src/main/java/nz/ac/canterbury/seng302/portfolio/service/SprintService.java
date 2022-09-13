@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +30,7 @@ public class SprintService {
         this.projectRepo = projectRepository;
         this.sprintRepository = sprintRepository;
     }
+
     /**
      * To get a new sprint with the appropriate default values.
      * @param project Of type Project
@@ -39,10 +41,12 @@ public class SprintService {
         int sprintNo = countByProjectId(project.getProjectId()) + 1;
         Sprint sprint = new Sprint.Builder()
                                   .sprintLabel("Sprint " + sprintNo)
-                                  .sprintName("Sprint " + sprintNo).build();
+                                  .sprintName("Sprint " + sprintNo)
+                                  .color(SprintColor.valueOf(sprintNo%7)).build();
+
 
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
-        if (listSprints.size() == 0) {
+        if (listSprints.isEmpty()) {
             LocalDate startDate = project.getStartDate().toLocalDate();
             sprint.setStartDate(Date.valueOf(startDate));
             sprint.setEndDate(Date.valueOf(startDate.plusWeeks(3)));
@@ -102,28 +106,25 @@ public class SprintService {
      * @throws IncorrectDetailsException If null value is returned from the sprintRepository's findById function
      * @throws PersistenceException Passed by {@link SprintRepository#deleteById(Object) deleteById}
      */
-    public String deleteSprint(int sprintId) throws Exception,IncorrectDetailsException, PersistenceException {
-        try {
-            Optional<Sprint> sprint = sprintRepository.findById(sprintId);
-            if(sprint.isPresent()) {
-                sprintRepository.deleteById(sprintId);
-                return "Successfully deleted " + sprint.get().getSprintLabel();
-            }
-            else
-                throw new IncorrectDetailsException("Could not find the given sprint");
-        } catch (Exception e) {
-            throw new Exception("Failure Deleting Sprint");
+    public String deleteSprint(int sprintId) throws IncorrectDetailsException, PersistenceException {
+        Optional<Sprint> sprint = sprintRepository.findById(sprintId);
+        if(sprint.isPresent()) {
+            sprintRepository.deleteById(sprintId);
+            return "Successfully deleted " + sprint.get().getSprintLabel();
+        } else {
+            throw new IncorrectDetailsException("Could not find the given sprint");
         }
     }
 
     /**
-     * If the project sprint list is edited in some way, change the names of sprints accordingly.
+     * If the project sprint list is edited in some way, change the names and colors of sprints accordingly.
      * @param sprintList a list of all the sprints
      */
-    public void updateSprintLabels(List<Sprint> sprintList) {
+    public void updateSprintLabelsAndColor(List<Sprint> sprintList) {
         AtomicInteger count = new AtomicInteger(1);
         sprintList.forEach(sprint -> {
             sprint.setSprintLabel("Sprint " + count.getAndIncrement());
+            sprint.setColor(SprintColor.valueOf((count.get()-1) % 7));
             sprintRepository.save(sprint);
         });
     }
@@ -158,7 +159,7 @@ public class SprintService {
         List<Sprint> sprints = getSprintByProject(project.getProjectId());
         String stringSprintMinDate;
         String stringSprintMaxDate;
-        if(sprints.size() == 0) {
+        if(sprints.isEmpty()) {
             stringSprintMinDate = project.getStartDate().toString();
             stringSprintMaxDate = project.getEndDate().toString();
         } else if (!sprints.contains(sprint)) {
@@ -201,6 +202,9 @@ public class SprintService {
      * @return
      */
     public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
+        if (sprint.getSprintName().length() > 50)
+            throw new IncorrectDetailsException("Sprint name must be less than 50 characters");
+
         if (sprint.getStartDate().after(sprint.getEndDate()))
             throw new IncorrectDetailsException("Sprint start date can not be after sprint end date");
 
@@ -214,7 +218,7 @@ public class SprintService {
             throw new IncorrectDetailsException("Sprint end date can not be after project end date");
 
         if(sprint.getDescription().length() > 250)
-            throw new IncorrectDetailsException("Project description too long");
+            throw new IncorrectDetailsException("Sprint description must be less than 250 characters");
 
         List<Sprint> sprints = sprintRepository.findByProject(sprint.getProject());
         try {

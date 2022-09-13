@@ -35,6 +35,9 @@ public class AccountController {
     private final UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
 
+    private static final String EDIT_ACCOUNT_PAGE = "editAccount";
+    private static final String ACCOUNT_PAGE = "account";
+
     public AccountController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
     }
@@ -51,7 +54,7 @@ public class AccountController {
             Model model
     ) {
         this.addAttributesToModel(principal, model);
-        return "account";
+        return ACCOUNT_PAGE;
     }
 
     /**
@@ -104,9 +107,8 @@ public class AccountController {
     ) {
         this.addAttributesToModel(principal, model);
 
-        return "editAccount";
+        return EDIT_ACCOUNT_PAGE;
     }
-
 
     /**
      * The mapping for a Post request relating to editing a user
@@ -132,7 +134,7 @@ public class AccountController {
             @RequestParam String bio,
             @RequestParam String pronouns,
             @RequestParam String email,
-            Boolean deleteImage,
+            boolean deleteImage,
             Model model,
             RedirectAttributes ra
     ) throws IOException {
@@ -162,37 +164,39 @@ public class AccountController {
                 String msgString;
                 msgString = "File must be an image of type jpg, jpeg or png";
                 ra.addFlashAttribute("messageDanger", msgString);
-                return "editAccount";
+                return EDIT_ACCOUNT_PAGE;
             }
         }
         if (deleteImage) deleteUserProfilePhoto(principal);
 
-//       End of image
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
             msgString = "Successfully updated details";
             ra.addFlashAttribute("messageSuccess", msgString);
-            return "account";
+            return "redirect:" + ACCOUNT_PAGE;
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
 
-
-
-        return "editAccount";
+        return EDIT_ACCOUNT_PAGE;
     }
 
 
+    /**
+     * Add attributes to the model to be used with Thymeleaf
+     * @param principal the current user
+     * @param model the thymeleaf model
+     */
     private void addAttributesToModel(AuthState principal, Model model) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
 
         User user = new User(idpResponse);
 
         StringBuilder roles = new StringBuilder();
-        user.getRoles().forEach(role -> roles.append(capitaliseFirstLetter(role.toString() + ", ")));
+        user.getRoles().forEach(role -> roles.append(formatRoleName(role.toString() + ", ")));
         model.addAttribute("roles",
-                user.getRoles().size() > 0 ? roles.substring(0, roles.length() - 2): user.getRoles());
+                !user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
 
         // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
@@ -225,10 +229,15 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-    static String capitaliseFirstLetter(String name) {
+    /**
+     * Formats the roles of a user
+     * @param name name of the role
+     * @return The name of the role correctly formatted
+     */
+    static String formatRoleName(String name) {
         if (name.contains("_")) {
             String[] role = name.split("_");
-            return capitaliseFirstLetter(role[0]) + " " + capitaliseFirstLetter(role[1]);
+            return formatRoleName(role[0]) + " " + formatRoleName(role[1]);
         } else
             return name.substring(0, 1).toUpperCase() + name.substring(1).toLowerCase();
     }

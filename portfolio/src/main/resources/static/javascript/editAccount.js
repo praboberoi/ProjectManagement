@@ -1,37 +1,15 @@
 var editBtn = document.getElementById('editBtn');
 var editables = document.querySelectorAll('#username, #firstname, #lastname');
-var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
+var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-]([A-Za-z0-9-])*(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
+var pronoun = /[`!@#$%^*()_+\-&,\=\[\]{};':"\\|.<>\?~]/;
 var email = /^(?=.{1,64}@)[A-Za-z0-9_-]+(\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/;
 var names = /[`!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~]/;
+var username = /[ `!@#$%^&*()_+\=\[\]{};:"\\|,.<>\/?~'-]/;
 var digit = /[0-9]/;
 var upper = /[A-Z]/;
-var dash = /^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$/;
-var space = /^[A-Za-z0-9\-]+( [A-Za-z0-9\-]+)*$/;
-
-/**
- * Disable input fields and buttons when edit button is pressed
- */
-editBtn.addEventListener('click', function(e) {
-    if (!editables[0].isContentEditable) {
-        editables[0].contentEditable = 'true';
-        editables[1].contentEditable = 'true';
-        editables[2].contentEditable = 'true';
-        editBtn.innerHTML = 'Save Changes';
-        editBtn.style.backgroundColor = '#6F9';
-    } else {
-        // Disable Editing
-        editables[0].contentEditable = 'false';
-        editables[1].contentEditable = 'false';
-        editables[2].contentEditable = 'false';
-        // Change Button Text and Color
-        editBtn.innerHTML = 'Enable Editing';
-        editBtn.style.backgroundColor = '#F96';
-        // Save the data in localStorage
-        for (var i = 0; i < editables.length; i++) {
-            localStorage.setItem(editables[i].getAttribute('id'), editables[i].innerHTML);
-        }
-    }
-});
+var special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
+var dash = /^[^-]+(-[^-]+)*$/;
+var space = /^[^ ]+( [^ ]+)*$/;
 
 /**
  * Validates the users first name in input field
@@ -44,7 +22,8 @@ function checkFirstName() {
         || names.test(firstNameElement.value)
         || digit.test(firstNameElement.value)
         || !dash.test(firstNameElement.value)
-        || !space.test(firstNameElement.value)) {
+        || !space.test(firstNameElement.value))
+    {
         firstNameElement.classList.add("formError")
         firstNameErrorElement.innerText = "First name must be between 2 and 32 characters with no special characters or digits."
         firstNameElement.setCustomValidity("Invalid field.");
@@ -66,7 +45,8 @@ function checkLastName() {
         || names.test(lastNameElement.value)
         || digit.test(lastNameElement.value)
         || !dash.test(lastNameElement.value)
-        || !space.test(lastNameElement.value)) {
+        || !space.test(lastNameElement.value))
+    {
         lastNameElement.classList.add("formError")
         lastNameErrorElement.innerText = "Last name must be between 2 and 32 characters with no special characters or digits."
         lastNameElement.setCustomValidity("Invalid field.");
@@ -83,10 +63,11 @@ function checkLastName() {
 function checkNickname() {
     let nicknameElement = document.getElementById("nickname");
     let nicknameErrorElement = document.getElementById("nicknameError");
-    if (nicknameElement.value.length > 32)
+    if (nicknameElement.value.length > 32
+        || username.test(nicknameElement.value))
     {
         nicknameElement.classList.add("formError")
-        nicknameErrorElement.innerText = "Nickname must be less than 32 characters."
+        nicknameErrorElement.innerText = "Nickname must be less than 32 characters with no space or special characters."
         nicknameElement.setCustomValidity("Invalid field.");
     } else {
         nicknameElement.classList.remove("formError");
@@ -124,9 +105,9 @@ function checkPronouns() {
         pronounsErrorElement.innerText = "Personal pronouns must be less than 32 characters."
         pronounsElement.setCustomValidity("Invalid field.");
     } else if (digit.test(pronounsElement.value)
-        || special.test(pronounsElement.value)) {
+        || pronoun.test(pronounsElement.value)) {
         pronounsElement.classList.add("formError")
-        pronounsErrorElement.innerText = "Personal pronouns can only contain special characters + & - , and no digits."
+        pronounsErrorElement.innerText = "Personal pronouns can only contain special character / and no digits."
         pronounsElement.setCustomValidity("Invalid field.");
     } else {
         pronounsElement.classList.remove("formError");

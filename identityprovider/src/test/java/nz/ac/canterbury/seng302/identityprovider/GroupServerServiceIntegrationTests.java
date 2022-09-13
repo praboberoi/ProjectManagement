@@ -147,7 +147,7 @@ class GroupServerServiceIntegrationTests {
      * Tests that all the correct group info is returned to the client.
      */
     @Test
-    void givenSampleData_whengetGroupDetailsIsCalled_thenCorrect() {
+    void givenSampleData_whenGetGroupDetailsIsCalled_thenCorrect() {
         GetGroupDetailsRequest request = GetGroupDetailsRequest.newBuilder().setGroupId(1).build();
         StreamRecorder<GroupDetailsResponse> responseObserver = StreamRecorder.create();
         groupServerService.getGroupDetails(request, responseObserver);

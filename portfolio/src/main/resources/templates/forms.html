@@ -1,0 +1,129 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css" rel='stylesheet' type="text/css" />
+    <!-- Custom css for body-->
+    <link rel="stylesheet" type="text/css" th:href="@{{apiPrefix}/css/body.css(apiPrefix=${apiPrefix})}" />
+    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.js'></script>
+</head>
+<body>
+<div th:fragment="eventsForm">
+    <div class="modal fade" id="eventFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="eventFormTitle">Create New Event</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <!--                    Show event form-->
+                    <div class="projectForm">
+                        <form id="createEventForm" name="eventForm" onsubmit="saveEvent();return false" th:object="${event}" >
+                            <input type="hidden" id="projectId" th:field="${project.projectId}"/>
+                            <input type="hidden" id="eventId" th:field="*{eventId}" />
+                            <div class="mb-3">
+                                <label for="event-name" class="col-form-label required">Event Name</label>
+                                <input style="font-size:20px;" type="text" class="form-control required" id="event-name" th:field="*{eventName}" onkeyup="checkEventName()" required>
+                                <div>
+                                    <span id="charCount" th:value="${charCount}">[[*{eventName.length}]] </span> / 50 characters used.
+                                </div>
+                                <p id="eventNameError" th:text="${eventNameError}" class="error-msg"></p>
+                            </div>
+
+                            <div style="height:30px;" class="row">
+
+                                <div class="col-md-6 ms-auto">
+                                    <label  for="eventStartDate" class="form-label date-font required">Start Date</label>
+                                </div>
+                                <div class="col-md-6 ms-auto">
+                                    <label for="eventEndDate" class="form-label required">End Date</label>
+                                </div>
+                            </div>
+                            <!-- Start Date & Time-->
+                            <div class="row">
+                                <div class="col-md-6 ms-auto">
+                                    <input type="datetime-local" class="form-control date-font" id="eventStartDate" th:field="*{startDate}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax} + 'T00:00'}" onchange="checkEventDates()" required>
+                                    <p id="eventStartDateError"  class="error-msg"></p>
+                                </div>
+                                <div class="col-md-6 ms-auto">
+                                    <input type="datetime-local" class="form-control date-font" id="eventEndDate" th:field="*{endDate}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax}+'T00:00'}" onchange="checkEventDates()" required>
+                                    <p id="eventEndDateError"  class="error-msg"></p>
+                                </div>
+                                <br>
+                            </div>
+
+                            <div class="row">
+                            </div>
+                            <br>
+                            <div class="modal-footer">
+                                <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton" data-bs-dismiss="modal">
+                                    <img class="icon img-color-secondary" id="eventFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                    <span id="eventFormSubmitLabel">Create</span></button>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript" th:src="@{{apiPrefix}/javascript/eventForm.js(apiPrefix=${apiPrefix})}"></script>
+    <script type="text/javascript" th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
+</div>
+<div th:fragment="deadlineForm">
+    <div class="modal fade" id="deadlineFormModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="deadlineFormTitle">Create New Deadline</h5>
+                    <button type="button" class="close" aria-label="Close" th:onclick="closeDeadlineModal()">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="projectForm">
+                        <form id="createDeadlineForm" name="createDeadlineForm" onsubmit="saveDeadline(); return false" th:object="${deadline}" >
+                            <input type="hidden" id="deadlineId" th:field="*{deadlineId}">
+                            <div class="mb-3">
+                                <label for="deadline-name" class="col-form-label required">Deadline Name</label>
+                                <input style="font-size:20px;" type="text"  class="form-control required" id="deadline-name" maxlength="50" th:field="*{name}" onkeyup="checkDeadlineName()" required>
+                                <div>
+                                    <span id="deadlineCharCount" th:value="${charCount}">[[*{name.length}]] </span> / 50 characters used.
+                                </div>
+                                <p id="deadlineNameError" th:text="${deadlineNameError}" class="error-msg"></p>
+                            </div>
+                            <!-- Date & Time-->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <label  for="deadlineDate" class="form-label date-font required">Date</label>
+                                    <input type="datetime-local" class="form-control date-font" id="deadlineDate" th:field="*{date}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax}+'T00:00'}" onchange="checkDeadlineDates()" required>
+                                    <p id="deadlineDateError" class="error-msg"></p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" name="submit" id="deadlineFormSubmitButton" class="btn btn-outline-primary" th:onclick="closeDeadlineModal()">
+                                    <img class="icon img-color-primary" id="deadlineFromSubmitImg" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                    <span id="deadlineFormSubmitLabel">Create</span></button>
+                                <button type="button" class="btn btn-outline-secondary" th:onclick="closeDeadlineModal()">
+                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{{apiPrefix}/javascript/deadlineForm.js(apiPrefix=${apiPrefix})}"></script>
+    <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
+</div>
+</body>
+</html>

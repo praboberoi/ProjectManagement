@@ -1,0 +1,69 @@
+<th:block th:each="deadline : ${listDeadlines}" th:fragment="deadlineTab">
+    <div class="card shadow-sm bg-white rounded deadline-card m-2" th:id="'deadline' + ${deadline.deadlineId} + '-card'">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between pt-2">
+                <div>
+                    <h6 class="card-title" th:id="'deadline' + ${deadline.deadlineId} + 'Name'">[[${deadline.name}]]
+                    </h6>
+                    <p class="eventDates" th:id="'deadline' + ${deadline.deadlineId} + 'date'"><b>Date:</b>
+                        [[${#dates.format(deadline.date, 'dd MMM yyyy hh:mm a')}]]
+                </div>
+                <div class="d-flex align-items-baseline pt-2 mt-2" th:if="${adminOrTeacher}">
+                    <th:block th:each="notification : ${editDeadlineNotifications}" th:object="${notification}"
+                              th:if="${notification.deadlineId} == ${deadline.deadlineId}">
+                        <p class="text-align-start font-italic text-black-50 mb-0 ml-5 ml-md-0" th:id="'deadline' + ${deadline.deadlineId} + '-notification'" th:text="${notification.username} + ' is currently editing'"></p>
+                    </th:block>
+                    <th:block th:with="check=${deadline.deadlineId}">
+                        <p class="text-align-start font-italic text-black-50 mb-0 ml-5 ml-md-0" th:if="!${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}" th:id="'deadline' + ${deadline.deadlineId} + '-notification'"></p>
+                    </th:block>
+                    <button type="button" class="btn btn-outline-primary btn-sm mr-2"
+                        th:hidden="${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}"
+                        th:id="'deadline' + ${deadline.deadlineId} + '-edit-btn'" th:data-deadlineId="${deadline.deadlineId}"
+                        th:data-deadlineName="${deadline.name}" th:data-deadlineDate="${deadline.date}"
+                        th:onclick="editDeadline(this.getAttribute('data-deadlineName'), this.getAttribute('data-deadlineDate'), this.getAttribute('data-deadlineId'))">
+                        <img class="icon img-color-primary"
+                            th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Edit</span>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        th:hidden="${editDeadlineNotifications.^[deadlineId == #root.deadline.deadlineId]}"
+                        th:id="'deadline' + ${deadline.deadlineId} + '-delete-btn'" data-toggle="modal"
+                        data-target="#conformationModalDeadline" th:data-deadlineId="${deadline.deadlineId}"
+                        th:data-deadlineName="${deadline.name}"
+                        th:onclick="deleteDeadline(this.getAttribute('data-deadlineId'), this.getAttribute('data-deadlineName'))">
+                        <img class="icon img-color-secondary"
+                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="conformationModalDeadline" tabindex="-1" role="dialog"
+        aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Deadline</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="messageDeadline"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" id="deleteDeadlineModalBtn" data-dismiss="modal">
+                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                            Delete
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                        <img class="icon img-color-secondary"
+                            th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" /> Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>

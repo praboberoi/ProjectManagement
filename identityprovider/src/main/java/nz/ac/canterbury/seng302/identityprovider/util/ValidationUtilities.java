@@ -9,13 +9,26 @@ import java.util.regex.Pattern;
  */
 public class ValidationUtilities {
 
+    private ValidationUtilities() {}
+
     /**
-     * Checks if a string has a special character e.g !?@,.
+     * Checks if a string has space or special characters e.g!?@,. for usernames.
+     * @param str String to be checked.
+     * @return true if str contains special characters.
+     */
+    public static boolean isUsername(String str) {
+        Pattern pattern = Pattern.compile("[ `!@#$%^&*()_+\\=\\[\\]{};:\"\\\\|,.<>\\/?~'-]");
+        Matcher matcher = pattern.matcher(str);
+        return matcher.find();
+    }
+
+    /**
+     * Checks if a string has space or special characters e.g !?@,.
      * @param str String to be checked.
      * @return true if str contains special characters.
      */
     public static boolean hasSpecial(String str) {
-        Pattern pattern = Pattern.compile("[^a-zA-Z0-9]");
+        Pattern pattern = Pattern.compile("[`!@#$%^*()_\\=\\[\\]{};':\"\\\\|.<>\\/?~]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
@@ -25,20 +38,19 @@ public class ValidationUtilities {
      * @param str String to be checked.
      * @return true if str contains special characters.
      */
-    public static boolean hasDashSpecial(String str) {
-        Pattern pattern = Pattern.compile("^[A-Za-z0-9 ]+(-[A-Za-z0-9 ]+)*$");
+    public static boolean hasMultipleDashes(String str) {
+        Pattern pattern = Pattern.compile("(.*-{2,}.*)");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
 
-
     /**
      * Checks if a string has consecutive " " e.g "   "
      * @param str String to be checked.
-     * @return true if str contains special characters.
+     * @return true if str contains consecutive spaces.
      */
-    public static boolean hasSpaceSpecial(String str) {
-        Pattern pattern = Pattern.compile("^[A-Za-z0-9\\-]+( [A-Za-z0-9\\-]+)*$");
+    public static boolean hasMultipleSpaces(String str) {
+        Pattern pattern = Pattern.compile("(.* {2,}.*)");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
@@ -49,19 +61,19 @@ public class ValidationUtilities {
      * @return true if str contains disallowed characters.
      */
     public static boolean hasNameSpecial(String str) {
-        Pattern pattern = Pattern.compile("[^a-zA-Z0-9 '-]");
+        Pattern pattern = Pattern.compile("[`!@#$%^&*()_+\\=\\[\\]{};:\"\\\\|,.<>\\/?~]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
 
     /**
      * Checks if a string has a special character that aren't allowed in pronouns e.g !?@
-     * allows ',',  ' ',  '-'  '+',  '&'.
+     * allows '/'.
      * @param str String to be checked.
      * @return true if str contains disallowed characters.
      */
     public static boolean hasPronounSpecial(String str) {
-        Pattern pattern = Pattern.compile("[^a-zA-Z0-9 ,+&-]");
+        Pattern pattern = Pattern.compile("[^a-zA-Z0-9/]");
         Matcher matcher = pattern.matcher(str);
         return matcher.find();
     }
