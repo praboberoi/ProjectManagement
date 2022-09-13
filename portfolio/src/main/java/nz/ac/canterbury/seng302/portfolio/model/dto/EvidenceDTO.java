@@ -1,9 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.model.dto;
 
+import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 
 import java.util.Date;
-import java.util.Objects;
 
 /**
  * The evidenceDTO entity stored in the database for the portfolio application
@@ -70,99 +70,13 @@ public class EvidenceDTO {
         this.ownerId = ownerId;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof EvidenceDTO)) return false;
-        EvidenceDTO evidenceDTO = (EvidenceDTO) o;
-        return evidenceId == evidenceDTO.evidenceId && Objects.equals(project, evidenceDTO.project) && Objects.equals(title, evidenceDTO.title) && Objects.equals(dateOccurred, evidenceDTO.dateOccurred);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(evidenceId, project, title, description, dateOccurred);
-    }
-
-
-    /**
-     * Builder class to construct an evidenceDTO object.
-     */
-    public static class Builder {
-        private int evidenceId;
-        private Date dateOccurred;
-        private String title;
-        private String description = "";
-        private int ownerId;
-        private Project project;
-
-        /**
-         * Builds the current Builder with the given evidence id
-         * @param evidenceId of type int.
-         * @return The current Builder.
-         */
-        public EvidenceDTO.Builder evidenceId(int evidenceId) {
-            this.evidenceId = evidenceId;
-            return this;
-        }
-
-        /**
-         * Builds the current Builder with the given date occurred label.
-         * @param dateOccurred of type String
-         * @return the current Builder
-         */
-        public EvidenceDTO.Builder dateOccurred(Date dateOccurred) {
-            this.dateOccurred = dateOccurred;
-            return this;
-        }
-
-        /**
-         * Builds the current Builder with the given evidence title.
-         * @param title of type String
-         * @return the current Builder
-         */
-        public EvidenceDTO.Builder title(String title) {
-            this.title = title;
-            return this;
-        }
-
-        /**
-         * Builds the current Builder with the given project.
-         * @param project of type Project
-         * @return the current Builder
-         */
-        public EvidenceDTO.Builder project(Project project) {
-            this.project = project;
-            return this;
-        }
-
-        /**
-         * Builds the current Builder with the given description
-         * @param description of type String.
-         * @return the current Builder.
-         */
-        public EvidenceDTO.Builder description(String description) {
-            this.description = description;
-            return this;
-        }
-
-
-        /**
-         * Builds the current Builder with the given ownerId.
-         * @param ownerId user id of the owner of the evidence.
-         * @return the current Builder
-         */
-        public EvidenceDTO.Builder ownerId(int ownerId) {
-            this.ownerId = ownerId;
-            return this;
-        }
-
-        /**
-         * Returns a new Evidence with all the parameters of the current Builder
-         * @return Evidence object
-         */
-        public EvidenceDTO build() {
-            return new EvidenceDTO(evidenceId, project, dateOccurred, title, description, ownerId);
-        }
+    public EvidenceDTO(Evidence evidence)  {
+        evidenceId = evidence.getEvidenceId();
+        project = evidence.getProject();
+        dateOccurred = evidence.getDateOccurred();
+        title = evidence.getTitle();
+        description = evidence.getDescription();
+        ownerId = evidence.getOwnerId();
     }
 
 }
