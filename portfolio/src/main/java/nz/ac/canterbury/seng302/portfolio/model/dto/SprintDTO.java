@@ -3,7 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.model.dto;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import java.sql.Date;
-import java.util.Objects;
+
 
 /**
  * The SprintDTO object for transferring the date from the frontend to the database
@@ -89,17 +89,4 @@ public class SprintDTO {
         return color;
     }
 
-    @Override
-    public String toString() {
-        return "SprintDTO{" +
-                "sprintId=" + sprintId +
-                ", project=" + project +
-                ", sprintLabel='" + sprintLabel + '\'' +
-                ", sprintName='" + sprintName + '\'' +
-                ", description='" + description + '\'' +
-                ", startDate=" + startDate +
-                ", endDate=" + endDate +
-                ", color=" + color +
-                '}';
-    }
 }
