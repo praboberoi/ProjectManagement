@@ -42,6 +42,7 @@
                     <th:block th:each="group : ${listGroups}">
                         <div class="card project-card mb-3" th:id="'group' + ${group.groupId} + 'Card'"
                             th:ondrop="'dropUsers(event, ' + ${group.groupId} + ')'" ondragover="allowDrop(event)">
+                            <input type="hidden" th:value="${group.groupId}" class="group-id">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="card-body">

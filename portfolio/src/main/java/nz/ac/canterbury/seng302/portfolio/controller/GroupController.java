@@ -188,11 +188,16 @@ public class GroupController {
             ModifyGroupDetailsResponse response = groupService.modifyGroup(groupId, shortName, longName);
             status = response.getIsSuccess();
             message = response.getMessage();
+            
         }
         model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
         model.addAttribute("user", userAccountClientService.getUser(principal));
         if (status) {
-            notifyGroup(groupId, "details", "edited");
+            if (groupId == null) {
+                notifyGroup(-1, "details", "edited");
+            } else {
+                notifyGroup(groupId, "details", "edited");
+            }
             ra.addFlashAttribute("messageSuccess", message);
         } else {
             ra.addFlashAttribute(WARNING_MESSAGE, message);
@@ -311,3 +316,5 @@ public class GroupController {
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
 }
+
+
