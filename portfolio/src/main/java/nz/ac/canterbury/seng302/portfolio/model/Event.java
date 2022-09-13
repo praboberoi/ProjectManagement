@@ -45,7 +45,7 @@ public class Event {
 
     @Column
     @ElementCollection
-    private final List<SprintColor> colors = new ArrayList<>();;
+    private final List<SprintColor> colors = new ArrayList<>();
 
 
     /**

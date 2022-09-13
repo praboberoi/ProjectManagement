@@ -131,7 +131,7 @@ public class EventService {
                 event.addColor(sprint.getColor(), counter.getAndIncrement());
         });
 
-        if (sprintList.size() > 0) {
+        if (!sprintList.isEmpty()) {
             if ( sprintList.get(0).getStartDate().after(event.getStartDate()) )
                 event.addColor(SprintColor.WHITE, 0);
 

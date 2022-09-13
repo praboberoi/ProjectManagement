@@ -57,7 +57,7 @@ public class EventController {
       * @return Page fragment containing events
       */
       @GetMapping(path="/project/{projectId}/events")
-      public ModelAndView events(@PathVariable("projectId") int projectId) throws IncorrectDetailsException {
+      public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
           listEvents.forEach(eventService::updateEventColors);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
