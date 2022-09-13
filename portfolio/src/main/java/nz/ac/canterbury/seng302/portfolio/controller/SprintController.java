@@ -96,7 +96,7 @@ public class SprintController {
     @PostMapping("/project/{projectId}/verifySprint")
     public ResponseEntity<String> verifySprint(
             @PathVariable int projectId,
-            @RequestBody SprintDTO sprintDTO,
+            @ModelAttribute SprintDTO sprintDTO,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
