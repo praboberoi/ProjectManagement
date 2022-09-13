@@ -137,16 +137,13 @@
                         <div class="mb-3">
                             <label for="evidence-project" class="col-form-label required">Select Project</label>
                             <select type="text" class="form-select required" id="evidence-project" th:field="*{project}"   required>
-                                <option selected>Select project</option>
                                 <th:block th:each="project : ${listProjects}">
-                                    <option value ="1">[[${project.projectName}]]</option>
+                                    <option th:value ="${project.projectId}">[[${project.projectName}]]</option>
                                 </th:block>
 
                             </select>
                             <p id="evidenceProjectError" th:text="${evidenceTitleError}" class="error-msg"></p>
                         </div>
-
-
 
                         <div class="mb-3">
                             <label for="evidence-date" class="col-form-label required">Date</label>
