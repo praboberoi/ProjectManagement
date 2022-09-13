@@ -76,8 +76,8 @@ public class RepoController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to edit these repo settings");
         }
 
-        Repo repo = new Repo(repoDTO);
         try {
+            Repo repo = new Repo(repoDTO);
             repoService.saveRepo(repo);
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());

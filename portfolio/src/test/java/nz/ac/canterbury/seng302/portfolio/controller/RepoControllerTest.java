@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Repo;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
+import nz.ac.canterbury.seng302.portfolio.service.RepoService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -41,6 +42,8 @@ public class RepoControllerTest {
 
     @MockBean
     private GroupService groupService;
+    @MockBean
+    private RepoService repoService;
 
     @MockBean
     private UserAccountClientService userAccountClientService;
@@ -99,7 +102,7 @@ public class RepoControllerTest {
         Repo repo = new Repo(1, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
-        when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
+        when(repoService.getRepo(anyInt())).thenReturn(repo);
         mockMvc
             .perform(get("/repo/1"))
             .andExpect(status().isOk())
@@ -118,7 +121,7 @@ public class RepoControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         when(PrincipalUtils.getUserId(any())).thenReturn(1);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
-        when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
+        when(repoService.getRepo(anyInt())).thenReturn(repo);
         mockMvc
             .perform(get("/repo/1"))
             .andExpect(status().isOk())
