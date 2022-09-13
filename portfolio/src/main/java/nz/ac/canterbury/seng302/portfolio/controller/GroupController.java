@@ -10,6 +10,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -43,9 +44,12 @@ public class GroupController {
 
     @Autowired
     private RepoRepository repoRepository;
+    
+    @Autowired
+    private SimpMessagingTemplate template;
 
     private static final String GROUP = "group";
-    private static final String GROUP_FRAGMENT = "groups::group";
+    private static final String GROUP_FRAGMENT = "groupsFragments::group";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
     private static final String WARNING_MESSAGE = "messageDanger";
 
@@ -188,6 +192,7 @@ public class GroupController {
         model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
         model.addAttribute("user", userAccountClientService.getUser(principal));
         if (status) {
+            notifyGroup(groupId, "details", "edited");
             ra.addFlashAttribute("messageSuccess", message);
         } else {
             ra.addFlashAttribute(WARNING_MESSAGE, message);
@@ -229,6 +234,7 @@ public class GroupController {
 
         RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
         if (response.getIsSuccess() && "".equals(additionalInfo)) {
+            notifyGroup(groupId, "members", "removed");
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage() + additionalInfo);
@@ -261,6 +267,7 @@ public class GroupController {
 
         AddGroupMembersResponse response = groupService.addGroupMembers(userIds, groupId);
         if (response.getIsSuccess()) {
+            notifyGroup(groupId, "members", "added");
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
@@ -292,5 +299,15 @@ public class GroupController {
         model.addAttribute(GROUP, group);
         model.addAttribute("repo", repo);
         return GROUP;
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param groupId Id of the event edited
+     * @param component Component that has been modified (details or members)
+     * @param action The action taken (deleted, created, edited)
+     */
+    private void notifyGroup(int groupId, String component, String action) {
+        template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
 }
