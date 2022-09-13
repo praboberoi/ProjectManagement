@@ -1,6 +1,5 @@
-package nz.ac.canterbury.seng302.portfolio.model.repository;
+package nz.ac.canterbury.seng302.portfolio.model;
 
-import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

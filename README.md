@@ -32,6 +32,16 @@ Endpoints implemented <br />
 - "/usersList" GET - Get the current table page of users. 
 - "/usersList/removeRole" DELETE - Remove the selected role from a user.
 - "/user/{userId}/addRole" POST - Add the selected role to a user.
+- "/groups" GET - Get the groups page.
+- "/groups/list" GET - Get the list of groups.
+- "/groups/{groupId}" DELETE - Delete the selected group but not the members within the group.
+- "/groups/{groupId}" GET - Get the details of the selected group.
+- "/groups/unassigned" GET - Get the members and details of the group of users with no assigned group.
+- "/groups/teachers" GET - Get the members and details of the group of users with a Teacher role.
+- "/groups" POST - Create a new group.
+- "/groups/{groupId}/removeMembers" POST - Remove selected members from a group but not as users of LENSFolio.
+- "/groups/{groupId}/addMembers" POST - Add selected members to a group.
+- 
 
 Basic project template using `gradle`, `Spring Boot`, `Thymeleaf` and `Gitlab CI`.
 
@@ -118,6 +128,16 @@ By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 |Retail Management 2022| This is to manage retail jobs|21/07/2022|20/03/2021|
 |Project 2022||10/08/2022|10/04/2023|
 
+### 6 - Example Groups 
+|Group Short Name|Group Long Name|
+|----|----|
+|Team 400|400 Bad Request|
+|Team 300|Bolt Development|
+|Team 100| Lens Development|
+|Team 200|200 Cats|
+|Team 700|Cows Cows Cows|
+|Team 800|The Spartans|
+
 ## Contributors
 
 - SENG302 teaching team
@@ -132,6 +152,51 @@ By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 ## License
 Apache 2.0
 
+## Dependencies
+### Shared
+- `io.grpc:grpc-netty-shaded:1.40.1`
+- `io.grpc:grpc-protobuf:1.40.1`
+- `io.grpc:grpc-stub:1.40.1`
+- `org.jetbrains:annotations:20.1.0`
+- `com.h2database:h2:1.4.200`
+- `org.springframework.boot:spring-boot-starter-data-jpa`
+- `jakarta.annotation:jakarta.annotation-api:1.3.5`
+
+### Portfolio
+- `org.springframework.boot:spring-boot-starter-web`
+- `org.springframework.boot:spring-boot-starter-thymeleaf`
+- `org.springframework.boot:spring-boot-starter-security`
+- `org.springframework.boot:spring-boot-starter-data-jpa`
+- `com.h2database:h2:1.4.200`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `net.devh:grpc-client-spring-boot-starter:2.13.1.RELEASE`
+- `io.jsonwebtoken:jjwt-api:0.11.0`
+- `group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.6.4'`
+- `group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.0.4'`
+- `org.springframework.boot:spring-boot-devtools`
+- `org.springframework.boot:spring-boot-starter-test`
+- `io.cucumber:cucumber-java:6.10.4`
+- `io.cucumber:cucumber-junit:6.10.4`
+
+### Identity Provider
+- `org.springframework:spring-web`
+- `org.springframework:spring-web`
+- `'org.springframework.boot:spring-boot-starter-web'`
+- `'org.springframework.boot:spring-boot-starter'`
+- `'org.springframework.boot:spring-boot-starter-data-jpa'`
+- `'com.h2database:h2:1.4.200'`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `net.devh:grpc-spring-boot-starter:2.13.1.RELEASE`
+- `io.jsonwebtoken:jjwt-api:0.11.0`
+- `io.jsonwebtoken:jjwt-impl:0.11.0`
+- `io.jsonwebtoken:jjwt-jackson:0.11.0`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `org.mariadb.jdbc:mariadb-java-client:2.1.2`
+- `org.springframework.boot:spring-boot-devtools`
+- `org.springframework.boot:spring-boot-starter-test`
+- `io.grpc:grpc-testing:1.45.0`
+- `io.cucumber:cucumber-java:6.10.4`
+- `io.cucumber:cucumber-junit:6.10.4`
 
 ## StompJS License
 
