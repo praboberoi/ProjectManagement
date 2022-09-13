@@ -82,6 +82,18 @@ public class EvidenceController {
         return "evidence";
     }
 
+//    public String evidenceList(
+//            @PathVariable("userId") int userId,
+//            Model model) {
+//        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+//        model.addAttribute("listEvidence", listEvidence);
+//        if (!listEvidence.isEmpty()) {
+//            model.addAttribute("selectedEvidence", listEvidence.get(0));
+//        }
+//        return "evidence";
+//    }
+
+
 
     /**
      * Updates the model with the correct list of evidence and a selected evidence
@@ -126,6 +138,6 @@ public class EvidenceController {
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        return "redirect:/evidence";
+        return "redirect:/evidence/{userId}";
     }
 }
