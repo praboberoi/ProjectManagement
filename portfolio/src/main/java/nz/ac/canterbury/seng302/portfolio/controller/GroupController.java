@@ -52,6 +52,7 @@ public class GroupController {
     private static final String GROUP_FRAGMENT = "groupsFragments::group";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
     private static final String WARNING_MESSAGE = "messageDanger";
+    private static final String DETAILS = "details";
 
     /**
      * Get message for empty registration page
@@ -103,7 +104,7 @@ public class GroupController {
         
         ResponseEntity.BodyBuilder reply;
         if (response.getIsSuccess()) {
-            notifyGroup(groupId, "details", "deleted");
+            notifyGroup(groupId, DETAILS, "deleted");
             reply = ResponseEntity.status(HttpStatus.OK);
         } else {
             reply = ResponseEntity.status(HttpStatus.NOT_FOUND);
@@ -195,9 +196,9 @@ public class GroupController {
         model.addAttribute("user", userAccountClientService.getUser(principal));
         if (status) {
             if (groupId == null) {
-                notifyGroup(-1, "details", "edited");
+                notifyGroup(-1, DETAILS, "edited");
             } else {
-                notifyGroup(groupId, "details", "edited");
+                notifyGroup(groupId, DETAILS, "edited");
             }
             ra.addFlashAttribute("messageSuccess", message);
         } else {
