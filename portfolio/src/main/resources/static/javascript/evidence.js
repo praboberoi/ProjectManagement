@@ -1,6 +1,3 @@
-messageSuccess.hidden = true;
-messageDanger.hidden = true;
-
 /**
  * Makes a call to the server and replaces the current evidence with the new one
  */
