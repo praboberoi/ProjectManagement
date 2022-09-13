@@ -116,21 +116,6 @@ public class Event {
         this.endDate = endDate;
     }
 
-    public String getStartDateOnly() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return formatter.format(startDate);
-    }
-
-    public String getEndDateOnly() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return formatter.format(endDate);
-    }
-
-    public String getStartTime() {
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-        return formatter.format(startDate);
-    }
-
     public List<SprintColor> getColors() {
         return this.colors;
     }
