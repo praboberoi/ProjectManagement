@@ -182,9 +182,19 @@ public class GroupController {
             @RequestParam String longName,
             Model model,
             RedirectAttributes ra) {
-        Groups group = groupService.getGroupById(groupId);
+        Groups group;
+        if (groupId == null) {
+            group = null;
+        } else {
+            group = groupService.getGroupById(groupId);
+            if (group == null) {
+                ra.addFlashAttribute(WARNING_MESSAGE, "Group doesn't exist.");
+                return GROUPS_REDIRECT;
+            }
+        }
+
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
-                && (group.getGroupId() == 0 || group.getMembers().stream()
+                && (group == null || group.getGroupId() == 0 || group.getMembers().stream()
                         .noneMatch(user -> (user.getUserId() == PrincipalUtils.getUserId(principal))))) {
             ra.addFlashAttribute(WARNING_MESSAGE, "Insufficient permissions to save group.");
             return GROUPS_REDIRECT;
@@ -198,7 +208,7 @@ public class GroupController {
             message = response.getMessage();
         } else {
             ModifyGroupDetailsResponse response;
-            if (group.getGroupId() == 0 || group.getMembers().stream()
+            if (group.getMembers().stream()
                     .noneMatch(user -> (user.getUserId() == PrincipalUtils.getUserId(principal)))) {
                         response = groupService.modifyGroup(groupId, group.getShortName(), longName);
             } else {
@@ -207,6 +217,7 @@ public class GroupController {
             status = response.getIsSuccess();
             message = response.getMessage();
         }
+
         model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
         model.addAttribute("user", userAccountClientService.getUser(principal));
         if (status) {

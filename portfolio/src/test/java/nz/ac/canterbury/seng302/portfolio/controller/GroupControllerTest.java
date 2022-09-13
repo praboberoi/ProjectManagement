@@ -129,7 +129,7 @@ public class GroupControllerTest {
         mockMvc
                 .perform(post("/groups?shortName=&longName="))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to create group."));
+                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to save group."));
     }
 
     /**
@@ -271,10 +271,11 @@ public class GroupControllerTest {
     void givenStudentUser_whenModifyGroupCalled_thenRedirectToGroupsPage() throws Exception{
         when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
                 .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to create group."));
+                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to save group."));
     }
 
     /**
@@ -285,6 +286,7 @@ public class GroupControllerTest {
     void givenTeacherUser_whenModifyGroupCalled_thenSuccess() throws Exception{
         when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
                 .andExpect(status().is3xxRedirection())
@@ -299,6 +301,7 @@ public class GroupControllerTest {
     void givenTeacherUser_whenModifyGroupCalledWithInvalidData_thenFail() throws Exception{
         when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(false).setMessage("Fail").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
                 .andExpect(status().is3xxRedirection())
