@@ -16,6 +16,10 @@ When("I set valid repo settings", () => {
     cy.get("#submit-repo").click()
 });
 
+When("I toggle the recent actions component", () => {
+    cy.get('#actions-toggle-tab').click()
+});
+
 Then("A repo is connected", () => {
     cy.contains("Connected to repo:").should('exist')
 });
@@ -26,6 +30,14 @@ Then("I cannot see repo settings", () => {
 
 Then("I can see repo settings", () => {
     cy.get("#repo-settings-tab").should('exist')
+})
+
+Then("The recent actions component is not visible", () => {
+    cy.get("#recent-actions-container").should("not.be.visible")
+})
+
+Then("The recent actions component is visible", () => {
+    cy.get("#recent-actions-container").should("be.visible")
 })
 
 When("I set invalid repo settings", () => {

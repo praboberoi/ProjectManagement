@@ -1,11 +1,12 @@
 <div th:fragment="repoSettings">
-    <form onsubmit="connectTest(event)">
+    <form onsubmit="saveRepoSettings(event)" name="repoSettingsForm">
         <div class="form-group">
+            <input type="hidden" name="repoId" th:value="${repo.repoId}" />
             <label for="git-project-name" class="col-form-label">Project Name</label>
             <input type="text" class="form-control" id="git-project-name" disabled></input>
 
             <label for="git-alias" class="col-form-label required">Project Alias</label>
-            <input type="text" class="form-control" id="git-project-alias" required onkeyup="validateProjectAlias();"></input>
+            <input type="text" class="form-control" id="git-project-alias" required name="repoName" th:value="${repo.repoName}" onkeyup="validateProjectAlias();"></input>
             <p id="gitProjectAliasError" th:text="${gitProjectAliasError}" class="error-msg" ></p>
 
 
@@ -13,7 +14,7 @@
             <span data-bs-toggle="tooltip" data-bs-placement="top" title="This is found under the repo's name."><img
                     class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
-            <input type="number" class="form-control" id="git-project-id" required onkeyup="validateProjectID();"></input>
+            <input type="number" class="form-control" id="git-project-id" required name="gitlabProjectId" th:value="${repo.gitlabProjectId}" onkeyup="validateProjectID();"></input>
             <p id="gitProjectIdError" th:text="${gitProjectIdError}" class="error-msg"></p>
 
 
@@ -22,14 +23,13 @@
                 title="This is needed for private repos. Generate this in your repo's settings page."><img
                     class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
-            <input type="text" class="form-control" id="git-access-token"></input>
-
+            <input type="text" class="form-control" id="git-access-token" name="accessToken" th:value="${repo.accessToken}"></input>
 
             <label for="git-host-address" class="col-form-label required">Project host address</label>
             <span data-bs-toggle="tooltip" data-bs-placement="top"
                 title="This is the host of your repo (e.g. https://github.com)."><img class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
-            <input type="text" class="form-control" id="git-host-address" required onkeyup="validateProjectHostAddress();"></input>
+            <input type="text" class="form-control" id="git-host-address" required name="hostAddress" th:value="${repo.hostAddress}" onkeyup="validateProjectHostAddress();"></input>
             <p id="gitHostAddressError" th:text="${gitHostAddressError}" class="error-msg"></p>
 
         </div>
@@ -75,4 +75,8 @@
             </th:block>
         </tbody>
     </table>
+</div>
+
+<div th:fragment="repoSettingsError">
+    <p>Unable to retrieve repo settings</p>
 </div>
