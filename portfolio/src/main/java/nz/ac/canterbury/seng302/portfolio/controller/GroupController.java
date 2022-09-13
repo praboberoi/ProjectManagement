@@ -39,7 +39,8 @@ public class GroupController {
     @Autowired
     private GroupService groupService;
 
-    @Autowired private UserAccountClientService userAccountClientService;
+    @Autowired
+    private UserAccountClientService userAccountClientService;
 
     @Autowired
     private RepoRepository repoRepository;
@@ -51,12 +52,14 @@ public class GroupController {
 
     /**
      * Get message for empty registration page
-     * @param request HTTP request sent to this endpoint
+     * 
+     * @param request  HTTP request sent to this endpoint
      * @param response HTTP response that will be returned by this endpoint
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
+     * @param model    Parameters sent to thymeleaf template to be rendered into
+     *                 HTML
      * @return Registration html page
      */
-    @GetMapping(path="/groups")
+    @GetMapping(path = "/groups")
     public String groups(
             HttpServletRequest request,
             HttpServletResponse response,
@@ -64,7 +67,8 @@ public class GroupController {
             @AuthenticationPrincipal AuthState principal
 
     ) {
-        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(),
+                groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         model.addAttribute("listGroups", groups);
         model.addAttribute(GROUP, groupService.getMembersWithoutAGroup());
@@ -73,11 +77,13 @@ public class GroupController {
 
     /**
      * Get list of groups
+     * 
      * @return List of groups
      */
-    @GetMapping(path="/groups/list")
+    @GetMapping(path = "/groups/list")
     public ModelAndView groupsList() {
-        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(),
+                groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView("groups::groupList");
         mv.addObject("listGroups", groups);
@@ -86,7 +92,8 @@ public class GroupController {
 
     /**
      * Attempts to delete a group from the idp server
-     * @param groupId The id of the group to be deleted
+     * 
+     * @param groupId   The id of the group to be deleted
      * @param principal Authentication information containing user info
      * @return Status of the request and corresponding message
      */
@@ -96,7 +103,7 @@ public class GroupController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
         DeleteGroupResponse response = groupService.deleteGroup(groupId);
-        
+
         ResponseEntity.BodyBuilder reply;
         if (response.getIsSuccess()) {
             reply = ResponseEntity.status(HttpStatus.OK);
@@ -108,14 +115,15 @@ public class GroupController {
 
     /**
      * Get method for the selected group.
+     * 
      * @return The selected group fragment
      */
     @GetMapping("/groups/{groupId}")
     public ModelAndView selectedGroup(
-            @PathVariable int groupId
-    ) {
+            @PathVariable int groupId) {
         Groups group = groupService.getGroupById(groupId);
-        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(),
+                groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
@@ -125,12 +133,14 @@ public class GroupController {
 
     /**
      * Get method for the unassigned members group.
+     * 
      * @return The selected group fragment
      */
     @GetMapping("/groups/unassigned")
     public ModelAndView unassignedGroup() {
         Groups group = groupService.getMembersWithoutAGroup();
-        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(),
+                groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
@@ -140,12 +150,14 @@ public class GroupController {
 
     /**
      * Get method for the teachers group.
+     * 
      * @return The teacher group fragment
      */
     @GetMapping("/groups/teachers")
     public ModelAndView teachersGroup() {
         Groups group = groupService.getTeachingStaffGroup();
-        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(), groupService.getTeachingStaffGroup());
+        List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(),
+                groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
         mv.addObject("listGroups", groups);
@@ -155,25 +167,29 @@ public class GroupController {
 
     /**
      * Attempts to create a group from in the idp server
-     * @param groupId Id of the new group, null if it is new
+     * 
+     * @param groupId   Id of the new group, null if it is new
      * @param shortName short name of the group being created
-     * @param longName long name of the group being created
+     * @param longName  long name of the group being created
      * @param principal Authentication information containing user info
      * @return Status of the request and corresponding message
      */
     @PostMapping(value = "/groups")
     public String createGroup(
-        @AuthenticationPrincipal AuthState principal,
-        @RequestParam(required = false) Integer groupId,
-        @RequestParam String shortName,
-        @RequestParam String longName,
-        Model model,
-        RedirectAttributes ra
-    ) {
-        if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
-            ra.addFlashAttribute(WARNING_MESSAGE, "Insufficient permissions to create group.");
+            @AuthenticationPrincipal AuthState principal,
+            @RequestParam(required = false) Integer groupId,
+            @RequestParam String shortName,
+            @RequestParam String longName,
+            Model model,
+            RedirectAttributes ra) {
+        Groups group = groupService.getGroupById(groupId);
+        if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+                && (group.getGroupId() == 0 || group.getMembers().stream()
+                        .noneMatch(user -> (user.getUserId() == PrincipalUtils.getUserId(principal))))) {
+            ra.addFlashAttribute(WARNING_MESSAGE, "Insufficient permissions to save group.");
             return GROUPS_REDIRECT;
         }
+
         boolean status;
         String message;
         if (groupId == null) {
@@ -181,7 +197,13 @@ public class GroupController {
             status = response.getIsSuccess();
             message = response.getMessage();
         } else {
-            ModifyGroupDetailsResponse response = groupService.modifyGroup(groupId, shortName, longName);
+            ModifyGroupDetailsResponse response;
+            if (group.getGroupId() == 0 || group.getMembers().stream()
+                    .noneMatch(user -> (user.getUserId() == PrincipalUtils.getUserId(principal)))) {
+                        response = groupService.modifyGroup(groupId, group.getShortName(), longName);
+            } else {
+                response = groupService.modifyGroup(groupId, shortName, longName);
+            }
             status = response.getIsSuccess();
             message = response.getMessage();
         }
@@ -197,9 +219,11 @@ public class GroupController {
 
     /**
      * Removes the selected users from the selected group
+     * 
      * @param listOfUserIds List of users to remove in csv format
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @param principal Authentication information containing user info
+     * @param model         Parameters sent to thymeleaf template to be rendered
+     *                      into HTML
+     * @param principal     Authentication information containing user info
      * @return Response with status code and message
      */
     @PostMapping("/groups/{groupId}/removeMembers")
@@ -207,7 +231,7 @@ public class GroupController {
             @PathVariable Integer groupId,
             String listOfUserIds,
             Model model,
-            @AuthenticationPrincipal AuthState principal){
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
@@ -216,11 +240,12 @@ public class GroupController {
         List<Integer> userIds;
         try {
             userIds = new ArrayList<>(Arrays.stream(listOfUserIds.split(",")).map(Integer::parseInt).toList());
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User list must be a csv of integers");
         }
 
-        if (groupId == -1 && !PrincipalUtils.getUserRole(principal).contains(UserRole.COURSE_ADMINISTRATOR.name()) && userIds.remove(Integer.valueOf(PrincipalUtils.getUserId(principal)))) {
+        if (groupId == -1 && !PrincipalUtils.getUserRole(principal).contains(UserRole.COURSE_ADMINISTRATOR.name())
+                && userIds.remove(Integer.valueOf(PrincipalUtils.getUserId(principal)))) {
             additionalInfo += "\nUnable to remove own role";
             if (listOfUserIds.length() == 1) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unable to remove own role");
@@ -237,9 +262,11 @@ public class GroupController {
 
     /**
      * Adds the selected users to the selected group
+     * 
      * @param listOfUserIds List of users to add in csv format
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @param principal Authentication information containing user info
+     * @param model         Parameters sent to thymeleaf template to be rendered
+     *                      into HTML
+     * @param principal     Authentication information containing user info
      * @return Response with status code and message
      */
     @PostMapping("/groups/{groupId}/addMembers")
@@ -247,7 +274,7 @@ public class GroupController {
             @PathVariable Integer groupId,
             String listOfUserIds,
             Model model,
-            @AuthenticationPrincipal AuthState principal){
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
@@ -255,7 +282,7 @@ public class GroupController {
         List<Integer> userIds;
         try {
             userIds = new ArrayList<>(Arrays.stream(listOfUserIds.split(",")).map(Integer::parseInt).toList());
-        } catch(Exception e) {
+        } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("User list must be a csv of integers");
         }
 
@@ -269,12 +296,13 @@ public class GroupController {
 
     /**
      * Gets the individual group page.
+     * 
      * @param groupId The pages group id for future implementation
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @param ra Redirect Attribute frontend message object
+     * @param model   Parameters sent to thymeleaf template to be rendered into HTML
+     * @param ra      Redirect Attribute frontend message object
      * @return The group page
      */
-    @GetMapping(path="/group/{groupId}")
+    @GetMapping(path = "/group/{groupId}")
     public String groupPage(@PathVariable int groupId, Model model, RedirectAttributes ra) {
         Groups group = groupService.getGroupById(groupId);
         if (group.getGroupId() == 0) {
