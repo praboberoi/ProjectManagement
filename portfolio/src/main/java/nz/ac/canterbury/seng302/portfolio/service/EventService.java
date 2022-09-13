@@ -25,9 +25,10 @@ public class EventService {
     private Logger logger = LoggerFactory.getLogger(EventService.class);
 
 
-    public EventService(ProjectRepository projectRepository, EventRepository eventRepository) {
+    public EventService(ProjectRepository projectRepository, EventRepository eventRepository, SprintRepository sprintRepository) {
         this.eventRepository = eventRepository;
         this.projectRepository = projectRepository;
+        this.sprintRepository = sprintRepository;
     }
 
     /**
