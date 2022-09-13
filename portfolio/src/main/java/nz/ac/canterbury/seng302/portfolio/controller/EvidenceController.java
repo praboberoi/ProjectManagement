@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +35,8 @@ public class EvidenceController {
     private String apiPrefix;
     @Autowired
     private EvidenceService evidenceService;
+    @Autowired
+    private ProjectService projectService;
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
@@ -71,11 +74,13 @@ public class EvidenceController {
         Evidence[] evidences = {evidence1, evidence2};
 
         Evidence newEvidence = evidenceService.getNewEvidence(userId, project);
+        List<Project> listProjects = projectService.getAllProjects();
 
         List<Evidence> listEvidences = Arrays.asList(evidences);
         model.addAttribute("listEvidence", listEvidences);
         model.addAttribute("selectedEvidence", evidence2);
         model.addAttribute("evidence", newEvidence);
+        model.addAttribute("listProjects", listProjects);
         return "evidence";
     }
 
