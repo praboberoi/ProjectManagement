@@ -240,6 +240,25 @@ class SprintControllerTest {
         }
     }
 
+    /**
+     * Test to make sure that the user is redirected to the project page after saving the sprint
+     */
+    @Test
+    void givenSprintExists_whenSaveSprintIsRequested_thenUserIsRedirectedToProjectPage(){
+        try {
+            when(projectService.getProjectById(1)).thenReturn(project);
+            when(sprintService.verifySprint(any())).thenReturn(true);
+
+            this.mockMvc.perform(MockMvcRequestBuilders
+                            .post("/project/1/saveSprint"))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(view().name("redirect:/project/{projectId}"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
 
     @AfterAll

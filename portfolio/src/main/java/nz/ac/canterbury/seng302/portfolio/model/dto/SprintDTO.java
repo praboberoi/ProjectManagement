@@ -102,17 +102,4 @@ public class SprintDTO {
                 ", color=" + color +
                 '}';
     }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof SprintDTO)) return false;
-        SprintDTO sprintDTO = (SprintDTO) o;
-        return sprintId == sprintDTO.sprintId && project.equals(sprintDTO.project) && sprintLabel.equals(sprintDTO.sprintLabel) && sprintName.equals(sprintDTO.sprintName) && description.equals(sprintDTO.description) && startDate.equals(sprintDTO.startDate) && endDate.equals(sprintDTO.endDate) && color == sprintDTO.color;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(sprintId, project, sprintLabel, sprintName, description, startDate, endDate, color);
-    }
 }
