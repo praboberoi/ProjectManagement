@@ -19,6 +19,6 @@ function getSelectedEvidence(selectedEvidenceId) {
         }
     }
 
-    httpRequest.open('GET', apiPrefix + `/evidence/${selectedEvidenceId}`);
+    httpRequest.open('GET', apiPrefix + `/evidence/${userId}/${selectedEvidenceId}`);
     httpRequest.send();
 }

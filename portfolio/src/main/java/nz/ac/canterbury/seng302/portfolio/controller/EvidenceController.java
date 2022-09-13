@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -33,6 +32,8 @@ public class EvidenceController {
     private String apiPrefix;
     @Autowired
     private EvidenceService evidenceService;
+    @Autowired
+    private ProjectService projectService;
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
@@ -48,30 +49,55 @@ public class EvidenceController {
 
     /**
      * Get message for empty registration page
-     * @param request HTTP request sent to this endpoint
-     * @param response HTTP response that will be returned by this endpoint
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return Registration html page
+     * Updates the model with the correct list of evidence
+     * @param userId UserId containing the desired evidence
+     * @return Page fragment containing events
      */
     @GetMapping(path="/evidence/{userId}")
-    public String evidence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Model model,
-            @AuthenticationPrincipal AuthState principal
+//    public String evidence(
+//            HttpServletRequest request,
+//            HttpServletResponse response,
+//            Model model,
+//            @PathVariable("userId") int userId,
+//            @AuthenticationPrincipal AuthState principal
+//
+//    ) {
+//        LocalDate now = LocalDate.now();
+//        Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now),
+//                java.sql.Date.valueOf(now.plusDays(50)));
+//        Evidence evidence1 = new Evidence(1, project, new Date(), "Test Evidence 1", "testing", 1);
+//        Evidence evidence2 = new Evidence(2, project, new Date(), "Test Evidence 2", "testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing ", 1);
+//        Evidence[] evidences = {evidence1, evidence2};
+//
+//        Evidence newEvidence = evidenceService.getNewEvidence(userId, project);
+//        List<Project> listProjects = projectService.getAllProjects();
+//
+//        List<Evidence> listEvidences = Arrays.asList(evidences);
+//        model.addAttribute("listEvidence", listEvidences);
+//        model.addAttribute("selectedEvidence", evidence2);
+//        model.addAttribute("userId", userId);
+//        model.addAttribute("evidence", newEvidence);
+//        model.addAttribute("listProjects", listProjects);
+//        return "evidence";
+//    }
 
-    ) {
-        LocalDate now = LocalDate.now();
-        Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now),
-                java.sql.Date.valueOf(now.plusDays(50)));
-        Evidence evidence1 = new Evidence(1, project, new Date(), "Test Evidence 1", "testing", 1);
-        Evidence evidence2 = new Evidence(2, project, new Date(), "Test Evidence 2", "testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing ", 1);
-        Evidence[] evidences = {evidence1, evidence2};
-        List<Evidence> listEvidences = Arrays.asList(evidences);
-        model.addAttribute("listEvidence", listEvidences);
-        model.addAttribute("selectedEvidence", evidence2);
+    public String evidenceList(
+            @PathVariable("userId") int userId,
+            Model model) {
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+        List<Project> listProjects = projectService.getAllProjects();
+        Evidence newEvidence = evidenceService.getNewEvidence(userId);
+
+        model.addAttribute("listEvidence", listEvidence);
+        model.addAttribute("evidence", newEvidence);
+        model.addAttribute("listProjects", listProjects);
+        model.addAttribute("userId", userId);
+        if (!listEvidence.isEmpty()) {
+            model.addAttribute("selectedEvidence", listEvidence.get(0));
+        }
         return "evidence";
     }
+
 
 
     /**
@@ -86,7 +112,7 @@ public class EvidenceController {
             @PathVariable int userId,
             @PathVariable int evidenceId,
             RedirectAttributes ra) {
-        ModelAndView mv = new ModelAndView("evidence::evidenceList");
+        ModelAndView mv = new ModelAndView("evidence::selectedEvidence");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject("listEvidence", listEvidence);
         try {
@@ -117,6 +143,6 @@ public class EvidenceController {
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
-        return "redirect:/evidence";
+        return "redirect:/evidence/{userId}";
     }
 }
