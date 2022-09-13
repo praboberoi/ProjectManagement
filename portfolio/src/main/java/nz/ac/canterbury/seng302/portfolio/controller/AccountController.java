@@ -151,7 +151,7 @@ public class AccountController {
             Model model,
             RedirectAttributes ra
     ) throws IOException {
-        Integer userId = Integer.parseInt(principal.getClaimsList().stream()
+        int userId = Integer.parseInt(principal.getClaimsList().stream()
             .filter(claim -> claim.getType().equals("nameid"))
             .findFirst().map(ClaimDTO::getValue).orElse("-1"));
         EditUserResponse idpResponse = userAccountClientService.edit(userId, firstName, lastName, nickname,
@@ -209,7 +209,6 @@ public class AccountController {
         model.addAttribute("roles",
                 !user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
 
-        // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())
