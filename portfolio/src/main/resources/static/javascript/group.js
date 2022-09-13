@@ -18,9 +18,7 @@ function toggleRecentActions() {
  * Attempts to connect to the git repository using the details provided
  * @param event Form submit event
  */
-function connectToRepo(event) {
-    event.preventDefault()
-
+function connectToRepo() {
     let message = document.getElementById("connection-message")
 
     let projectId = document.getElementById("git-project-id").value
@@ -184,3 +182,50 @@ function addCreated(element, event) {
         action.innerText = "Created the project"
     }
 }
+
+function saveRepoSettings(event) {
+    if (event != null) {
+        event.preventDefault()
+    }
+
+    let httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = () => processAction(httpRequest)
+
+    httpRequest.open('POST', apiPrefix + `/repo/${groupId}/save`);
+
+    let formData = new FormData(document.forms.repoSettingsForm)
+
+    httpRequest.send(formData);
+
+    connectToRepo()
+}
+
+/**
+ * Replaces the old messages with the new one contained in the request
+ * @param httpRequest Request containing a model view element
+ */
+ function processAction(httpRequest){
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            messageSuccess.hidden = false
+            messageDanger.hidden = true;
+            messageSuccess.innerText = httpRequest.responseText;
+        } else if (httpRequest.status === 400) {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = httpRequest.responseText;
+        } else {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Something went wrong.";
+        }
+    }
+}
+
+/**
+ * Runs when the page is loaded
+ */
+ document.addEventListener('DOMContentLoaded', function() {
+    connectToRepo()
+});
