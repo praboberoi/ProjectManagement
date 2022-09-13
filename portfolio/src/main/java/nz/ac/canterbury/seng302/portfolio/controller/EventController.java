@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.dto.EventDTO;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
@@ -45,10 +46,6 @@ public class EventController {
 
     private Logger logger = LoggerFactory.getLogger(EventController.class);
 
-    private static final String PROJECT_REDIRECT = "redirect:/project/{projectId}";
-    private static final String SUCCESS_MESSAGE = "messageSuccess";
-    private static final String FAILURE_MESSAGE = "messageDanger";
-
     private static Set<EventNotification> editing = new HashSet<>();
 
     /**
@@ -74,13 +71,14 @@ public class EventController {
      */
     @PostMapping(path = "/project/{projectId}/saveEvent")
     public ResponseEntity<String> saveEvent(
-            @ModelAttribute Event event,
+            @ModelAttribute EventDTO eventDTO,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal,
             @PathVariable ("projectId") int projectId) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }   
+        Event event = new Event(eventDTO);
         String message = "";
         try {
             event.setProject(projectService.getProjectById(projectId));
