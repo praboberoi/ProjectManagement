@@ -159,24 +159,24 @@ public class EvidenceControllerTest {
                 .andExpect(model().attribute("selectedEvidence", evidence));
     }
 
-//    /**
-//     * Asserts that an exception is thrown when attempting to select an evidence which doesn't exist
-//     * @throws Exception when userId doesn't exist
-//     */
-//    @Test
-//    void givenIncorrectEvidence_whenSelectedEvidenceCalled_thenExceptionThrown() throws Exception {
-//        Evidence evidence = new Evidence(evidenceDTO);
-//        Evidence evidence1 = new Evidence(evidenceDTO1);
-//
-//        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
-//        when(evidenceService.getEvidence(33)).thenThrow(new IncorrectDetailsException("Failed to locate the piece of evidence with ID: 33"));
-//
-//        this.mockMvc
-//                .perform(get("/evidence/99/33"))
-//                .andExpect(status().is2xxSuccessful())
-//                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
-//                .andExpect(flash().attribute("messageDanger","Failed to locate the piece of evidence with ID: 33"));
-//    }
+    /**
+     * Asserts that no evidence is selected when a given evidence ID does not exist
+     * @throws Exception when userId doesn't exist
+     */
+    @Test
+    void givenIncorrectEvidence_whenSelectedEvidenceCalled_thenNoEvidenceSelected() throws Exception {
+        Evidence evidence = new Evidence(evidenceDTO);
+        Evidence evidence1 = new Evidence(evidenceDTO1);
+
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        when(evidenceService.getEvidence(33)).thenThrow(new IncorrectDetailsException("Failed to locate the piece of evidence with ID: 33"));
+
+        this.mockMvc
+                .perform(get("/evidence/99/33"))
+                .andExpect(status().is2xxSuccessful())
+                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
+                .andExpect(model().attributeDoesNotExist("selectedEvidence"));
+    }
 
 
     @AfterAll
