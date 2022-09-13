@@ -37,10 +37,7 @@
 
     <div class="createBtn">
         <button class="btn btn-outline-primary ms-0 mb-1" id="create-evidence-btn" data-bs-toggle="modal"
-                data-bs-target="#evidenceFormModal"
-                th:data-id="${evidence.evidenceId}" th:data-name="${evidence.title}" th:data-date="${evidence.dateOccurred}"
-                th:data-project="${evidence.project}"
-                th:onclick="populateEventModal(false, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-date'), this.getAttribute('data-project'))">
+                data-bs-target="#evidenceFormModal">
             <img class="icon img-color-primary"
                  th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /> Create Evidence</button>
     </div>
@@ -121,9 +118,8 @@
 
                 <!--                    Show evidence form-->
                 <div class="evidenceForm">
-                    <form id="createEvidenceForm" name="evidenceForm" onsubmit="saveEvidence();return false" th:object="${evidence}" >
+                    <form id="createEvidenceForm" name="evidenceForm"  onsubmit="return true" th:action="@{${apiPrefix} + '/evidence/' + ${userId} + '/saveEvidence'}" method="post" th:object="${evidence}">
                         <input type="hidden" id="userId" th:field="${evidence.ownerId}"/>
-                        <input type="hidden" id="projectId" th:field="${evidence.project.projectId}"/>
                         <input type="hidden" id="eventId" th:field="*{evidenceId}" />
                         <div class="mb-3">
                             <label for="evidence-title" class="col-form-label required">Evidence Title</label>
@@ -136,9 +132,9 @@
 
                         <div class="mb-3">
                             <label for="evidence-project" class="col-form-label required">Select Project</label>
-                            <select type="text" class="form-select required" id="evidence-project" th:field="*{project}"   required>
+                            <select type="text" class="form-select required" id="evidence-project" th:field="*{project}"    required>
                                 <th:block th:each="project : ${listProjects}">
-                                    <option th:value ="${project.projectId}">[[${project.projectName}]]</option>
+                                    <option  id="selectedProject" th:value ="${project.projectId}">[[${project.projectName}]]</option>
                                 </th:block>
 
                             </select>
@@ -151,12 +147,12 @@
                                 <img class="icon img-color-primary" src="/icons/question-circle.svg">
                             </span>
                             <input  type="date" class="form-control required" id="evidence-date" th:field="*{dateOccurred}" required>
-                            <p id="evidenceDateError" th:text="${eventDateError}" class="error-msg"></p>
+                            <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
                         </div>
 
                         <div class="mb-3">
                             <label for="evidence-description" class="col-form-label required">Description</label>
-                            <textarea type="evidence-description" style="font-size:20px;"  class="form-control required" id="evidence-description" th:field="*{description}" required></textarea>
+                            <textarea type="evidence-description"  class="form-control required" id="evidence-description" th:field="*{description}" required></textarea>
                             <p id="evidenceDescriptionError" th:text="${eventDescriptionError}" class="error-msg"></p>
                         </div>
 
@@ -165,9 +161,9 @@
                         </div>
                         <br>
                         <div class="modal-footer">
-                            <button type= "submit" class="btn btn-outline-primary" id="eventFormSubmitButton" data-bs-dismiss="modal">
-                                <img class="icon img-color-secondary" id="eventFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
-                                <span id="eventFormSubmitLabel">Create</span></button>
+                            <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" >
+                                <img class="icon img-color-secondary" id="evidenceFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                <span id="evidenceFormSubmitLabel">Create</span></button>
                             <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                 <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                         </div>

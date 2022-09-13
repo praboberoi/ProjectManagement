@@ -12,9 +12,9 @@ function saveEvidence() {
 
     httpRequest.open('POST', apiPrefix + `/evidence/${userId}/saveEvidence`);
 
-    // let formData = new FormData(document.forms.eventForm)
-    //
-    // httpRequest.send(formData);
+    let formData = new FormData(document.forms.createEvidenceForm)
+
+    httpRequest.send(formData);
 }
 
 function checkEvidenceTitle(){

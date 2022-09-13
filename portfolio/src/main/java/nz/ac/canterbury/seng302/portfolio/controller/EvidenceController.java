@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -79,6 +76,7 @@ public class EvidenceController {
         List<Evidence> listEvidences = Arrays.asList(evidences);
         model.addAttribute("listEvidence", listEvidences);
         model.addAttribute("selectedEvidence", evidence2);
+        model.addAttribute("userId", userId);
         model.addAttribute("evidence", newEvidence);
         model.addAttribute("listProjects", listProjects);
         return "evidence";
