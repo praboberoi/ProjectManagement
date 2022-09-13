@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.model.dto.SprintDTO;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 
 import javax.persistence.*;
@@ -90,6 +91,22 @@ public class Sprint {
         this.startDate = startDate;
         this.endDate = endDate;
         this.color = color;
+    }
+
+    /**
+     * Constructor for sprint with argument
+     * @param sprintDTO of type SprintDTO
+     */
+    public Sprint(SprintDTO sprintDTO) {
+        this.setSprintId(sprintDTO.getSprintId());
+        this.setProject(sprintDTO.getProject());
+        this.setSprintName(sprintDTO.getSprintName());
+        this.setDescription(sprintDTO.getDescription());
+        this.setSprintLabel(sprintDTO.getSprintLabel());
+        this.setStartDate(sprintDTO.getStartDate());
+        this.setEndDate(sprintDTO.getEndDate());
+        this.setColor(sprintDTO.getColor());
+
     }
 
     /**

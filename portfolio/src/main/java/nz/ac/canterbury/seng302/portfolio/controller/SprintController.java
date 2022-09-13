@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.dto.SprintDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
@@ -95,11 +96,12 @@ public class SprintController {
     @PostMapping("/project/{projectId}/verifySprint")
     public ResponseEntity<String> verifySprint(
             @PathVariable int projectId,
-            @RequestBody Sprint sprint,
+            @RequestBody SprintDTO sprintDTO,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = projectService.getProjectById(projectId);
+            Sprint sprint = new Sprint(sprintDTO);
             sprint.setProject(project);
             sprintService.verifySprint(sprint);
             return ResponseEntity.status(HttpStatus.OK).body(null);
