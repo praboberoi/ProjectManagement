@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.model.dto;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import java.sql.Date;
+import java.util.Objects;
 
 /**
  * The SprintDTO object for transferring the date from the frontend to the database
@@ -54,19 +55,8 @@ public class SprintDTO {
         return sprintId;
     }
 
-
-    public void setSprintId(int id) {
-        this.sprintId = id;
-    }
-
-
     public Project getProject() {
         return project;
-    }
-
-
-    public void setProject(Project project) {
-        this.project = project;
     }
 
 
@@ -75,18 +65,8 @@ public class SprintDTO {
     }
 
 
-    public void setSprintLabel(String sprintLabel) {
-        this.sprintLabel = sprintLabel;
-    }
-
-
     public String getSprintName() {
         return sprintName;
-    }
-
-
-    public void setSprintName(String sprintName) {
-        this.sprintName = sprintName;
     }
 
 
@@ -95,18 +75,8 @@ public class SprintDTO {
     }
 
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-
     public Date getStartDate() {
         return startDate;
-    }
-
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
     }
 
 
@@ -115,20 +85,9 @@ public class SprintDTO {
     }
 
 
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
-    }
-
-
     public SprintColor getColor() {
         return color;
     }
-
-
-    public void setColor(SprintColor color) {
-        this.color = color;
-    }
-
 
     @Override
     public String toString() {
@@ -152,4 +111,8 @@ public class SprintDTO {
         return sprintId == sprintDTO.sprintId && project.equals(sprintDTO.project) && sprintLabel.equals(sprintDTO.sprintLabel) && sprintName.equals(sprintDTO.sprintName) && description.equals(sprintDTO.description) && startDate.equals(sprintDTO.startDate) && endDate.equals(sprintDTO.endDate) && color == sprintDTO.color;
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(sprintId, project, sprintLabel, sprintName, description, startDate, endDate, color);
+    }
 }
