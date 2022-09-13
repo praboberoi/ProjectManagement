@@ -49,13 +49,11 @@ public class EvidenceService {
     /**
      * Creates a new evidence object
      * @param userId User ID who the evidence relates to
-     * @param project Project which the evidence relates to
      * @return Evidence object
      */
-    public Evidence getNewEvidence(int userId, Project project) {
+    public Evidence getNewEvidence(int userId) {
         LocalDate now = LocalDate.now();
         return new Evidence.Builder()
-                .project(project)
                 .dateOccurred(java.sql.Date.valueOf(now))
                 .title("New evidence")
                 .ownerId(userId)

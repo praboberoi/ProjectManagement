@@ -49,49 +49,54 @@ public class EvidenceController {
 
     /**
      * Get message for empty registration page
-     * @param request HTTP request sent to this endpoint
-     * @param response HTTP response that will be returned by this endpoint
-     * @param model Parameters sent to thymeleaf template to be rendered into HTML
-     * @return Registration html page
+     * Updates the model with the correct list of evidence
+     * @param userId UserId containing the desired evidence
+     * @return Page fragment containing events
      */
     @GetMapping(path="/evidence/{userId}")
-    public String evidence(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Model model,
-            @PathVariable("userId") int userId,
-            @AuthenticationPrincipal AuthState principal
-
-    ) {
-        LocalDate now = LocalDate.now();
-        Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now),
-                java.sql.Date.valueOf(now.plusDays(50)));
-        Evidence evidence1 = new Evidence(1, project, new Date(), "Test Evidence 1", "testing", 1);
-        Evidence evidence2 = new Evidence(2, project, new Date(), "Test Evidence 2", "testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing ", 1);
-        Evidence[] evidences = {evidence1, evidence2};
-
-        Evidence newEvidence = evidenceService.getNewEvidence(userId, project);
-        List<Project> listProjects = projectService.getAllProjects();
-
-        List<Evidence> listEvidences = Arrays.asList(evidences);
-        model.addAttribute("listEvidence", listEvidences);
-        model.addAttribute("selectedEvidence", evidence2);
-        model.addAttribute("userId", userId);
-        model.addAttribute("evidence", newEvidence);
-        model.addAttribute("listProjects", listProjects);
-        return "evidence";
-    }
-
-//    public String evidenceList(
+//    public String evidence(
+//            HttpServletRequest request,
+//            HttpServletResponse response,
+//            Model model,
 //            @PathVariable("userId") int userId,
-//            Model model) {
-//        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-//        model.addAttribute("listEvidence", listEvidence);
-//        if (!listEvidence.isEmpty()) {
-//            model.addAttribute("selectedEvidence", listEvidence.get(0));
-//        }
+//            @AuthenticationPrincipal AuthState principal
+//
+//    ) {
+//        LocalDate now = LocalDate.now();
+//        Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now),
+//                java.sql.Date.valueOf(now.plusDays(50)));
+//        Evidence evidence1 = new Evidence(1, project, new Date(), "Test Evidence 1", "testing", 1);
+//        Evidence evidence2 = new Evidence(2, project, new Date(), "Test Evidence 2", "testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing testing ", 1);
+//        Evidence[] evidences = {evidence1, evidence2};
+//
+//        Evidence newEvidence = evidenceService.getNewEvidence(userId, project);
+//        List<Project> listProjects = projectService.getAllProjects();
+//
+//        List<Evidence> listEvidences = Arrays.asList(evidences);
+//        model.addAttribute("listEvidence", listEvidences);
+//        model.addAttribute("selectedEvidence", evidence2);
+//        model.addAttribute("userId", userId);
+//        model.addAttribute("evidence", newEvidence);
+//        model.addAttribute("listProjects", listProjects);
 //        return "evidence";
 //    }
+
+    public String evidenceList(
+            @PathVariable("userId") int userId,
+            Model model) {
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+        List<Project> listProjects = projectService.getAllProjects();
+        Evidence newEvidence = evidenceService.getNewEvidence(userId);
+
+        model.addAttribute("listEvidence", listEvidence);
+        model.addAttribute("evidence", newEvidence);
+        model.addAttribute("listProjects", listProjects);
+        model.addAttribute("userId", userId);
+        if (!listEvidence.isEmpty()) {
+            model.addAttribute("selectedEvidence", listEvidence.get(0));
+        }
+        return "evidence";
+    }
 
 
 
@@ -107,7 +112,7 @@ public class EvidenceController {
             @PathVariable int userId,
             @PathVariable int evidenceId,
             RedirectAttributes ra) {
-        ModelAndView mv = new ModelAndView("evidence::evidenceList");
+        ModelAndView mv = new ModelAndView("evidence::selectedEvidence");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject("listEvidence", listEvidence);
         try {
