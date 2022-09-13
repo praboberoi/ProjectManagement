@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.model.dto;
 
 import java.util.Date;
 
+import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 
 /**
@@ -30,6 +31,8 @@ public class EventDTO {
 
     public Date getEndDate() {return endDate;}
 
+    public EventDTO(){}
+
     /**
      * Creates a new repoDTO object with the provided details
      * @param repoId The ID of the repo object
@@ -45,5 +48,13 @@ public class EventDTO {
         this.eventName = eventName;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public EventDTO(Event event) {
+        eventId = event.getEventId();
+        eventName = event.getEventName();
+        project = event.getProject();
+        startDate = event.getStartDate();
+        endDate = event.getEndDate();
     }
 }
