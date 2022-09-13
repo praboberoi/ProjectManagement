@@ -71,7 +71,7 @@ public class RepoControllerTest {
     void givenGroupNotExists_whenGetRepoCalled_thenErrorReturned() throws Exception{
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
-            .perform(get("/repo/1"))
+            .perform(get("/repo/1/settings"))
             .andExpect(status().isNotFound());
     }
 
@@ -85,7 +85,7 @@ public class RepoControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
         mockMvc
-            .perform(get("/repo/1"))
+            .perform(get("/repo/1/settings"))
             .andExpect(status().isForbidden());
     }
 
@@ -101,7 +101,7 @@ public class RepoControllerTest {
         when(groupService.getGroupById(anyInt())).thenReturn(group);
         when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
         mockMvc
-            .perform(get("/repo/1"))
+            .perform(get("/repo/1/settings"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("repo", repo));
     }
@@ -120,7 +120,7 @@ public class RepoControllerTest {
         when(groupService.getGroupById(anyInt())).thenReturn(group);
         when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
         mockMvc
-            .perform(get("/repo/1"))
+            .perform(get("/repo/1/settings"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("repo", repo));
     }

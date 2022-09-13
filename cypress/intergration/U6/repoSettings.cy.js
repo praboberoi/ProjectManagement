@@ -1,12 +1,30 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 When("I set valid repo settings", () => {
-    cy.intercept("https://eng-git.canterbury.ac.nz/**", {
+    cy.intercept("https://eng-git.canterbury.ac.nz/api/v4/projects/**", {
         statusCode: 200,
         body: {
-            id: 1,
-            name: "Cypress git repo",
+            "id":13964,
+            "description":"This is an example project to check if the gitlab connection is working correctly",
+            "name":"seng302 test project"
         },
+    })
+    cy.intercept("https://eng-git.canterbury.ac.nz/api/v4/projects/*/events", {
+        statusCode: 200,
+        body: [{
+            "id":1,
+            "project_id":1,
+            "action_name":"joined",
+            "author_id":1,
+            "created_at":"2022-09-11T16:43:19.178+12:00",
+            "author":{
+                "id":1,
+                "name":"Cypress user",
+                "username":"CYU",
+                "avatar_url":"https://secure.gravatar.com/avatar/1",
+            },
+            "author_username":"CYU",
+        }]
     })
     cy.get("#repo-settings-tab").click()
     cy.get("#git-project-alias").clear().type("Cypress git project")
