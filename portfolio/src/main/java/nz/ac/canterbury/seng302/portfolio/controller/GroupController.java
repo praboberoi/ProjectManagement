@@ -103,6 +103,7 @@ public class GroupController {
         
         ResponseEntity.BodyBuilder reply;
         if (response.getIsSuccess()) {
+            notifyGroup(groupId, "details", "deleted");
             reply = ResponseEntity.status(HttpStatus.OK);
         } else {
             reply = ResponseEntity.status(HttpStatus.NOT_FOUND);

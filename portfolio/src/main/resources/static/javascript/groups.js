@@ -369,11 +369,15 @@ function subscribe() {
     if (component == "members" || action === "edited") {
         if (document.getElementById("groupId").value == group) {
             getGroup(group)
+        } else {
+            getGroup(document.getElementById("groupId").value)
         }
         updateGroupList()
     } else if (action === "deleted") {
         if (document.getElementById("groupId").value == group) {
             getGroup("unassigned")
+        } else {
+            getGroup(document.getElementById("groupId").value)
         }
         updateGroupList()
     } else {
