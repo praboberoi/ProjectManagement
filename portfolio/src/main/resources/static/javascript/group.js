@@ -122,23 +122,23 @@ async function getRecentActions() {
         let action = document.createElement('p');
         actionContainer.appendChild(action)
 
-        if (event.action_name == 'joined') {
+        if (event.action_name === 'joined') {
             action.innerText = "Joined the project"
-        } else if (event.action_name == "pushed new") {
+        } else if (event.action_name === "pushed new") {
             action.innerText = "Created branch: " + event.push_data.ref
-        } else if (event.action_name == "pushed to") {
+        } else if (event.action_name === "pushed to") {
             action.innerText = "Pushed " + event.push_data.commit_count + " commits to " + event.push_data.ref
-        } else if (event.action_name == "created") {
+        } else if (event.action_name === "created") {
             addCreated(actionContainer, event)
-        } else if (event.action_name == "opened") {
+        } else if (event.action_name === "opened") {
             action.innerText = "Opened new " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
-        } else if (event.action_name == "commented on") {
+        } else if (event.action_name === "commented on") {
             action.innerText = "Commented on " + event.note.noteable_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
-        } else if (event.action_name == "approved") {
+        } else if (event.action_name === "approved") {
             action.innerText = "Approved " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
-        } else if (event.action_name == "accepted") {
+        } else if (event.action_name === "accepted") {
             action.innerText = "Merged " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
-        } else if (event.action_name == "closed") {
+        } else if (event.action_name === "closed") {
             action.innerText = "Closed " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
         } else {
             action.innerText = "Performed a " + event.action_name
@@ -184,29 +184,46 @@ function validateProjectAlias() {
     }
 }
 
+
+
+function validateProjectHostAddress() {
+    let projectHostAddressElement = document.getElementById("git-host-address");
+    let projectHostAddressErrorElement = document.getElementById("gitHostAddressError");
+
+    if (projectHostAddressElement.value.length < 1) {
+        projectHostAddressElement.classList.add("formError")
+        projectHostAddressErrorElement.innerText = "Project host address field must not be empty"
+        projectHostAddressElement.setCustomValidity("Invalid field.")
+    } else if (!isValidHttpUrl(projectHostAddressElement.value)) {
+        projectHostAddressElement.classList.add("formError")
+        projectHostAddressErrorElement.innerText = "Project host address must be a valid HTTP URL"
+        projectHostAddressElement.setCustomValidity("Invalid field.")
+    } else {
+        projectHostAddressElement.classList.remove("formError");
+        projectHostAddressErrorElement.innerText = null;
+        projectHostAddressElement.setCustomValidity("");
+    }
+}
+
 function validateProjectID() {
     let projectIDElement = document.getElementById("git-project-id");
     let projectIDErrorElement = document.getElementById("gitProjectIdError");
 
-    function validateProjectHostAddress() {
-        let projectHostAddressElement = document.getElementById("git-host-address");
-        let projectHostAddressErrorElement = document.getElementById("gitHostAddressError");
-
-        if (projectHostAddressElement.value.length < 1) {
-            projectHostAddressElement.classList.add("formError")
-            projectHostAddressErrorElement.innerText = "Project host address field must not be empty"
-            projectHostAddressElement.setCustomValidity("Invalid field.")
-        } else if (!isValidHttpUrl(projectHostAddressElement.value)) {
-            projectHostAddressElement.classList.add("formError")
-            projectHostAddressErrorElement.innerText = "Project host address must be a valid HTTP URL"
-            projectHostAddressElement.setCustomValidity("Invalid field.")
-        } else {
-            projectHostAddressElement.classList.remove("formError");
-            projectHostAddressErrorElement.innerText = null;
-            projectHostAddressElement.setCustomValidity("");
-        }
+    if (projectIDElement.value.length < 1 || projectIDElement.value.length > 50) {
+        projectIDElement.classList.add("formError")
+        projectIDErrorElement.innerText = "Project ID field must be between 1 and 50 characters"
+        projectIDElement.setCustomValidity("Invalid field.")
+    } else if (!projectIdValidate.test(projectIDElement.value)) {
+        projectIDElement.classList.add("formError")
+        projectIDErrorElement.innerText = "Project ID field can only contain numbers"
+        projectIDElement.setCustomValidity("Invalid field.")
+    } else {
+        projectIDElement.classList.remove("formError");
+        projectIDErrorElement.innerText = null;
+        projectIDElement.setCustomValidity("");
     }
 }
+
 
 /**
  * Adds the date component to the provided element
@@ -231,19 +248,6 @@ function addCreated(element, event) {
         action.innerText = "Created wiki page: " + event.target_title
     } else if (event.target_type == null) {
         action.innerText = "Created the project"
-    }
-    if (projectIDElement.value.length < 1 || projectIDElement.value.length > 50) {
-        projectIDElement.classList.add("formError")
-        projectIDErrorElement.innerText = "Project ID field must be between 1 and 50 characters"
-        projectIDElement.setCustomValidity("Invalid field.")
-    } else if (!projectIdValidate.test(projectIDElement.value)) {
-        projectIDElement.classList.add("formError")
-        projectIDErrorElement.innerText = "Project ID field can only contain numbers"
-        projectIDElement.setCustomValidity("Invalid field.")
-    } else {
-            projectIDElement.classList.remove("formError");
-            projectIDErrorElement.innerText = null;
-            projectIDElement.setCustomValidity("");
     }
 }
 

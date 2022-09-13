@@ -1,5 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.service.RepoService;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,9 +29,9 @@ public class RepoController {
 
     @Autowired
     private GroupService groupService;
-
     @Autowired
-    private RepoRepository repoRepository;
+    private RepoService repoService;
+
 
     /**
      * Gets the groups repo.
@@ -51,8 +53,7 @@ public class RepoController {
             mv.setStatus(HttpStatus.FORBIDDEN);
             return mv;
         }
-
-        Repo repo = repoRepository.getByGroupId(groupId);
+        Repo repo = repoService.getRepo(groupId);
         mv = new ModelAndView("groupFragments::repoSettings");
         mv.addObject("repo", repo);
         return mv;
@@ -76,8 +77,11 @@ public class RepoController {
         }
 
         Repo repo = new Repo(repoDTO);
-
-        repoRepository.save(repo);
+        try {
+            repoService.saveRepo(repo);
+        } catch (IncorrectDetailsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body("Successfully updated the group's repository");
     }
