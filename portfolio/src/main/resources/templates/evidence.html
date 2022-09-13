@@ -127,11 +127,11 @@
                         <input type="hidden" id="eventId" th:field="*{evidenceId}" />
                         <div class="mb-3">
                             <label for="evidence-title" class="col-form-label required">Evidence Title</label>
-                            <input type="text" class="form-control required" id="evidence-title" th:field="*{title}" onkeyup="checkEvidenceName()" required>
+                            <input type="text" class="form-control required" id="evidence-title" th:field="*{title}" maxlength="50" onkeyup="checkEvidenceTitle()" required>
                             <div>
-                                <span id="charCount" th:value="${charCount}">[[*{title.length}]] </span> / 50 characters used.
+                                <span id="evidenceCharCount" th:value="${charCount}">[[*{title.length}]] </span> / 50 characters used.
                             </div>
-                            <p id="eventTitleError" th:text="${eventTitleError}" class="error-msg"></p>
+                            <p id="evidenceTitleError" th:text="${evidenceTitleError}" class="error-msg"></p>
                         </div>
 
 
