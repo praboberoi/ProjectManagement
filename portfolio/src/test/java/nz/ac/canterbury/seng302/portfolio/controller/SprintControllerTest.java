@@ -35,10 +35,11 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.view;
 
 @WebMvcTest(controllers = SprintController.class)
 @AutoConfigureMockMvc(addFilters = false)
-public class SprintControllerTest {
+class SprintControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -196,6 +197,50 @@ public class SprintControllerTest {
         }
 
     }
+
+    /**
+     * Test to make sure when editing of sprint is requested sprint form is returned with valid information
+     */
+    @Test
+    void givenSprintExists_whenEditIsRequested_ThenSprintFormIsReturnedWithValidDetails() {
+        try {
+            when(projectService.getProjectById(1)).thenReturn(project);
+            when(sprintService.getSprint(1)).thenReturn(sprint1);
+            when(userAccountClientService.getUser(any())).thenReturn(reply.build());
+
+            this.mockMvc.perform(MockMvcRequestBuilders
+                            .get("/project/1/editSprint/1")
+                            .flashAttr("sprint", sprint1)
+                            .flashAttr("project", project))
+                    .andExpect(status().isOk())
+                    .andExpect(view().name("sprintForm"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Test to make sure after deleting the sprint user is redirected to project page
+     */
+    @Test
+    void givenSprintExists_whenDeleteSprintIsRequested_thenUserIsRedirectedToProjectPage() {
+        try {
+            when(sprintService.deleteSprint(1)).thenReturn("Successfully deleted Sprint 1");
+            when(sprintService.getSprintByProject(1)).thenReturn(List.of());
+            when(eventService.getEventByProjectId(1)).thenReturn(List.of());
+
+            this.mockMvc.perform(MockMvcRequestBuilders
+                            .post("/1/deleteSprint/1"))
+                    .andExpect(status().is3xxRedirection())
+                    .andExpect(view().name("redirect:/project/{projectId}"));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+
 
     @AfterAll
     private static void tearDown() {
