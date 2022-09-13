@@ -208,9 +208,10 @@ public class GroupController {
             message = response.getMessage();
         } else {
             ModifyGroupDetailsResponse response;
-            if (group.getMembers().stream()
-                    .noneMatch(user -> (user.getUserId() == PrincipalUtils.getUserId(principal)))) {
-                        response = groupService.modifyGroup(groupId, group.getShortName(), longName);
+            if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+                    && group.getMembers().stream()
+                            .noneMatch(user -> (user.getUserId() == PrincipalUtils.getUserId(principal)))) {
+                response = groupService.modifyGroup(groupId, group.getShortName(), longName);
             } else {
                 response = groupService.modifyGroup(groupId, shortName, longName);
             }
