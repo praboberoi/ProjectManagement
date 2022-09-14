@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
@@ -101,7 +102,7 @@ public class EvidenceControllerTest {
     void givenServer_whenSaveInvalidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
         Evidence evidence1 = new Evidence(evidenceDTO1);
         when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
-
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
         this.mockMvc
                 .perform(post("/evidence/99/saveEvidence").flashAttr("evidence", evidence1))
                 .andExpect(status().is3xxRedirection())
