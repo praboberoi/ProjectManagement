@@ -4,6 +4,11 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
+/**
+ * Checks to see if a string is a valid url
+ * @param string String to be validated
+ * @returns {boolean} True if the string is a valid URL, false otherwise
+ */
 function isValidHttpUrl(string) {
     let url;
     try {
@@ -27,7 +32,7 @@ function toggleRecentActions() {
 
 /**
  * Attempts to connect to the git repository using the details provided
- * @param event Form submit event
+ * @param saving
  */
 function connectToRepo(saving=false) {
     let httpRequest = new XMLHttpRequest();
@@ -62,17 +67,17 @@ function connectToRepo(saving=false) {
                     document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
                 }
 
-                if (repoName != undefined) {
+                if (repoName !== undefined) {
                     repoName.value = repo.name
                 }
 
                 getRecentActions(jsonRepo)
             }).catch((error) => {
-                if (repoName != undefined) {
+                if (repoName !== undefined) {
                     repoName.value = ""
                 }
                 if (saving) {
-                    document.getElementById("messageDanger") = "Error connecting to repository"
+                    document.getElementById("messageDanger").innerText = "Error connecting to repository"
                 }
                 clearRecentActions()
             });
@@ -183,7 +188,9 @@ function addUserProfile(element, event) {
     userImageContainer.insertAdjacentText('beforeend', " " + event.author_username)
 }
 
-
+/**
+ * Front end validation for the projectAlias element
+ */
 function validateProjectAlias() {
     let projectAliasElement = document.getElementById("git-project-alias");
     let projectAliasErrorElement = document.getElementById("gitProjectAliasError");
@@ -200,7 +207,9 @@ function validateProjectAlias() {
 }
 
 
-
+/**
+ * Front end validation for the projectHostAddress element
+ */
 function validateProjectHostAddress() {
     let projectHostAddressElement = document.getElementById("git-host-address");
     let projectHostAddressErrorElement = document.getElementById("gitHostAddressError");
@@ -220,6 +229,9 @@ function validateProjectHostAddress() {
     }
 }
 
+/**
+ * Front end validation for the projectID element
+ */
 function validateProjectID() {
     let projectIDElement = document.getElementById("git-project-id");
     let projectIDErrorElement = document.getElementById("gitProjectIdError");

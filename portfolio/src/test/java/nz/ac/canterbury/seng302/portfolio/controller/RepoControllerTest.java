@@ -132,7 +132,7 @@ public class RepoControllerTest {
         Repo repo = new Repo(1, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
-        when(repoService.getRepo(anyInt())).thenReturn(repo);
+        when(repoService.getRepoByGroup(anyInt())).thenReturn(repo);
         mockMvc
             .perform(get("/repo/1/settings"))
             .andExpect(status().isOk())
@@ -151,7 +151,7 @@ public class RepoControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         when(PrincipalUtils.getUserId(any())).thenReturn(1);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
-        when(repoService.getRepo(anyInt())).thenReturn(repo);
+        when(repoService.getRepoByGroup(anyInt())).thenReturn(repo);
         mockMvc
             .perform(get("/repo/1/settings"))
             .andExpect(status().isOk())

@@ -30,7 +30,7 @@ public class RepoService {
      * @param groupId The unique id (integer) of the requested repo group.
      * @return Repo object associated with the given ID
      */
-    public Repo getRepo(int groupId) {
+    public Repo getRepoByGroup(int groupId) {
         return repoRepository.getByGroupId(groupId);
     }
 

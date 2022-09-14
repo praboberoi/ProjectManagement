@@ -45,7 +45,7 @@ public class RepoController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
-        Repo repo = repoRepository.getByGroupId(groupId);
+        Repo repo = repoService.getRepoByGroup(groupId);
         return ResponseEntity.status(HttpStatus.OK).body(repo);
     }
 
@@ -69,7 +69,7 @@ public class RepoController {
             mv.setStatus(HttpStatus.FORBIDDEN);
             return mv;
         }
-        Repo repo = repoService.getRepo(groupId);
+        Repo repo = repoService.getRepoByGroup(groupId);
         mv = new ModelAndView("groupFragments::repoSettings");
         mv.addObject("repo", repo);
         return mv;
