@@ -84,6 +84,19 @@ class DashboardServiceTest {
     }
 
     /**
+     * Tests that a sprint with too long a description will not be valid
+     */
+    @Test
+    void givenDuplicateName_whenProjectValidated_thenFailsValidation() {
+        Project project = projectBuilder
+            .projectId(1)
+            .projectName("Test") //260 characters
+            .build();
+        when(projectRepository.findByProjectName("Test")).thenReturn(new Project());
+        assertThrows(Exception.class, () -> {dashboardService.verifyProject(project);});
+    }
+
+    /**
      * Tests that a sprint with the maximum character count will be valid
      */
     @Test

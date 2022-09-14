@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,6 @@ import java.util.Optional;
 public class DashboardService {
     @Autowired private ProjectRepository projectRepo;
     @Autowired private SprintService sprintService;
-
-    private Logger logger = LoggerFactory.getLogger(DashboardService.class);
-
 
     public DashboardService(ProjectRepository projectRepo, SprintService sprintService) {
         this.projectRepo = projectRepo;
@@ -99,7 +97,11 @@ public class DashboardService {
      */
     public void verifyProject(Project project) throws IncorrectDetailsException {
         List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
+        Project projectName = projectRepo.findByProjectName(project.getProjectName());
 
+        if (projectName != null && projectName.getProjectId() != project.getProjectId()) {
+            throw new IncorrectDetailsException("A project already exists with that name.");
+        }
         if (sprints.stream().anyMatch(sprint -> sprint.getStartDate().before(project.getStartDate()))) {
             throw new IncorrectDetailsException("You are trying to start the project after you have started a sprint.");
         }

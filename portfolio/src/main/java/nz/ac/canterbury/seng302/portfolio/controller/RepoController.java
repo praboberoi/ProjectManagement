@@ -7,6 +7,8 @@ import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import nz.ac.canterbury.seng302.portfolio.service.RepoService;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,6 +20,13 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
+import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.portfolio.model.Repo;
+import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
+import nz.ac.canterbury.seng302.portfolio.service.GroupService;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+
 /**
  * Controller for repo components
  */
@@ -26,18 +35,35 @@ public class RepoController {
 
     @Autowired
     private GroupService groupService;
-
     @Autowired
-    private RepoRepository repoRepository;
+    private RepoService repoService;
+
 
     /**
-     * Gets the groups repo.
+     * Gets the group's repo.
+     *
+     * @param groupId The group id of the repo to get.
+     * @return The group repo
+     */
+    @GetMapping(path = "/repo/{groupId}")
+    public ResponseEntity<Repo> repo(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
+        Groups group = groupService.getGroupById(groupId);
+        if (group == null || group.getGroupId() == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        Repo repo = repoService.getRepoByGroup(groupId);
+        return ResponseEntity.status(HttpStatus.OK).body(repo);
+    }
+
+    /**
+     * Gets the groups repo setting component.
      * 
      * @param groupId The group id of the repo to get.
      * @return The repo page segment
      */
-    @GetMapping(path = "/repo/{groupId}")
-    public ModelAndView groupPage(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
+    @GetMapping(path = "/repo/{groupId}/settings")
+    public ModelAndView repoSettings(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
         Groups group = groupService.getGroupById(groupId);
         ModelAndView mv;
         if (group == null || group.getGroupId() == 0) {
@@ -50,8 +76,7 @@ public class RepoController {
             mv.setStatus(HttpStatus.FORBIDDEN);
             return mv;
         }
-
-        Repo repo = repoRepository.getByGroupId(groupId);
+        Repo repo = repoService.getRepoByGroup(groupId);
         mv = new ModelAndView("groupFragments::repoSettings");
         mv.addObject("repo", repo);
         return mv;
@@ -74,9 +99,12 @@ public class RepoController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to edit these repo settings");
         }
 
-        Repo repo = new Repo(repoDTO);
-
-        repoRepository.save(repo);
+        try {
+            Repo repo = new Repo(repoDTO);
+            repoService.saveRepo(repo);
+        } catch (IncorrectDetailsException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
 
         return ResponseEntity.status(HttpStatus.OK).body("Successfully updated the group's repository");
     }
