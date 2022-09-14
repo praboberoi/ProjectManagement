@@ -48,9 +48,6 @@ public class GroupController {
     @Autowired
     private RepoRepository repoRepository;
 
-    @Autowired
-    private SimpMessagingTemplate template;
-
     private static final String GROUP = "group";
     private static final String GROUP_FRAGMENT = "groupsFragments::group";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
@@ -318,8 +315,6 @@ public class GroupController {
         model.addAttribute(GROUP, group);
         model.addAttribute("repo", repo);
         return GROUP;
-        model.addAttribute("group", group);
-        return "groupSetting";
     }
 
     /**

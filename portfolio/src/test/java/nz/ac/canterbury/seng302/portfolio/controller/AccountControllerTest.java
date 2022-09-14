@@ -243,7 +243,6 @@ class AccountControllerTest {
      */
     @Test
     void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws IOException {
-//        UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
 
         when(userAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
