@@ -27,13 +27,11 @@ public class RepoService {
 
     /**
      * Returns a repo object from the database. If the repo is not present then it throws an exception.
-     * @param groupId The unique id (integer) of the requested repog rup.
+     * @param groupId The unique id (integer) of the requested repo group.
      * @return Repo object associated with the given ID
-     * @throws IncorrectDetailsException If null value is returned by {@link RepoRepository (Object) getByGroupId}
      */
     public Repo getRepo(int groupId) {
-        Repo result = repoRepository.getByGroupId(groupId);
-        return result;
+        return repoRepository.getByGroupId(groupId);
     }
 
     /**

@@ -15,7 +15,6 @@ import org.springframework.web.servlet.ModelAndView;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
-import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -34,7 +33,7 @@ public class RepoController {
 
 
     /**
-     * Gets the groups repo.
+     * Gets the group's repo.
      * 
      * @param groupId The group id of the repo to get.
      * @return The repo page segment
