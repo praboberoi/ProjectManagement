@@ -1,4 +1,5 @@
 const SPRINT_COLOURS = ['blue', 'skyblue', 'purple', 'orange', 'green', 'pink', 'navy'];const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
+const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
 const adminRoles = ['TEACHER', 'COURSE_ADMINISTRATOR'];
 let calendar;
@@ -94,6 +95,7 @@ function editEventDuration(info) {
                 CALENDAR_MESSAGE.innerText =  "Sprint saved successfully";
                 loadEventCards();
                 loadDeadlineCards();
+
             } else {
                 CALENDAR_MESSAGE.hidden = false;
                 CALENDAR_MESSAGE.classList.add("alert-danger");
@@ -117,6 +119,7 @@ function editEventDuration(info) {
     params.append('endDate', endDateStr);
 
     httpRequest.send(params);
+
 }
 
 /**

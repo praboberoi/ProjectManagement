@@ -3,19 +3,20 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 import java.util.stream.Collectors;
-
-import org.slf4j.Logger;
 
 /**
  * Client service used to communicate to the database and perform business logic for Deadlines
@@ -48,6 +49,28 @@ public class DeadlineService {
                 .build();
         return newDeadline;
     }
+
+    /**
+     * Creates a mapping between a deadline and the name of the sprint that occurs on the deadline
+     * @param deadlineList A list of deadlines to create mappings for
+     * @return A mapping between the deadline id and the name of the sprint occurring on the deadline
+     */
+    public Hashtable<Integer, String> getSprintOccurringOnDeadlines(List<Deadline> deadlineList) {
+        Hashtable<Integer, String> deadlineDateMapping = new Hashtable<Integer, String>();
+        for (Deadline deadline : deadlineList) {
+            List<String> sprintNames = new ArrayList<String>();
+            java.sql.Date date = new Date(deadline.getDate().getTime());
+            Sprint sprint = sprintRepository.findByDateAndProject(deadline.getProject(), date);
+            if (sprint == null) {
+                sprintNames.add("");
+            } else {
+                sprintNames.add("(" + sprint.getSprintName() + ")");
+            }
+            deadlineDateMapping.put(deadline.getDeadlineId(), sprintNames.get(0));
+        }
+        return deadlineDateMapping;
+    }
+
 
     /**
      * Gets deadline object from the database

@@ -1,10 +1,5 @@
-package nz.ac.canterbury.seng302.portfolio.model.repository;
+package nz.ac.canterbury.seng302.portfolio.model;
 
-import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -51,7 +46,7 @@ class SprintRepositoryTest {
                 .project(project)
                 .startDate(new Date(2021,1,1))
                 .endDate(new Date(2021, 3, 1))
-                .color(SprintColor.GREEN)
+                .color(SprintColor.BLUE)
                 .build();
 
         sprint2 = new Sprint.Builder()
@@ -61,7 +56,7 @@ class SprintRepositoryTest {
                 .project(project)
                 .startDate(new Date(2021,3,1))
                 .endDate(new Date(2021, 6, 1))
-                .color(SprintColor.PURPLE)
+                .color(SprintColor.SYYBLUE)
                 .build();
         projectRepository.save(project);
         sprintRepository.save(sprint1);
@@ -161,5 +156,30 @@ class SprintRepositoryTest {
         assertNotEquals(2, sprintRepository.countByProject(project2));
 
         projectRepository.delete(project2);
+    }
+
+    @Test
+    void givenEventExists_whenFindByEventRequested_thenAnAppropriateListOfEventsIsReturned() {
+       Sprint sprint3 = new Sprint.Builder()
+                .sprintLabel("Sprint 3")
+                .sprintName("Sprint 3")
+                .description("Attempt 3")
+                .project(project)
+                .startDate(new Date(2022,3,1))
+                .endDate(new Date(2022, 6, 1))
+                .color(SprintColor.GREEN)
+                .build();
+        sprintRepository.save(sprint3);
+
+        Event event = new Event.Builder().eventName("This is a test")
+                .eventId(1)
+                .startDate(new Date(2021, 1,1))
+                .endDate(new Date(2021, 3, 6))
+                .project(project)
+                .build();
+
+        List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event);
+        assertArrayEquals(List.of(sprint1, sprint2).toArray(), sprintList.toArray());
+
     }
 }

@@ -44,7 +44,6 @@ public class SprintService {
                                   .sprintName("Sprint " + sprintNo)
                 .color(SprintColor.valueOf(sprintNo % 8 == 0 ? 7 : sprintNo % 8)).build();
 
-
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.isEmpty()) {
             LocalDate startDate = project.getStartDate().toLocalDate();
