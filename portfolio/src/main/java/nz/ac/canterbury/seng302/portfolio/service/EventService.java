@@ -62,7 +62,7 @@ public class EventService {
 
 
     public Hashtable<Integer, List<String>> getStartAndEndDates(List<Event> eventList) {
-        Hashtable<Integer, List<String>> dateDict = new Hashtable<Integer, List<String>>();
+        Hashtable<Integer, List<String>> eventDateMappingDictionary = new Hashtable<Integer, List<String>>();
         for (Event event : eventList) {
             List<String> sprintNames = new ArrayList<String>();
             Date startDate = new Date(event.getStartDate().getTime());
@@ -79,9 +79,9 @@ public class EventService {
             } else {
                 sprintNames.add("(" + end.getSprintName() + ")");
             }
-            dateDict.put(event.getEventId(), sprintNames);
+            eventDateMappingDictionary.put(event.getEventId(), sprintNames);
         }
-        return dateDict;
+        return eventDateMappingDictionary;
     }
 
     /**

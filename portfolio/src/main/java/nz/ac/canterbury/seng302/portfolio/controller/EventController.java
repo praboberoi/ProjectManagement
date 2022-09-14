@@ -61,11 +61,11 @@ public class EventController {
       @GetMapping(path="/project/{projectId}/events")
       public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
-          Hashtable<Integer, List<String>> dateDict = eventService.getStartAndEndDates(listEvents);
+          Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getStartAndEndDates(listEvents);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);
-          mv.addObject("dateDict", dateDict);
+          mv.addObject("eventDateMappingDictionary", eventDateMappingDictionary);
           return mv;
       }
 
