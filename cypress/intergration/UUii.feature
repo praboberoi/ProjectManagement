@@ -1,7 +1,7 @@
 Feature: UUii Editing a user account
   Scenario: AC 2: My account page reflects any edits I have made. AC 4: Any validation still works.
     Given I login as a student
-    And I navigate to 'Account Page'
+    And I navigate to the Account Page
     When I edit my account
     And I change my firstname to 'CypressEditFirstname'
     And I change my lastname to 'CypressEditLastname'
@@ -19,7 +19,7 @@ Feature: UUii Editing a user account
     And My bio is 'Cypress Bio'
 
     Given I login as a student
-    And I navigate to 'Account Page'
+    And I navigate to the Account Page
     When I edit my account
     And I change my firstname to 'ÇyprœssFirst'
     And I change my lastname to 'ÇyprœssLast'

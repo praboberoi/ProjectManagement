@@ -1,9 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.model.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
-import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupRequest;
-import nz.ac.canterbury.seng302.shared.identityprovider.DeleteGroupResponse;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,7 +18,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 
@@ -174,16 +174,14 @@ class EvidenceServiceTest {
      */
     @Test
     void whenGetNewEvidenceIsCalled_thenNewEvidenceObjectReturned() {
-        User user = new User.Builder().userId(999).build();
+        User user = new User.Builder().userId(1000).build();
+        LocalDate now = LocalDate.now();
         Evidence expectedEvidence = new Evidence.Builder()
-                .evidenceId(999)
-                .project(project)
-                .dateOccurred(new Date())
+                .dateOccurred(java.sql.Date.valueOf(now))
                 .title("New evidence")
-                .description("A new piece of evidence")
-                .ownerId(999)
+                .ownerId(user.getUserId())
                 .build();
-        Evidence testEvidence = evidenceService.getNewEvidence(user, project);
+        Evidence testEvidence = evidenceService.getNewEvidence(1000);
         assertEquals(testEvidence, expectedEvidence);
     }
 

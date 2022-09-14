@@ -3,18 +3,19 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.model.dto.EventDTO;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
-import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,27 +25,19 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.web.servlet.MockMvc;
-import org.junit.jupiter.api.Test;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.HexFormat;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = EventController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -133,22 +126,39 @@ public class EventControllerTest {
         mockedWebSocketPrincipal = mock(WebSocketPrincipal.class);
     }
 
+    private EventDTO toDTO(Event event) {
+        return new EventDTO(
+        event.getEventId(),
+        event.getProject(),
+        event.getEventName(),
+        event.getStartDate(),
+        event.getEndDate());
+    }
+
     /**
      * Test verification of event object and check that it redirect the user to the project page.
      * @throws IncorrectDetailsException
      */
     @Test
-    void givenServer_WhenSaveValidEvent_ThenEventVerifiedSuccessfully() throws Exception {
-        when(eventService.saveEvent(event)).thenReturn("Successfully Created " + event.getEventName());
-        when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
+    void givenServer_WhenSaveValidEvent_ThenEventSuccessful() throws Exception {
+        when(eventService.saveEvent(any())).thenReturn("Successfully Created " + event.getEventName());
 
         this.mockMvc
-                .perform(post("/project/1/saveEvent").flashAttr("event", event))
+                .perform(post("/project/1/saveEvent").flashAttr("eventDTO", toDTO(event)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Successfully Created " + event.getEventName()));
 
+    }
+
+    /**
+     * Test verification of event object and check that it redirect the user to the project page.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenServer_WhenSaveValidEvent_ThenEventFailsSuccessfully() throws Exception {
+        when(eventService.saveEvent(any())).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
         this.mockMvc
-                .perform(post("/project/1/saveEvent").flashAttr("event", event1))
+                .perform(post("/project/1/saveEvent").flashAttr("eventDTO", toDTO(event1)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string("Failure Saving Event"));
     }
@@ -159,10 +169,10 @@ public class EventControllerTest {
      */
     @Test
     void givenServer_WhenSaveValidEvent_ThenEventFailedSuccessfully() throws Exception {
-        when(eventService.saveEvent(event1)).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
+        when(eventService.saveEvent(any())).thenThrow(new IncorrectDetailsException("Failure Saving Event"));
 
         this.mockMvc
-                .perform(post("/project/1/saveEvent").flashAttr("event", event1))
+                .perform(post("/project/1/saveEvent").flashAttr("eventDTO", toDTO(event1)))
                 .andExpect(status().is4xxClientError())
                 .andExpect(content().string("Failure Saving Event"));
 

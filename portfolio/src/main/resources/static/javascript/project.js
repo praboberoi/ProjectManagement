@@ -202,8 +202,6 @@ function handleDeadlineNotification(message) {
         return
     } else if (action === "editing" && deadlineCard) {
         let user = array[2]
-        console.log(user)
-        console.log("test")
         document.getElementById(deadline + '-notification').innerText =`${user} is currently editing`
         document.getElementById(deadline + '-edit-btn').hidden = true
         document.getElementById(deadline + '-delete-btn').hidden = true
@@ -221,7 +219,6 @@ function handleDeadlineNotification(message) {
  * @param message Message with event and edit type
  */
 function handleEventNotification(message) {
-    console.log(message)
     let array = message.body.split(' ')
     let event = array[0]
     let action = array[1]

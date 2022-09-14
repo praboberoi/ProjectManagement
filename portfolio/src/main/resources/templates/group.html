@@ -20,9 +20,13 @@
 
 <body>
     <div class="main">
-        <div class="page-title">
+        <div id="title" class="page-title col-12" th:fragment="groupTitle">
             <h2 id="title">[[${group.shortName}]] Group Page</h2>
             <h4 id="longTitle">[[${group.longName}]]</h4>
+            <span th:replace="groupFragments::groupOptions"></span>
+            <div>
+                <span th:replace="groupFragments::editGroupModal"></span>
+            </div>
         </div>
         <div class="alert alert-danger text-center" id="messageDanger">[[${messageDanger}]]</div>
         <div class="alert alert-success text-center" id="messageSuccess">[[${messageSuccess}]]</div>
@@ -49,7 +53,7 @@
                                         </li>
                                     </ul>
 
-                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab" role="tablist">
+                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab2" role="tablist">
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link active" id="actions-toggle-tab" type="button" role="tab"
                                                 onclick="toggleRecentActions()">Recent Actions</button>
@@ -82,6 +86,16 @@
                                     </button>
                                 </div>
                                 <div class="card-body">
+                                    <div class="container-fluid row pr-0">
+                                        <div class="col pl-2 pr-1">
+                                            <select class="form-select" id="userFilter" aria-label="userFilter">
+                                            </select>
+                                        </div>
+                                        <div class="col pl-3 pr-0">
+                                            <select class="form-select" id="actionType" aria-label="actionType">
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div id="recent-action-cards">
                                     </div>
                                 </div>

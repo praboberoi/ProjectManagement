@@ -1,14 +1,18 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.dto.EventDTO;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
-import nz.ac.canterbury.seng302.portfolio.service.*;
+import nz.ac.canterbury.seng302.portfolio.service.EventService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
+import java.sql.Date;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -45,10 +49,6 @@ public class EventController {
 
     private Logger logger = LoggerFactory.getLogger(EventController.class);
 
-    private static final String PROJECT_REDIRECT = "redirect:/project/{projectId}";
-    private static final String SUCCESS_MESSAGE = "messageSuccess";
-    private static final String FAILURE_MESSAGE = "messageDanger";
-
     private static Set<EventNotification> editing = new HashSet<>();
 
     /**
@@ -59,6 +59,7 @@ public class EventController {
       @GetMapping(path="/project/{projectId}/events")
       public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
+          listEvents.forEach(eventService::updateEventColors);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);
@@ -67,20 +68,21 @@ public class EventController {
 
     /**
      * Checks if event dates are valid and if it is saves the event
-     * @param event Event object
+     * @param eventDTO EventDTO object
      * @param principal Current User
      * @param ra Redirect Attribute frontend message object
      * @return link of html page to display
      */
     @PostMapping(path = "/project/{projectId}/saveEvent")
     public ResponseEntity<String> saveEvent(
-            @ModelAttribute Event event,
+            @ModelAttribute EventDTO eventDTO,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal,
             @PathVariable ("projectId") int projectId) {
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
-        }   
+        }
+        Event event = new Event(eventDTO);
         String message = "";
         try {
             event.setProject(projectService.getProjectById(projectId));
