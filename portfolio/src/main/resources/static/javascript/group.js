@@ -5,6 +5,84 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 })
 
 /**
+ * Count down the characters remaining in the Group Short name, and check the length is between 3 and 50 characters.
+ */
+ function checkShortName(event) {
+    let groupShortNameElement = event.target;
+    let groupShortNameErrorElement = groupShortNameElement.parentNode.querySelector('#shortNameError')
+    let charMessage = groupShortNameElement.parentNode.querySelector("#charCount");
+    let charCount = groupShortNameElement.value.length;
+    charMessage.innerText = charCount + ' '
+    if (charCount < 3 || charCount > 50) {
+        groupShortNameElement.classList.add('formError');
+        groupShortNameErrorElement.innerText = "Group short name must be between 3 and 50 characters."
+        groupShortNameElement.setCustomValidity("Invalid Field")
+    } else {
+        groupShortNameElement.classList.remove("formError");
+        groupShortNameErrorElement.innerText = null;
+        groupShortNameElement.setCustomValidity("");
+    }
+}
+
+/**
+ * Count down the characters remaining in the Group Long name, and check the length is between 3 and 100 characters.
+ */
+function checkLongName(event) {
+    let groupLongNameElement = event.target;
+    let groupLongNameErrorElement = groupLongNameElement.parentNode.querySelector("#longNameError")
+    let charMessage = groupLongNameElement.parentNode.querySelector("#charCountLong");
+    let charCount = groupLongNameElement.value.length;
+    if (charCount < 3 || charCount > 100) {
+        groupLongNameElement.classList.add('formError');
+        groupLongNameErrorElement.innerText = "Group long name must be between 3 and 100 characters."
+        groupLongNameElement.setCustomValidity("Invalid Field")
+    } else {
+        groupLongNameElement.classList.remove("formError");
+        groupLongNameErrorElement.innerText = null;
+        groupLongNameElement.setCustomValidity("");
+    }
+    charMessage.innerText = charCount + ' '
+
+}
+
+/**
+ * Sends a request to the server to save the group
+ * @param event Form submit request
+ */
+function saveGroup() {
+    let httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = () => {
+        processAction(httpRequest)
+        updateTitle()
+    }
+
+    httpRequest.open('POST', apiPrefix + `/groups`);
+
+    let formData = new FormData(document.forms.editGroupForm)
+
+    httpRequest.send(formData);
+}
+
+function updateTitle() {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function (){
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                document.getElementById("title").outerHTML = httpRequest.responseText;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            }
+        }
+    }
+
+    httpRequest.open('GET', apiPrefix + `/group/${groupId}/title`);
+    httpRequest.send();
+}
+
+/**
  * Checks to see if a string is a valid url
  * @param string String to be validated
  * @returns {boolean} True if the string is a valid URL, false otherwise

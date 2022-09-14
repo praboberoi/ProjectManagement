@@ -181,29 +181,26 @@ public class GroupController {
      * @return Status of the request and corresponding message
      */
     @PostMapping(value = "/groups")
-    public String createGroup(
+    public ResponseEntity<String> createGroup(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam(required = false) Integer groupId,
             @RequestParam String shortName,
             @RequestParam String longName,
-            Model model,
-            RedirectAttributes ra) {
+            Model model) {
         Groups group;
         if (groupId == null) {
             group = null;
         } else {
             group = groupService.getGroupById(groupId);
             if (group == null) {
-                ra.addFlashAttribute(WARNING_MESSAGE, "Group doesn't exist.");
-                return GROUPS_REDIRECT;
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Group doesn't exist.");
             }
         }
 
         if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
                 && (group == null || group.getGroupId() == 0 || group.getMembers().stream()
                         .noneMatch(user -> (user.getUserId() == PrincipalUtils.getUserId(principal))))) {
-            ra.addFlashAttribute(WARNING_MESSAGE, "Insufficient permissions to save group.");
-            return GROUPS_REDIRECT;
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient permissions to save group.");
         }
 
         boolean status;
@@ -234,11 +231,10 @@ public class GroupController {
             } else {
                 notifyGroup(groupId, DETAILS, "edited");
             }
-            ra.addFlashAttribute("messageSuccess", message);
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } else {
-            ra.addFlashAttribute(WARNING_MESSAGE, message);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(message);
         }
-        return GROUPS_REDIRECT;
     }
 
     /**
@@ -347,6 +343,22 @@ public class GroupController {
         model.addAttribute("repo", repo);
         return GROUP;
     }
+
+    /**
+     * Gets the individual group's title.
+     * 
+     * @param groupId The pages group id for future implementation
+     * @param model   Parameters sent to thymeleaf template to be rendered into HTML
+     * @return The group page
+     */
+    @GetMapping(path = "/group/{groupId}/title")
+    public ModelAndView groupPageTitle(@PathVariable int groupId) {
+        Groups group = groupService.getGroupById(groupId);
+        ModelAndView mv = new ModelAndView("group::groupTitle");
+        mv.addObject("group", group);
+        return mv;
+    }
+    
 
     /**
      * Sends an update message to all clients connected to the websocket
