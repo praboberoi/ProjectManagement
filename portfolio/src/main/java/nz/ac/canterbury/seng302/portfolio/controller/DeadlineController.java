@@ -2,10 +2,10 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.dto.DeadlineDTO;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.DeadlineNotification;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
@@ -38,12 +38,13 @@ import java.util.Set;
 public class DeadlineController {
     @Autowired
     private DeadlineService deadlineService;
+
     @Autowired
     private ProjectService projectService;
-    @Autowired
-    private UserAccountClientService userAccountClientService;
+
     @Autowired
     private SimpMessagingTemplate template;
+
     private Logger logger = LoggerFactory.getLogger(DeadlineController.class);
     private static Set<DeadlineNotification> editing = new HashSet<>();
     private static final String NOTIFICATION_DESTINATION = "/element/project/%d/deadlines";
@@ -84,7 +85,7 @@ public class DeadlineController {
 
     /**
      * Checks if deadline dates are valid and if it is saves the deadline
-     * @param deadline Deadline object
+     * @param deadlineDTO DeadlineDTO object
      * @param principal Current user
      * @param projectId ID of the project
      * @param ra Redirect Attribute frontend message object
@@ -92,12 +93,14 @@ public class DeadlineController {
      */
     @PostMapping(path = "/project/{projectId}/saveDeadline")
     public ResponseEntity<String> saveDeadline(
-            @ModelAttribute Deadline deadline,
+            @ModelAttribute DeadlineDTO deadlineDTO,
             @AuthenticationPrincipal AuthState principal,
             @PathVariable ("projectId") int projectId,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+        Deadline deadline = new Deadline(deadlineDTO);
         String message = "";
         try {
             deadline.setProject(projectService.getProjectById(projectId));

@@ -79,6 +79,14 @@ public class Event {
         this.endDate = endDate;
     }
 
+    public Event(EventDTO eventDTO) {
+        setEventId(eventDTO.getEventId());
+        setEventName(eventDTO.getEventName());
+        setProject(eventDTO.getProject());
+        setStartDate(eventDTO.getStartDate());
+        setEndDate(eventDTO.getEndDate());
+    }
+
     public Project getProject() {
         return this.project;
     }

@@ -30,6 +30,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if(authenticateClientService == null){
             ServletContext servletContext = request.getServletContext();
             WebApplicationContext webApplicationContext = WebApplicationContextUtils.getWebApplicationContext(servletContext);
+            if (webApplicationContext == null) {
+                return null;
+            }
             authenticateClientService = webApplicationContext.getBean(AuthenticateClientService.class);
         }
         return authenticateClientService;
@@ -40,8 +43,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         PreAuthenticatedAuthenticationToken authentication = getAuthentication(req, null);
         
         if(!authentication.isAuthenticated()) {
-            AuthenticateResponse reply = getAuthenticateClientService(req).reAuthenticate();
-            if (reply != null && reply.getSuccess()) {
+            authenticateClientService = getAuthenticateClientService(req);
+            AuthenticateResponse reply;
+            if (authenticateClientService != null && (reply = authenticateClientService.reAuthenticate()) != null && reply.getSuccess()) {
                 var domain = req.getHeader("host");
                 Cookie newCookie = CookieUtil.create(
                     res,
@@ -85,7 +89,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         AuthState authState;
         try {
-            authState = getAuthenticateClientService(request).checkAuthState();
+            AuthenticateClientService  authenticateClientServiceRequest = getAuthenticateClientService(request);
+            if (authenticateClientServiceRequest == null) {
+                return authToken;
+            }
+            authState = authenticateClientServiceRequest.checkAuthState();
         } catch (StatusRuntimeException e) {
             // This exception is thrown if the IdP encounters some error, or if the IdP can not be reached
             // Also may be thrown if some error connecting to IdP, either way, return unauthenticated token
