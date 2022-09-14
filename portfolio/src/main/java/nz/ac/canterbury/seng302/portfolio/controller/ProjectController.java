@@ -21,6 +21,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -68,6 +69,7 @@ public class ProjectController {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
             Project project = projectService.getProjectById(projectId);
             Event newEvent = eventService.getNewEvent(project);
             Deadline newDeadline = deadlineService.getNewDeadline(project);
@@ -75,6 +77,7 @@ public class ProjectController {
             model.addAttribute("listDeadlines", listDeadlines);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
+            model.addAttribute("deadlineDateMapping", deadlineDateMapping);
             model.addAttribute("event", newEvent);
             model.addAttribute("deadline", newDeadline);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
