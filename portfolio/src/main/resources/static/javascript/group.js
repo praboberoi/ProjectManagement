@@ -82,7 +82,7 @@ function connectToRepo(saving=false) {
                     repoName.value = ""
                 }
                 if (saving) {
-                    document.getElementById("messageDanger") = "Error connecting to repository"
+                    document.getElementById("messageDanger").innerText = "Error connecting to repository"
                 }
                 clearRecentActions()
             });
