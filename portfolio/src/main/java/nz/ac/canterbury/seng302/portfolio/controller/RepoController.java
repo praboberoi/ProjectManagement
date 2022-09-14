@@ -36,10 +36,27 @@ public class RepoController {
      * Gets the group's repo.
      * 
      * @param groupId The group id of the repo to get.
-     * @return The repo page segment
+     * @return The group repo
      */
     @GetMapping(path = "/repo/{groupId}")
-    public ModelAndView groupPage(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
+    public ResponseEntity<Repo> repo(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
+        Groups group = groupService.getGroupById(groupId);
+        if (group == null || group.getGroupId() == 0) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+
+        Repo repo = repoRepository.getByGroupId(groupId);
+        return ResponseEntity.status(HttpStatus.OK).body(repo);
+    }
+
+    /**
+     * Gets the groups repo setting component.
+     * 
+     * @param groupId The group id of the repo to get.
+     * @return The repo page segment
+     */
+    @GetMapping(path = "/repo/{groupId}/settings")
+    public ModelAndView repoSettings(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
         Groups group = groupService.getGroupById(groupId);
         ModelAndView mv;
         if (group == null || group.getGroupId() == 0) {

@@ -71,11 +71,6 @@
             </a>
           </li>
           <li class="nav-item"  >
-            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/account') ? 'active':''}" th:href="@{{apiPrefix}/account(apiPrefix=${apiPrefix})}">
-              Account Page
-            </a>
-          </li>
-          <li class="nav-item"  >
             <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/users') ? 'active':''}" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">
               Users
             </a>

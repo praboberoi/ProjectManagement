@@ -67,7 +67,7 @@ public class RepoControllerTest {
     }
 
     /**
-     * Checks that the repo page fails when a group doesn't exist
+     * Checks that the repo fails when a group doesn't exist
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
@@ -79,16 +79,46 @@ public class RepoControllerTest {
     }
 
     /**
+     * Checks that the repo is returned correctly when the group exists
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenGroupExists_whenGetRepoCalled_thenRepoReturned() throws Exception{
+        Groups group = new Groups("Team: 400", "Bad Request", 1, List.of());
+        Repo repo = new Repo(1, 1, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
+        when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
+        when(groupService.getGroupById(anyInt())).thenReturn(group);
+
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+            .perform(get("/repo/1"))
+            .andExpect(status().isOk())
+            .andExpect(content().json(new ObjectMapper().writeValueAsString(repo)));
+    }
+
+    /**
+     * Checks that the repo page fails when a group doesn't exist
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void givenGroupNotExists_whenGetRepoSettingsCalled_thenErrorReturned() throws Exception{
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockMvc
+            .perform(get("/repo/1/settings"))
+            .andExpect(status().isNotFound());
+    }
+
+    /**
      * Checks that a user not in the group can't access the repo information
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
-    void givenGroupExists_andUserNotAMember_whenGetRepoCalled_thenErrorReturned() throws Exception{
+    void givenGroupExists_andUserNotAMember_whenGetRepoSettingsCalled_thenErrorReturned() throws Exception{
         Groups group = new Groups("Team: 400", "Bad Request", 1, List.of());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
         mockMvc
-            .perform(get("/repo/1"))
+            .perform(get("/repo/1/settings"))
             .andExpect(status().isForbidden());
     }
 
@@ -97,14 +127,14 @@ public class RepoControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
-    void givenGroupExists_andUserNotAMember_andUserIsATeacher_whenGetRepoCalled_thenPageReturned() throws Exception{
+    void givenGroupExists_andUserNotAMember_andUserIsATeacher_whenGetRepoSettingsCalled_thenPageReturned() throws Exception{
         Groups group = new Groups("Team: 400", "Bad Request", 1, List.of());
         Repo repo = new Repo(1, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
         when(repoService.getRepo(anyInt())).thenReturn(repo);
         mockMvc
-            .perform(get("/repo/1"))
+            .perform(get("/repo/1/settings"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("repo", repo));
     }
@@ -114,7 +144,7 @@ public class RepoControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
-    void givenGroupExists_andUserIsAMember_whenGetRepoCalled_thenPageReturned() throws Exception{
+    void givenGroupExists_andUserIsAMember_whenGetRepoSettingsCalled_thenPageReturned() throws Exception{
         User user = new User.Builder().userId(1).build();
         Groups group = new Groups("Team: 400", "Bad Request", 1, List.of(user));
         Repo repo = new Repo(1, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
@@ -123,7 +153,7 @@ public class RepoControllerTest {
         when(groupService.getGroupById(anyInt())).thenReturn(group);
         when(repoService.getRepo(anyInt())).thenReturn(repo);
         mockMvc
-            .perform(get("/repo/1"))
+            .perform(get("/repo/1/settings"))
             .andExpect(status().isOk())
             .andExpect(model().attribute("repo", repo));
     }

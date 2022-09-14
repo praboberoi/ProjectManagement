@@ -14,7 +14,7 @@ function isValidHttpUrl(string) {
     return url.protocol === "http:" || url.protocol === "https:"
 }
 
-const GIT_API = "/api/v4/"
+const GIT_API = "api/v4/"
 
 /**
  * Toggles the visibility of the recent actions component
@@ -29,34 +29,59 @@ function toggleRecentActions() {
  * Attempts to connect to the git repository using the details provided
  * @param event Form submit event
  */
-function connectToRepo() {
-    let message = document.getElementById("connection-message")
+function connectToRepo(saving=false) {
+    let httpRequest = new XMLHttpRequest();
 
-    let projectId = document.getElementById("git-project-id").value
-    let accessToken = document.getElementById("git-access-token").value
-    let hostAddress = document.getElementById("git-host-address").value
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status !== 200) {
+                clearRecentActions()
+                return
+            }
 
-    fetch(hostAddress + GIT_API + "projects/" + projectId, {
-        method: 'GET',
-        headers: {
-            'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
-            'Content-Type': 'application/json',
-        },
-    }).then(async (response) => {
-        const repo = await  response.json();
-        if (!repo.hasOwnProperty('id')) {
-            message.innerText = "Repo not found"
-            clearRecentActions()
-            return
+            let repoName = document.getElementById("git-project-name")
+
+            let jsonRepo = JSON.parse(httpRequest.response)
+
+            fetch(jsonRepo.hostAddress + GIT_API + "projects/" + jsonRepo.gitlabProjectId, {
+                method: 'GET',
+                headers: {
+                    'PRIVATE-TOKEN': jsonRepo.accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
+                    'Content-Type': 'application/json',
+                },
+            }).then(async (response) => {
+                const repo = await  response.json();
+                if (saving) {
+                    if (!repo.hasOwnProperty('id')) {
+                        document.getElementById("messageDanger").innerText = "Repo not found"
+                        clearRecentActions()
+                        return
+                    }
+
+
+                    document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
+                }
+
+                if (repoName != undefined) {
+                    repoName.value = repo.name
+                }
+
+                getRecentActions(jsonRepo)
+            }).catch((error) => {
+                if (repoName != undefined) {
+                    repoName.value = ""
+                }
+                if (saving) {
+                    document.getElementById("messageDanger") = "Error connecting to repository"
+                }
+                clearRecentActions()
+            });
         }
-        document.getElementById("git-project-name").value = repo.name
-        message.innerText = "Connected to repo: " + repo.name
-        getRecentActions()
-    }).catch((error) => {
-        document.getElementById("git-project-name").value = ""
-        message.innerText = "Error connecting to repository"
-        clearRecentActions()
-    });
+    }
+
+    httpRequest.open('GET', apiPrefix + `/repo/${groupId}`);
+
+    httpRequest.send();
 }
 
 /**
@@ -74,21 +99,11 @@ function clearRecentActions() {
 /**
  * Calls the git api to get events from the project that has been provided. Formats these into cards for the recent actions component
  */
-async function getRecentActions() {
-    let message = document.getElementById("connection-message")
-
-    if (message.innerText === "Repo not found") {
-        return
-    }
-
-    let projectId = document.getElementById("git-project-id").value
-    let accessToken = document.getElementById("git-access-token").value
-    let hostAddress = document.getElementById("git-host-address").value
-
-    const response = await fetch(hostAddress + GIT_API + "projects/" + projectId + "/events", {
+async function getRecentActions(repo) {
+    const response = await fetch(repo.hostAddress + GIT_API + "projects/" + repo.gitlabProjectId + "/events", {
         method: 'GET',
         headers: {
-            'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
+            'PRIVATE-TOKEN': repo.accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
             'Content-Type': 'application/json',
         },
     });
@@ -122,23 +137,23 @@ async function getRecentActions() {
         let action = document.createElement('p');
         actionContainer.appendChild(action)
 
-        if (event.action_name === 'joined') {
+        if (event.action_name == 'joined') {
             action.innerText = "Joined the project"
-        } else if (event.action_name === "pushed new") {
+        } else if (event.action_name == "pushed new") {
             action.innerText = "Created branch: " + event.push_data.ref
-        } else if (event.action_name === "pushed to") {
+        } else if (event.action_name == "pushed to") {
             action.innerText = "Pushed " + event.push_data.commit_count + " commits to " + event.push_data.ref
-        } else if (event.action_name === "created") {
+        } else if (event.action_name == "created") {
             addCreated(actionContainer, event)
-        } else if (event.action_name === "opened") {
+        } else if (event.action_name == "opened") {
             action.innerText = "Opened new " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
-        } else if (event.action_name === "commented on") {
+        } else if (event.action_name == "commented on") {
             action.innerText = "Commented on " + event.note.noteable_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
-        } else if (event.action_name === "approved") {
+        } else if (event.action_name == "approved") {
             action.innerText = "Approved " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
-        } else if (event.action_name === "accepted") {
+        } else if (event.action_name == "accepted") {
             action.innerText = "Merged " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
-        } else if (event.action_name === "closed") {
+        } else if (event.action_name == "closed") {
             action.innerText = "Closed " + event.target_type.replace(/([A-Z])/g, ' $1') + ": " + event.target_title
         } else {
             action.innerText = "Performed a " + event.action_name
@@ -251,8 +266,6 @@ function addCreated(element, event) {
     }
 }
 
-
-
 function saveRepoSettings(event) {
     if (event != null) {
         event.preventDefault()
@@ -268,7 +281,7 @@ function saveRepoSettings(event) {
 
     httpRequest.send(formData);
 
-    connectToRepo()
+    connectToRepo(true)
 }
 
 /**
