@@ -2,14 +2,19 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
 
 import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.*;
 
 
@@ -24,9 +29,10 @@ public class EventService {
     private Logger logger = LoggerFactory.getLogger(EventService.class);
 
 
-    public EventService(ProjectRepository projectRepository, EventRepository eventRepository) {
+    public EventService(ProjectRepository projectRepository, EventRepository eventRepository, SprintRepository sprintRepository) {
         this.eventRepository = eventRepository;
         this.projectRepository = projectRepository;
+        this.sprintRepository = sprintRepository;
     }
 
     /**
@@ -139,6 +145,32 @@ public class EventService {
         else if(event.getStartDate().after(event.getProject().getEndDate()) || event.getEndDate().after(event.getProject().getEndDate()))
             throw new IncorrectDetailsException("The event cannot start or end after the project");
 
+    }
+
+    /**
+     * Updates the colours for the given event
+     * @param event of type Event
+     */
+    public void updateEventColors(Event event) {
+        event.clearColourList();
+        List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event)
+                .stream().sorted(Comparator.comparingInt(Sprint::getSprintId))
+                .toList();
+
+        AtomicInteger counter = new AtomicInteger(0);
+
+        sprintList.forEach(sprint -> {
+            if ( !event.getColors().contains(sprint.getColor()) )
+                event.addColor(sprint.getColor(), counter.getAndIncrement());
+        });
+
+        if (!sprintList.isEmpty()) {
+            if ( sprintList.get(0).getStartDate().after(event.getStartDate()) )
+                event.addColor(SprintColor.WHITE, 0);
+
+            if (sprintList.get(sprintList.size() - 1).getEndDate().before(event.getEndDate()))
+                event.addColor(SprintColor.WHITE, event.getColors().size());
+        }
     }
 
     /**

@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
@@ -80,5 +81,13 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      * @return an int.
      */
     int countByProject(Project project);
+
+    /**
+     * Obtains a list of sprint that fall under the given Event
+     * @param event of type Event
+     * @return a list of Sprint
+     */
+    @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#event.startDate} <= sprint.endDate and :#{#event.endDate} >= sprint.startDate")
+    List<Sprint> findSprintsByEvent(@Param("event") Event event);
 
 }

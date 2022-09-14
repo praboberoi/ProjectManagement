@@ -1,15 +1,15 @@
 <!-- Event list for project page -->
 <th:block th:each="event: ${listEvents}" th:fragment="projectList">
-    <div class="card shadow-sm bg-white rounded event-card m-2" th:id="'event' + ${event.eventId} + '-card'">
+    <div class="card shadow-sm bg-white rounded event-card p-0 m-2" th:id="'event' + ${event.eventId} + '-card'">
         <input class="hiddenEventId" hidden th:value="${event.eventId}">
         <div class="container-fluid">
             <div class="d-flex justify-content-between py-2">
                 <div>
                     <h6 class="card-title" th:id="'event' + ${event.eventId} + 'Name'">[[${event.eventName}]]</h6>
                     <p class="eventDates mb-2" th:id="'event' + ${event.eventId} + 'StartDate'"><b>Start Date:</b>
-                        [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]] [[${eventDateMappingDictionary.get(event.eventId).get(0)}]]
+                        [[${#dates.format(event.startDate, 'dd MMM yyyy hh:mm a')}]]
                     </p>
-                    <p class="eventDates mb-2" th:id="'event' + ${event.eventId} + 'EndDate'"><b>End Date:</b> [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]] [[${eventDateMappingDictionary.get(event.eventId).get(1)}]]</p>
+                    <p class="eventDates mb-2" th:id="'event' + ${event.eventId} + 'EndDate'"><b>End Date:</b> [[${#dates.format(event.endDate, 'dd MMM yyyy hh:mm a')}]]</p>
                 </div>
                 <!--If a user is a STUDENT do not show the 'edit', 'delete' calendar object buttons !-->
                 <div class="d-flex align-items-baseline pt-3 mt-2" th:if="${adminOrTeacher}">
@@ -39,6 +39,11 @@
                     </button>
                 </div>
             </div>
+            </div>
+        <div class="container-fluid row px-0 mx-0" style="height: 5px;">
+            <th:block th:each="color : ${event.getColors()}">
+                <div class="col" th:style="'background-color: ' + ${color.getColor()}"></div>
+            </th:block>
         </div>
     </div>
 </th:block>

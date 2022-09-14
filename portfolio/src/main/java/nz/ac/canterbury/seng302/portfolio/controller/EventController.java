@@ -3,7 +3,8 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.dto.EventDTO;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
-import nz.ac.canterbury.seng302.portfolio.service.*;
+import nz.ac.canterbury.seng302.portfolio.service.EventService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
@@ -32,6 +33,10 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Controller for the events page
  */
@@ -58,11 +63,10 @@ public class EventController {
       @GetMapping(path="/project/{projectId}/events")
       public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
-          Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getStartAndEndDates(listEvents);
+          listEvents.forEach(eventService::updateEventColors);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);
-          mv.addObject("eventDateMappingDictionary", eventDateMappingDictionary);
           return mv;
       }
 
@@ -87,6 +91,7 @@ public class EventController {
         try {
             event.setProject(projectService.getProjectById(projectId));
             eventService.verifyEvent(event);
+            eventService.updateEventColors(event);
             message = eventService.saveEvent(event);
             notifyEvent(projectId, event.getEventId(), "edited");
             return ResponseEntity.status(HttpStatus.OK).body(message);

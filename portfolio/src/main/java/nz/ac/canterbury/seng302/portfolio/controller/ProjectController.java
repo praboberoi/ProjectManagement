@@ -2,12 +2,9 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.*;
-import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
-import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -68,18 +67,15 @@ public class ProjectController {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
-            Hashtable<Integer, List<String>> dateDict = eventService.getStartAndEndDates(listEvents);
+            listEvents.forEach(eventService::updateEventColors);
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
-            Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
             Project project = projectService.getProjectById(projectId);
             Event newEvent = eventService.getNewEvent(project);
             Deadline newDeadline = deadlineService.getNewDeadline(project);
             model.addAttribute("listEvents", listEvents);
-            model.addAttribute("dateDict", dateDict);
             model.addAttribute("listDeadlines", listDeadlines);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);
-            model.addAttribute("deadlineDateMapping", deadlineDateMapping);
             model.addAttribute("event", newEvent);
             model.addAttribute("deadline", newDeadline);
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));

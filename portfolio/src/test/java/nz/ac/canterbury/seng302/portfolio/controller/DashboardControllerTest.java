@@ -1,21 +1,25 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
-import nz.ac.canterbury.seng302.portfolio.model.*;
-import nz.ac.canterbury.seng302.portfolio.service.*;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.SprintService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
-
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.MockedStatic;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.junit.jupiter.api.Test;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -26,11 +30,9 @@ import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(controllers = DashboardController.class)
 @AutoConfigureMockMvc(addFilters = false)
