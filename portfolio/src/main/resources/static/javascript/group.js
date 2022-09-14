@@ -3,7 +3,7 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
-const GIT_API = "/api/v4/"
+const GIT_API = "api/v4/"
 
 /**
  * Toggles the visibility of the recent actions component
@@ -18,34 +18,59 @@ function toggleRecentActions() {
  * Attempts to connect to the git repository using the details provided
  * @param event Form submit event
  */
-function connectToRepo() {
-    let message = document.getElementById("connection-message")
+function connectToRepo(saving=false) {
+    let httpRequest = new XMLHttpRequest();
 
-    let projectId = document.getElementById("git-project-id").value
-    let accessToken = document.getElementById("git-access-token").value
-    let hostAddress = document.getElementById("git-host-address").value
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status !== 200) {
+                clearRecentActions()
+                return
+            }
 
-    fetch(hostAddress + GIT_API + "projects/" + projectId, {
-        method: 'GET',
-        headers: {
-            'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
-            'Content-Type': 'application/json',
-        },
-    }).then(async (response) => {
-        const repo = await  response.json();
-        if (!repo.hasOwnProperty('id')) {
-            message.innerText = "Repo not found"
-            clearRecentActions()
-            return
+            let repoName = document.getElementById("git-project-name")
+
+            let jsonRepo = JSON.parse(httpRequest.response)
+
+            fetch(jsonRepo.hostAddress + GIT_API + "projects/" + jsonRepo.gitlabProjectId, {
+                method: 'GET',
+                headers: {
+                    'PRIVATE-TOKEN': jsonRepo.accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
+                    'Content-Type': 'application/json',
+                },
+            }).then(async (response) => {
+                const repo = await  response.json();
+                if (saving) {
+                    if (!repo.hasOwnProperty('id')) {
+                        document.getElementById("messageDanger").innerText = "Repo not found"
+                        clearRecentActions()
+                        return
+                    }
+
+                    
+                    document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
+                }
+                
+                if (repoName != undefined) {
+                    repoName.value = repo.name
+                }
+
+                getRecentActions(jsonRepo)
+            }).catch((error) => {
+                if (repoName != undefined) {
+                    repoName.value = ""
+                }
+                if (saving) {
+                    document.getElementById("messageDanger") = "Error connecting to repository"
+                }
+                clearRecentActions()
+            });
         }
-        document.getElementById("git-project-name").value = repo.name
-        message.innerText = "Connected to repo: " + repo.name
-        getRecentActions()
-    }).catch((error) => {
-        document.getElementById("git-project-name").value = ""
-        message.innerText = "Error connecting to repository"
-        clearRecentActions()
-    });
+    }
+
+    httpRequest.open('GET', apiPrefix + `/repo/${groupId}`);
+
+    httpRequest.send();
 }
 
 /**
@@ -63,21 +88,11 @@ function clearRecentActions() {
 /**
  * Calls the git api to get events from the project that has been provided. Formats these into cards for the recent actions component
  */
-async function getRecentActions() {
-    let message = document.getElementById("connection-message")
-
-    if (message.innerText === "Repo not found") {
-        return
-    }
-
-    let projectId = document.getElementById("git-project-id").value
-    let accessToken = document.getElementById("git-access-token").value
-    let hostAddress = document.getElementById("git-host-address").value
-
-    const response = await fetch(hostAddress + GIT_API + "projects/" + projectId + "/events", {
+async function getRecentActions(repo) {
+    const response = await fetch(repo.hostAddress + GIT_API + "projects/" + repo.gitlabProjectId + "/events", {
         method: 'GET',
         headers: {
-            'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
+            'PRIVATE-TOKEN': repo.accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
             'Content-Type': 'application/json',
         },
     });
@@ -198,7 +213,7 @@ function saveRepoSettings(event) {
 
     httpRequest.send(formData);
 
-    connectToRepo()
+    connectToRepo(true)
 }
 
 /**
