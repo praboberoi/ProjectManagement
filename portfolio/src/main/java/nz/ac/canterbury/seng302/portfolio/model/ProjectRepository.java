@@ -12,9 +12,9 @@ public interface ProjectRepository extends CrudRepository<Project, Integer> {
     /**
      * Obtains a list of projects with the given name.
      * @param projectName of type String.
-     * @return a list of type Project.
+     * @return A project with the given name.
      */
-    List<Project> findByProjectName(String projectName);
+    Project findByProjectName(String projectName);
 
     /**
      * Obtains a list of projects with the name containing the given string

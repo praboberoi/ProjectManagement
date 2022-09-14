@@ -5,7 +5,7 @@ header, sidebar
 
 #sidebar {
     position: fixed;
-    top: 51px;
+    top: 50px;
     bottom: 0;
     left: 0;
     z-index: 1000;
@@ -33,7 +33,7 @@ header, sidebar
 }
 
 .navbar {
-    height: 8vh;
+    height: 50px;
 }
 
 /* for screen sizes less than 820px */
