@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import javax.persistence.PersistenceException;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
@@ -119,5 +121,18 @@ public class RepoServiceTest {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 repoService.validateRepo(repo1));
         Assertions.assertEquals("Project host address must be a valid HTTP URL", exception.getMessage());
+    }
+
+    /**
+     * Asserts that correct message is thrown when PersistentException is thrown from database
+     */
+    @Test
+    void givenInvalidRepo_whenSaveRepoCalled_andRepositoryError_thenCorrectExceptionThrown() {
+        when(repoRepository.save(repo1)).thenThrow(new PersistenceException());
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                repoService.saveRepo(repo1));
+        Assertions.assertEquals("Failure Saving Repo", exception.getMessage());
+
+
     }
 }

@@ -59,9 +59,6 @@ public class RepoService {
     public void validateRepo(Repo repo) throws IncorrectDetailsException {
         if (repo.getRepoName() == null || repo.getHostAddress() == null)
             throw new IncorrectDetailsException("Repo must have a name and host address");
-        int repoIdLength = String.valueOf(repo.getGitlabProjectId()).length();
-        if (repoIdLength < 1 || repoIdLength > 50)
-            throw new IncorrectDetailsException("Project ID field must be between 1 and 50 characters");
         if (repo.getRepoName().length() < 1 || repo.getRepoName().length() > 50)
             throw new IncorrectDetailsException("Project Alias field must be between 1 and 50 characters");
         if (repo.getHostAddress().length() < 1)
