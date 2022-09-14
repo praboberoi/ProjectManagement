@@ -17,12 +17,15 @@ function saveEvidence() {
     httpRequest.send(formData);
 }
 
-function checkEvidenceTitle(){
+function checkEvidenceTitle() {
     const evidenceTitle = document.getElementById('evidence-title');
     let charMessage = document.getElementById("evidenceCharCount");
     let charCount = evidenceTitle.value.length;
     charMessage.innerText = charCount + ' '
 
+    if (evidenceTitle.value === 1) {
+        document.getElementById('evidenceFormSubmitButton')
+    }
 
 
 }
