@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
 
@@ -65,12 +66,14 @@ public class DeadlineController {
     @GetMapping(path="/project/{projectId}/deadlines")
     public ModelAndView deadlines(@PathVariable("projectId") int projectId) {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+        Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("deadlineFragments::deadlineTab");
         mv.addObject("project", project);
         mv.addObject("listDeadlines", listDeadlines);
         mv.addObject("editDeadlineNotifications", editing);
+        mv.addObject("deadlineDateMapping", deadlineDateMapping);
         return mv;
     }
 
