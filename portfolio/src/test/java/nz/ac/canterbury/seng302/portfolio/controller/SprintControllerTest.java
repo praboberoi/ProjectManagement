@@ -176,8 +176,7 @@ class SprintControllerTest {
     }
 
     /**
-     * Test to make sure that an error message is returned when verify Sprint is requested for an invalid sprint with a
-     * a changed label
+     * Test to make sure that an error message is returned when verify Sprint is requested for an invalid sprint with a     *  changed label
      */
     @Test
     void givenSprintExists_whenVerifySprintIsRequested_thenErrorMessageIsReturnedForModifyingTheSprintLabel() {
