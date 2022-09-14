@@ -69,6 +69,7 @@ public class ProjectController {
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            listDeadlines.forEach(deadlineService::updateDeadlineColors);
             Project project = projectService.getProjectById(projectId);
             Event newEvent = eventService.getNewEvent(project);
             Deadline newDeadline = deadlineService.getNewDeadline(project);

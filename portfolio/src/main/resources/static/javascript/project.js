@@ -137,7 +137,6 @@ function connect() {
     });
     
     stompClient.onConnect = function () {
-        console.log('Active updating enabled');
         subscribe()
         document.getElementById("websocket-status").value = "connected"
     };

@@ -1,11 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.model.dto.SprintDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
+import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -36,6 +38,7 @@ public class SprintController {
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Autowired private EventService eventService;
+    @Autowired private DeadlineService deadlineService;
     @Value("${apiPrefix}") private String apiPrefix;
 
     @Autowired
@@ -137,7 +140,10 @@ public class SprintController {
             notifySprint(projectId, sprint.getSprintId(), "edited");
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
+            List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            listDeadlines.forEach(deadlineService::updateDeadlineColors);
             ra.addFlashAttribute("listEvents", listEvents);
+            ra.addFlashAttribute("listDeadlines", listDeadlines);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
@@ -212,6 +218,9 @@ public class SprintController {
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
             ra.addFlashAttribute("listEvents", listEvents);
+            List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            listDeadlines.forEach(deadlineService::updateDeadlineColors);
+            ra.addFlashAttribute("listDeadlines", listDeadlines);
             model.addAttribute("listSprints", listSprints);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {

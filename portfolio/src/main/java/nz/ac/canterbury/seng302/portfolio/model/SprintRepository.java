@@ -65,8 +65,9 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      */
     List<Sprint> findByProject(Project project);
 
+
     /**
-     * Finds a sprint occuring within a project on a certain date
+     * Finds a sprint occurring within a project on a certain date
      * @param project The project the sprint is from
      * @param date The date the sprint must occur during
      * @return The sprint
@@ -90,4 +91,11 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
     @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#event.startDate} <= sprint.endDate and :#{#event.endDate} >= sprint.startDate")
     List<Sprint> findSprintsByEvent(@Param("event") Event event);
 
+    /**
+     * Obtains a list of sprint that fall under the given Deadline
+     * @param deadline of type Deadline
+     * @return a list of Sprint
+     */
+    @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#deadline.date} <= sprint.endDate and :#{#deadline.date} >= sprint.startDate")
+    List<Sprint> findSprintsByDeadline(@Param("deadline") Deadline deadline);
 }

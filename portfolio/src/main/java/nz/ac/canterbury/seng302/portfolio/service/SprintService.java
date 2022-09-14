@@ -42,7 +42,7 @@ public class SprintService {
         Sprint sprint = new Sprint.Builder()
                                   .sprintLabel("Sprint " + sprintNo)
                                   .sprintName("Sprint " + sprintNo)
-                                  .color(SprintColor.valueOf(sprintNo % 8 == 0 ? 7 : sprintNo % 8)).build();
+                .color(SprintColor.valueOf(sprintNo % 8 == 0 ? 7 : sprintNo % 8)).build();
 
         List<Sprint> listSprints = getSprintByProject(project.getProjectId());
         if (listSprints.isEmpty()) {

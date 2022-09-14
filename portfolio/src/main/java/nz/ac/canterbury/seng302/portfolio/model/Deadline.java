@@ -1,11 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import nz.ac.canterbury.seng302.portfolio.model.dto.DeadlineDTO;
 
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -32,6 +34,10 @@ public class Deadline {
     @Temporal(TemporalType.TIMESTAMP)
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date date;
+
+    @Column
+    @ElementCollection
+    private final List<SprintColor> colors = new ArrayList<>();
 
     /**
      * No args Constructor for the Deadline.
@@ -105,6 +111,18 @@ public class Deadline {
         return formatter.format(date);
     }
 
+    public List<SprintColor> getColors() {
+        return this.colors;
+    }
+
+    public void addColor(SprintColor color, int index) {
+        this.colors.add(index, color);
+    }
+
+    public void clearColorList() {
+        colors.clear();
+    }
+
     @Override
     public String toString() {
         return "Deadline{" +
@@ -112,6 +130,7 @@ public class Deadline {
                 ", projectId=" + project.getProjectId() +
                 ", name='" + name + '\'' +
                 ", date=" + date +
+                ", colors= " + colors +
                 '}';
     }
 
