@@ -314,7 +314,7 @@ public class GroupController {
 
         model.addAttribute(GROUP, group);
         model.addAttribute("repo", repo);
-        return GROUP;
+        return "groupSetting";
     }
 
     /**

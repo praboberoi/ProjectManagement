@@ -58,9 +58,6 @@ public class GroupControllerTest {
     @InjectMocks
     private ControllerAdvisor controllerAdvisor;
 
-    @MockBean
-    private SimpMessagingTemplate template;
-
     private static MockedStatic<PrincipalUtils> mockedUtil;
 
     @BeforeAll
