@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -21,6 +22,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
@@ -38,6 +40,8 @@ public class EvidenceControllerTest {
 
     @MockBean
     private EvidenceService evidenceService;
+    @MockBean
+    private ProjectService projectService;
 
     @MockBean
     private UserAccountClientService userAccountClientService;
@@ -133,11 +137,27 @@ public class EvidenceControllerTest {
     void givenEvidenceObject_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
         Evidence evidence = new Evidence(evidenceDTO);
         Evidence evidence1 = new Evidence(evidenceDTO1);
+
+        LocalDate now = LocalDate.now();
+        Evidence expectedEvidence = new Evidence.Builder()
+                .dateOccurred(java.sql.Date.valueOf(now))
+                .title("New evidence")
+                .ownerId(99)
+                .build();
+
+        ArrayList<Project> projectList = new ArrayList<>();
+        when(projectService.getAllProjects()).thenReturn(projectList);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        when(evidenceService.getNewEvidence(99)).thenReturn(expectedEvidence);
+
         this.mockMvc
                 .perform(get("/evidence/99"))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)));
+                .andExpect(model().attribute("evidence", expectedEvidence))
+                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
+                .andExpect(model().attribute("listProjects", projectList))
+                .andExpect(model().attribute("userId", 99));
+
     }
 
     /**

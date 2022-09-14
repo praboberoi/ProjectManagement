@@ -113,10 +113,9 @@
                 <div class="evidenceForm">
                     <form id="createEvidenceForm" name="evidenceForm"  onsubmit="return true" th:action="@{${apiPrefix} + '/evidence/' + ${userId} + '/saveEvidence'}" method="post" th:object="${evidence}">
                         <input type="hidden" id="userId" th:value="${ownerId}"/>
-<!--                        <input type="hidden" id="eventId" th:field="*{evidenceId}" />-->
                         <div class="mb-3">
                             <label for="evidence-title" class="col-form-label required">Evidence Title</label>
-                            <input type="text" class="form-control required" id="evidence-title" th:field="*{title}" maxlength="50" onkeyup="checkEvidenceTitle()" required>
+                            <input type="text" class="form-control required" id="evidence-title" name="title" th:field="*{title}" maxlength="50" onkeyup="checkEvidenceTitle()" required>
                             <div>
                                 <span id="evidenceCharCount" th:value="${charCount}">[[*{title.length}]] </span> / 50 characters used.
                             </div>

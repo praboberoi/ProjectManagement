@@ -174,16 +174,14 @@ class EvidenceServiceTest {
      */
     @Test
     void whenGetNewEvidenceIsCalled_thenNewEvidenceObjectReturned() {
-        User user = new User.Builder().userId(999).build();
+        User user = new User.Builder().userId(1000).build();
+        LocalDate now = LocalDate.now();
         Evidence expectedEvidence = new Evidence.Builder()
-                .evidenceId(999)
-                .project(project)
-                .dateOccurred(new Date())
+                .dateOccurred(java.sql.Date.valueOf(now))
                 .title("New evidence")
-                .description("A new piece of evidence")
-                .ownerId(999)
+                .ownerId(user.getUserId())
                 .build();
-        Evidence testEvidence = evidenceService.getNewEvidence(999);
+        Evidence testEvidence = evidenceService.getNewEvidence(1000);
         assertEquals(testEvidence, expectedEvidence);
     }
 
