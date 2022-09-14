@@ -65,6 +65,7 @@ public class DeadlineController {
     @GetMapping(path="/project/{projectId}/deadlines")
     public ModelAndView deadlines(@PathVariable("projectId") int projectId) {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+        listDeadlines.forEach(deadlineService::updateDeadlineColors);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("deadlineFragments::deadlineTab");
@@ -106,6 +107,7 @@ public class DeadlineController {
         try {
             deadline.setProject(projectService.getProjectById(projectId));
             deadlineService.verifyDeadline(deadline);
+            deadlineService.updateDeadlineColors(deadline);
             message = deadlineService.saveDeadline(deadline);
             logger.info("Deadline {} has been edited", deadline.getDeadlineId());
             notifyDeadline(projectId, deadline.getDeadlineId(), "edited");
