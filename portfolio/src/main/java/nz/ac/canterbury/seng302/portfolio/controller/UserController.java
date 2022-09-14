@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static java.lang.Integer.parseInt;
@@ -49,12 +50,13 @@ public class UserController {
      * @return The user list page
      */
     @GetMapping("/users")
-    public ModelAndView users(@AuthenticationPrincipal AuthState principal, ModelAndView mv) {
+    public ModelAndView users(@AuthenticationPrincipal AuthState principal) {
         int userId = PrincipalUtils.getUserId(principal);
         int limit = 10;
+        Optional<PersistentSort> sortBase = persistentSortRepository.findById(userId);
         PersistentSort sort;
-        if (persistentSortRepository.findById(userId).isPresent()) {
-            sort = persistentSortRepository.findById(userId).get();
+        if (sortBase.isPresent()) {
+            sort = sortBase.get();
         } else {
             sort = persistentSortRepository.save(new PersistentSort(PrincipalUtils.getUserId(principal)));
         }
@@ -67,7 +69,7 @@ public class UserController {
                         role.ordinal() <= Collections.max(user.getRoles()).ordinal())
                 .toList();
 
-        mv = new ModelAndView("userList");
+        ModelAndView mv = new ModelAndView("userList");
         mv.addObject("user", user);
         mv.addObject("usersList", usersList);
         mv.addObject("currentUser", userAccountClientService.getUser(principal));
@@ -84,24 +86,28 @@ public class UserController {
     }
 
     /**
-     * Get method for the current page of users from the list
-     * @param principal Authentication information containing user info
-     * @return The list of user fragment
-     */
+      * Get method for the current page of users from the list
+      * @param principal Authentication information containing user info
+      * @param page The page of users to retrieve
+      * @param limit The number of users to retrieve
+      * @param order The field to sort the users by
+      * @param asc The direction to sort the users in
+      * @return The list of user fragment
+      */
     @GetMapping("/usersList")
     public ModelAndView usersList(
             @AuthenticationPrincipal AuthState principal,
             @RequestParam Integer page,
             @RequestParam Integer limit,
             @RequestParam String order,
-            @RequestParam Integer asc,
-            ModelAndView mv
+            @RequestParam Integer asc
     ) {
         int userId = PrincipalUtils.getUserId(principal);
-        PersistentSort sort;
-        if (persistentSortRepository.findById(userId).isPresent()) {
-            sort = persistentSortRepository.findById(userId).get();
 
+        Optional<PersistentSort> sortBase = persistentSortRepository.findById(userId);
+        PersistentSort sort;
+        if (sortBase.isPresent()) {
+            sort = sortBase.get();
         } else {
             sort = new PersistentSort(PrincipalUtils.getUserId(principal));
         }
@@ -119,7 +125,7 @@ public class UserController {
         PaginatedUsersResponse response = userAccountClientService.getUsers(page, limit, sort.getUserListSortBy(), sort.isUserListAscending());
         List<User> usersList = response.getUsersList().stream().map(User::new).toList();
 
-        mv = new ModelAndView("userList::userListDataTable");
+        ModelAndView mv = new ModelAndView("userList::userListDataTable");
         mv.addObject("usersList", usersList);
         mv.addObject("currentUser", userAccountClientService.getUser(principal));
         mv.addObject("page", page);
@@ -145,6 +151,7 @@ public class UserController {
      *
      * @param userId ID for the user
      * @param role   Type of role being deleted
+     * @param principal Authentication information containing user info
      * @return Ok (200) response if successful, 500 response if failure.
      */
     @DeleteMapping(value = "/usersList/removeRole")

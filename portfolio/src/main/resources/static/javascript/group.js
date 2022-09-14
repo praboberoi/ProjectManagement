@@ -1,9 +1,30 @@
 const GIT_API = "api/v4/"
 let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+let filterByUser = ""
+let filterByActionType = ""
+let projectIdValidate = /^\d+$/;
+let jsonRepo;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 let stompClient = null;
+
+/**
+ * Checks to see if a string is a valid url
+ * @param string String to be validated
+ * @returns {boolean} True if the string is a valid URL, false otherwise
+ */
+function isValidHttpUrl(string) {
+    let url;
+    try {
+        url = new URL(string)
+    } catch (_) {
+        return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:"
+}
+
+const GIT_API = "api/v4/"
 
 /**
  * Toggles the visibility of the recent actions component
@@ -16,7 +37,7 @@ function toggleRecentActions() {
 
 /**
  * Attempts to connect to the git repository using the details provided
- * @param event Form submit event
+ * @param saving
  */
 function connectToRepo(saving=false) {
     let httpRequest = new XMLHttpRequest();
@@ -30,7 +51,7 @@ function connectToRepo(saving=false) {
 
             let repoName = document.getElementById("git-project-name")
 
-            let jsonRepo = JSON.parse(httpRequest.response)
+            jsonRepo = JSON.parse(httpRequest.response)
 
             fetch(jsonRepo.hostAddress + GIT_API + "projects/" + jsonRepo.gitlabProjectId, {
                 method: 'GET',
@@ -51,7 +72,7 @@ function connectToRepo(saving=false) {
                     document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
                 }
 
-                if (repoName != undefined) {
+                if (repoName !== undefined) {
                     repoName.value = repo.name
                 }
 
@@ -61,7 +82,7 @@ function connectToRepo(saving=false) {
                     repoName.value = ""
                 }
                 if (saving) {
-                    document.getElementById("messageDanger").innerText = "Error connecting to repository"
+                    document.getElementById("messageDanger") = "Error connecting to repository"
                 }
                 clearRecentActions()
             });
@@ -97,9 +118,16 @@ async function getRecentActions(repo) {
         },
     });
 
-    const events = await response.json();
+    let events = await response.json();
     let recentActions = document.getElementById("recent-action-cards")
+    updateFilters(events);
     recentActions.innerHTML = ""
+    if(filterByUser.length > 0)
+        events = events.filter(event => event.author_username === filterByUser)
+
+    if(filterByActionType.length > 0)
+        events = events.filter(event => event.action_name === filterByActionType)
+
     events.forEach(event => {
         // Card
         let eventCard = document.createElement('div');
@@ -171,6 +199,70 @@ function addUserProfile(element, event) {
     // Username
     userImageContainer.insertAdjacentText('beforeend', " " + event.author_username)
 }
+
+/**
+ * Front end validation for the projectAlias element
+ */
+function validateProjectAlias() {
+    let projectAliasElement = document.getElementById("git-project-alias");
+    let projectAliasErrorElement = document.getElementById("gitProjectAliasError");
+
+    if (projectAliasElement.value.length < 1 || projectAliasElement.value.length > 50) {
+        projectAliasElement.classList.add("formError")
+        projectAliasErrorElement.innerText = "Project Alias field must be between 1 and 50 characters"
+        projectAliasElement.setCustomValidity("Invalid field.")
+    } else {
+        projectAliasElement.classList.remove("formError");
+        projectAliasErrorElement.innerText = null;
+        projectAliasElement.setCustomValidity("");
+    }
+}
+
+
+/**
+ * Front end validation for the projectHostAddress element
+ */
+function validateProjectHostAddress() {
+    let projectHostAddressElement = document.getElementById("git-host-address");
+    let projectHostAddressErrorElement = document.getElementById("gitHostAddressError");
+
+    if (projectHostAddressElement.value.length < 1) {
+        projectHostAddressElement.classList.add("formError")
+        projectHostAddressErrorElement.innerText = "Project host address field must not be empty"
+        projectHostAddressElement.setCustomValidity("Invalid field.")
+    } else if (!isValidHttpUrl(projectHostAddressElement.value)) {
+        projectHostAddressElement.classList.add("formError")
+        projectHostAddressErrorElement.innerText = "Project host address must be a valid HTTP URL"
+        projectHostAddressElement.setCustomValidity("Invalid field.")
+    } else {
+        projectHostAddressElement.classList.remove("formError");
+        projectHostAddressErrorElement.innerText = null;
+        projectHostAddressElement.setCustomValidity("");
+    }
+}
+
+/**
+ * Front end validation for the projectID element
+ */
+function validateProjectID() {
+    let projectIDElement = document.getElementById("git-project-id");
+    let projectIDErrorElement = document.getElementById("gitProjectIdError");
+
+    if (projectIDElement.value.length < 1 || projectIDElement.value.length > 50) {
+        projectIDElement.classList.add("formError")
+        projectIDErrorElement.innerText = "Project ID field must be between 1 and 50 characters"
+        projectIDElement.setCustomValidity("Invalid field.")
+    } else if (!projectIdValidate.test(projectIDElement.value)) {
+        projectIDElement.classList.add("formError")
+        projectIDErrorElement.innerText = "Project ID field can only contain numbers"
+        projectIDElement.setCustomValidity("Invalid field.")
+    } else {
+        projectIDElement.classList.remove("formError");
+        projectIDErrorElement.innerText = null;
+        projectIDElement.setCustomValidity("");
+    }
+}
+
 
 /**
  * Adds the date component to the provided element
@@ -364,4 +456,72 @@ function updateElement(httpRequest, element){
         }
     }
 }
+
+
+/**
+ * Updates the list of all the filters available for selection based on the events list passed
+ */
+ function updateFilters(events) {
+     let userFilter = document.getElementById('userFilter')
+     let actionType = document.getElementById('actionType')
+
+     const userSet = new Set();
+     const actionTypeSet = new Set();
+
+     userFilter.innerText = "";
+     actionType.innerText = "";
+
+     events.forEach(event => {
+         userSet.add(event.author_username);
+         actionTypeSet.add(event.action_name);
+     })
+
+     if (filterByUser.length === 0) {
+         userFilter.innerHTML = `<option selected>Filter By User</option>`
+         userSet.forEach(user => userFilter.innerHTML += `<option>${user}</option>`)
+
+     } else {
+         userFilter.innerHTML += `<option>Clear Filter</option>`
+         userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>`: `<option>${user}</option>`)
+     }
+
+     if (filterByActionType.length === 0) {
+         actionType.innerHTML = `<option selected>Filter By Action Type</option>`
+         actionTypeSet.forEach(action => actionType.innerHTML += `<option>${action}</option>`)
+
+     } else {
+         actionType.innerHTML += `<option>Clear Filter</option>`
+         actionTypeSet.forEach(action => actionType.innerHTML +=
+             action === filterByActionType ? `<option selected>${action}</option>` :`<option>${action}</option>`)
+
+
+     }
+
+ }
+
+/**
+ * Event listener for change in the userFilter
+ */
+ document.getElementById('userFilter').addEventListener('change', function () {
+     if (this.value === 'Clear Filter')
+         filterByUser = ""
+     else
+         filterByUser = this.value
+
+     getRecentActions(jsonRepo)
+
+ } )
+/**
+ * Event listener for change in the actionTypeFilter
+ */
+document.getElementById('actionType').addEventListener('change', function () {
+     if (this.value === 'Clear Filter')
+         filterByActionType = ""
+     else
+         filterByActionType = this.value
+
+     getRecentActions(jsonRepo)
+
+ } )
+
 

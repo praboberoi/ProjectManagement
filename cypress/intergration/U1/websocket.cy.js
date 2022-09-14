@@ -27,7 +27,7 @@ When("I call create event on {string}", (event) => {
         cy.setCookie('lens-session-token', cookie.value)
     })
     cy.get("#projectId").invoke('val').then((projectId) => {
-        cy.request('POST', Cypress.config().baseUrl + '/project/' + projectId + '/saveEvent?eventName=' + event.replaceAll(' ', '+') + '&startDate=2022-07-17T00%3A00&endDate=2022-07-20T00%3A00')
+        cy.request('POST', Cypress.config().baseUrl + '/project/' + projectId + '/saveEvent?eventId=0&eventName=' + event.replaceAll(' ', '+') + '&startDate=2022-07-17T00%3A00&endDate=2022-07-20T00%3A00')
 
     })
 })

@@ -1,9 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.Event;
-import nz.ac.canterbury.seng302.portfolio.model.EventRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +8,9 @@ import org.springframework.stereotype.Service;
 import org.slf4j.Logger;
 
 import javax.persistence.PersistenceException;
+import java.sql.Date;
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 /**
@@ -24,6 +20,7 @@ import java.util.Optional;
 public class EventService {
     @Autowired private EventRepository eventRepository;
     @Autowired private ProjectRepository projectRepository;
+    @Autowired private SprintRepository sprintRepository;
     private Logger logger = LoggerFactory.getLogger(EventService.class);
 
 
@@ -61,6 +58,35 @@ public class EventService {
                 .startDate(java.sql.Date.valueOf(now))
                 .endDate(java.sql.Date.valueOf(now.plusDays(1)))
                 .build();
+    }
+
+    /**
+     * This method maps the id's of events to the names of sprints that occur at the start and end of the event
+     * @param eventList The list of events to have sprints mapped to them
+     * @return Hashtable containing a mapping between the id of an event to a List containing the sprint occurring at
+     * the start of the event and then the sprint that occurs at the end of an event.
+     */
+    public Hashtable<Integer, List<String>> getStartAndEndDates(List<Event> eventList) {
+        Hashtable<Integer, List<String>> eventDateMappingDictionary = new Hashtable<Integer, List<String>>();
+        for (Event event : eventList) {
+            List<String> sprintNames = new ArrayList<String>();
+            Date startDate = new Date(event.getStartDate().getTime());
+            Date endDate = new Date(event.getEndDate().getTime());
+            Sprint start = sprintRepository.findByDateAndProject(event.getProject(), startDate);
+            Sprint end = sprintRepository.findByDateAndProject(event.getProject(), endDate);
+            if (start == null) {
+                sprintNames.add("");
+            } else {
+                sprintNames.add("(" + start.getSprintName() + ")");
+            }
+            if (end == null) {
+                sprintNames.add("");
+            } else {
+                sprintNames.add("(" + end.getSprintName() + ")");
+            }
+            eventDateMappingDictionary.put(event.getEventId(), sprintNames);
+        }
+        return eventDateMappingDictionary;
     }
 
     /**

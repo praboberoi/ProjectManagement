@@ -50,7 +50,7 @@
                                         </li>
                                     </ul>
 
-                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab" role="tablist">
+                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab2" role="tablist">
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link active" id="actions-toggle-tab" type="button" role="tab"
                                                 onclick="toggleRecentActions()">Recent Actions</button>
@@ -83,6 +83,16 @@
                                     </button>
                                 </div>
                                 <div class="card-body">
+                                    <div class="container-fluid row pr-0">
+                                        <div class="col pl-2 pr-1">
+                                            <select class="form-select" id="userFilter" aria-label="userFilter">
+                                            </select>
+                                        </div>
+                                        <div class="col pl-3 pr-0">
+                                            <select class="form-select" id="actionType" aria-label="actionType">
+                                            </select>
+                                        </div>
+                                    </div>
                                     <div id="recent-action-cards">
                                     </div>
                                 </div>
