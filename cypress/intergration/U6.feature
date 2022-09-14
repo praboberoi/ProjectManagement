@@ -14,3 +14,34 @@ Feature: U6. Group settings and single repository settings
         Given I login as an admin
         And I navigate directly to "group/1285322"
         Then I can see repo settings
+
+    Scenario: Misc. The user is able to toggle the recent actions tab.
+        Given I login as an admin
+        And I navigate directly to "group/1285322"
+        When I toggle the recent actions component
+        Then The recent actions component is not visible
+    
+    Scenario: Misc. The user is able to toggle the recent actions tab.
+        Given I login as an admin
+        And I navigate directly to "group/1285322"
+        When I toggle the recent actions component
+        And I toggle the recent actions component
+        Then The recent actions component is visible
+
+    Scenario: AC3. Group members can edit (update) and save the long name; the modification is populated across the application
+        Given I login as an admin
+        And I navigate to 'Groups'
+        When I call create group 'Cypress ws'
+        Then "Cypress ws" exists
+
+    Scenario: AC3. Group members can edit (update) and save the long name; the modification is populated across the application
+        Given I login as an admin
+        And I navigate to 'Groups'
+        When I call edit group 'Cypress ws' to 'Cypress wse'
+        Then "Cypress wse" exists
+
+    Scenario: AC3. Group members can edit (update) and save the long name; the modification is populated across the application
+        Given I login as an admin
+        And I navigate to 'Groups'
+        When I call delete group 'Cypress wse'
+        Then "Cypress wse" doesn't exist

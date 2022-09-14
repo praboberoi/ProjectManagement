@@ -23,7 +23,7 @@ public class Project {
     /**
      * Name of the project
      */
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String projectName;
 
     /**

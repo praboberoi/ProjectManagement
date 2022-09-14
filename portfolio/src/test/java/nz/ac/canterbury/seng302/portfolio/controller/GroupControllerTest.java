@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
@@ -47,6 +48,12 @@ public class GroupControllerTest {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+
+    @MockBean
+    private RepoRepository repoRepository;
+
+    @MockBean
+    private SimpMessagingTemplate template;
 
     @InjectMocks
     private ControllerAdvisor controllerAdvisor;

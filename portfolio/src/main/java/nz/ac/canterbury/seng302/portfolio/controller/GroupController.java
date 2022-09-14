@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.portfolio.model.Repo;
+import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -43,10 +45,17 @@ public class GroupController {
     @Autowired
     private SimpMessagingTemplate template;
 
+    @Autowired
+    private RepoRepository repoRepository;
+
+    @Autowired
+    private SimpMessagingTemplate template;
+
     private static final String GROUP = "group";
-    private static final String GROUP_FRAGMENT = "groups::group";
+    private static final String GROUP_FRAGMENT = "groupsFragments::group";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
     private static final String WARNING_MESSAGE = "messageDanger";
+    private static final String DETAILS = "details";
 
     /**
      * Get message for empty registration page
@@ -111,6 +120,7 @@ public class GroupController {
         
         ResponseEntity.BodyBuilder reply;
         if (response.getIsSuccess()) {
+            notifyGroup(groupId, DETAILS, "deleted");
             reply = ResponseEntity.status(HttpStatus.OK);
         } else {
             reply = ResponseEntity.status(HttpStatus.NOT_FOUND);
@@ -196,10 +206,16 @@ public class GroupController {
             ModifyGroupDetailsResponse response = groupService.modifyGroup(groupId, shortName, longName);
             status = response.getIsSuccess();
             message = response.getMessage();
+
         }
         model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
         model.addAttribute("user", userAccountClientService.getUser(principal));
         if (status) {
+            if (groupId == null) {
+                notifyGroup(-1, DETAILS, "edited");
+            } else {
+                notifyGroup(groupId, DETAILS, "edited");
+            }
             ra.addFlashAttribute("messageSuccess", message);
         } else {
             ra.addFlashAttribute(WARNING_MESSAGE, message);
@@ -239,6 +255,7 @@ public class GroupController {
 
         RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
         if (response.getIsSuccess() && "".equals(additionalInfo)) {
+            notifyGroup(groupId, "members", "removed");
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage() + additionalInfo);
@@ -269,6 +286,7 @@ public class GroupController {
 
         AddGroupMembersResponse response = groupService.addGroupMembers(userIds, groupId);
         if (response.getIsSuccess()) {
+            notifyGroup(groupId, "members", "added");
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
@@ -276,7 +294,7 @@ public class GroupController {
     }
 
     /**
-     * Gets the individual group page. This is currently the same page for every group.
+     * Gets the individual group page.
      * @param groupId The pages group id for future implementation
      * @param model Parameters sent to thymeleaf template to be rendered into HTML
      * @param ra Redirect Attribute frontend message object
@@ -289,7 +307,28 @@ public class GroupController {
             ra.addFlashAttribute(WARNING_MESSAGE, "Group " + groupId + " does not exist.");
             return GROUPS_REDIRECT;
         }
+
+        Repo repo = repoRepository.getByGroupId(groupId);
+
+        if (repo == null) {
+            repo = new Repo(groupId, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
+            repo = repoRepository.save(repo);
+        }
+
+        model.addAttribute(GROUP, group);
+        model.addAttribute("repo", repo);
+        return GROUP;
         model.addAttribute("group", group);
         return "groupSetting";
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param groupId Id of the event edited
+     * @param component Component that has been modified (details or members)
+     * @param action The action taken (deleted, created, edited)
+     */
+    private void notifyGroup(int groupId, String component, String action) {
+        template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
 }

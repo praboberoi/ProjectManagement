@@ -1,5 +1,10 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
+Given("I navigate to the Account Page", () => {
+    cy.get("#navbarDropdown").click()
+    cy.get("a").contains("Account").click()
+})
+
 When("I edit my account", () => {
     cy.get('#edit-account-btn').click();
 });

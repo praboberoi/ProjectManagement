@@ -29,7 +29,7 @@ public class RepoDTO {
 
     public int getGitlabProjectId() {return this.gitlabProjectId;}
 
-    public String getAccessToken() {return this.getAccessToken();}
+    public String getAccessToken() {return this.accessToken;}
 
     public String getHostAddress() {return this.hostAddress;}
 
