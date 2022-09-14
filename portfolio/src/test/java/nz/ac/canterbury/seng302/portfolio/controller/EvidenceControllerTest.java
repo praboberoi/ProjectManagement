@@ -8,6 +8,8 @@ import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -22,6 +24,7 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
@@ -53,6 +56,25 @@ public class EvidenceControllerTest {
     private Evidence evidence1;
 
     private static MockedStatic<PrincipalUtils> utilities;
+
+    /**
+     * Helper function which creates a new user for testing with
+     * @param userId The user id to set the user, this affects nearly all of the user's attributes
+     * @return A new User object
+     */
+    UserResponse.Builder createTestUserResponse(int userId) {
+        UserResponse.Builder userResponse = UserResponse.newBuilder()
+                .setId(userId)
+                .setFirstName("First" + userId)
+                .setLastName("Last" + userId)
+                .setNickname("Nick" + userId)
+                .setUsername("User" + userId)
+                .setBio("Bio " + userId)
+                .setPersonalPronouns("Pronoun " + userId)
+                .setEmail("test" + userId + "@gmail.com")
+                .addAllRoles(Arrays.asList(UserRole.STUDENT));
+        return userResponse;
+    }
 
     @BeforeAll
     private static void beforeAllInit() {
@@ -144,6 +166,8 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenEvidenceObject_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
+        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        when(userAccountClientService.getUser(any())).thenReturn(user);
         ArrayList<Project> projectList = new ArrayList<>();
         when(projectService.getAllProjects()).thenReturn(projectList);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
@@ -155,7 +179,7 @@ public class EvidenceControllerTest {
                 .andExpect(model().attribute("evidence", evidence))
                 .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
                 .andExpect(model().attribute("listProjects", projectList))
-                .andExpect(model().attribute("userId", 99));
+                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99));
 
     }
 

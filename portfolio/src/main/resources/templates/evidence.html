@@ -31,7 +31,7 @@
     <br>
 
 
-    <div class="createBtn">
+    <div th:if="${isCurrentUserEvidence}" class="createBtn" >
         <button class="btn btn-outline-primary ms-0 mb-1" id="create-evidence-btn" data-bs-toggle="modal"
                 data-bs-target="#evidenceFormModal">
             <img class="icon img-color-primary"
@@ -109,8 +109,9 @@
 
                 <!--                    Show evidence form-->
                 <div class="evidenceForm">
-                    <form id="createEvidenceForm" name="evidenceForm"  onsubmit="return true" th:action="@{${apiPrefix} + '/evidence/' + ${userId} + '/saveEvidence'}" method="post" th:object="${evidence}">
-                        <input type="hidden" id="userId" th:value="${ownerId}"/>
+                    <form id="createEvidenceForm" name="evidenceForm"  onsubmit="return true" th:action="@{${apiPrefix} + '/evidence/' + ${evidence.ownerId} + '/saveEvidence'}" method="post" th:object="${evidence}">
+                        <input type="hidden" id="userId" th:field="*{ownerId}"/>
+                        <input type="hidden" id="evidenceId" th:field="*{evidenceId}"/>
                         <div class="mb-3">
                             <label for="evidence-title" class="col-form-label required">Evidence Title</label>
                             <input type="text" class="form-control required" id="evidence-title" name="title" th:field="*{title}" maxlength="50" onkeyup="checkEvidenceTitle()" required>

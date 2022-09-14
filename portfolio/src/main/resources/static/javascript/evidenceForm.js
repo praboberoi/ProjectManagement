@@ -21,7 +21,7 @@ function checkEvidenceTitle(){
     const evidenceTitle = document.getElementById('evidence-title');
     let charMessage = document.getElementById("evidenceCharCount");
     let charCount = evidenceTitle.value.length;
-    charMessage.innerText = charCount + ' '
+    charMessage.innerText = charCount + ' ';
 
 
 

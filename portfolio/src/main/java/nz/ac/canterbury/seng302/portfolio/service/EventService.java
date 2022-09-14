@@ -66,7 +66,12 @@ public class EventService {
                 .build();
     }
 
-
+    /**
+     * This method maps the id's of events to the names of sprints that occur at the start and end of the event
+     * @param eventList The list of events to have sprints mapped to them
+     * @return Hashtable containing a mapping between the id of an event to a List containing the sprint occurring at
+     * the start of the event and then the sprint that occurs at the end of an event.
+     */
     public Hashtable<Integer, List<String>> getStartAndEndDates(List<Event> eventList) {
         Hashtable<Integer, List<String>> eventDateMappingDictionary = new Hashtable<Integer, List<String>>();
         for (Event event : eventList) {
