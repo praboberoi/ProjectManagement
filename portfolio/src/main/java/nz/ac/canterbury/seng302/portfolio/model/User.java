@@ -195,6 +195,11 @@ public class User implements Serializable {
         && Objects.equals(username, user.username);
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(userId, bio, email, firstName, lastName, dateCreated, nickname, profileImagePath, pronouns, roles, username);
+    }
+
     /**
      * Builder Class to build the User
      */

@@ -46,8 +46,8 @@ public class EvidenceControllerTest {
     @MockBean
     private UserAccountClientService userAccountClientService;
 
-    private EvidenceDTO evidenceDTO;
-    private EvidenceDTO evidenceDTO1;
+    private Evidence evidence;
+    private Evidence evidence1;
 
     private static MockedStatic<PrincipalUtils> utilities;
 
@@ -62,7 +62,7 @@ public class EvidenceControllerTest {
         LocalDate now = LocalDate.now();
         Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
 
-        evidenceDTO = new EvidenceDTO.Builder()
+        evidence = new Evidence.Builder()
             .title("New Evidence")
             .description("New piece of evidence")
             .dateOccurred(java.sql.Date.valueOf(now))
@@ -70,7 +70,7 @@ public class EvidenceControllerTest {
             .project(project)
             .build();
 
-        evidenceDTO1 = new EvidenceDTO.Builder()
+        evidence1 = new Evidence.Builder()
             .title("Another Evidence")
             .description("Additional piece of evidence")
             .dateOccurred(java.sql.Date.valueOf(now))
@@ -80,20 +80,29 @@ public class EvidenceControllerTest {
 
     }
 
+    public EvidenceDTO toDTO(Evidence evidence)  {
+        return new EvidenceDTO(
+        evidence.getEvidenceId(),
+        evidence.getProject(),
+        evidence.getDateOccurred(),
+        evidence.getTitle(),
+        evidence.getDescription(),
+        evidence.getOwnerId());
+    }
+
     /**
      * Test verification of evidence object when a valid evidence is saved and checks it redirects the user
      */
     @Test
     void givenServer_whenSaveValidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
-        Evidence evidence = new Evidence(evidenceDTO);
-        when(evidenceService.saveEvidence(evidence)).thenReturn("Successfully Created " + evidenceDTO.getTitle());
+        when(evidenceService.saveEvidence(any())).thenReturn("Successfully Created " + evidence.getTitle());
         when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidence", evidence))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", nullValue()))
-                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidenceDTO.getTitle()));
+                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getTitle()));
     }
 
     /**
@@ -101,12 +110,11 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenServer_whenSaveInvalidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
-        Evidence evidence1 = new Evidence(evidenceDTO1);
-        when(evidenceService.saveEvidence(evidence1)).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
+        when(evidenceService.saveEvidence(any())).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
         when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidence", evidence1))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence1)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
                 .andExpect(flash().attribute("messageSuccess", nullValue()));
@@ -119,10 +127,9 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenEvidenceObjectAndIncorrectUser_whenSaveEvidenceCalled_thenEvidenceSavedCorrectly() throws Exception {
-        Evidence evidence = new Evidence(evidenceDTO);
         when(PrincipalUtils.getUserId(any())).thenReturn(53);
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidence", evidence))
+                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger","You may only create evidence on your own evidence page" ));
 
@@ -135,9 +142,6 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenEvidenceObject_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
-        Evidence evidence = new Evidence(evidenceDTO);
-        Evidence evidence1 = new Evidence(evidenceDTO1);
-
         LocalDate now = LocalDate.now();
         Evidence expectedEvidence = new Evidence.Builder()
                 .dateOccurred(java.sql.Date.valueOf(now))
@@ -166,9 +170,6 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenCorrectEvidenceAndUserIds_whenSelectedEvidenceCalled_thenReturnSelectedEvidence() throws Exception {
-        Evidence evidence = new Evidence(evidenceDTO);
-        Evidence evidence1 = new Evidence(evidenceDTO1);
-
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getEvidence(33)).thenReturn(evidence);
 
@@ -185,9 +186,6 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenIncorrectEvidence_whenSelectedEvidenceCalled_thenNoEvidenceSelected() throws Exception {
-        Evidence evidence = new Evidence(evidenceDTO);
-        Evidence evidence1 = new Evidence(evidenceDTO1);
-
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getEvidence(33)).thenThrow(new IncorrectDetailsException("Failed to locate the piece of evidence with ID: 33"));
 

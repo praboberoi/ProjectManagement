@@ -37,20 +37,18 @@ class ProjectRepositoryTest {
                 .build();
 
         Project project2 = new Project.Builder()
-                .projectName("Project 2020")
+                .projectName("Project 2021")
                 .description("Second Attempt")
                 .startDate(new Date(2021, 1, 9))
                 .endDate(new Date(2021, 11, 20))
                 .build();
 
-        List<Project> projList = Arrays.asList(project1, project2);
         projectRepo.save(project1);
         projectRepo.save(project2);
 
-        assertArrayEquals(projList.toArray(), projectRepo.findByProjectName("Project 2020").toArray());
+        assertEquals(project1, projectRepo.findByProjectName("Project 2020"));
 
-        List<Project> emptyList = Collections.<Project>emptyList();
-        assertArrayEquals(emptyList.toArray(), projectRepo.findByProjectName("No").toArray());
+        assertNull(projectRepo.findByProjectName("No"));
 
         projectRepo.delete(project1);
         projectRepo.delete(project2);
