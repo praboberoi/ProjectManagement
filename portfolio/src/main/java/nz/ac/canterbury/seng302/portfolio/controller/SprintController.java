@@ -135,6 +135,9 @@ public class SprintController {
             sprintService.verifySprint(sprint);
             String message = sprintService.saveSprint(sprint);
             notifySprint(projectId, sprint.getSprintId(), "edited");
+            List<Event> listEvents = eventService.getEventByProjectId(projectId);
+            listEvents.forEach(eventService::updateEventColors);
+            ra.addFlashAttribute("listEvents", listEvents);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
