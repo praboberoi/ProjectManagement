@@ -336,3 +336,4 @@ public class GroupControllerTest {
             .andExpect(flash().attribute("messageDanger", "Group 1 does not exist."));
     }
 }
+

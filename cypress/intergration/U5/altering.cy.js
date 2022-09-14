@@ -30,14 +30,14 @@ When("I drag user {word} to group {word}", (user, group) => {
 });
 
 When("I delete the group", () => {
-    cy.get('#edit-group-tab').click()
+    cy.get('#group-settings-icon').click()
     cy.get('#delete-group-btn').click()
     cy.get('#deleteModal button').contains("Delete").should('be.visible').click()
     cy.get('#messageSuccess').should('contain', 'Group deleted successfully')
 })
 
 When("I change the group name to {word}", (newName) => {
-    cy.get('#edit-group-tab').click()
+    cy.get('#group-settings-icon').click()
     cy.get('#edit-group-btn').click()
     cy.get('#editGroupForm #shortName').clear().type(newName, {"delay":0})
     cy.get('#editGroupForm #shortName').should('have.value', newName)
