@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import nz.ac.canterbury.seng302.portfolio.model.dto.DeadlineDTO;
+
 import javax.persistence.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -47,6 +49,13 @@ public class Deadline {
         this.name = name;
         this.project = project;
         this.date = date;
+    }
+
+    public Deadline(DeadlineDTO deadlineDTO) {
+        setDeadlineId(deadlineDTO.getDeadlineId());
+        setName(deadlineDTO.getName());
+        setProject(deadlineDTO.getProject());
+        setDate(deadlineDTO.getDate());
     }
 
     public int getDeadlineId() {

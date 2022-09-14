@@ -1,11 +1,27 @@
 let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 let filterByUser = ""
 let filterByActionType = ""
+let projectIdValidate = /^\d+$/;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
-const GIT_API = "/api/v4/"
+/**
+ * Checks to see if a string is a valid url
+ * @param string String to be validated
+ * @returns {boolean} True if the string is a valid URL, false otherwise
+ */
+function isValidHttpUrl(string) {
+    let url;
+    try {
+        url = new URL(string)
+    } catch (_) {
+        return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:"
+}
+
+const GIT_API = "api/v4/"
 
 /**
  * Toggles the visibility of the recent actions component
@@ -18,36 +34,61 @@ function toggleRecentActions() {
 
 /**
  * Attempts to connect to the git repository using the details provided
- * @param event Form submit event
+ * @param saving
  */
-function connectToRepo() {
-    let message = document.getElementById("connection-message")
+function connectToRepo(saving=false) {
+    let httpRequest = new XMLHttpRequest();
 
-    let projectId = document.getElementById("git-project-id").value
-    let accessToken = document.getElementById("git-access-token").value
-    let hostAddress = document.getElementById("git-host-address").value
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status !== 200) {
+                clearRecentActions()
+                return
+            }
 
-    fetch(hostAddress + GIT_API + "projects/" + projectId, {
-        method: 'GET',
-        headers: {
-            'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
-            'Content-Type': 'application/json',
-        },
-    }).then(async (response) => {
-        const repo = await  response.json();
-        if (!repo.hasOwnProperty('id')) {
-            message.innerText = "Repo not found"
-            clearRecentActions()
-            return
+            let repoName = document.getElementById("git-project-name")
+
+            let jsonRepo = JSON.parse(httpRequest.response)
+
+            fetch(jsonRepo.hostAddress + GIT_API + "projects/" + jsonRepo.gitlabProjectId, {
+                method: 'GET',
+                headers: {
+                    'PRIVATE-TOKEN': jsonRepo.accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
+                    'Content-Type': 'application/json',
+                },
+            }).then(async (response) => {
+                const repo = await  response.json();
+                if (saving) {
+                    if (!repo.hasOwnProperty('id')) {
+                        document.getElementById("messageDanger").innerText = "Repo not found"
+                        clearRecentActions()
+                        return
+                    }
+
+
+                    document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
+                }
+
+                if (repoName !== undefined) {
+                    repoName.value = repo.name
+                }
+
+                getRecentActions(jsonRepo)
+            }).catch((error) => {
+                if (repoName !== undefined) {
+                    repoName.value = ""
+                }
+                if (saving) {
+                    document.getElementById("messageDanger").innerText = "Error connecting to repository"
+                }
+                clearRecentActions()
+            });
         }
-        document.getElementById("git-project-name").value = repo.name
-        message.innerText = "Connected to repo: " + repo.name
-        getRecentActions()
-    }).catch((error) => {
-        document.getElementById("git-project-name").value = ""
-        message.innerText = "Error connecting to repository"
-        clearRecentActions()
-    });
+    }
+
+    httpRequest.open('GET', apiPrefix + `/repo/${groupId}`);
+
+    httpRequest.send();
 }
 
 /**
@@ -65,21 +106,11 @@ function clearRecentActions() {
 /**
  * Calls the git api to get events from the project that has been provided. Formats these into cards for the recent actions component
  */
-async function getRecentActions() {
-    let message = document.getElementById("connection-message")
-
-    if (message.innerText === "Repo not found") {
-        return
-    }
-
-    let projectId = document.getElementById("git-project-id").value
-    let accessToken = document.getElementById("git-access-token").value
-    let hostAddress = document.getElementById("git-host-address").value
-
-    const response = await fetch(hostAddress + GIT_API + "projects/" + projectId + "/events", {
+async function getRecentActions(repo) {
+    const response = await fetch(repo.hostAddress + GIT_API + "projects/" + repo.gitlabProjectId + "/events", {
         method: 'GET',
         headers: {
-            'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
+            'PRIVATE-TOKEN': repo.accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
             'Content-Type': 'application/json',
         },
     });
@@ -145,7 +176,7 @@ async function getRecentActions() {
 }
 
 /**
- * Adds the user profile component to the provided element 
+ * Adds the user profile component to the provided element
  * @param element HTML element to append the profile to
  * @param event GitLab api response
  */
@@ -167,7 +198,71 @@ function addUserProfile(element, event) {
 }
 
 /**
- * Adds the date component to the provided element 
+ * Front end validation for the projectAlias element
+ */
+function validateProjectAlias() {
+    let projectAliasElement = document.getElementById("git-project-alias");
+    let projectAliasErrorElement = document.getElementById("gitProjectAliasError");
+
+    if (projectAliasElement.value.length < 1 || projectAliasElement.value.length > 50) {
+        projectAliasElement.classList.add("formError")
+        projectAliasErrorElement.innerText = "Project Alias field must be between 1 and 50 characters"
+        projectAliasElement.setCustomValidity("Invalid field.")
+    } else {
+        projectAliasElement.classList.remove("formError");
+        projectAliasErrorElement.innerText = null;
+        projectAliasElement.setCustomValidity("");
+    }
+}
+
+
+/**
+ * Front end validation for the projectHostAddress element
+ */
+function validateProjectHostAddress() {
+    let projectHostAddressElement = document.getElementById("git-host-address");
+    let projectHostAddressErrorElement = document.getElementById("gitHostAddressError");
+
+    if (projectHostAddressElement.value.length < 1) {
+        projectHostAddressElement.classList.add("formError")
+        projectHostAddressErrorElement.innerText = "Project host address field must not be empty"
+        projectHostAddressElement.setCustomValidity("Invalid field.")
+    } else if (!isValidHttpUrl(projectHostAddressElement.value)) {
+        projectHostAddressElement.classList.add("formError")
+        projectHostAddressErrorElement.innerText = "Project host address must be a valid HTTP URL"
+        projectHostAddressElement.setCustomValidity("Invalid field.")
+    } else {
+        projectHostAddressElement.classList.remove("formError");
+        projectHostAddressErrorElement.innerText = null;
+        projectHostAddressElement.setCustomValidity("");
+    }
+}
+
+/**
+ * Front end validation for the projectID element
+ */
+function validateProjectID() {
+    let projectIDElement = document.getElementById("git-project-id");
+    let projectIDErrorElement = document.getElementById("gitProjectIdError");
+
+    if (projectIDElement.value.length < 1 || projectIDElement.value.length > 50) {
+        projectIDElement.classList.add("formError")
+        projectIDErrorElement.innerText = "Project ID field must be between 1 and 50 characters"
+        projectIDElement.setCustomValidity("Invalid field.")
+    } else if (!projectIdValidate.test(projectIDElement.value)) {
+        projectIDElement.classList.add("formError")
+        projectIDErrorElement.innerText = "Project ID field can only contain numbers"
+        projectIDElement.setCustomValidity("Invalid field.")
+    } else {
+        projectIDElement.classList.remove("formError");
+        projectIDErrorElement.innerText = null;
+        projectIDElement.setCustomValidity("");
+    }
+}
+
+
+/**
+ * Adds the date component to the provided element
  * @param element HTML element to append the date to
  * @param event GitLab api response
  */
@@ -207,7 +302,7 @@ function saveRepoSettings(event) {
 
     httpRequest.send(formData);
 
-    connectToRepo()
+    connectToRepo(true)
 }
 
 /**

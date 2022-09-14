@@ -1,7 +1,7 @@
 /**
  * Makes a call to the server and replaces the current evidence with the new one
  */
-function getSelectedEvidence(selectedEvidenceId) {
+function getSelectedEvidence(selectedEvidenceId, ownerId) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = function (){
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -19,6 +19,6 @@ function getSelectedEvidence(selectedEvidenceId) {
         }
     }
 
-    httpRequest.open('GET', apiPrefix + `/evidence/${selectedEvidenceId}`);
+    httpRequest.open('GET', apiPrefix + `/evidence/${ownerId}/${selectedEvidenceId}`);
     httpRequest.send();
 }
