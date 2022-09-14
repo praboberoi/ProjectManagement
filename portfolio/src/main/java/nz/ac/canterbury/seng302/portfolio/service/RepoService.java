@@ -84,6 +84,6 @@ public class RepoService {
         } catch (MalformedURLException e) {
             return false;
         }
-        return Objects.equals(url.getProtocol(), "http:") || Objects.equals(url.getProtocol(), "https:");
+        return Objects.equals(url.getProtocol(), "http") || Objects.equals(url.getProtocol(), "https");
     }
 }
