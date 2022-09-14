@@ -1,5 +1,8 @@
 let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+let filterByUser = ""
+let filterByActionType = ""
 let projectIdValidate = /^\d+$/;
+let jsonRepo;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
@@ -130,7 +133,7 @@ function connectToRepo(saving=false) {
 
             let repoName = document.getElementById("git-project-name")
 
-            let jsonRepo = JSON.parse(httpRequest.response)
+            jsonRepo = JSON.parse(httpRequest.response)
 
             fetch(jsonRepo.hostAddress + GIT_API + "projects/" + jsonRepo.gitlabProjectId, {
                 method: 'GET',
@@ -197,9 +200,16 @@ async function getRecentActions(repo) {
         },
     });
 
-    const events = await response.json();
+    let events = await response.json();
     let recentActions = document.getElementById("recent-action-cards")
+    updateFilters(events);
     recentActions.innerHTML = ""
+    if(filterByUser.length > 0)
+        events = events.filter(event => event.author_username === filterByUser)
+
+    if(filterByActionType.length > 0)
+        events = events.filter(event => event.action_name === filterByActionType)
+
     events.forEach(event => {
         // Card
         let eventCard = document.createElement('div');
@@ -408,3 +418,71 @@ function saveRepoSettings(event) {
  document.addEventListener('DOMContentLoaded', function() {
     connectToRepo()
 });
+
+/**
+ * Updates the list of all the filters available for selection based on the events list passed
+ */
+ function updateFilters(events) {
+     let userFilter = document.getElementById('userFilter')
+     let actionType = document.getElementById('actionType')
+
+     const userSet = new Set();
+     const actionTypeSet = new Set();
+
+     userFilter.innerText = "";
+     actionType.innerText = "";
+
+     events.forEach(event => {
+         userSet.add(event.author_username);
+         actionTypeSet.add(event.action_name);
+     })
+
+     if (filterByUser.length === 0) {
+         userFilter.innerHTML = `<option selected>Filter By User</option>`
+         userSet.forEach(user => userFilter.innerHTML += `<option>${user}</option>`)
+
+     } else {
+         userFilter.innerHTML += `<option>Clear Filter</option>`
+         userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>`: `<option>${user}</option>`)
+     }
+
+     if (filterByActionType.length === 0) {
+         actionType.innerHTML = `<option selected>Filter By Action Type</option>`
+         actionTypeSet.forEach(action => actionType.innerHTML += `<option>${action}</option>`)
+
+     } else {
+         actionType.innerHTML += `<option>Clear Filter</option>`
+         actionTypeSet.forEach(action => actionType.innerHTML +=
+             action === filterByActionType ? `<option selected>${action}</option>` :`<option>${action}</option>`)
+
+
+     }
+
+ }
+
+/**
+ * Event listener for change in the userFilter
+ */
+ document.getElementById('userFilter').addEventListener('change', function () {
+     if (this.value === 'Clear Filter')
+         filterByUser = ""
+     else
+         filterByUser = this.value
+
+     getRecentActions(jsonRepo)
+
+ } )
+/**
+ * Event listener for change in the actionTypeFilter
+ */
+document.getElementById('actionType').addEventListener('change', function () {
+     if (this.value === 'Clear Filter')
+         filterByActionType = ""
+     else
+         filterByActionType = this.value
+
+     getRecentActions(jsonRepo)
+
+ } )
+
+

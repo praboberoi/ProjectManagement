@@ -21,7 +21,7 @@ public class EvidenceDTO {
 
     private String description;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateOccurred;
 
     private int ownerId;
