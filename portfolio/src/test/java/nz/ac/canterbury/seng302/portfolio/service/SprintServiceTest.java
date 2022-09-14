@@ -116,7 +116,7 @@ class SprintServiceTest {
     @Test
     void givenProject_whenGetNewSprintCalled_thenColorSetCorrectly() throws IncorrectDetailsException {
         Sprint sprint2 = sprintService.getNewSprint(project);
-        assertEquals("green", sprint2.getColor().getColor());
+        assertEquals("blue", sprint2.getColor().getColor());
     }
 
     /**
@@ -137,7 +137,7 @@ class SprintServiceTest {
 
         List<Sprint> sprintList = List.of(sprint2);
         sprintService.updateSprintLabelsAndColor(sprintList);
-        assertEquals("green", sprint2.getColor().getColor());
+        assertEquals("blue", sprint2.getColor().getColor());
         assertEquals("Sprint 1", sprint2.getSprintLabel());
     }
 

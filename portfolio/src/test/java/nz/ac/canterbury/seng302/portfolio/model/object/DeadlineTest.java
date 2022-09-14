@@ -192,6 +192,7 @@ import static org.junit.jupiter.api.Assertions.*;
                 ", projectId=" + project.getProjectId() +
                 ", name='" + deadline1.getName() +  "'" +
                 ", date=" + deadline1.getDate() +
+                ", colors= " + deadline1.getColors() +
                 '}';
 
         assertEquals(expectedString, deadline1.toString());
