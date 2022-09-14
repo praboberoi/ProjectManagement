@@ -165,7 +165,7 @@
                 </div>
                 <div class="modal-body">
                     <div class="groupForm">
-                        <form id="editGroupForm" method="post" th:object="${group}"
+                        <form id="editGroupForm" onsubmit="saveGroup();return false" th:object="${group}"
                             th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}">
                             <div class="mb-3">
                                 <input hidden type="number" name="groupId" th:value="${group.groupId}" required>
@@ -190,11 +190,11 @@
                                 </p>
                             </div>
                             <div class="modal-footer">
-                                <button type="submit" id="save-submit-button" class="btn btn-outline-primary me-3">
+                                <button type="submit" id="save-submit-button" class="btn btn-outline-primary me-3" >
                                     <img class="icon img-color-primary"
                                         th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}" />
                                     Save</button>
-                                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                                <button id="editModalClose" type="button" class="btn btn-outline-secondary" data-dismiss="modal">
                                     <img class="icon img-color-secondary"
                                         th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
                                     Close</button>

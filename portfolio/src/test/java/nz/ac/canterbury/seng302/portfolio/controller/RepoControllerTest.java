@@ -168,7 +168,6 @@ public class RepoControllerTest {
         when(groupService.getGroupById(anyInt())).thenReturn(group);
         when(repoService.getRepoByGroup(anyInt())).thenReturn(repo);
 
-        System.out.println(new ObjectMapper().writeValueAsString(repo));
         mockMvc
             .perform(post("/repo/1/save").contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param("repoId", "1")
@@ -194,7 +193,6 @@ public class RepoControllerTest {
         when(groupService.getGroupById(anyInt())).thenReturn(group);
         when(repoService.getRepoByGroup(anyInt())).thenReturn(repo);
 
-        System.out.println(new ObjectMapper().writeValueAsString(repo));
         mockMvc
             .perform(post("/repo/1/save").contentType(MediaType.APPLICATION_FORM_URLENCODED)
             .param("repoId", "1")

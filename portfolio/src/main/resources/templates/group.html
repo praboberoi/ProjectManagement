@@ -20,9 +20,13 @@
 
 <body>
     <div class="main">
-        <div class="page-title">
+        <div id="title" class="page-title col-12" th:fragment="groupTitle">
             <h2 id="title">[[${group.shortName}]] Group Page</h2>
             <h4 id="longTitle">[[${group.longName}]]</h4>
+            <span th:replace="groupFragments::groupOptions"></span>
+            <div>
+                <span th:replace="groupFragments::editGroupModal"></span>
+            </div>
         </div>
         <div class="alert alert-danger text-center" id="messageDanger">[[${messageDanger}]]</div>
         <div class="alert alert-success text-center" id="messageSuccess">[[${messageSuccess}]]</div>
