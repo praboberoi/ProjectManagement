@@ -176,10 +176,10 @@ class SprintControllerTest {
     }
 
     /**
-     * Test to make sure that an error message is returned when verify Sprint is requested for an invalid sprint sprint
+     * Test to make sure that an error message is returned when verify Sprint is requested for an invalid sprint
      */
     @Test
-    void givenSprintExists_whenVerifySprintIsRequested_thenErrorMessageIsReturned() {
+    void givenSprintExists_whenVerifySprintIsRequested_thenErrorMessageIsReturnedForModifyingTheSprintLabel() {
         SprintDTO sprintDTO = new SprintDTO(1, project, "Sprint 100", "Sprint 1","Attempt 1",
                 new Date(2021,1,1), new Date(2021, 3, 1),SprintColor.BLUE);
         try {
