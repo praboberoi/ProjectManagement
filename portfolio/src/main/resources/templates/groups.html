@@ -21,12 +21,13 @@
 <div th:replace="fragments :: sidebar"></div>
 
 <body>
-    <div class="main">
-        <div class="page-title">
-            <h2 id="name">Groups</h2>
-        </div>
-        <div class="alert alert-danger text-center" id="messageDanger">[[${messageDanger}]]</div>
-        <div class="alert alert-success text-center" id="messageSuccess">[[${messageSuccess}]]</div>
+<div class="main">
+    <br>
+    <div class="page-title">
+        <h2 id="name">Groups</h2>
+    </div>
+    <div class="alert alert-danger text-center" id="messageDanger">[[${messageDanger}]]</div>
+    <div class="alert alert-success text-center" id="messageSuccess">[[${messageSuccess}]]</div>
 
         <div th:if="${adminOrTeacher}">
             <a class="btn btn-outline-primary ms-0 mb-1" id="create-btn" data-toggle="modal" data-target="#createModal">

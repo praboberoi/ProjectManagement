@@ -76,7 +76,7 @@ public class RepoControllerTest {
     }
 
     /**
-     * Checks that the repo fails when a group doesn't exist
+     * Checks that the repo is returned correctly when the group exists
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
