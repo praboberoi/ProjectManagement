@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
@@ -26,6 +27,7 @@ import static org.mockito.Mockito.mockStatic;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -330,5 +332,24 @@ public class GroupControllerTest {
             .perform(get("/group/1"))
             .andExpect(status().is3xxRedirection())
             .andExpect(flash().attribute("messageDanger", "Group 1 does not exist."));
+    }
+
+    /**
+     * This test checks that when a list of users from a specific group are requested they are returned correctly in a fragment
+     */
+    @Test
+    void givenSelectedGroup_whenMembersRequested_thenGroupMembersReturned() throws Exception {
+        Groups group = new Groups();
+        User user1 = new User.Builder().userId(1).build();
+        User user2 = new User.Builder().userId(2).build();
+        List<User> userList = new ArrayList<User>();
+        userList.add(user1);
+        userList.add(user2);
+        group.setMembers(userList);
+        when(groupService.getGroupById(1)).thenReturn(group);
+        mockMvc.perform(get("/group/1/members"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("group", group));
+
     }
 }
