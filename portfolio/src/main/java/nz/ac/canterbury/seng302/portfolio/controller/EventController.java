@@ -64,7 +64,7 @@ public class EventController {
 
     /**
      * Checks if event dates are valid and if it is saves the event
-     * @param event Event object
+     * @param eventDTO EventDTO object
      * @param principal Current User
      * @param ra Redirect Attribute frontend message object
      * @return link of html page to display

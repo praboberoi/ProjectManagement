@@ -86,7 +86,7 @@ public class DeadlineController {
 
     /**
      * Checks if deadline dates are valid and if it is saves the deadline
-     * @param deadline Deadline object
+     * @param deadlineDTO DeadlineDTO object
      * @param principal Current user
      * @param projectId ID of the project
      * @param ra Redirect Attribute frontend message object

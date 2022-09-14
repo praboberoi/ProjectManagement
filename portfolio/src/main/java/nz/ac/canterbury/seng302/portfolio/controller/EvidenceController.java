@@ -87,7 +87,7 @@ public class EvidenceController {
 
 
     /** Checks if evidence variables are valid and if it is then saves the evidence
-     * @param evidence Evidence object
+     * @param evidenceDTO EvidenceDTO object
      * @param ra Redirect Attribute frontend message object
      * @return link of html page to display
      */
