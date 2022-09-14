@@ -1,7 +1,23 @@
 let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+let projectIdValidate = /^\d+$/;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
+
+/**
+ * Checks to see if a string is a valid url
+ * @param string String to be validated
+ * @returns {boolean} True if the string is a valid URL, false otherwise
+ */
+function isValidHttpUrl(string) {
+    let url;
+    try {
+        url = new URL(string)
+    } catch (_) {
+        return false;
+    }
+    return url.protocol === "http:" || url.protocol === "https:"
+}
 
 const GIT_API = "api/v4/"
 
@@ -16,7 +32,7 @@ function toggleRecentActions() {
 
 /**
  * Attempts to connect to the git repository using the details provided
- * @param event Form submit event
+ * @param saving
  */
 function connectToRepo(saving=false) {
     let httpRequest = new XMLHttpRequest();
@@ -47,21 +63,21 @@ function connectToRepo(saving=false) {
                         return
                     }
 
-                    
+
                     document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
                 }
-                
-                if (repoName != undefined) {
+
+                if (repoName !== undefined) {
                     repoName.value = repo.name
                 }
 
                 getRecentActions(jsonRepo)
             }).catch((error) => {
-                if (repoName != undefined) {
+                if (repoName !== undefined) {
                     repoName.value = ""
                 }
                 if (saving) {
-                    document.getElementById("messageDanger") = "Error connecting to repository"
+                    document.getElementById("messageDanger").innerText = "Error connecting to repository"
                 }
                 clearRecentActions()
             });
@@ -151,7 +167,7 @@ async function getRecentActions(repo) {
 }
 
 /**
- * Adds the user profile component to the provided element 
+ * Adds the user profile component to the provided element
  * @param element HTML element to append the profile to
  * @param event GitLab api response
  */
@@ -173,7 +189,71 @@ function addUserProfile(element, event) {
 }
 
 /**
- * Adds the date component to the provided element 
+ * Front end validation for the projectAlias element
+ */
+function validateProjectAlias() {
+    let projectAliasElement = document.getElementById("git-project-alias");
+    let projectAliasErrorElement = document.getElementById("gitProjectAliasError");
+
+    if (projectAliasElement.value.length < 1 || projectAliasElement.value.length > 50) {
+        projectAliasElement.classList.add("formError")
+        projectAliasErrorElement.innerText = "Project Alias field must be between 1 and 50 characters"
+        projectAliasElement.setCustomValidity("Invalid field.")
+    } else {
+        projectAliasElement.classList.remove("formError");
+        projectAliasErrorElement.innerText = null;
+        projectAliasElement.setCustomValidity("");
+    }
+}
+
+
+/**
+ * Front end validation for the projectHostAddress element
+ */
+function validateProjectHostAddress() {
+    let projectHostAddressElement = document.getElementById("git-host-address");
+    let projectHostAddressErrorElement = document.getElementById("gitHostAddressError");
+
+    if (projectHostAddressElement.value.length < 1) {
+        projectHostAddressElement.classList.add("formError")
+        projectHostAddressErrorElement.innerText = "Project host address field must not be empty"
+        projectHostAddressElement.setCustomValidity("Invalid field.")
+    } else if (!isValidHttpUrl(projectHostAddressElement.value)) {
+        projectHostAddressElement.classList.add("formError")
+        projectHostAddressErrorElement.innerText = "Project host address must be a valid HTTP URL"
+        projectHostAddressElement.setCustomValidity("Invalid field.")
+    } else {
+        projectHostAddressElement.classList.remove("formError");
+        projectHostAddressErrorElement.innerText = null;
+        projectHostAddressElement.setCustomValidity("");
+    }
+}
+
+/**
+ * Front end validation for the projectID element
+ */
+function validateProjectID() {
+    let projectIDElement = document.getElementById("git-project-id");
+    let projectIDErrorElement = document.getElementById("gitProjectIdError");
+
+    if (projectIDElement.value.length < 1 || projectIDElement.value.length > 50) {
+        projectIDElement.classList.add("formError")
+        projectIDErrorElement.innerText = "Project ID field must be between 1 and 50 characters"
+        projectIDElement.setCustomValidity("Invalid field.")
+    } else if (!projectIdValidate.test(projectIDElement.value)) {
+        projectIDElement.classList.add("formError")
+        projectIDErrorElement.innerText = "Project ID field can only contain numbers"
+        projectIDElement.setCustomValidity("Invalid field.")
+    } else {
+        projectIDElement.classList.remove("formError");
+        projectIDErrorElement.innerText = null;
+        projectIDElement.setCustomValidity("");
+    }
+}
+
+
+/**
+ * Adds the date component to the provided element
  * @param element HTML element to append the date to
  * @param event GitLab api response
  */
