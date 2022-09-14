@@ -142,22 +142,15 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenEvidenceObject_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
-        LocalDate now = LocalDate.now();
-        Evidence expectedEvidence = new Evidence.Builder()
-                .dateOccurred(java.sql.Date.valueOf(now))
-                .title("New evidence")
-                .ownerId(99)
-                .build();
-
         ArrayList<Project> projectList = new ArrayList<>();
         when(projectService.getAllProjects()).thenReturn(projectList);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
-        when(evidenceService.getNewEvidence(99)).thenReturn(expectedEvidence);
+        when(evidenceService.getNewEvidence(99)).thenReturn(evidence);
 
         this.mockMvc
                 .perform(get("/evidence/99"))
                 .andExpect(status().is2xxSuccessful())
-                .andExpect(model().attribute("evidence", expectedEvidence))
+                .andExpect(model().attribute("evidence", evidence))
                 .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
                 .andExpect(model().attribute("listProjects", projectList))
                 .andExpect(model().attribute("userId", 99));
