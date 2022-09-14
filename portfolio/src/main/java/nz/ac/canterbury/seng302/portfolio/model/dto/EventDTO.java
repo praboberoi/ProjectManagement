@@ -34,14 +34,14 @@ public class EventDTO {
 
     public Date getEndDate() {return endDate;}
 
-     /**
-      * Creates a new eventDTO object with the provided details
-      * @param eventId The ID of the of the event object
-      * @param project Project of the event object
-      * @param eventName Name of the of the event object
-      * @param startDate Start date of the event object
-      * @param endDate End date of the event object
-      */
+    /**
+     * Creates a new eventDTO object with the provided details
+     * @param eventId The ID of the of the event object
+     * @param project Project of the event object
+     * @param eventName Name of the of the event object
+     * @param startDate Start date of the event object
+     * @param endDate End date of the event object
+     */
     public EventDTO(int eventId, Project project, String eventName, Date startDate, Date endDate) {
         this.eventId = eventId;
         this.project = project;
