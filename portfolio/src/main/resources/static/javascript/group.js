@@ -61,7 +61,13 @@ function saveGroup() {
 
     let formData = new FormData(document.forms.editGroupForm)
 
+    document.getElementById("editModalClose").click()
+
     httpRequest.send(formData);
+}
+
+function closeGroupModal() {
+    
 }
 
 function updateTitle() {

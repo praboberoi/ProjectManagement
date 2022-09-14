@@ -61,6 +61,44 @@ function checkLongName(event) {
 }
 
 /**
+ * Sends a request to the server to save the group
+ * @param event Form submit request
+ */
+ function saveGroup() {
+    let httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                messageDanger.hidden = true;
+                messageSuccess.hidden = false;
+                messageSuccess.innerText = httpRequest.responseText;
+            } else if (httpRequest.status === 500) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "An error occurred on the server, please try again later";
+            } else if (errorCodes.includes(httpRequest.status)) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.responseText;
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Something went wrong.";
+            }
+        }
+    }
+
+    httpRequest.open('POST', apiPrefix + `/groups`);
+
+    let formData = new FormData(document.forms.editGroupForm)
+
+    document.getElementById("editModalClose").click()
+
+    httpRequest.send(formData);
+}
+
+/**
  * Makes a call to the server and replaces the current group with the new one
  */
 function getGroup(groupId) {
