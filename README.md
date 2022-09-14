@@ -208,9 +208,11 @@ Apache 2.0
 - `org.springframework.boot:spring-boot-starter-test`
 - `io.cucumber:cucumber-java:6.10.4`
 - `io.cucumber:cucumber-junit:6.10.4`
+- `junit:junit:4.13.1`
+- `org.springframework', name: 'spring-websocket', version: '5.3.22'`
+- `group: 'org.springframework', name: 'spring-messaging', version: '5.3.22'`
 
 ### Identity Provider
-- `org.springframework:spring-web`
 - `org.springframework:spring-web`
 - `'org.springframework.boot:spring-boot-starter-web'`
 - `'org.springframework.boot:spring-boot-starter'`
