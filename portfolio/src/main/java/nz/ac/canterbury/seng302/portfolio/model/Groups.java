@@ -2,10 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 
-import javax.persistence.Embeddable;
-import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Group entity for storing the idp group for use on the portfolio

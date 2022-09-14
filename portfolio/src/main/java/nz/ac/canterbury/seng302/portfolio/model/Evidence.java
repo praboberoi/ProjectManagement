@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -27,6 +28,7 @@ public class Evidence {
     private String description;
 
     @Column(nullable = false)
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date dateOccurred;
 
     @Column(nullable = false)
