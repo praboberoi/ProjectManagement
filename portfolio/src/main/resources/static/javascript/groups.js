@@ -243,7 +243,6 @@ function dropUsers(event, groupId) {
         }
     }
     let data = event.dataTransfer.getData("origin");
-    console.log(data)
     if (data == "Members without a group") {
         addUsers(groupId, "unassigned")
         console.log("test")

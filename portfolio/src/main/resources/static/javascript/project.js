@@ -137,7 +137,6 @@ function connect() {
     });
     
     stompClient.onConnect = function () {
-        console.log('Active updating enabled');
         subscribe()
         document.getElementById("websocket-status").value = "connected"
     };
@@ -221,7 +220,6 @@ function handleDeadlineNotification(message) {
  * @param message Message with event and edit type
  */
 function handleEventNotification(message) {
-    console.log(message)
     let array = message.body.split(' ')
     let event = array[0]
     let action = array[1]
