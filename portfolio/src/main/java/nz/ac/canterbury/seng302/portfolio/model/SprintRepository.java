@@ -66,6 +66,16 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
     List<Sprint> findByProject(Project project);
 
     /**
+     * Finds a sprint occuring within a project on a certain date
+     * @param project The project the sprint is from
+     * @param date The date the sprint must occur during
+     * @return The sprint
+     */
+    @Query(value = "select distinct sprint from Sprint sprint where :#{#date} between sprint.startDate and sprint" +
+            ".endDate and sprint.project.projectId = :#{#project.projectId}")
+    Sprint findByDateAndProject(Project project, Date date);
+
+    /**
      * Counts the sprints based on the given project.
      * @param project of type Project.
      * @return an int.

@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -67,11 +68,13 @@ public class ProjectController {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
+            Hashtable<Integer, List<String>> dateDict = eventService.getStartAndEndDates(listEvents);
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             Project project = projectService.getProjectById(projectId);
             Event newEvent = eventService.getNewEvent(project);
             Deadline newDeadline = deadlineService.getNewDeadline(project);
             model.addAttribute("listEvents", listEvents);
+            model.addAttribute("dateDict", dateDict);
             model.addAttribute("listDeadlines", listDeadlines);
             model.addAttribute("listSprints", listSprints);
             model.addAttribute("project", project);

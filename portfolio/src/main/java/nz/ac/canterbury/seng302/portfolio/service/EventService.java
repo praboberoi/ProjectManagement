@@ -9,11 +9,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.*;
 
 
 /**
@@ -62,6 +64,30 @@ public class EventService {
                 .startDate(java.sql.Date.valueOf(now))
                 .endDate(java.sql.Date.valueOf(now.plusDays(1)))
                 .build();
+    }
+
+
+    public Hashtable<Integer, List<String>> getStartAndEndDates(List<Event> eventList) {
+        Hashtable<Integer, List<String>> eventDateMappingDictionary = new Hashtable<Integer, List<String>>();
+        for (Event event : eventList) {
+            List<String> sprintNames = new ArrayList<String>();
+            Date startDate = new Date(event.getStartDate().getTime());
+            Date endDate = new Date(event.getEndDate().getTime());
+            Sprint start = sprintRepository.findByDateAndProject(event.getProject(), startDate);
+            Sprint end = sprintRepository.findByDateAndProject(event.getProject(), endDate);
+            if (start == null) {
+                sprintNames.add("");
+            } else {
+                sprintNames.add("(" + start.getSprintName() + ")");
+            }
+            if (end == null) {
+                sprintNames.add("");
+            } else {
+                sprintNames.add("(" + end.getSprintName() + ")");
+            }
+            eventDateMappingDictionary.put(event.getEventId(), sprintNames);
+        }
+        return eventDateMappingDictionary;
     }
 
     /**

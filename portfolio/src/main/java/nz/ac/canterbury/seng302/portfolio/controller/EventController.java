@@ -9,6 +9,13 @@ import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+
+import java.sql.Date;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,7 +63,6 @@ public class EventController {
       @GetMapping(path="/project/{projectId}/events")
       public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
-          listEvents.forEach(eventService::updateEventColors);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);
