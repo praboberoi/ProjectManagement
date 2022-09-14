@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.PersistenceException;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -47,18 +48,15 @@ public class EvidenceService {
 
     /**
      * Creates a new evidence object
-     * @param user User who the evidence relates to
-     * @param project Project which the evidence relates to
+     * @param userId User ID who the evidence relates to
      * @return Evidence object
      */
-    public Evidence getNewEvidence(User user, Project project) {
+    public Evidence getNewEvidence(int userId) {
+        LocalDate now = LocalDate.now();
         return new Evidence.Builder()
-                .evidenceId(999)
-                .project(project)
-                .dateOccurred(new Date())
+                .dateOccurred(java.sql.Date.valueOf(now))
                 .title("New evidence")
-                .description("A new piece of evidence")
-                .ownerId(user.getUserId())
+                .ownerId(userId)
                 .build();
     }
 

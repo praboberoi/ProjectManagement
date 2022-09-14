@@ -1,8 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -11,10 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -29,6 +28,8 @@ public class EvidenceController {
     private String apiPrefix;
     @Autowired
     private EvidenceService evidenceService;
+    @Autowired
+    private ProjectService projectService;
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
@@ -51,13 +52,19 @@ public class EvidenceController {
     public String evidenceList(
             @PathVariable("userId") int userId,
             Model model) {
+        List<Project> listProjects = projectService.getAllProjects();
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+        Evidence newEvidence = evidenceService.getNewEvidence(userId);
+        model.addAttribute("evidence", newEvidence);
         model.addAttribute("listEvidence", listEvidence);
+        model.addAttribute("listProjects", listProjects);
+        model.addAttribute("userId", userId);
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }
         return "evidence";
     }
+
 
     /**
      * Updates the model with the correct list of evidence and a selected evidence
@@ -72,10 +79,8 @@ public class EvidenceController {
             @PathVariable int evidenceId,
             RedirectAttributes ra) {
         ModelAndView mv = new ModelAndView("evidence::selectedEvidence");
-
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject("listEvidence", listEvidence);
-
         try {
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
             mv.addObject("selectedEvidence", selectedEvidence);
@@ -84,7 +89,6 @@ public class EvidenceController {
         }
         return mv;
     }
-
 
     /** Checks if evidence variables are valid and if it is then saves the evidence
      * @param evidenceDTO EvidenceDTO object
@@ -113,5 +117,4 @@ public class EvidenceController {
         }
         return "redirect:/evidence/{userId}";
     }
-
 }
