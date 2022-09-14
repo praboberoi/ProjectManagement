@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import nz.ac.canterbury.seng302.portfolio.model.dto.EventDTO;
+
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Objects;
@@ -71,6 +73,14 @@ public class Event {
         this.eventName = eventName;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public Event(EventDTO eventDTO) {
+        setEventId(eventDTO.getEventId());
+        setEventName(eventDTO.getEventName());
+        setProject(eventDTO.getProject());
+        setStartDate(eventDTO.getStartDate());
+        setEndDate(eventDTO.getEndDate());
     }
 
     public Project getProject() {
