@@ -24,7 +24,6 @@ function isValidHttpUrl(string) {
     return url.protocol === "http:" || url.protocol === "https:"
 }
 
-const GIT_API = "api/v4/"
 
 /**
  * Toggles the visibility of the recent actions component
@@ -334,7 +333,8 @@ function saveRepoSettings(event) {
  * Runs when the page is loaded
  */
  document.addEventListener('DOMContentLoaded', function() {
-    connectToRepo()
+    connectToRepo();
+    connect();
 });
 
 /**
@@ -364,14 +364,6 @@ function connect() {
 
     stompClient.activate();
 }
-
-/**
- * Connects to web socket on page load
- */
-document.addEventListener('DOMContentLoaded', function() {
-    connect();
-});
-
 
 /**
  * Attempts to connect to the git repository using the details provided
