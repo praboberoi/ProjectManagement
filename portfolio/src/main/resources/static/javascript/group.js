@@ -239,6 +239,9 @@ function saveRepoSettings(event) {
     connectToRepo()
 });
 
+/**
+ * Updates the list of all the filters available for selection based on the events list passed
+ */
  function updateFilters(events) {
      let userFilter = document.getElementById('userFilter')
      let actionType = document.getElementById('actionType')
@@ -277,6 +280,9 @@ function saveRepoSettings(event) {
 
  }
 
+/**
+ * Event listener for change in the userFilter
+ */
  document.getElementById('userFilter').addEventListener('change', function () {
      if (this.value === 'Clear Filter')
          filterByUser = ""
@@ -286,7 +292,9 @@ function saveRepoSettings(event) {
      getRecentActions()
 
  } )
-
+/**
+ * Event listener for change in the actionTypeFilter
+ */
 document.getElementById('actionType').addEventListener('change', function () {
      if (this.value === 'Clear Filter')
          filterByActionType = ""
