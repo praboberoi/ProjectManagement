@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.model.dto.EventDTO;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.springframework.format.annotation.DateTimeFormat;
 
