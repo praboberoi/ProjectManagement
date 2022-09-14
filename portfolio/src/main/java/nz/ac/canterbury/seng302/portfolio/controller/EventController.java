@@ -33,10 +33,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 /**
  * Controller for the events page
  */
@@ -91,7 +87,6 @@ public class EventController {
         try {
             event.setProject(projectService.getProjectById(projectId));
             eventService.verifyEvent(event);
-            eventService.updateEventColors(event);
             message = eventService.saveEvent(event);
             notifyEvent(projectId, event.getEventId(), "edited");
             return ResponseEntity.status(HttpStatus.OK).body(message);
