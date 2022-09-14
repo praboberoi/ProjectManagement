@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
-import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.RepoService;
@@ -48,9 +47,6 @@ public class RepoControllerTest {
     @MockBean
     private UserAccountClientService userAccountClientService;
 
-    @MockBean
-    private RepoRepository repoRepository;
-
     @InjectMocks
     private ControllerAdvisor controllerAdvisor;
 
@@ -86,7 +82,7 @@ public class RepoControllerTest {
     void givenGroupExists_whenGetRepoCalled_thenRepoReturned() throws Exception{
         Groups group = new Groups("Team: 400", "Bad Request", 1, List.of());
         Repo repo = new Repo(1, 1, group.getShortName() + "'s repo", 0, null, "https://gitlab.com");
-        when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
+        when(repoService.getRepoByGroup(anyInt())).thenReturn(repo);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
 
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
@@ -171,7 +167,7 @@ public class RepoControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         when(PrincipalUtils.getUserId(any())).thenReturn(1);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
-        when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
+        when(repoService.getRepoByGroup(anyInt())).thenReturn(repo);
 
         System.out.println(new ObjectMapper().writeValueAsString(repo));
         mockMvc
@@ -197,7 +193,7 @@ public class RepoControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         when(PrincipalUtils.getUserId(any())).thenReturn(1);
         when(groupService.getGroupById(anyInt())).thenReturn(group);
-        when(repoRepository.getByGroupId(anyInt())).thenReturn(repo);
+        when(repoService.getRepoByGroup(anyInt())).thenReturn(repo);
 
         System.out.println(new ObjectMapper().writeValueAsString(repo));
         mockMvc
