@@ -262,8 +262,8 @@ function saveRepoSettings(event) {
          userSet.forEach(user => userFilter.innerHTML += `<option>${user}</option>`)
 
      } else {
-         userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>`: `<option>${user}</option>`)
          userFilter.innerHTML += `<option>Clear Filter</option>`
+         userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>`: `<option>${user}</option>`)
      }
 
      if (filterByActionType.length === 0) {
@@ -271,9 +271,9 @@ function saveRepoSettings(event) {
          actionTypeSet.forEach(action => actionType.innerHTML += `<option>${action}</option>`)
 
      } else {
+         actionType.innerHTML += `<option>Clear Filter</option>`
          actionTypeSet.forEach(action => actionType.innerHTML +=
              action === filterByActionType ? `<option selected>${action}</option>` :`<option>${action}</option>`)
-         actionType.innerHTML += `<option>Clear Filter</option>`
 
 
      }
