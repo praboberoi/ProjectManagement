@@ -1,4 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
+
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.dto.DeadlineDTO;
@@ -24,8 +25,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.HashSet;
@@ -66,14 +65,12 @@ public class DeadlineController {
     @GetMapping(path="/project/{projectId}/deadlines")
     public ModelAndView deadlines(@PathVariable("projectId") int projectId) {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
-        Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("deadlineFragments::deadlineTab");
         mv.addObject("project", project);
         mv.addObject("listDeadlines", listDeadlines);
         mv.addObject("editDeadlineNotifications", editing);
-        mv.addObject("deadlineDateMapping", deadlineDateMapping);
         return mv;
     }
 

@@ -1,3 +1,4 @@
+
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
 When("I call create group {string}", (groupName) => {

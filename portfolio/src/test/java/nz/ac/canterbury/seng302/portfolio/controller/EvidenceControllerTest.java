@@ -14,7 +14,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,6 +29,10 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.mockito.Mockito.when;
@@ -134,7 +137,6 @@ public class EvidenceControllerTest {
     void givenServer_whenSaveInvalidEvidence_thenEvidenceVerifiedSuccessfully() throws Exception {
         when(evidenceService.saveEvidence(any())).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
         when(PrincipalUtils.getUserId(any())).thenReturn(99);
-
         this.mockMvc
                 .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence1)))
                 .andExpect(status().is3xxRedirection())

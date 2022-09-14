@@ -1,4 +1,5 @@
-const SPRINT_COLOURS = ['green', 'purple', 'darkSlateGrey', 'firebrick', 'mediumVioletRed', 'mediumSeaGreen', 'orangeRed'];
+
+const SPRINT_COLOURS = ['blue', 'skyblue', 'purple', 'orange', 'green', 'pink', 'navy'];
 const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
 const adminRoles = ['TEACHER', 'COURSE_ADMINISTRATOR'];
@@ -92,7 +93,8 @@ function editEventDuration(info) {
                 CALENDAR_MESSAGE.hidden = false;
                 CALENDAR_MESSAGE.classList.remove("alert-danger");
                 CALENDAR_MESSAGE.classList.add("alert-success");
-                CALENDAR_MESSAGE.innerText = "Event saved successfully";
+                CALENDAR_MESSAGE.innerText =  "Sprint saved successfully";
+                loadEventCards();
 
             } else {
                 CALENDAR_MESSAGE.hidden = false;
@@ -109,12 +111,17 @@ function editEventDuration(info) {
     // Need to remove 1 day
     let endDate = new Date(event.end);
     endDate.setDate(endDate.getDate() - 1);
+    const startDate = new Date(event.start)
+    const startDateStr = startDate.toLocaleDateString().split('/').reverse().join('-');
+    const endDateStr = endDate.toLocaleDateString().split('/').reverse().join('-');
+
 
     var params = new FormData();
-    params.append('startDate', event.start.getTime());
-    params.append('endDate', endDate.getTime());
+    params.append('startDate', startDateStr);
+    params.append('endDate', endDateStr);
 
     httpRequest.send(params);
+
 }
 
 /**

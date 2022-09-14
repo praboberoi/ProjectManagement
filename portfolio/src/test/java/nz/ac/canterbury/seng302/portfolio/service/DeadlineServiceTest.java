@@ -1,7 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
-import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,6 +15,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;

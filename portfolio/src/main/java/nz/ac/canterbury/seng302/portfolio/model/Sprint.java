@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.model.dto.SprintDTO;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 
 import javax.persistence.*;
@@ -63,7 +64,7 @@ public class Sprint {
      */
     @Column()
     @Enumerated(value = EnumType.STRING)
-    private SprintColor color = SprintColor.DEFAULT_BLUE;
+    private SprintColor color = SprintColor.WHITE;
 
     /**
      * Constructor for the Sprint class without arguments
@@ -90,6 +91,22 @@ public class Sprint {
         this.startDate = startDate;
         this.endDate = endDate;
         this.color = color;
+    }
+
+    /**
+     * Constructor for sprint with argument
+     * @param sprintDTO of type SprintDTO
+     */
+    public Sprint(SprintDTO sprintDTO) {
+        this.setSprintId(sprintDTO.getSprintId());
+        this.setProject(sprintDTO.getProject());
+        this.setSprintName(sprintDTO.getSprintName());
+        this.setDescription(sprintDTO.getDescription());
+        this.setSprintLabel(sprintDTO.getSprintLabel());
+        this.setStartDate(sprintDTO.getStartDate());
+        this.setEndDate(sprintDTO.getEndDate());
+        this.setColor(sprintDTO.getColor());
+
     }
 
     /**
@@ -234,10 +251,18 @@ public class Sprint {
     }
 
     @Override
-    public int hashCode() {
-        return Objects.hash(sprintId, project, sprintLabel, sprintName, description, startDate, endDate, color);
+    public String toString() {
+        return "Sprint{" +
+                "sprintId=" + sprintId +
+                ", project=" + project +
+                ", sprintLabel='" + sprintLabel + '\'' +
+                ", sprintName='" + sprintName + '\'' +
+                ", description='" + description + '\'' +
+                ", startDate=" + startDate +
+                ", endDate=" + endDate +
+                ", color=" + color +
+                '}';
     }
-
 
     /**
      * Builder class to build the sprint
