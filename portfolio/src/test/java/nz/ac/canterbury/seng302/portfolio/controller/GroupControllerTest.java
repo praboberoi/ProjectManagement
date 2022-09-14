@@ -95,7 +95,7 @@ public class GroupControllerTest {
     }
 
     /**
-     * Checks that the group create functionality will be called correctly for non teacher/admin users
+     * Checks that the group create functionality will be called correctly for teacher/admin users
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
@@ -104,8 +104,8 @@ public class GroupControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
                 .perform(post("/groups?shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageSuccess", "success"));
+                .andExpect(status().isOk())
+                .andExpect(content().string( "success"));
     }
 
     /**
@@ -118,8 +118,8 @@ public class GroupControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
                 .perform(post("/groups?shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "unsuccessful"));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string( "unsuccessful"));
     }
 
 
@@ -132,8 +132,8 @@ public class GroupControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         mockMvc
                 .perform(post("/groups?shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to save group."));
+                .andExpect(status().isForbidden())
+                .andExpect(content().string( "Insufficient permissions to save group."));
     }
 
     /**
@@ -278,8 +278,8 @@ public class GroupControllerTest {
         when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to save group."));
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Insufficient permissions to save group."));
     }
 
     /**
@@ -293,8 +293,8 @@ public class GroupControllerTest {
         when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageSuccess", "success"));
+                .andExpect(status().isOk())
+                .andExpect(content().string("success"));
     }
 
     /**
@@ -308,8 +308,8 @@ public class GroupControllerTest {
         when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Fail"));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Fail"));
     }
 
     /**
