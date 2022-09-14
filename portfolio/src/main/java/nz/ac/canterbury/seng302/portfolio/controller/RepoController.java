@@ -1,5 +1,12 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Groups;
+import nz.ac.canterbury.seng302.portfolio.model.Repo;
+import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
+import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
+import nz.ac.canterbury.seng302.portfolio.service.GroupService;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,14 +17,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
-
-import nz.ac.canterbury.seng302.portfolio.model.Groups;
-import nz.ac.canterbury.seng302.portfolio.model.Repo;
-import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
-import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
-import nz.ac.canterbury.seng302.portfolio.service.GroupService;
-import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
-import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
 /**
  * Controller for repo components

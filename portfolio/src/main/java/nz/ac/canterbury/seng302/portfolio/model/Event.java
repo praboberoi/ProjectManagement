@@ -3,10 +3,11 @@ package nz.ac.canterbury.seng302.portfolio.model;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.*;
-import java.text.SimpleDateFormat;
-
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The data class for Events. Contains the id, name, and dates of the event for storage in the db. 

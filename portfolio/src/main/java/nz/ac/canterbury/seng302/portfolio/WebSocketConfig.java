@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio;
 
+import nz.ac.canterbury.seng302.portfolio.authentication.CustomHandshakeHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
@@ -8,8 +9,6 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
 import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
-
-import nz.ac.canterbury.seng302.portfolio.authentication.CustomHandshakeHandler;
 
 /**
  * Configuration class for WebSocket, creates the required endpoints and prefixes for the connections
