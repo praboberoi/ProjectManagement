@@ -2,6 +2,7 @@ let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 let filterByUser = ""
 let filterByActionType = ""
 let projectIdValidate = /^\d+$/;
+let jsonRepo;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
   return new bootstrap.Tooltip(tooltipTriggerEl)
 })
@@ -48,7 +49,7 @@ function connectToRepo(saving=false) {
 
             let repoName = document.getElementById("git-project-name")
 
-            let jsonRepo = JSON.parse(httpRequest.response)
+            jsonRepo = JSON.parse(httpRequest.response)
 
             fetch(jsonRepo.hostAddress + GIT_API + "projects/" + jsonRepo.gitlabProjectId, {
                 method: 'GET',
@@ -384,7 +385,7 @@ function saveRepoSettings(event) {
      else
          filterByUser = this.value
 
-     getRecentActions()
+     getRecentActions(jsonRepo)
 
  } )
 /**
@@ -396,7 +397,7 @@ document.getElementById('actionType').addEventListener('change', function () {
      else
          filterByActionType = this.value
 
-     getRecentActions()
+     getRecentActions(jsonRepo)
 
  } )
 
