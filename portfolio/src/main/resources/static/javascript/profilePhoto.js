@@ -10,7 +10,6 @@ const validTypes = ["image/jpeg", "image/gif", "image/png"]
  * @param event
  */
 async function loadFile (event) {
-    console.log(event.target.files[0].type);
     if (validTypes.includes(event.target.files[0].type)) {
         image = document.getElementById("output")
         image.src = URL.createObjectURL(event.target.files[0])
