@@ -20,12 +20,17 @@ function saveEvidence() {
 function checkEvidenceTitle() {
     const evidenceTitle = document.getElementById('evidence-title');
     let charMessage = document.getElementById("evidenceCharCount");
+    let evidenceNameError = document.getElementById('evidenceDateError')
+    let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
     let charCount = evidenceTitle.value.length;
     charMessage.innerText = charCount + ' '
 
-    if (evidenceTitle.value === 1) {
-        document.getElementById('evidenceFormSubmitButton')
+    if (evidenceTitle.value.length === 1) {
+        evidenceCreateBtn.disabled = true;
+        evidenceNameError.innerText = "Cannot have only one character for the name"
     }
+    if (evidenceTitle.value.)
+
 
 
 }
