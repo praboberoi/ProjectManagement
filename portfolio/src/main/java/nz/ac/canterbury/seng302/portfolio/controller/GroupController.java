@@ -92,7 +92,7 @@ public class GroupController {
     public ModelAndView groupList(@PathVariable int groupId) {
         Groups group = groupService.getGroupById(groupId);
         ModelAndView mv = new ModelAndView("groupFragments::groupUserList");
-        mv.addObject("group", group);
+        mv.addObject(GROUP, group);
         return mv;
     }
 
