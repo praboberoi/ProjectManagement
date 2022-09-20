@@ -75,7 +75,6 @@ function createGroup() {
 
     let formData = new FormData(document.forms.createGroupForm)
 
-    console.log(formData)
     httpRequest.send(formData);
 }
 

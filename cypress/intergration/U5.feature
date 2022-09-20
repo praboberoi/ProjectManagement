@@ -88,7 +88,7 @@ Feature: U5. Groups and group membership
     When I delete the group
     Then Group "Cypress2" doesn't exist
 
-  Scenario: AC3 As a teacher, I can create a group with a short name (e.g., team 1000) and a long name (e.g., Superstars).
+  Scenario: AC3 As a teacher, I can create a group with a short name and a long name.
     Given I login as an admin
     And I navigate to 'Groups'
     When I create the group "Cypress create", "Cypress create long name"
