@@ -10,7 +10,7 @@ When("I remove users from group", () => {
     cy.wait("@deleteCheck")
 });
 
-When("I drag user {word} to group {word}", (user, group) => {
+When("I drag user {word} to group {string}", (user, group) => {
     cy.intercept({
         method: 'POST',
         url: '/groups/*/addMembers',
@@ -36,7 +36,15 @@ When("I delete the group", () => {
     cy.get('#messageSuccess').should('contain', 'Group deleted successfully')
 })
 
-When("I change the group name to {word}", (newName) => {
+When("I create the group {string}, {string}", (groupName, groupLongName) => {
+    cy.get('#create-btn').click()
+    cy.get('#shortName').clear().type(groupName, {delay: 0})
+    cy.get('#longName').clear().type(groupLongName, {delay: 0})
+    cy.get('#save-submit-button').contains("Create").should('be.visible').click()
+    cy.get('#messageSuccess').should('contain', `Group created successfully`)
+})
+
+When("I change the group name to {string}", (newName) => {
     cy.get('#group-settings-icon').click()
     cy.get('#edit-group-btn').click()
     cy.get('#editGroupForm #shortName').clear().type(newName, {"delay":0})
