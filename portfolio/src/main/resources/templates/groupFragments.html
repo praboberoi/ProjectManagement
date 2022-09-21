@@ -92,7 +92,7 @@
         </a>
         <ul class="dropdown-menu">
             <li th:if="${adminOrTeacher || group.members.contains(user)}">
-                <a id="edit-group-btn" type="button" class="dropdown-item" data-toggle="modal" data-target="#editModal">
+                <a id="edit-group-btn" type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal">
                     <img class="icon img-color-secondary"
                         th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
                     Edit</a>

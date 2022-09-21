@@ -97,6 +97,12 @@ function saveGroup() {
     httpRequest.send(formData);
 }
 
+/**
+ * Updates the error message and removes the modal if there is no issues
+ * @param httpRequest Request made to the server
+ * @param modal Which modal is being edited
+ * @param modalError Error message div that displays an error
+ */
 function updateModal(httpRequest, modal, modalError) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
