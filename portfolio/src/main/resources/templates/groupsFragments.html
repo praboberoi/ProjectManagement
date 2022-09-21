@@ -101,13 +101,13 @@
                                 </ul>
                             </div>
                         </div>
-                        <div th:if="${group.groupId != 0}" class="container-fluid my-2 p-0 d-none d-md-block">
+                        <div th:if="${group.groupId != 0 && adminOrTeacher}" class="container-fluid my-2 p-0 d-none d-md-block">
                             <button id="remove-users" type="button" class="btn btn-outline-secondary"
                                 th:onclick="'removeUsers(' + ${group.groupId} + ')'" disabled>
                                 Remove selected users
                             </button>
                         </div>
-                        <div th:if="${group.shortName.contains('Teaching Staff')}" class="container-fluid p-0 my-2">
+                        <div th:if="${group.shortName.contains('Teaching Staff') && adminOrTeacher}" class="container-fluid p-0 my-2">
                             <button id="remove-users" type="button" class="btn btn-outline-secondary"
                                 th:onclick="'removeUsers(-1)'" disabled>
                                 Remove selected users
