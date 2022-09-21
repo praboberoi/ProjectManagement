@@ -16,7 +16,7 @@ public interface GroupsRepository extends PagingAndSortingRepository<Groups, Int
      * 
      * @return List of groupless users
      */
-    @Query(value = "SELECT DISTINCT user FROM User user LEFT JOIN user.groups groups WHERE groups IS NULL AND 1 NOT MEMBER OF user.roles  ORDER BY (LOWER(username))")
+    @Query(value = "SELECT DISTINCT user FROM User user LEFT JOIN user.groups groups WHERE groups IS NULL AND 1 NOT MEMBER OF user.roles ORDER BY (LOWER(user.username))")
     List<User> findUsersNotInGroup();
 
     /**
@@ -24,7 +24,7 @@ public interface GroupsRepository extends PagingAndSortingRepository<Groups, Int
      * 
      * @return List of Teacher users
      */
-    @Query(value = "SELECT DISTINCT user FROM User user WHERE 1 MEMBER OF user.roles ORDER BY (LOWER(username))")
+    @Query(value = "SELECT DISTINCT user FROM User user WHERE 1 MEMBER OF user.roles ORDER BY (LOWER(user.username))")
     List<User> findTeacherGroup();
 
     /**
