@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
@@ -63,6 +65,17 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      */
     List<Sprint> findByProject(Project project);
 
+
+    /**
+     * Finds a sprint occurring within a project on a certain date
+     * @param project The project the sprint is from
+     * @param date The date the sprint must occur during
+     * @return The sprint
+     */
+    @Query(value = "select distinct sprint from Sprint sprint where :#{#date} between sprint.startDate and sprint" +
+            ".endDate and sprint.project.projectId = :#{#project.projectId}")
+    Sprint findByDateAndProject(Project project, Date date);
+
     /**
      * Counts the sprints based on the given project.
      * @param project of type Project.
@@ -70,4 +83,19 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      */
     int countByProject(Project project);
 
+    /**
+     * Obtains a list of sprint that fall under the given Event
+     * @param event of type Event
+     * @return a list of Sprint
+     */
+    @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#event.startDate} <= sprint.endDate and :#{#event.endDate} >= sprint.startDate")
+    List<Sprint> findSprintsByEvent(@Param("event") Event event);
+
+    /**
+     * Obtains a list of sprint that fall under the given Deadline
+     * @param deadline of type Deadline
+     * @return a list of Sprint
+     */
+    @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#deadline.date} <= sprint.endDate and :#{#deadline.date} >= sprint.startDate")
+    List<Sprint> findSprintsByDeadline(@Param("deadline") Deadline deadline);
 }

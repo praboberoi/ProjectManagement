@@ -2,6 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.authentication;
 
 import io.grpc.*;
 import net.devh.boot.grpc.client.interceptor.GrpcGlobalClientInterceptor;
+
+import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -33,8 +35,15 @@ public class AuthenticationClientInterceptor implements ClientInterceptor {
      */
     @Override
     public <ReqT, RespT> ClientCall<ReqT, RespT> interceptCall(MethodDescriptor<ReqT, RespT> method, CallOptions callOptions, Channel next) {
-        HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
-        String sessionToken = CookieUtil.getValue(request, "lens-session-token");
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
+        String sessionToken;
+        if (requestAttributes != null) {
+            HttpServletRequest request = ((ServletRequestAttributes) requestAttributes).getRequest();
+            sessionToken = CookieUtil.getValue(request, "lens-session-token");
+        }
+        else {
+            sessionToken = null;
+        }
 
         // Every time we send a gRPC request, include a copy of our authentication token in the headers
         return new ForwardingClientCall.SimpleForwardingClientCall<ReqT, RespT>(next.newCall(method, callOptions)) {

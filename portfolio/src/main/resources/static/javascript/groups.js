@@ -61,6 +61,44 @@ function checkLongName(event) {
 }
 
 /**
+ * Sends a request to the server to save the group
+ * @param event Form submit request
+ */
+ function saveGroup() {
+    let httpRequest = new XMLHttpRequest();
+
+    httpRequest.onreadystatechange = function() {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                messageDanger.hidden = true;
+                messageSuccess.hidden = false;
+                messageSuccess.innerText = httpRequest.responseText;
+            } else if (httpRequest.status === 500) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "An error occurred on the server, please try again later";
+            } else if (errorCodes.includes(httpRequest.status)) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = httpRequest.responseText;
+            } else {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Something went wrong.";
+            }
+        }
+    }
+
+    httpRequest.open('POST', apiPrefix + `/groups`);
+
+    let formData = new FormData(document.forms.editGroupForm)
+
+    document.getElementById("editModalClose").click()
+
+    httpRequest.send(formData);
+}
+
+/**
  * Makes a call to the server and replaces the current group with the new one
  */
 function getGroup(groupId) {
@@ -243,10 +281,8 @@ function dropUsers(event, groupId) {
         }
     }
     let data = event.dataTransfer.getData("origin");
-    console.log(data)
     if (data == "Members without a group") {
         addUsers(groupId, "unassigned")
-        console.log("test")
     } else {
         addUsers(groupId, null)
     }
@@ -318,3 +354,76 @@ function allowDrop(event) {
 
     httpRequest.send(params);
 }
+
+let stompClient = null;
+
+/**
+ * Connects to the websocket server
+ */
+function connect() {
+    let websocketProtocol = window.location.protocol === 'http:'?'ws://':'wss://'
+    stompClient = new StompJs.Client({
+        brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
+        debug: function(str) {
+            // console.log(str);
+        },
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+    });
+    
+    stompClient.onConnect = function () {
+        console.log('Active updating enabled');
+        subscribe()
+        document.getElementById("websocket-status").value = "connected"
+    };
+
+    stompClient.onStompError = function () {
+        console.log('Websocket communication error')
+    }
+
+    stompClient.activate();
+}
+
+/**
+ * Subscribes to the required websocket notification channels
+ */
+function subscribe() {
+    stompClient.subscribe('/element/groups/', updateGroup);
+}
+
+/**
+ * Replaces the relevant component of the sprint table
+ * @param message Message with sprint and edit type
+ */
+ function updateGroup(message) {
+    let array = message.body.split(' ')
+    let group = array[1]
+    let component = array[2]
+    let action = array[3]
+
+    if (component == "members" || action === "edited") {
+        if (document.getElementById("groupId").value == group) {
+            getGroup(group)
+        } else {
+            getGroup(document.getElementById("groupId").value)
+        }
+        updateGroupList()
+    } else if (action === "deleted") {
+        if (document.getElementById("groupId").value == group) {
+            getGroup("unassigned")
+        } else {
+            getGroup(document.getElementById("groupId").value)
+        }
+        updateGroupList()
+    } else {
+        console.log("Unknown command: " + action)
+    }
+}
+
+/**
+ * Runs the connect function when the document is loaded
+ */
+ document.addEventListener('DOMContentLoaded', function() {
+    connect();
+})

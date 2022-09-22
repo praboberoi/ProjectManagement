@@ -2,8 +2,11 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
+import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
+import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -29,6 +32,7 @@ public class EvidenceController {
     private EvidenceService evidenceService;
     @Autowired
     private ProjectService projectService;
+    @Autowired private UserAccountClientService userAccountClientService;
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
@@ -49,15 +53,17 @@ public class EvidenceController {
      */
     @GetMapping(path="/evidence/{userId}")
     public String evidenceList(
+            @AuthenticationPrincipal AuthState principal,
             @PathVariable("userId") int userId,
             Model model) {
+        User user = new User(userAccountClientService.getUser(principal));
         List<Project> listProjects = projectService.getAllProjects();
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         Evidence newEvidence = evidenceService.getNewEvidence(userId);
         model.addAttribute("evidence", newEvidence);
         model.addAttribute("listEvidence", listEvidence);
         model.addAttribute("listProjects", listProjects);
-        model.addAttribute("userId", userId);
+        model.addAttribute("isCurrentUserEvidence", user.getUserId()==userId);
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }
@@ -90,16 +96,17 @@ public class EvidenceController {
     }
 
     /** Checks if evidence variables are valid and if it is then saves the evidence
-     * @param evidence Evidence object
+     * @param evidenceDTO EvidenceDTO object
      * @param ra Redirect Attribute frontend message object
      * @return link of html page to display
      */
     @PostMapping(path="/evidence/{userId}/saveEvidence")
     public String saveEvidence(
-            @ModelAttribute Evidence evidence,
+            @ModelAttribute EvidenceDTO evidenceDTO,
             @PathVariable("userId") int userId,
             RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal) {
+        Evidence evidence = new Evidence(evidenceDTO);
         try {
             int editingUser = PrincipalUtils.getUserId(principal);
             if (editingUser != userId) {

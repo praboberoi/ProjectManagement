@@ -1,13 +1,12 @@
 package nz.ac.canterbury.seng302.portfolio.authentication;
 
-import java.security.Principal;
-import java.util.Map;
-
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.DefaultHandshakeHandler;
 
-import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
+import java.security.Principal;
+import java.util.Map;
 
 /**
  * Overrides the default websocket handshake to return a custom websocket username 

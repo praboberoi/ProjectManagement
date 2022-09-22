@@ -23,6 +23,7 @@ public class Groups {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "users_groups", joinColumns = @JoinColumn(name = "group_id", referencedColumnName = "GroupId"), inverseJoinColumns = @JoinColumn(name = "user_id", referencedColumnName = "UserId"))
+    @OrderBy("LOWER(username)")
     private Set<User> users;
 
     public int getGroupId() {
@@ -69,8 +70,9 @@ public class Groups {
 
     /**
      * Creates a new group object with the provided details
+     * 
      * @param shortName The short name of the group (max 15)
-     * @param longName The long name of the group (max 25)
+     * @param longName  The long name of the group (max 25)
      */
     public Groups(String shortName, String longName) {
         this.shortName = shortName;

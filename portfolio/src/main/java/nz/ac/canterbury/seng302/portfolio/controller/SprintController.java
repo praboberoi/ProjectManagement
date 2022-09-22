@@ -1,8 +1,13 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.dto.SprintDTO;
+import nz.ac.canterbury.seng302.portfolio.service.EventService;
+import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -17,7 +22,10 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.persistence.PersistenceException;
@@ -29,6 +37,8 @@ public class SprintController {
     @Autowired private SprintService sprintService;
     @Autowired private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
+    @Autowired private EventService eventService;
+    @Autowired private DeadlineService deadlineService;
     @Value("${apiPrefix}") private String apiPrefix;
 
     @Autowired
@@ -85,32 +95,21 @@ public class SprintController {
     /**
      * Checks if a sprints dates are valid and returns a Response containing a message
      * @param projectId ID of the project to check
-     * @param startDate New start date of the project
-     * @param endDate New end date of the project
      * @param principal Current user
-     * @param label Sprint label
-     * @param id Sprint Id
+     * @param sprint Current sprint
      * @return ResponseEntity containing a string message
      */
     @PostMapping("/project/{projectId}/verifySprint")
     public ResponseEntity<String> verifySprint(
             @PathVariable int projectId,
-            String startDate,
-            String endDate,
-            String label,
-            int id,
+            @ModelAttribute SprintDTO sprintDTO,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = projectService.getProjectById(projectId);
-            Sprint currentSprint = new Sprint.Builder()
-                    .project(project)
-                    .sprintId(id)
-                    .sprintLabel(label)
-                    .startDate(Date.valueOf(startDate))
-                    .endDate(Date.valueOf(endDate))
-                    .build();
-            sprintService.verifySprint(currentSprint);
+            Sprint sprint = new Sprint(sprintDTO);
+            sprint.setProject(project);
+            sprintService.verifySprint(sprint);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
@@ -139,6 +138,12 @@ public class SprintController {
             sprintService.verifySprint(sprint);
             String message = sprintService.saveSprint(sprint);
             notifySprint(projectId, sprint.getSprintId(), "edited");
+            List<Event> listEvents = eventService.getEventByProjectId(projectId);
+            listEvents.forEach(eventService::updateEventColors);
+            List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            listDeadlines.forEach(deadlineService::updateDeadlineColors);
+            ra.addFlashAttribute("listEvents", listEvents);
+            ra.addFlashAttribute("listDeadlines", listDeadlines);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
@@ -210,6 +215,12 @@ public class SprintController {
             ra.addFlashAttribute("messageSuccess", message);
             sprintService.updateSprintLabelsAndColor(sprintService.getSprintByProject(projectId));
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            List<Event> listEvents = eventService.getEventByProjectId(projectId);
+            listEvents.forEach(eventService::updateEventColors);
+            ra.addFlashAttribute("listEvents", listEvents);
+            List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            listDeadlines.forEach(deadlineService::updateDeadlineColors);
+            ra.addFlashAttribute("listDeadlines", listDeadlines);
             model.addAttribute("listSprints", listSprints);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
@@ -235,20 +246,17 @@ public class SprintController {
     @PostMapping("/sprint/{sprintId}/editSprint")
     public ResponseEntity<String> editSprint(
         @PathVariable("sprintId") int sprintId,
-        String startDate,
-        String endDate,
+        Date startDate,
+        Date endDate,
         @AuthenticationPrincipal AuthState principal
     ) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
             return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
 
         try {
-            Date newStartDate = new Date(Long.parseLong(startDate));
-            Date newEndDate = new Date(Long.parseLong(endDate));
-
             Sprint sprint = sprintService.getSprint(sprintId);
-            sprint.setStartDate(newStartDate);
-            sprint.setEndDate(newEndDate);
+            sprint.setStartDate(startDate);
+            sprint.setEndDate(endDate);
             sprintService.verifySprint(sprint);
             sprintService.saveSprint(sprint);
         } catch (Exception e) {

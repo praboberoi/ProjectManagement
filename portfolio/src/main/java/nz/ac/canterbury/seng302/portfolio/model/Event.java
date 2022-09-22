@@ -1,12 +1,14 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.model.dto.EventDTO;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.util.Objects;
-
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * The data class for Events. Contains the id, name, and dates of the event for storage in the db. 
@@ -43,6 +45,11 @@ public class Event {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startDate;
 
+    @Column
+    @ElementCollection
+    private final List<SprintColor> colors = new ArrayList<>();
+
+
     /**
      * End date and time for the event
      */
@@ -71,6 +78,14 @@ public class Event {
         this.eventName = eventName;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public Event(EventDTO eventDTO) {
+        setEventId(eventDTO.getEventId());
+        setEventName(eventDTO.getEventName());
+        setProject(eventDTO.getProject());
+        setStartDate(eventDTO.getStartDate());
+        setEndDate(eventDTO.getEndDate());
     }
 
     public Project getProject() {
@@ -111,14 +126,16 @@ public class Event {
         this.endDate = endDate;
     }
 
-    public String getDateOnly() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        return formatter.format(startDate);
+    public List<SprintColor> getColors() {
+        return this.colors;
     }
 
-    public String getTime() {
-        SimpleDateFormat formatter = new SimpleDateFormat("hh:mm a");
-        return formatter.format(startDate);
+    public void addColor(SprintColor color, int index) {
+        this.colors.add(index, color);
+    }
+
+    public void clearColourList() {
+        colors.clear();
     }
 
 
@@ -148,6 +165,7 @@ public class Event {
                 ", project=" + project +
                 ", eventName='" + eventName + '\'' +
                 ", startDate=" + startDate +
+                ", colors=" + colors +
                 ", endDate=" + endDate +
                 '}';
     }

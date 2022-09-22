@@ -23,7 +23,7 @@ function checkEvidenceTitle() {
     let evidenceNameError = document.getElementById('evidenceDateError')
     let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
     let charCount = evidenceTitle.value.length;
-    charMessage.innerText = charCount + ' '
+    charMessage.innerText = charCount + ' ';
 
     if (evidenceTitle.value.length === 1) {
         evidenceCreateBtn.disabled = true;

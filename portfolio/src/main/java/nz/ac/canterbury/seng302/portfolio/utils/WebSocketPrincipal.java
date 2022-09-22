@@ -1,10 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.utils;
 
-import java.security.Principal;
-
+import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 
-import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import java.security.Principal;
 
 /**
  * New principal to override the authstate one that is being used and provide a name for the user

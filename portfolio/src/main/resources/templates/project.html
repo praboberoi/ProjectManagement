@@ -177,7 +177,7 @@
           <tbody>
             <div id="sprint-list">
               <th:block th:each="sprint : ${listSprints}" th:fragment="sprints">
-                <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'">
+                <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'" th:style="'border-bottom: 5px solid ' + ${sprint.color.getColor()}">
                   <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">
                   <button class="accordion-button collapsed" type="button" id="toggle-display" data-bs-toggle="collapse"
                       th:data-bs-target="'#showSprint' + ${sprint.sprintId}" aria-controls="collapseOne" aria-expanded="false">
@@ -218,7 +218,7 @@
                             <div th:if="${(event.startDate <= sprint.endDate and event.endDate >= sprint.startDate)}">
                               <b>[[${event.eventName}]]</b>
                               <br><b>Start Date:</b> [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
-                              <br><b>End Date:</b> [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]<br><br>
+                              <br><b>End Date:</b>  [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]
                             </div>
                           </th:block>
                         </div>
@@ -232,7 +232,7 @@
                           <th:block th:each="deadline : ${listDeadlines}">
                             <div th:if="${(deadline.date >= sprint.startDate and deadline.date <= sprint.endDate)}">
                               <b>[[${deadline.name}]]</b>
-                              <br><b>Date:</b> [[${#dates.format(deadline.date, 'dd MMM yyyy HH:mm a')}]]<br><br>
+                              <br><b>Date:</b> [[${#dates.format(deadline.date, 'dd MMM yyyy HH:mm a')}]]
                             </div>
                           </th:block>
                         </div>

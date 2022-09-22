@@ -2,17 +2,14 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import nz.ac.canterbury.seng302.shared.identityprovider.GroupDetailsResponse;
 
-import javax.persistence.Embeddable;
-import java.io.Serializable;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * Group entity for storing the idp group for use on the portfolio
  */
 
 public class Groups {
-    private  String shortName;
+    private String shortName;
     private String longName;
 
     private int groupId;
@@ -21,10 +18,11 @@ public class Groups {
 
     /**
      * Constructor for a group object
+     * 
      * @param shortName Short name of the group
-     * @param longName Long name of the group
-     * @param groupId Id of the group
-     * @param members Members in the group
+     * @param longName  Long name of the group
+     * @param groupId   Id of the group
+     * @param members   Members in the group
      */
     public Groups(String shortName, String longName, int groupId, List<User> members) {
         this.longName = longName;
@@ -65,10 +63,12 @@ public class Groups {
         this.members = members;
     }
 
-    public Groups () {}
+    public Groups() {
+    }
 
     /**
      * Constructor for a group object
+     * 
      * @param response Response protobuf object from the idp
      */
     public Groups(GroupDetailsResponse response) {
