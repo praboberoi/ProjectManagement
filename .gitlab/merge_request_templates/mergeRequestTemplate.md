@@ -1,4 +1,4 @@
-> **Note** Pleaase update the title of the merge request.
+> **Note** Please update the title of the merge request.
 
 **Tasks On Scrum Board**
 
