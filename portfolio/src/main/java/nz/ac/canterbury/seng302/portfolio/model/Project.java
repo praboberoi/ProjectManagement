@@ -55,6 +55,9 @@ public class Project {
     @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
     private Set<Evidence> evidences;
 
+    @OneToMany(mappedBy = "project", cascade = CascadeType.ALL)
+    private Set<Milestone> milestones;
+
     /**
      * No args Constructor of the Project.
      */

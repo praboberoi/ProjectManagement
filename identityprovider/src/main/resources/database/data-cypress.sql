@@ -1,6 +1,7 @@
 -- Delete any cypress test users
 DELETE FROM user_roles WHERE user_user_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%');
 DELETE FROM users_groups WHERE group_id IN (SELECT group_id FROM groups WHERE long_name LIKE '%Cypress%') OR group_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%');
+DELETE FROM users_groups WHERE user_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%') OR group_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%');
 DELETE FROM groups WHERE long_name LIKE '%Cypress%';
 DELETE FROM user WHERE username LIKE '%Cypress%';
 

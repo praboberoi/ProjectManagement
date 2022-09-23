@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -48,6 +49,9 @@ public class ProjectControllerTest {
 
     @MockBean
     private DeadlineService deadlineService;
+
+    @MockBean
+    private MilestoneService milestoneService;
 
     @MockBean
     private DashboardService dashboardService;
@@ -101,6 +105,7 @@ public class ProjectControllerTest {
                 .project(project)
                 .startDate(new java.sql.Date(2021,1,1))
                 .endDate(new java.sql.Date(2021, 3, 1))
+                .color(SprintColor.BLUE)
                 .build();
         testSprintList.add(testSprint);
         userResponse = UserResponse.newBuilder();
@@ -125,12 +130,14 @@ public class ProjectControllerTest {
     @Test
     void givenServer_WhenNavigateToProjectPage_ThenProjectPageReturned() throws Exception{
         Deadline newDeadline = new Deadline.Builder().project(project).name("Test").build();
+        Milestone newMilestone = new Milestone.Builder().project(project).name("Test").build();
         Event newEvent = new Event.Builder().eventName("Test").build();
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
         when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         when(eventService.getNewEvent(any())).thenReturn(newEvent);
         when(deadlineService.getNewDeadline(any())).thenReturn(newDeadline);
+        when(milestoneService.getNewMilestone(any())).thenReturn(newMilestone);
 
         this.mockMvc
                 .perform(get("/project/1"))
@@ -139,6 +146,7 @@ public class ProjectControllerTest {
                 .andExpect(model().attribute("listEvents", List.of()))
                 .andExpect(model().attribute("listDeadlines", List.of()))
                 .andExpect(model().attribute("deadline", newDeadline))
+                .andExpect(model().attribute("milestone", newMilestone))
                 .andExpect(model().attribute("project", project))
                 .andExpect(model().attribute("event", newEvent))
                 .andExpect(model().attribute("roles", testList))

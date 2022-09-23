@@ -38,9 +38,13 @@ When('I select delete again on the conformation modal', ()=> {
 })
 
 When("I enter an invalid deadline date", () => {
-    cy.get('#deadlineDate').clear().type("2021-06-10T08:30")
-    cy.get('#deadlineFormSubmitButton').click()
+    cy.get('#deadlineDate').clear().type("2021-06-10T08:30", {delay:0})
 })
+
+Then("I am unable to click submit", () => {
+    cy.get('#deadlineFormSubmitButton').should('be.disabled')
+})
+
 
 Then('A new deadline is created', () => {
     cy.contains("#messageSuccess",'Successfully Created CypressTest1')

@@ -3,6 +3,7 @@ DELETE FROM event WHERE project_id IN (SELECT project_id FROM project WHERE proj
 DELETE FROM deadline_colors where deadline_deadline_id IN (SELECT deadline_id FROM deadline WHERE project_id IN (SELECT project_id FROM project WHERE project_name LIKE '%Cypress%'));
 DELETE FROM evidence WHERE project_id IN (SELECT project_id FROM project WHERE project_name LIKE '%Cypress%');
 DELETE FROM deadline WHERE project_id IN (SELECT project_id FROM project WHERE project_name LIKE '%Cypress%');
+DELETE FROM milestone WHERE project_id IN (SELECT project_id FROM project WHERE project_name LIKE '%Cypress%');
 DELETE FROM evidence WHERE project_id IN (SELECT project_id FROM project WHERE project_name LIKE '%Cypress%');
 DELETE FROM project WHERE project_name LIKE '%Cypress%';
 

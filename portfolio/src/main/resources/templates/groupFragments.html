@@ -7,7 +7,7 @@
 
             <label for="git-alias" class="col-form-label required">Project Alias</label>
             <input type="text" class="form-control" id="git-project-alias" required name="repoName"
-                th:value="${repo.repoName}" onkeyup="validateProjectAlias();"></input>
+                th:value="${repo.repoName}" oninput="validateProjectAlias();"></input>
             <p id="gitProjectAliasError" th:text="${gitProjectAliasError}" class="error-msg"></p>
 
 
@@ -16,7 +16,7 @@
                     class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
             <input type="number" class="form-control" id="git-project-id" required name="gitlabProjectId"
-                th:value="${repo.gitlabProjectId}" onkeyup="validateProjectID();"></input>
+                th:value="${repo.gitlabProjectId}" oninput="validateProjectID();"></input>
             <p id="gitProjectIdError" th:text="${gitProjectIdError}" class="error-msg"></p>
 
 
@@ -33,7 +33,7 @@
                 title="This is the host of your repo (e.g. https://github.com)."><img class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}" /></span>
             <input type="text" class="form-control" id="git-host-address" required name="hostAddress"
-                th:value="${repo.hostAddress}" onkeyup="validateProjectHostAddress();"></input>
+                th:value="${repo.hostAddress}" oninput="validateProjectHostAddress();"></input>
             <p id="gitHostAddressError" th:text="${gitHostAddressError}" class="error-msg"></p>
 
         </div>

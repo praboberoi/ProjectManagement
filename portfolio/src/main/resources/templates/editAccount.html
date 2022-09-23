@@ -80,35 +80,35 @@
                                 <div class="row mb-3">
                                     <label for="firstName" class = "required col-sm-2 col-form-label"><h6>First Name: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="firstName" name="firstName" class="form-control" th:value="${user.firstName}" onkeyup="checkFirstName();" required>
+                                        <input type="text" id="firstName" name="firstName" class="form-control" th:value="${user.firstName}" oninput="checkFirstName();" required>
                                         <p id="firstNameError" th:text="${firstNameError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="lastName" class = "required col-sm-2 col-form-label"><h6>Last Name: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="lastName" name="lastName" class="form-control " th:value="${user.lastName}"  onkeyup="checkLastName();" required>
+                                        <input type="text" id="lastName" name="lastName" class="form-control " th:value="${user.lastName}"  oninput="checkLastName();" required>
                                         <p id="lastNameError" th:text="${lastNameError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="pronouns" class = "col-sm-2 col-form-label"><h6>Pronouns: </h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="pronouns" name="pronouns" class="form-control" th:value="${user.pronouns}" onkeyup="checkPronouns();">
+                                        <input type="text" id="pronouns" name="pronouns" class="form-control" th:value="${user.pronouns}" oninput="checkPronouns();">
                                         <p id="personalPronounsError" th:text="${personalPronounsError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="nickname" class = "col-sm-2 col-form-label"><h6>Nicknames: </h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="text" id="nickname" name="nickname" class="form-control" th:value="${user.nickname}" onkeyup="checkNickname();">
+                                        <input type="text" id="nickname" name="nickname" class="form-control" th:value="${user.nickname}" oninput="checkNickname();">
                                         <p id="nicknameError" th:text="${nicknameError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
                                     <label for="email" class = "required col-sm-2 col-form-label"><h6>Email: <span class="asterisk">*</span></h6></label>
                                     <div class = "col-sm-6">
-                                        <input type="email" id="email" name="email" class="form-control" th:value="${user.email}"onkeyup="checkEmail();" required>
+                                        <input type="email" id="email" name="email" class="form-control" th:value="${user.email}"oninput="checkEmail();" required>
                                         <p id="emailError" th:text="${emailError}" class="error-msg"></p>
                                     </div>
                                 </div>
@@ -140,7 +140,7 @@
                                                 <div id="uploadImage" class="center-block"></div>
                                             </div>
                                             <div class="modal-footer">
-                                                <input type="file" accept="image/*" name="image" id="image" class="form-control" onchange="loadFile(event)" >
+                                                <input type="file" accept="image/*" name="image" id="image" class="form-control" oninput="loadFile(event)" >
                                                 <button type="button" id="cropImageBtn" class="btn btn-outline-primary" data-dismiss="modal" onclick="cropImage()">
                                                     <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}"/> Save</button>
                                                 <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">

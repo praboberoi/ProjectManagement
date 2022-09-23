@@ -30,7 +30,7 @@
                             <input type="hidden" id="eventId" th:field="*{eventId}" />
                             <div class="mb-3">
                                 <label for="event-name" class="col-form-label required">Event Name</label>
-                                <input style="font-size:20px;" type="text" class="form-control required" id="event-name" th:field="*{eventName}" onkeyup="checkEventName()" required>
+                                <input style="font-size:20px;" type="text" class="form-control required" id="event-name" th:field="*{eventName}" oninput="checkEventName()" required>
                                 <div>
                                     <span id="charCount" th:value="${charCount}">[[*{eventName.length}]] </span> / 50 characters used.
                                 </div>
@@ -49,11 +49,11 @@
                             <!-- Start Date & Time-->
                             <div class="row">
                                 <div class="col-md-6 ms-auto">
-                                    <input type="datetime-local" class="form-control date-font" id="eventStartDate" th:field="*{startDate}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax} + 'T00:00'}" onchange="checkEventDates()" required>
+                                    <input type="datetime-local" class="form-control date-font" id="eventStartDate" th:field="*{startDate}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax} + 'T00:00'}" oninput="checkEventDates()" required>
                                     <p id="eventStartDateError"  class="error-msg"></p>
                                 </div>
                                 <div class="col-md-6 ms-auto">
-                                    <input type="datetime-local" class="form-control date-font" id="eventEndDate" th:field="*{endDate}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax}+'T00:00'}" onchange="checkEventDates()" required>
+                                    <input type="datetime-local" class="form-control date-font" id="eventEndDate" th:field="*{endDate}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax}+'T00:00'}" oninput="checkEventDates()" required>
                                     <p id="eventEndDateError"  class="error-msg"></p>
                                 </div>
                                 <br>
@@ -95,7 +95,7 @@
                             <input type="hidden" id="deadlineId" th:field="*{deadlineId}">
                             <div class="mb-3">
                                 <label for="deadline-name" class="col-form-label required">Deadline Name</label>
-                                <input style="font-size:20px;" type="text"  class="form-control required" id="deadline-name" maxlength="50" th:field="*{name}" onkeyup="checkDeadlineName()" required>
+                                <input style="font-size:20px;" type="text"  class="form-control required" id="deadline-name" maxlength="50" th:field="*{name}" oninput="checkDeadlineName()" required>
                                 <div>
                                     <span id="deadlineCharCount" th:value="${charCount}">[[*{name.length}]] </span> / 50 characters used.
                                 </div>
@@ -105,7 +105,7 @@
                             <div class="row mb-4">
                                 <div class="col-12">
                                     <label  for="deadlineDate" class="form-label date-font required">Date</label>
-                                    <input type="datetime-local" class="form-control date-font" id="deadlineDate" th:field="*{date}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax}+'T00:00'}" onchange="checkDeadlineDates()" required>
+                                    <input type="datetime-local" class="form-control date-font" id="deadlineDate" th:field="*{date}" th:min="@{${projectDateMin} + 'T00:00'}" th:max="@{${projectDateMax}+'T00:00'}" oninput="checkDeadlineDates()" required>
                                     <p id="deadlineDateError" class="error-msg"></p>
                                 </div>
                             </div>
