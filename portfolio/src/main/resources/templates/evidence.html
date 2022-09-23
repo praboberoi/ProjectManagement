@@ -130,7 +130,7 @@
                             <div class="mb-3">
                                 <label for="evidence-title" class="col-form-label required">Evidence Title</label>
                                 <input type="text" class="form-control required" id="evidence-title" name="title"
-                                    th:field="*{title}" maxlength="50" onkeyup="checkEvidenceTitle()" required>
+                                    th:field="*{title}" maxlength="50" oninput="checkEvidenceTitle()" required>
                                 <div>
                                     <span id="evidenceCharCount" th:value="${charCount}">[[*{title.length}]] </span> /
                                     50 characters used.
