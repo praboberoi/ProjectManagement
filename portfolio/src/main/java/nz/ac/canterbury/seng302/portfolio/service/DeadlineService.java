@@ -62,7 +62,7 @@ public class DeadlineService {
             java.sql.Date date = new Date(deadline.getDate().getTime());
             Sprint sprint = sprintRepository.findByDateAndProject(deadline.getProject(), date);
             if (sprint == null) {
-                sprintNames.add("");
+                sprintNames.add("(No Sprint)");
             } else {
                 sprintNames.add("(" + sprint.getSprintName() + ")");
             }
