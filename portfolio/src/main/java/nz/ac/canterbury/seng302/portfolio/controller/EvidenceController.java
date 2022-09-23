@@ -21,6 +21,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
+import static org.springframework.http.HttpStatus. *;
+
 /**
  * Controller for the evidence page
  */
@@ -75,14 +77,12 @@ public class EvidenceController {
      * Updates the model with the correct list of evidence and a selected evidence
      * @param userId User ID containing the evidence
      * @param evidenceId ID of the selected evidence object
-     * @param ra Redirect Attribute, a frontend message object
      * @return The selected evidence fragment
      */
     @GetMapping(path="/evidence/{userId}/{evidenceId}")
     public ModelAndView selectedEvidence(
             @PathVariable int userId,
-            @PathVariable int evidenceId,
-            RedirectAttributes ra) {
+            @PathVariable int evidenceId) {
         ModelAndView mv = new ModelAndView("evidence::selectedEvidence");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject("listEvidence", listEvidence);
@@ -90,7 +90,8 @@ public class EvidenceController {
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
             mv.addObject("selectedEvidence", selectedEvidence);
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
+            mv.addObject("messageDanger", e.getMessage());
         }
         return mv;
     }
@@ -123,35 +124,72 @@ public class EvidenceController {
         return "redirect:/evidence/{userId}";
     }
 
-    @GetMapping(path="/evidence/{userId}/{evidenceId}/evidence")
+    /**
+     * Updates the model with the details of evidence with given evidenceId
+     * @param evidenceId ID of the selected evidence
+     * @return evidence form fragment
+     */
+    @GetMapping(path="/evidence/{userId}/{evidenceId}/editEvidence")
     public ModelAndView editEvidence(
-            @PathVariable("userId") int userId,
-            @PathVariable("evidenceId") int evidenceId,
-            RedirectAttributes ra) {
+            @PathVariable int evidenceId) {
         ModelAndView mv = new ModelAndView("evidence::evidenceForm");
         try {
             Evidence evidence = evidenceService.getEvidence(evidenceId);
             List<Project> listProjects = projectService.getAllProjects();
             mv.addObject("evidence", evidence);
             mv.addObject("listProjects", listProjects);
+            mv.addObject("submissionImg", apiPrefix+"/icons/save-icon.svg");
+            mv.addObject("submissionName", "Save");
+
 
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
+            mv.addObject("messageDanger", e.getMessage());
         }
         return mv;
 
     }
+
+    /**
+     * Updates the form with the newly created evidence
+     * @param userId of user to create a new Evidence
+     * @return evidence form fragment
+     */
     @GetMapping(path="/evidence/{userId}/getNewEvidence")
     public ModelAndView createEvidence(
-            @PathVariable("userId") int userId,
-            RedirectAttributes ra) {
+            @PathVariable int userId) {
         ModelAndView mv = new ModelAndView("evidence::evidenceForm");
         Evidence evidence = evidenceService.getNewEvidence(userId);
         List<Project> listProjects = projectService.getAllProjects();
         mv.addObject("evidence", evidence);
         mv.addObject("listProjects", listProjects);
+        mv.addObject("submissionImg", apiPrefix+"/icons/create-icon.svg");
+        mv.addObject("submissionName", "Create");
         return mv;
-
     }
+
+    /**
+     * Deletes the evidence with the given evidence ID
+     * @param evidenceId of the evidence to be deleted
+     * @param ra redirect attribute of for displaying the message
+     * @return the link to the HTML page
+     */
+    @PostMapping(path="/evidence/{userId}/{evidenceId}/deleteEvidence")
+    public String deleteEvidence(
+            @PathVariable int evidenceId,
+            RedirectAttributes ra) {
+        String message = null;
+        try {
+            message = evidenceService.deleteEvidence(evidenceId);
+            ra.addFlashAttribute("messageSuccess", message);
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+        }
+
+        return "redirect:/evidence/{userId}";
+    }
+
+
+
 
 }

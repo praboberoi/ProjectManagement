@@ -25,7 +25,7 @@
         <div class="page-title">
             <h2 id="name">Evidence</h2>
         </div>
-        <div id="toRefresh">
+        <div id="serverMessages" th:fragment="serverMessages">
             <br>
             <div id="messageSuccess" class="alert alert-success text-center">[[${messageSuccess}]]</div>
             <div id="messageDanger" class="alert alert-danger text-center">[[${messageDanger}]]</div>
@@ -55,7 +55,7 @@
                                                 <a role="button" class="project-name" href="javascript:void(0);"
                                                     th:onclick="'getSelectedEvidence(' + ${evidence.evidenceId} + ')'"
                                                     th:text="${evidence.title}"></a>
-                                                <div>
+                                                <div th:if="${isCurrentUserEvidence}">
                                                     <button class="btn btn-outline-primary btn-sm"
                                                             th:data-id="${evidence.evidenceId}"
                                                             th:data-projectid="${evidence.project.projectId}"
@@ -64,7 +64,13 @@
                                                         <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
                                                         Edit
                                                     </button>
-                                                    <button class="btn btn-outline-secondary btn-sm">
+                                                    <button class="btn btn-outline-secondary btn-sm"
+                                                            data-bs-toggle="modal"
+                                                            th:data-id="${evidence.evidenceId}"
+                                                            th:data-title="${evidence.title}"
+                                                            data-bs-target="#deleteEvidenceConformationModal"
+                                                            th:onclick="updateDeleteDetails(this.getAttribute('data-id'),
+                                                                                      this.getAttribute('data-title'))">
                                                         <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/>
                                                         Delete
                                                     </button>
@@ -179,7 +185,7 @@
                             <div class="mb-3">
                                 <label for="evidence-description" class="col-form-label required">Description</label>
                                 <textarea type="evidence-description" class="form-control required"
-                                    id="evidence-description" th:field="*{description}" required></textarea>
+                                    id="evidence-description" oninput="checkEvidenceDescription()" th:field="*{description}" required></textarea>
                                 <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}"
                                     class="error-msg"></p>
                             </div>
@@ -191,8 +197,8 @@
                             <div class="modal-footer">
                                 <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton">
                                     <img class="icon img-color-secondary" id="evidenceFromSubmitImg"
-                                        th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" />
-                                    <span id="evidenceFormSubmitLabel">Create</span></button>
+                                        th:src="${submissionImg}" />
+                                    <span id="evidenceFormSubmitLabel" >[[${submissionName}]]</span></button>
                                 <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                                     <img class="icon img-color-secondary"
                                         th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
@@ -202,6 +208,34 @@
                     </div>
                 </div>
 
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="deleteEvidenceConformationModal" tabindex="-1"
+         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Delete Evidence</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p id="deleteMessage"></p>
+                </div>
+                <div class="modal-footer">
+                    <form id="deleteEvidenceForm" method="post">
+                        <button type="submit" id="evidenceModalDeleteBtn" class="btn btn-outline-primary" data-bs-dismiss="modal">
+                            <img class="icon img-color-primary"
+                                 th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                            Delete
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                            <img class="icon img-color-secondary"
+                                 th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" /> Close</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
