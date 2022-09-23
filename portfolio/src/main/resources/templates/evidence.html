@@ -35,7 +35,7 @@
 
         <div th:if="${isCurrentUserEvidence}" class="createBtn">
             <button class="btn btn-outline-primary ms-0 mb-1" id="create-evidence-btn" data-bs-toggle="modal"
-                data-bs-target="#evidenceFormModal">
+                data-bs-target="#evidenceFormModal" onclick="createNewEvidence()">
                 <img class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /> Create Evidence</button>
         </div>
@@ -58,17 +58,9 @@
                                                 <div>
                                                     <button class="btn btn-outline-primary btn-sm"
                                                             th:data-id="${evidence.evidenceId}"
-                                                            th:data-title="${evidence.title}"
-                                                            th:data-projectname="${evidence.project.projectName}"
                                                             th:data-projectid="${evidence.project.projectId}"
-                                                            th:data-occurance="${evidence.dateOccurred}"
-                                                            th:data-projectlist="${listProjects}"
                                                             th:onclick="editEvidence(this.getAttribute('data-id'),
-                                                                                      this.getAttribute('data-title'),
-                                                                                      this.getAttribute('data-projectname'),
-                                                                                      this.getAttribute('data-projectid'),
-                                                                                      this.getAttribute('data-occurance'),
-                                                                                      this.getAttribute('data-projectlist'))">
+                                                                                      this.getAttribute('data-projectid'))">
                                                         <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
                                                         Edit
                                                     </button>

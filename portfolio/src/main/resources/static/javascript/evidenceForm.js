@@ -22,42 +22,57 @@ function checkEvidenceTitle(){
     charMessage.innerText = charCount + ' ';
 }
 
+function updateEvidenceModalForm(httpRequest) {
 
-/**
- * Opens the modal to edit
- * @param evidenceId
- * @param evidenceTitle
- * @param projectName
- * @param evidenceProjectId
- * @param evidenceDateOccurred
- */
-function editEvidence(evidenceId,evidenceTitle, projectName, evidenceProjectId,evidenceDateOccurred, projectList) {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            document.getElementById('evidenceForm').outerHTML = httpRequest.responseText;
+        } else if (httpRequest.status === 400) {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Bad Request";
+        } else {
+            messageDanger.hidden = false;
+            messageSuccess.hidden = true;
+            messageDanger.innerText = "Something went wrong.";
+        }
+    }
+}
+
+function editEvidence(evidenceId, evidenceProjectId) {
     let httpRequest = new XMLHttpRequest();
-
-    const evidenceForm = document.getElementById('evidenceForm');
     httpRequest.open('GET', `${window.location.pathname}/${evidenceId}/evidence`)
     httpRequest.onreadystatechange = () => {
-        if (httpRequest.readyState === XMLHttpRequest.DONE) {
-            if (httpRequest.status === 200) {
-                document.getElementById(`project-${evidenceProjectId}`).selected = true
-                evidenceForm.outerHTML = httpRequest.responseText;
-                const modalElement = document.getElementById('evidenceFormModal');
-                const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
-                    keyword: false,
-                    backdrop: "static"
-                });
-                modal.show();
-            } else if (httpRequest.status === 400) {
-                messageDanger.hidden = false;
-                messageSuccess.hidden = true;
-                messageDanger.innerText = "Bad Request";
-            } else {
-                messageDanger.hidden = false;
-                messageSuccess.hidden = true;
-                messageDanger.innerText = "Something went wrong.";
-            }
-        }
+        updateEvidenceModalForm(httpRequest);
+        document.getElementById('evidenceFormTitle').innerText = "Update Evidence";
+        document.getElementById(`project-${evidenceProjectId}`).selected = true;
+        document.getElementById('evidenceFormSubmitLabel').innerText = 'Save';
+        document.getElementById('evidenceFromSubmitImg').src = `${apiPrefix}/icons/save-icon.svg`;
+        const modalElement = document.getElementById('evidenceFormModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
+            keyword: false,
+            backdrop: "static"
+        });
+        modal.show();
     }
     httpRequest.send();
 
+}
+
+function createNewEvidence() {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.open('GET', `${window.location.pathname}/getNewEvidence`)
+    httpRequest.onreadystatechange = () => {
+        updateEvidenceModalForm(httpRequest);
+        document.getElementById('evidenceFormTitle').innerText = "Create New Evidence";
+        document.getElementById('evidenceFormSubmitLabel').innerText = 'Create';
+        document.getElementById('evidenceFromSubmitImg').src = `${apiPrefix}/icons/create-icon.svg`;
+        const modalElement = document.getElementById('evidenceFormModal');
+        const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
+            keyword: false,
+            backdrop: "static"
+        });
+        modal.show();
+    }
+    httpRequest.send();
 }
