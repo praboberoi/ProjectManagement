@@ -34,6 +34,7 @@ public class ProjectController {
     @Autowired private EventService eventService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Autowired private DeadlineService deadlineService;
+    @Autowired private MilestoneService milestoneService;
 
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
@@ -66,23 +67,32 @@ public class ProjectController {
             RedirectAttributes ra) {
         try {
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
+
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
+
             Project project = projectService.getProjectById(projectId);
             Event newEvent = eventService.getNewEvent(project);
             Deadline newDeadline = deadlineService.getNewDeadline(project);
+            Milestone newMilestone = milestoneService.getNewMilestone(project);
+
             model.addAttribute("listEvents", listEvents);
             model.addAttribute("listDeadlines", listDeadlines);
             model.addAttribute("listSprints", listSprints);
+
             model.addAttribute("project", project);
             model.addAttribute("event", newEvent);
             model.addAttribute("deadline", newDeadline);
+            model.addAttribute("milestone", newMilestone);
+
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             model.addAttribute("projectDateMin", project.getStartDate());
             model.addAttribute("projectDateMax", project.getEndDate());
+
             return "project";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());

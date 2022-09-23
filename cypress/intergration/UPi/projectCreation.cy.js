@@ -14,13 +14,11 @@ When("I enter {word} as a Project Name", (word) => {
 })
 
 When("I enter {string} as the project start date", (date) => {
-    cy.get('#startDate').type(date)
-    cy.get('#startDateError').should('have.text','' )
+    cy.get('#startDate').type(date, {delay:0})
 })
 
 When("I enter {string} as the project end date", (date) => {
-    cy.get('#endDate').type(date)
-    cy.get('#endDateError').should('have.text','' )
+    cy.get('#endDate').type(date, {delay:0})
 })
 
 When("I enter {string} as the project description", (description) => {

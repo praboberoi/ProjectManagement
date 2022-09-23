@@ -13,7 +13,7 @@ public interface EvidenceRepository extends CrudRepository<Evidence, Integer> {
      * @param ownerId user id of the owner of the evidence
      * @return List of all the evidence owned by the specified user.
      */
-    List<Evidence> getAllByOwnerIdEquals(Integer ownerId);
+    List<Evidence> getAllByOwnerIdEqualsOrderByDateOccurredDesc(Integer ownerId);
 
     /**
      * Get the piece of evidence with the specified id.
