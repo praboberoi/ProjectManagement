@@ -152,25 +152,25 @@ public class EventService {
      * @param event of type Event
      */
     public void updateEventColors(Event event) {
-        event.clearColourList();
         List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event)
-                .stream().sorted(Comparator.comparingInt(Sprint::getSprintId))
+                .stream().sorted((sprint1, sprint2)-> sprint1.getEndDate().before(sprint2.getStartDate()) ? 1 : 0)
                 .toList();
 
-        AtomicInteger counter = new AtomicInteger(0);
+        ArrayList<SprintColor> eventColours = new ArrayList<>();
 
         sprintList.forEach(sprint -> {
-            if ( !event.getColors().contains(sprint.getColor()) )
-                event.addColor(sprint.getColor(), counter.getAndIncrement());
+            if ( !event.getColors().contains(sprint.getColor()))
+                eventColours.add(sprint.getColor());
         });
 
         if (!sprintList.isEmpty()) {
             if ( sprintList.get(0).getStartDate().after(event.getStartDate()) )
-                event.addColor(SprintColor.WHITE, 0);
+                eventColours.add(0, SprintColor.WHITE);
 
             if (sprintList.get(sprintList.size() - 1).getEndDate().before(event.getEndDate()))
-                event.addColor(SprintColor.WHITE, event.getColors().size());
+                eventColours.add(SprintColor.WHITE);
         }
+        event.setColors(eventColours);
     }
 
     /**

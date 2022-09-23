@@ -45,9 +45,8 @@ public class Event {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startDate;
 
-    @Column
     @ElementCollection
-    private final List<SprintColor> colors = new ArrayList<>();
+    private  List<SprintColor> colors;
 
 
     /**
@@ -130,14 +129,7 @@ public class Event {
         return this.colors;
     }
 
-    public void addColor(SprintColor color, int index) {
-        this.colors.add(index, color);
-    }
-
-    public void clearColourList() {
-        colors.clear();
-    }
-
+    public void setColors(ArrayList<SprintColor> eventColours) {this.colors = eventColours;}
 
     /**
      * Overrides for comparing event objects
