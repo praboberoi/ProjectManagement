@@ -63,6 +63,7 @@ public class EvidenceController {
         model.addAttribute("evidence", newEvidence);
         model.addAttribute("listEvidence", listEvidence);
         model.addAttribute("listProjects", listProjects);
+        model.addAttribute("project", listProjects.get(0));
         model.addAttribute("isCurrentUserEvidence", user.getUserId()==userId);
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));

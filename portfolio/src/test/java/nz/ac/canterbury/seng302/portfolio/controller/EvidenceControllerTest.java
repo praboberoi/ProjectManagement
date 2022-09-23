@@ -22,9 +22,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.nullValue;
@@ -168,7 +170,8 @@ public class EvidenceControllerTest {
     void givenEvidenceObject_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
-        ArrayList<Project> projectList = new ArrayList<>();
+        Project project = new Project.Builder().startDate(new Date(2022)).endDate(new Date(2022)).build();
+        ArrayList<Project> projectList = new ArrayList<>(Arrays.asList(project));
         when(projectService.getAllProjects()).thenReturn(projectList);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getNewEvidence(99)).thenReturn(evidence);

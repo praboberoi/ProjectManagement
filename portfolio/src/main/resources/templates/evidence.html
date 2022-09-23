@@ -125,7 +125,8 @@
                             <label for="evidence-project" class="col-form-label required">Select Project</label>
                             <select type="text" class="form-select required" id="evidence-project" th:field="*{project}" onclick="evidenceProjectChange()" required>
                                 <th:block th:each="project : ${listProjects}">
-                                    <option  id="selectedProject" th:value ="${project.projectId}" th:attr="startDate=${project.startDate}">[[${project.projectName}]]</option>
+                                    <option  id="selectedProject" th:value ="${project.projectId}" th:data-startDate="${project.startDate}" th:data-endDate="${project.endDate}">
+                                        [[${project.projectName}]]</option>
                                 </th:block>
 
                             </select>
