@@ -72,6 +72,8 @@ public class ProjectController {
             listEvents.forEach(eventService::updateEventColors);
 
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
+
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
 
             Project project = projectService.getProjectById(projectId);
@@ -86,6 +88,7 @@ public class ProjectController {
             model.addAttribute("project", project);
             model.addAttribute("event", newEvent);
             model.addAttribute("deadline", newDeadline);
+            model.addAttribute("deadlineDateMapping", deadlineDateMapping);
             model.addAttribute("milestone", newMilestone);
 
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));

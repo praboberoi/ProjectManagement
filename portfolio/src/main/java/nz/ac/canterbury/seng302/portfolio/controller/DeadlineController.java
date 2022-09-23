@@ -66,12 +66,14 @@ public class DeadlineController {
     public ModelAndView deadlines(@PathVariable("projectId") int projectId) {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
         listDeadlines.forEach(deadlineService::updateDeadlineColors);
+        Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("deadlineFragments::deadlineTab");
         mv.addObject("project", project);
         mv.addObject("listDeadlines", listDeadlines);
         mv.addObject("editDeadlineNotifications", editing);
+        mv.addObject("deadlineDateMapping", deadlineDateMapping);
         return mv;
     }
 

@@ -258,7 +258,7 @@
                             <th:block th:each="deadline : ${listDeadlines}">
                               <div th:if="${(deadline.date >= sprint.startDate and deadline.date <= sprint.endDate)}">
                                 <b>[[${deadline.name}]]</b>
-                                <br><b>Date:</b> [[${#dates.format(deadline.date, 'dd MMM yyyy HH:mm a')}]]
+                                <br><b>Date:</b> [[${#dates.format(deadline.date, 'dd MMM yyyy HH:mm a')}]] [[${deadlineDateMapping.get(deadline.deadlineId)}]]<br><br>
                               </div>
                             </th:block>
                           </div>
