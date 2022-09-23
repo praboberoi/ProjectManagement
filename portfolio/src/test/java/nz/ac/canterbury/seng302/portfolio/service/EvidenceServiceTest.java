@@ -191,7 +191,7 @@ class EvidenceServiceTest {
     @Test
     void givenEvidenceWithUser_whenGetEvidenceByUserIdCalled_thenCorrectEvidenceReturned() {
         List<Evidence> expectedEvidence = List.of(evidence1);
-        when(evidenceRepository.getAllByOwnerIdEquals(999)).thenReturn(expectedEvidence);
+        when(evidenceRepository.getAllByOwnerIdEqualsOrderByDateOccurredDesc(999)).thenReturn(expectedEvidence);
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(999);
         assertArrayEquals(listEvidence.toArray(), expectedEvidence.toArray());
     }
