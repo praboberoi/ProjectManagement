@@ -36,7 +36,7 @@
             </div>
             <div class="mb-3">
                 <label for="deadline-name" class="col-form-label required">Deadline Name</label>
-                <input style="font-size:20px;" type="text"  class="form-control required" id="deadline-name" maxlength="50" th:field="*{name}" onkeyup="checkDeadlineName()" required>
+                <input style="font-size:20px;" type="text"  class="form-control required" id="deadline-name" maxlength="50" th:field="*{name}" oninput="checkDeadlineName()" required>
                 <div>
                     <span id="charCount" th:value="${charCount}">[[*{name.length}]] </span> / 50 characters used.
                 </div>
@@ -46,7 +46,7 @@
             <div style="height:30px;" class="row">
                 <div class="mb-3">
                     <label  for="deadlineDate" class="form-label date-font required">Date</label>
-                    <input type="datetime-local" class="form-control date-font" id="deadlineDate" th:field="*{date}" th:min="${projectDateMin}" th:max="${projectDateMax}" onchange="checkDeadlineDates()" required>
+                    <input type="datetime-local" class="form-control date-font" id="deadlineDate" th:field="*{date}" th:min="${projectDateMin}" th:max="${projectDateMax}" oninput="checkDeadlineDates()" required>
                     <p id="deadlineDateError" class="error-msg"></p>
                 </div>
                 <div class="col-md-6 ms-auto">

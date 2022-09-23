@@ -1,3 +1,63 @@
 <th:block th:each="milestone : ${listMilestones}" th:fragment="milestoneTab">
-    
+
 </th:block>
+
+<div th:fragment="milestoneForm">
+    <div class="modal fade" id="milestoneFormModal" tabindex="-1" role="dialog"
+        aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="milestoneFormTitle">Create New Milestone</h5>
+                    <button type="button" class="close" aria-label="Close" data-bs-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger text-center" id="milestoneFormModalError"></div>
+                    <div class="projectForm">
+                        <form id="createMilestoneForm" name="createMilestoneForm" onsubmit="saveMilestone(); return false"
+                            th:object="${milestone}">
+                            <input type="hidden" id="milestoneId" th:field="*{milestoneId}">
+                            <div class="mb-3">
+                                <label for="milestone-name" class="col-form-label required">Milestone Name</label>
+                                <input style="font-size:20px;" type="text" class="form-control required"
+                                    id="milestone-name" maxlength="50" th:field="*{name}" oninput="checkMilestoneName()"
+                                    required>
+                                <div>
+                                    <span id="milestoneCharCount" th:value="${charCount}">[[*{name.length}]] </span> / 50
+                                    characters used.
+                                </div>
+                                <p id="milestoneNameError" class="error-msg"></p>
+                            </div>
+                            <!-- Date & Time-->
+                            <div class="row mb-4">
+                                <div class="col-12">
+                                    <label for="milestoneDate" class="form-label date-font required">Date</label>
+                                    <input type="date" class="form-control date-font" id="milestoneDate"
+                                        th:field="*{date}" th:min="@{${projectDateMin}}"
+                                        th:max="@{${projectDateMax}}" oninput="checkMilestoneDates()" required>
+                                    <p id="milestoneDateError" class="error-msg"></p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" name="submit" id="milestoneFormSubmitButton"
+                                    class="btn btn-outline-primary">
+                                    <img class="icon img-color-primary" id="milestoneFromSubmitImg"
+                                        th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}" />
+                                    <span id="milestoneFormSubmitLabel">Create</span></button>
+                                <button type="button" class="btn btn-outline-secondary"
+                                    data-bs-dismiss="modal">
+                                    <img class="icon img-color-secondary"
+                                        th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
+                                    Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script th:src="@{{apiPrefix}/javascript/milestoneForm.js(apiPrefix=${apiPrefix})}"></script>
+    <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
+</div>

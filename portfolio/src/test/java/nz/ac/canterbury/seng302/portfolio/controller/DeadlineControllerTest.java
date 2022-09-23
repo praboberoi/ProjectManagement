@@ -192,12 +192,12 @@ class DeadlineControllerTest {
      */
     @Test
     void givenBadDeadlineRequest_whenSubmitted_thenAppropriateMessageIsDisplayed() throws Exception {
-        when(deadlineService.saveDeadline(any())).thenThrow(new IncorrectDetailsException("Failure to save the deadline"));
+        when(deadlineService.saveDeadline(any())).thenThrow(new IncorrectDetailsException("Failed to save the deadline"));
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/project/1/saveDeadline")
                         .flashAttr("deadlineDTO", toDTO(deadline3)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Failure to save the deadline"));
+                .andExpect(content().string("Failed to save the deadline"));
     }
 
     /**

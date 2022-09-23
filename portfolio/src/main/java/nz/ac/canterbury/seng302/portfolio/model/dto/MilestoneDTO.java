@@ -25,6 +25,10 @@ public class MilestoneDTO {
 
     public Project getProject() {return project;}
 
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
     public String getName() {return name;}
 
     public Date getDate() {return date;}
