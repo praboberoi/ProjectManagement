@@ -2,8 +2,12 @@ let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
+let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
+evidenceCreateBtn.disabled = true;
 
-const userId = document.getElementById('userId').value;
+const evidenceTitleError = document.getElementById('evidenceTitleError')
+const evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
+const evidenceDescription = document.getElementById('evidence-description');
 
 function saveEvidence() {
     let httpRequest = new XMLHttpRequest();
@@ -19,18 +23,50 @@ function saveEvidence() {
 
 function checkEvidenceTitle() {
     const evidenceTitle = document.getElementById('evidence-title');
+    let evidenceTitleStrip = evidenceTitle.value.trim()
     let charMessage = document.getElementById("evidenceCharCount");
-    let evidenceNameError = document.getElementById('evidenceDateError')
-    let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
-    let charCount = evidenceTitle.value.length;
+    let charCount = evidenceTitleStrip.length;
     charMessage.innerText = charCount + ' ';
-
-    if (evidenceTitle.value.length === 1) {
-        evidenceCreateBtn.disabled = true;
-        evidenceNameError.innerText = "Cannot have only one character for the name"
+    if (evidenceTitleStrip.length <= 1) {
+        evidenceTitleError.innerText = "Evidence title must be at least 2 characters"
+    } else if (!/[a-zA-Z]/.test(evidenceTitleStrip)) {
+        evidenceTitleError.innerText = "Evidence title must contain some letters"
+    } else {
+        evidenceTitleError.innerText = ""
     }
-    if (evidenceTitle.value.)
+    checkCreateButton();
+}
 
+function checkEvidenceDate(project) {
+    console.log("text :) " + project.innerText)
+    console.log("Date :) " + project)
+}
 
+function evidenceProjectChange() {
+    const currentProjectStartDate = document.getElementById("selectedProject");
+    console.log(currentProjectStartDate.startDate)
+}
+
+function checkEvidenceDescription() {
+    let evidenceDescriptionStrip = evidenceDescription.value.trim()
+    if (evidenceDescriptionStrip.length < 2) {
+        evidenceDescriptionError.innerText = "Evidence description must be at least 2 characters"
+    } else if (evidenceDescriptionStrip.length >= 200) {
+        evidenceDescriptionError.innerText = "Evidence description must be less that 200 characters"
+    } else {
+        evidenceDescriptionError.innerText = ""
+    }
+    checkCreateButton();
+}
+
+function checkCreateButton() {
+    let evidenceDescriptionStrip = evidenceDescription.value.trim()
+    evidenceCreateBtn.disabled = false;
+
+    if (evidenceTitleError.innerText !== "") {
+        evidenceCreateBtn.disabled = true;
+    } else if (evidenceDescriptionError.innerText !== "" || evidenceDescriptionStrip.length < 2) {
+        evidenceCreateBtn.disabled = true;
+    }
 
 }

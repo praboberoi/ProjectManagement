@@ -114,7 +114,7 @@
                         <input type="hidden" id="evidenceId" th:field="*{evidenceId}"/>
                         <div class="mb-3">
                             <label for="evidence-title" class="col-form-label required">Evidence Title</label>
-                            <input type="text" class="form-control required" id="evidence-title" name="title" th:field="*{title}" maxlength="50" onkeyup="checkEvidenceTitle()" required>
+                            <input type="text" class="form-control required" id="evidence-title" name="title" th:field="*{title}" maxlength="50" oninput="checkEvidenceTitle()" required>
                             <div>
                                 <span id="evidenceCharCount" th:value="${charCount}">[[*{title.length}]] </span> / 50 characters used.
                             </div>
@@ -123,9 +123,9 @@
 
                         <div class="mb-3">
                             <label for="evidence-project" class="col-form-label required">Select Project</label>
-                            <select type="text" class="form-select required" id="evidence-project" th:field="*{project}"    required>
+                            <select type="text" class="form-select required" id="evidence-project" th:field="*{project}" onclick="evidenceProjectChange()" required>
                                 <th:block th:each="project : ${listProjects}">
-                                    <option  id="selectedProject" th:value ="${project.projectId}">[[${project.projectName}]]</option>
+                                    <option  id="selectedProject" th:value ="${project.projectId}" th:attr="startDate=${project.startDate}">[[${project.projectName}]]</option>
                                 </th:block>
 
                             </select>
@@ -137,20 +137,19 @@
                             <span data-bs-toggle="tooltip" data-bs-placement="top" aria-label="The date of evidence creation." title="The date of evidence creation.">
                                 <img class="icon img-color-primary" src="/icons/question-circle.svg">
                             </span>
-                            <input  type="date" class="form-control required" id="evidence-date" th:field="*{dateOccurred}" required>
+                            <input  type="date" class="form-control required" id="evidence-date" th:field="*{dateOccurred}" th:min="${projectStartDate}" th:max="${projectEndDate}" oninput="checkEvidenceDate()" required>
                             <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
                         </div>
 
                         <div class="mb-3">
                             <label for="evidence-description" class="col-form-label required">Description</label>
-                            <textarea type="evidence-description"  class="form-control required" id="evidence-description" th:field="*{description}" required></textarea>
+                            <textarea type="evidence-description"  class="form-control required" id="evidence-description" th:field="*{description}" oninput="checkEvidenceDescription()" maxlength="200" required></textarea>
                             <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}" class="error-msg"></p>
                         </div>
 
 
                         <div class="row">
                         </div>
-                        <br>
                         <div class="modal-footer">
                             <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" >
                                 <img class="icon img-color-secondary" id="evidenceFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
