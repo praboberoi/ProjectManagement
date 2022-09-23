@@ -60,9 +60,11 @@ public class EventController {
       public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
           listEvents.forEach(eventService::updateEventColors);
+          Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getStartAndEndDates(listEvents);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);
+          mv.addObject("eventDateMappingDictionary", eventDateMappingDictionary);
           return mv;
       }
 

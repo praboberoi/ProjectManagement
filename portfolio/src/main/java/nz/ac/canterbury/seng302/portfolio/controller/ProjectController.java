@@ -70,6 +70,7 @@ public class ProjectController {
 
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
+            Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getStartAndEndDates(listEvents);
 
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
@@ -90,6 +91,8 @@ public class ProjectController {
             model.addAttribute("deadline", newDeadline);
             model.addAttribute("deadlineDateMapping", deadlineDateMapping);
             model.addAttribute("milestone", newMilestone);
+            model.addAttribute("eventDateMappingDictionary", eventDateMappingDictionary);
+
 
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", new User(userAccountClientService.getUser(principal)));

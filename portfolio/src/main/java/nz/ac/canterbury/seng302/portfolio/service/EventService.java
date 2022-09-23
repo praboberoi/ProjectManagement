@@ -81,12 +81,12 @@ public class EventService {
             Sprint start = sprintRepository.findByDateAndProject(event.getProject(), startDate);
             Sprint end = sprintRepository.findByDateAndProject(event.getProject(), endDate);
             if (start == null) {
-                sprintNames.add("");
+                sprintNames.add("(No Sprint)");
             } else {
                 sprintNames.add("(" + start.getSprintName() + ")");
             }
             if (end == null) {
-                sprintNames.add("");
+                sprintNames.add("(No Sprint)");
             } else {
                 sprintNames.add("(" + end.getSprintName() + ")");
             }

@@ -241,8 +241,8 @@
                             <th:block th:each="event : ${listEvents}">
                               <div th:if="${(event.startDate <= sprint.endDate and event.endDate >= sprint.startDate)}">
                                 <b>[[${event.eventName}]]</b>
-                                <br><b>Start Date:</b> [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]]
-                                <br><b>End Date:</b> [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]]
+                                <br><b>Start Date:</b> [[${#dates.format(event.startDate, 'dd MMM yyyy HH:mm a')}]] [[${eventDateMappingDictionary.get(event.eventId).get(0)}]]
+                                <br><b>End Date:</b> [[${#dates.format(event.endDate, 'dd MMM yyyy HH:mm a')}]] [[${eventDateMappingDictionary.get(event.eventId).get(1)}]]<br><br>
                               </div>
                             </th:block>
                           </div>
