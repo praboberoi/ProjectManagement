@@ -112,10 +112,15 @@ public class EvidenceService {
      */
     public String saveEvidence(Evidence evidence) throws IncorrectDetailsException {
         try {
+            String message = "";
+            if (evidence.getEvidenceId() == 0 )
+                message = "Successfully Created " + evidence.getTitle();
+            else
+                message = "Successfully Updated " + evidence.getTitle();
             evidenceRepository.save(evidence);
             logger.info("Successfully created evidence {} for user with ID: {}", evidence.getEvidenceId(),
                     evidence.getOwnerId());
-            return "Successfully Created " + evidence.getTitle();
+            return message;
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);
             throw new IncorrectDetailsException("Failure Saving Evidence");

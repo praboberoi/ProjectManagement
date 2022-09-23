@@ -122,4 +122,25 @@ public class EvidenceController {
         }
         return "redirect:/evidence/{userId}";
     }
+
+    @GetMapping(path="/evidence/{userId}/{evidenceId}/evidence")
+    public ModelAndView editEvidence(
+            @PathVariable("userId") int userId,
+            @PathVariable("evidenceId") int evidenceId,
+            RedirectAttributes ra) {
+        ModelAndView mv = new ModelAndView("evidence::evidenceForm");
+        try {
+            Evidence evidence = evidenceService.getEvidence(evidenceId);
+            List<Project> listProjects = projectService.getAllProjects();
+            mv.addObject("evidence", evidence);
+            mv.addObject("listProjects", listProjects);
+            mv.addObject("evidenceFromSubmitImg", apiPrefix +"/icons/save-icon.svg");
+            mv.addObject("evidenceFormSubmitLabel", "Save");
+
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+        }
+        return mv;
+
+    }
 }

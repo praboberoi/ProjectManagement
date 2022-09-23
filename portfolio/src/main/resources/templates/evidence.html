@@ -51,12 +51,35 @@
                                 <div class="row">
                                     <div class="card-body">
                                         <h5 class="card-title">
-                                            <div>
+                                            <div class="d-flex justify-content-between">
                                                 <a role="button" class="project-name" href="javascript:void(0);"
                                                     th:onclick="'getSelectedEvidence(' + ${evidence.evidenceId} + ')'"
                                                     th:text="${evidence.title}"></a>
+                                                <div>
+                                                    <button class="btn btn-outline-primary btn-sm"
+                                                            th:data-id="${evidence.evidenceId}"
+                                                            th:data-title="${evidence.title}"
+                                                            th:data-projectname="${evidence.project.projectName}"
+                                                            th:data-projectid="${evidence.project.projectId}"
+                                                            th:data-occurance="${evidence.dateOccurred}"
+                                                            th:data-projectlist="${listProjects}"
+                                                            th:onclick="editEvidence(this.getAttribute('data-id'),
+                                                                                      this.getAttribute('data-title'),
+                                                                                      this.getAttribute('data-projectname'),
+                                                                                      this.getAttribute('data-projectid'),
+                                                                                      this.getAttribute('data-occurance'),
+                                                                                      this.getAttribute('data-projectlist'))">
+                                                        <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                                        Edit
+                                                    </button>
+                                                    <button class="btn btn-outline-secondary btn-sm">
+                                                        <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                                        Delete
+                                                    </button>
+                                                </div>
                                             </div>
                                         </h5>
+
                                         <b class="evidenceCardText">Project: </b>
                                         <p th:text="${evidence.project.projectName}" class="mb-0 evidenceCardText"></p>
                                         <br />
@@ -106,8 +129,6 @@
 
 
     </div>
-
-
     <div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -121,7 +142,7 @@
                 <div class="modal-body">
 
                     <!--                    Show evidence form-->
-                    <div class="evidenceForm">
+                    <div id="evidenceForm" th:fragment="evidenceForm">
                         <form id="createEvidenceForm" name="evidenceForm" onsubmit="return true"
                             th:action="@{${apiPrefix} + '/evidence/' + ${evidence.ownerId} + '/saveEvidence'}"
                             method="post" th:object="${evidence}">
@@ -143,7 +164,7 @@
                                 <select type="text" class="form-select required" id="evidence-project"
                                     th:field="*{project}" required>
                                     <th:block th:each="project : ${listProjects}">
-                                        <option id="selectedProject" th:value="${project.projectId}">
+                                        <option th:id="'project-' + ${project.projectId}" th:value="${project.projectId}">
                                             [[${project.projectName}]]</option>
                                     </th:block>
 
@@ -192,7 +213,6 @@
             </div>
         </div>
     </div>
-
     <script th:inline="javascript">
         let apiPrefix = [[${ apiPrefix }]];
         const userId = [[${ evidence.ownerId }]];
