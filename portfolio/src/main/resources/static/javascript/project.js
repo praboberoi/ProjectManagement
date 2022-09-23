@@ -181,6 +181,8 @@ function updateSprint(message) {
     httpRequest.onreadystatechange = () => updateElement(httpRequest, sprintElement)
 
     httpRequest.send();
+
+    updateSprintAccordions()
 }
 
 /**
@@ -211,7 +213,24 @@ function handleDeadlineNotification(message) {
     } else {
         console.log("Unknown event or command: " + deadline + " " + action)
     }
+
+    updateSprintAccordions()
 }
+
+function updateSprintAccordions() {
+    let httpRequest = new XMLHttpRequest();
+    let accordions = document.getElementById("showSprints").getElementsByClassName("accordion-body")
+
+    Array.from(accordions).forEach(element => {
+        let sprintId = element.parentNode.getElementsByClassName("accordion-sprint-id")[0].value
+        httpRequest.open('GET', window.location.pathname + `/sprint/${sprintId}/accordion`);
+        httpRequest.onreadystatechange = () => updateElement(httpRequest, element.parentNode)
+    
+        httpRequest.send();
+    });
+    
+}
+
 
 /**
  * Handles event updates from the server
@@ -223,6 +242,7 @@ function handleEventNotification(message) {
     let action = array[1]
 
     let eventCard = document.getElementById(event + "-card");
+    updateSprintAccordions()
 
     if (action === "edited") {
         loadEventCards()
@@ -258,6 +278,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateElement(httpRequest, element){
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
+            console.log(httpRequest)
             element.innerHTML = httpRequest.responseText;
         } else if (httpRequest.status === 400) {
             messageDanger.hidden = false;

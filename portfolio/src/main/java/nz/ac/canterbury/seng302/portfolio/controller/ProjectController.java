@@ -16,11 +16,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -126,22 +124,6 @@ public class ProjectController {
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
         }
-    }
-
-    /**
-     * Return the html component which contains the specified project's sprints
-      * @param projectId Project containing the desired sprints
-      * @return Page fragment containing sprints
-      */
-    @GetMapping(path="/project/{projectId}/sprints")
-    public ModelAndView groupsList(@PathVariable("projectId") int projectId) {
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
-        Project project = new Project();
-        project.setProjectId(projectId);
-        ModelAndView mv = new ModelAndView("project::sprints");
-        mv.addObject("project", project);
-        mv.addObject("listSprints", listSprints);
-        return mv;
     }
 
 }
