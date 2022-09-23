@@ -155,12 +155,11 @@ public class EventService {
         List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event)
                 .stream().sorted((sprint1, sprint2)-> sprint1.getEndDate().before(sprint2.getStartDate()) ? 1 : 0)
                 .toList();
-
         ArrayList<SprintColor> eventColours = new ArrayList<>();
-
         sprintList.forEach(sprint -> {
-            if ( !event.getColors().contains(sprint.getColor()))
+            if (!eventColours.contains(sprint.getColor())) {
                 eventColours.add(sprint.getColor());
+            }
         });
 
         if (!sprintList.isEmpty()) {
