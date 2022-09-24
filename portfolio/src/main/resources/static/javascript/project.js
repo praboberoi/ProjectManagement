@@ -278,7 +278,6 @@ document.addEventListener('DOMContentLoaded', function() {
 function updateElement(httpRequest, element){
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
-            console.log(httpRequest)
             element.innerHTML = httpRequest.responseText;
         } else if (httpRequest.status === 400) {
             messageDanger.hidden = false;
