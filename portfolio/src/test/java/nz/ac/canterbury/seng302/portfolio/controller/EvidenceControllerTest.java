@@ -22,7 +22,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
-import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -249,7 +248,7 @@ public class EvidenceControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("evidence", evidence))
                 .andExpect(model().attribute("submissionImg", "/icons/save-icon.svg"))
-                .andExpect(model().attribute("submissionName", "Edit"));
+                .andExpect(model().attribute("submissionName", "Save"));
     }
 
     /**
