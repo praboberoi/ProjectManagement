@@ -130,7 +130,7 @@ public class EvidenceController {
      * @return evidence form fragment
      */
     @GetMapping(path="/evidence/{userId}/{evidenceId}/editEvidence")
-    public ModelAndView editEvidence(
+    public ModelAndView getEvidence(
             @PathVariable int evidenceId) {
         ModelAndView mv = new ModelAndView("evidence::evidenceForm");
         try {
@@ -178,9 +178,8 @@ public class EvidenceController {
     public String deleteEvidence(
             @PathVariable int evidenceId,
             RedirectAttributes ra) {
-        String message = null;
         try {
-            message = evidenceService.deleteEvidence(evidenceId);
+            String message = evidenceService.deleteEvidence(evidenceId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());

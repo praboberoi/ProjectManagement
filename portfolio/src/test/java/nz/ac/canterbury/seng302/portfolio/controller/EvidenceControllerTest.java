@@ -22,6 +22,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
+import javax.swing.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -35,7 +36,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = EvidenceController.class)
@@ -54,6 +54,7 @@ public class EvidenceControllerTest {
 
     private Evidence evidence;
     private Evidence evidence1;
+    private Project project;
 
     private static MockedStatic<PrincipalUtils> utilities;
 
@@ -85,7 +86,7 @@ public class EvidenceControllerTest {
     @BeforeEach
     public void setup() {
         LocalDate now = LocalDate.now();
-        Project project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
+        project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
 
         evidence = new Evidence.Builder()
             .title("New Evidence")
@@ -210,11 +211,75 @@ public class EvidenceControllerTest {
 
         this.mockMvc
                 .perform(get("/evidence/99/33"))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
+                .andExpect(status().isNotFound())
+                .andExpect(model().attribute("messageDanger", "Failed to locate the piece of evidence with ID: 33"))
                 .andExpect(model().attributeDoesNotExist("selectedEvidence"));
     }
 
+    /**
+     * Asserts that given a user ID when createEvidence called then returns a list of all projects,
+     * correct submission image, and submission name
+     */
+    @Test
+    void givenCurrentUserId_whenCreateEvidenceCalled_thenCorrectModelViewObjectReturned() throws Exception{
+        when(projectService.getAllProjects()).thenReturn(List.of(project));
+        when(evidenceService.getNewEvidence(99)).thenReturn(evidence);
+
+
+        this.mockMvc
+                .perform(get("/evidence/99/getNewEvidence"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("evidence", evidence))
+                .andExpect(model().attribute("submissionImg", "/icons/create-icon.svg"))
+                .andExpect(model().attribute("submissionName", "Create"));
+
+    }
+
+    /**
+     * Asserts that given an evidence ID when editEvidence called then returns a list of all projects, submission image,
+     * and submission name
+     */
+    @Test
+    void givenCurrentEvidenceId_whenEditEvidenceCalled_thenCorrectModelViewObjectReturned() throws Exception {
+        when(projectService.getAllProjects()).thenReturn(List.of(project));
+        when(evidenceService.getEvidence(99)).thenReturn(evidence);
+
+        this.mockMvc
+                .perform(get("/evidence/1/99/editEvidence"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("evidence", evidence))
+                .andExpect(model().attribute("submissionImg", "/icons/save-icon.svg"))
+                .andExpect(model().attribute("submissionName", "Edit"));
+    }
+
+    /**
+     * Asserts that given an incorrect evidence ID when editEvidence called then returns the correct message
+     */
+    @Test
+    void givenIncorrectEvidenceID_whenEditEvidenceCalled_thenModalViewObjectWithDangerMessageReturned() throws Exception {
+        when(projectService.getAllProjects()).thenReturn(List.of(project));
+        when(evidenceService.getEvidence(99)).thenThrow(new IncorrectDetailsException("Failed to locate the piece of evidence with ID: 99"));
+
+        this.mockMvc
+                .perform(get("/evidence/1/99/editEvidence"))
+                .andExpect(status().isNotFound())
+                .andExpect(model().attribute("messageDanger", "Failed to locate the piece of evidence with ID: 99"))
+                .andExpect(view().name("evidence::serverMessages"));
+    }
+
+    /**
+     * Asserts that given an evidence ID when deleteEvidence called then user is redirected to the evidence page with
+     * correct message
+     */
+    @Test
+    void givenCorrectEvidenceID_whenDeleteEvidenceCalled_thenEvidenceDeletedSuccessfully() throws Exception {
+        when(evidenceService.deleteEvidence(99)).thenReturn("Successfully Deleted Test Evidence");
+        this.mockMvc
+                .perform(post("/evidence/1/99/deleteEvidence"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(flash().attribute("messageSuccess", "Successfully Deleted Test Evidence"))
+                .andExpect(view().name("redirect:/evidence/{userId}"));
+    }
 
     @AfterAll
     public static void afterAll() {

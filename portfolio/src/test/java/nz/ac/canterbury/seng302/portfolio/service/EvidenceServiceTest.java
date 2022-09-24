@@ -226,7 +226,12 @@ class EvidenceServiceTest {
     @Test
     void givenAPieceOfEvidence_whenDeleteEvidenceIsCalled_thenEvidenceNoLongerExists() {
         when(evidenceRepository.findById(evidence1.getEvidenceId())).thenReturn(Optional.ofNullable(evidence1));
-        String messageResponse = evidenceService.deleteEvidence(evidence1.getEvidenceId());
+        String messageResponse = null;
+        try {
+            messageResponse = evidenceService.deleteEvidence(evidence1.getEvidenceId());
+        } catch (IncorrectDetailsException e) {
+            e.printStackTrace();
+        }
         assertEquals("Successfully Deleted " + evidence1.getEvidenceId(), messageResponse);
     }
 

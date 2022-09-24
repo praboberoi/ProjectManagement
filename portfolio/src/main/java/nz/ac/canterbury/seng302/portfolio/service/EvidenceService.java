@@ -132,7 +132,7 @@ public class EvidenceService {
      * 
      * @param evidenceId id of evidence to be deleted
      * @return Message of the outcome of the delete operation
-     * @throws IncorrectDetailsException
+     * @throws IncorrectDetailsException if the evidence cannot be found
      */
     public String deleteEvidence(int evidenceId) throws IncorrectDetailsException {
         try {
