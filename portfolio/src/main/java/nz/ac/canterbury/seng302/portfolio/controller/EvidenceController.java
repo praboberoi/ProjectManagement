@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,13 +29,19 @@ import static org.springframework.http.HttpStatus. *;
  */
 @Controller
 public class EvidenceController {
+
     @Value("${apiPrefix}")
     private String apiPrefix;
+
     @Autowired
     private EvidenceService evidenceService;
+
     @Autowired
     private ProjectService projectService;
     @Autowired private UserAccountClientService userAccountClientService;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
@@ -117,6 +124,7 @@ public class EvidenceController {
             evidence.setOwnerId(userId);
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
+            notifyEvidence(evidence.getEvidenceId(), "saved", userId);
             ra.addFlashAttribute("messageSuccess", message);
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -140,7 +148,6 @@ public class EvidenceController {
             mv.addObject("listProjects", listProjects);
             mv.addObject("submissionImg", apiPrefix+"/icons/save-icon.svg");
             mv.addObject("submissionName", "Save");
-
 
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
@@ -177,10 +184,12 @@ public class EvidenceController {
     @PostMapping(path="/evidence/{userId}/{evidenceId}/deleteEvidence")
     public String deleteEvidence(
             @PathVariable int evidenceId,
+            @PathVariable int userId,
             RedirectAttributes ra) {
         try {
             String message = evidenceService.deleteEvidence(evidenceId);
             ra.addFlashAttribute("messageSuccess", message);
+            notifyEvidence(evidenceId, "deleted", userId);
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
@@ -188,6 +197,32 @@ public class EvidenceController {
         return "redirect:/evidence/{userId}";
     }
 
+    /**
+     * Updates the evidence list of the user with the given user ID
+     * @param userId the ID of user whose evidence list is requested
+     * @return evidenceList fragment
+     */
+    @GetMapping(path="/evidence/{userId}/getEvidenceList")
+    public ModelAndView getEvidenceList(
+            @PathVariable int userId) {
+        ModelAndView mv = new ModelAndView("evidence::evidenceList");
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+        mv.addObject("listEvidence", listEvidence);
+        return mv;
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param evidenceId the ID of the evidence to be updated
+     * @param action the action performed on the evidence
+     * @param userId the ID of the user making the changes to the evidence
+     */
+    private void notifyEvidence(int evidenceId, String action, int userId) {
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+        int firstEvidenceId = listEvidence.isEmpty() ? 0 : listEvidence.get(0).getEvidenceId();
+        template.convertAndSend("/element/evidence/" + userId ,
+                ("evidence " + evidenceId + " "  + action + " " + firstEvidenceId));
+    }
 
 
 

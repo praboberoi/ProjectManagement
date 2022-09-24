@@ -68,7 +68,6 @@ function updateEvidenceModalForm(httpRequest, evidenceProjectId, modalTitle) {
  * Server call to create a new evidence
  */
 function createNewEvidence() {
-
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `${window.location.pathname}/getNewEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, 0, "Create New Evidence");
@@ -76,7 +75,7 @@ function createNewEvidence() {
 }
 
 /**
- * Server to update an existing evidence
+ * Obtains the evidence from the server to update an existing evidence
  * @param evidenceId the ID of the evidence selected
  * @param evidenceProjectId the project ID of the evidence
  */
