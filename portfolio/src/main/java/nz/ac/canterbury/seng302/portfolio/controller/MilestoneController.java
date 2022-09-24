@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Milestone;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.dto.MilestoneDTO;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.MilestoneNotification;
 import nz.ac.canterbury.seng302.portfolio.service.MilestoneService;
@@ -17,9 +18,11 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -44,6 +47,34 @@ public class MilestoneController {
     public MilestoneController(MilestoneService milestoneService, ProjectService projectService) {
         this.milestoneService = milestoneService;
         this.projectService = projectService;
+    }
+
+    /**
+     * Return the html component which contains the specified project's milestones
+     * @param projectId Project containing the desired milestones
+     * @return Page fragment containing milestones
+     */
+    @GetMapping(path="/project/{projectId}/milestones")
+    public ModelAndView milestones(@PathVariable("projectId") int projectId) {
+        Project project;
+        ModelAndView mv;
+        try {
+            project = projectService.getProjectById(projectId);
+        } catch (IncorrectDetailsException e) {
+            mv = new ModelAndView("error");
+            mv.addObject("errorMessage", String.format("Project %s does not exist", projectId));
+            mv.setStatus(HttpStatus.NOT_FOUND);
+            return mv;
+        }
+
+        List<Milestone> listMilestones = milestoneService.getMilestonesByProject(project);
+        listMilestones.forEach(milestoneService::updateMilestoneColor);
+
+        mv = new ModelAndView("milestoneFragments::milestoneTab");
+        mv.addObject("project", project);
+        mv.addObject("listMilestones", listMilestones);
+        mv.addObject("editMilestoneNotifications", editing);
+        return mv;
     }
 
     /**
