@@ -1,10 +1,14 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.nio.file.WatchEvent;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -34,6 +38,9 @@ public class Evidence {
     @Column(nullable = false)
     private int ownerId;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @OrderColumn(name = "order_column")
+    private List<String> weblinks = new ArrayList<>();
 
     public int getEvidenceId() {
         return this.evidenceId;
@@ -55,6 +62,7 @@ public class Evidence {
         return this.title;
     }
     public Project getProject() {return project;}
+    public List<String> getWeblinks() { return this.weblinks; }
     public void setProject(Project project) {this.project = project;}
     public void setDateOccurred(Date dateOccurred) {
         this.dateOccurred = dateOccurred;
@@ -74,6 +82,30 @@ public class Evidence {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public void setWeblinks(List<String> weblinks) {
+        this.weblinks = weblinks;
+    }
+
+    /**
+     * Add new web links to the piece of evidence's list of weblinks.
+     * @param newWeblinks
+     */
+    public void addWeblink(List<String> newWeblinks ) {
+        List<String> weblinkList = new ArrayList<>(this.weblinks);
+        weblinkList.addAll(newWeblinks);
+        setWeblinks(weblinkList);
+    }
+
+    /**
+     * Remove specific web links to the piece of evidence's list of weblinks.
+     * @param removedWeblink
+     */
+    public void removeWeblink(List<String> removedWeblink) {
+        List<String> updatedWeblinks = new ArrayList<>(this.weblinks);
+        updatedWeblinks.removeAll(removedWeblink);
+        setWeblinks(updatedWeblinks);
     }
 
     /**
