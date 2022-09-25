@@ -129,7 +129,7 @@ public class Event {
         return this.colors;
     }
 
-    public void setColors(ArrayList<SprintColor> eventColours) {this.colors = eventColours;}
+    public void setColors(List<SprintColor> eventColours) {this.colors = eventColours;}
 
     /**
      * Overrides for comparing event objects
