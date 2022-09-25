@@ -26,6 +26,9 @@ function saveEvidence() {
     httpRequest.send(formData);
 }
 
+/**
+ * Validation for the evidence title
+ */
 function checkEvidenceTitle() {
     const evidenceTitle = document.getElementById('evidence-title');
     let evidenceTitleStrip = evidenceTitle.value.trim()
@@ -42,6 +45,9 @@ function checkEvidenceTitle() {
     checkCreateButton();
 }
 
+/**
+ * Validation for the evidence date
+ */
 function checkEvidenceDate() {
     const value = evidence_project.options[evidence_project.selectedIndex]
     if (evidenceDateElement.value > value.dataset.enddate || evidenceDateElement.value < value.dataset.startdate) {
@@ -52,7 +58,9 @@ function checkEvidenceDate() {
     checkCreateButton();
 
 }
-
+/**
+ * Changes the dates min and max value when the project changes
+ */
 function evidenceProjectChange() {
     const evidence_project = document.getElementById("evidence-project");
     const value = evidence_project.options[evidence_project.selectedIndex]
@@ -60,7 +68,9 @@ function evidenceProjectChange() {
     evidenceDateElement.max = value.dataset.enddate;
     checkEvidenceDate();
 }
-
+/**
+ * Validation for the evidence description
+ */
 function checkEvidenceDescription() {
     let evidenceDescriptionStrip = evidenceDescription.value.trim()
     if (evidenceDescriptionStrip.length < 2) {
@@ -72,7 +82,9 @@ function checkEvidenceDescription() {
     }
     checkCreateButton();
 }
-
+/**
+ * Disables or enables the create button
+ */
 function checkCreateButton() {
     let evidenceDescriptionStrip = evidenceDescription.value.trim()
     evidenceCreateBtn.disabled = false;
