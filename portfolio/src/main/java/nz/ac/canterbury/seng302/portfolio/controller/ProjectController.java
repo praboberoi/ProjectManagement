@@ -70,7 +70,7 @@ public class ProjectController {
 
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
-            Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getStartAndEndDates(listEvents);
+            Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getSprintLabelsForStartAndEndDates(listEvents);
 
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);

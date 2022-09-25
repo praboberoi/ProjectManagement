@@ -10,7 +10,6 @@ import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
-import java.sql.Date;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
@@ -60,7 +59,7 @@ public class EventController {
       public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
           listEvents.forEach(eventService::updateEventColors);
-          Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getStartAndEndDates(listEvents);
+          Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getSprintLabelsForStartAndEndDates(listEvents);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);

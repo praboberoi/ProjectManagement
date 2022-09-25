@@ -291,6 +291,27 @@ public class EventControllerTest {
             .andExpect(model().attribute("editNotifications", expectedNotifications));
     }
 
+    /**
+     * Test that date mappings are included and correct when a get call is made.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenServer_WhenGetRequestMade_ThenDateMappingPresent() throws Exception {
+        Hashtable<Integer, List<String>> testData = new Hashtable<Integer, List<String>>();
+        List<String> testNames = new ArrayList<String>();
+        testNames.add("TestName 1");
+        testNames.add("TestName 2");
+        testData.put(event.getEventId(), testNames);
+        when(eventService.getSprintLabelsForStartAndEndDates(any())).thenReturn(testData);
+
+
+        this.mockMvc
+                .perform(get("/project/1/events"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("eventDateMappingDictionary", testData));
+
+    }
+
     @AfterAll
     public static void afterAll() {
         utilities.close();

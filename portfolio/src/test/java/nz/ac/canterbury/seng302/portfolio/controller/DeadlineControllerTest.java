@@ -297,6 +297,25 @@ class DeadlineControllerTest {
                 .andExpect(model().attribute("editDeadlineNotifications", expectedNotifications));
     }
 
+    /**
+     * Test that date mappings are included and correct when a get call is made.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenServer_WhenGetRequestMade_ThenDateMappingPresent() throws Exception {
+        Hashtable<Integer, String> testData = new Hashtable<Integer, String>();
+        String testName = "TestName 1";
+        testData.put(deadline.getDeadlineId(), testName);
+        when(deadlineService.getSprintOccurringOnDeadlines(any())).thenReturn(testData);
+
+
+        this.mockMvc
+                .perform(get("/project/1/deadlines"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("deadlineDateMapping", testData));
+
+    }
+
     @AfterAll
     private static void tearDown() {
         utilities.close();

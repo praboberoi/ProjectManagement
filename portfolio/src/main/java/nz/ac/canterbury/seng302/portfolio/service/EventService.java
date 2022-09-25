@@ -72,7 +72,7 @@ public class EventService {
      * @return Hashtable containing a mapping between the id of an event to a List containing the sprint occurring at
      * the start of the event and then the sprint that occurs at the end of an event.
      */
-    public Hashtable<Integer, List<String>> getStartAndEndDates(List<Event> eventList) {
+    public Hashtable<Integer, List<String>> getSprintLabelsForStartAndEndDates(List<Event> eventList) {
         Hashtable<Integer, List<String>> eventDateMappingDictionary = new Hashtable<Integer, List<String>>();
         for (Event event : eventList) {
             List<String> sprintNames = new ArrayList<String>();
