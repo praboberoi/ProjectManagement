@@ -48,6 +48,13 @@ public class SprintController {
     @Value("${apiPrefix}")
     private String apiPrefix;
 
+    private static final String PROJECT_OBJECT = "project";
+    private static final String SPRINT_OBJECT = "sprint";
+    private static final String LIST_EVENTS_OBJECT = "listEvents";
+    private static final String LIST_DEADLINES_OBJECT = "listDeadlines";
+
+    private static final String ERROR = "error";
+
     @Autowired
     private SimpMessagingTemplate template;
 
@@ -65,7 +72,7 @@ public class SprintController {
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("project::sprints");
-        mv.addObject("project", project);
+        mv.addObject(PROJECT_OBJECT, project);
         mv.addObject("listSprints", listSprints);
         return mv;
     }
@@ -83,7 +90,7 @@ public class SprintController {
         try {
             sprint = sprintService.getSprint(sprintId);
         } catch (IncorrectDetailsException e) {
-            mv = new ModelAndView("error");
+            mv = new ModelAndView(ERROR);
             mv.setStatus(HttpStatus.NOT_FOUND);
             mv.addObject("errorMessage", String.format("Sprint %d doesn't exist", sprintId));
             return mv;
@@ -95,9 +102,9 @@ public class SprintController {
         listDeadlines.forEach(deadlineService::updateDeadlineColors);
         
         mv = new ModelAndView("project::sprintAccordion");
-        mv.addObject("sprint", sprint);
-        mv.addObject("listEvents", listEvents);
-        mv.addObject("listDeadlines", listDeadlines);
+        mv.addObject(SPRINT_OBJECT, sprint);
+        mv.addObject(LIST_EVENTS_OBJECT, listEvents);
+        mv.addObject(LIST_DEADLINES_OBJECT, listDeadlines);
 
         return mv;
     }
@@ -122,8 +129,8 @@ public class SprintController {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
             model.addAttribute("pageTitle", "Add New Sprint");
-            model.addAttribute("sprint", newSprint);
-            model.addAttribute("project", currentProject);
+            model.addAttribute(SPRINT_OBJECT, newSprint);
+            model.addAttribute(PROJECT_OBJECT, currentProject);
             List<String> dateRange = sprintService.getSprintDateRange(currentProject, newSprint);
 
             model.addAttribute("sprintDateMin", dateRange.get(0));
@@ -192,8 +199,8 @@ public class SprintController {
             listEvents.forEach(eventService::updateEventColors);
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
-            ra.addFlashAttribute("listEvents", listEvents);
-            ra.addFlashAttribute("listDeadlines", listDeadlines);
+            ra.addFlashAttribute(LIST_EVENTS_OBJECT, listEvents);
+            ra.addFlashAttribute(LIST_DEADLINES_OBJECT, listDeadlines);
             ra.addFlashAttribute("messageSuccess", message);
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
@@ -201,7 +208,7 @@ public class SprintController {
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
             model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
-            return "error";
+            return ERROR;
         }
     }
 
@@ -230,8 +237,8 @@ public class SprintController {
 
             Project currentProject = projectService.getProjectById(projectId);
             Sprint sprint = sprintService.getSprint(sprintId);
-            model.addAttribute("sprint", sprint);
-            model.addAttribute("project", currentProject);
+            model.addAttribute(SPRINT_OBJECT, sprint);
+            model.addAttribute(PROJECT_OBJECT, currentProject);
             model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
             model.addAttribute("sprintDateMin", currentProject.getStartDate());
             model.addAttribute("sprintDateMax", currentProject.getEndDate());
@@ -261,29 +268,36 @@ public class SprintController {
             @PathVariable int projectId,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return redirectDashboard;
+        } 
+        
         try {
-            String message = sprintService.deleteSprint(sprintId);
-            ra.addFlashAttribute("messageSuccess", message);
+            String responseMessage = sprintService.deleteSprint(sprintId);
             sprintService.updateSprintLabelsAndColor(sprintService.getSprintsByProject(projectId));
             List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
+            
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
-            ra.addFlashAttribute("listEvents", listEvents);
+            
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
-            ra.addFlashAttribute("listDeadlines", listDeadlines);
-            model.addAttribute("listSprints", listSprints);
+            
+            ra.addFlashAttribute("messageSuccess", responseMessage);
+            ra.addFlashAttribute(LIST_EVENTS_OBJECT, listEvents);
+            ra.addFlashAttribute(LIST_DEADLINES_OBJECT, listDeadlines);
+            ra.addAttribute("listSprints", listSprints);
+
             return "redirect:/project/{projectId}";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/project/{projectId}";
         } catch (PersistenceException e) {
             model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
-            return "error";
+            return ERROR;
         } catch (Exception e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "error";
+            return ERROR;
         }
     }
 
