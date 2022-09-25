@@ -116,8 +116,7 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             Model model,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
-            return redirectDashboard;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
@@ -183,8 +182,7 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             Model model,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
-            return redirectDashboard;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
@@ -263,8 +261,7 @@ public class SprintController {
             @PathVariable int projectId,
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
-            return redirectDashboard;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
         try {
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
@@ -305,8 +302,7 @@ public class SprintController {
             Date startDate,
             Date endDate,
             @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
-            return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
 
         try {
             Sprint sprint = sprintService.getSprint(sprintId);
