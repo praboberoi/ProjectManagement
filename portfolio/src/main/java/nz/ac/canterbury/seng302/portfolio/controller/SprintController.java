@@ -83,8 +83,9 @@ public class SprintController {
         try {
             sprint = sprintService.getSprint(sprintId);
         } catch (IncorrectDetailsException e) {
-            mv = new ModelAndView();
+            mv = new ModelAndView("error");
             mv.setStatus(HttpStatus.NOT_FOUND);
+            mv.addObject("errorMessage", String.format("Sprint %d doesn't exist", sprintId));
             return mv;
         }
         List<Event> listEvents = eventService.getEventsBySprintId(sprintId);
@@ -152,8 +153,7 @@ public class SprintController {
             @PathVariable int projectId,
             @ModelAttribute SprintDTO sprintDTO,
             @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
-            return null;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
         try {
             Project project = projectService.getProjectById(projectId);
             Sprint sprint = new Sprint(sprintDTO);
@@ -301,8 +301,10 @@ public class SprintController {
             @PathVariable("sprintId") int sprintId,
             Date startDate,
             Date endDate,
-            @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
+            @AuthenticationPrincipal AuthState principal
+        ) {
+            if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+                return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
 
         try {
             Sprint sprint = sprintService.getSprint(sprintId);

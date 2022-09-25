@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.*;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -96,5 +97,14 @@ public class SprintControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listEvents", List.of(new Event())))
                 .andExpect(model().attribute("listDeadlines", List.of(new Deadline())));
+    }
+
+    @Test
+    void givenSprintDoesNotExist_whenGetSprintAccordion_thenErrorPage() throws Exception{
+        when(sprintService.getSprint(anyInt())).thenThrow(new IncorrectDetailsException("Sprint doesn't exist"));
+
+        this.mockMvc
+            .perform(get("/project/1/sprint/1/accordion"))
+            .andExpect(status().isNotFound());
     }
 }
