@@ -87,10 +87,10 @@ public class SprintController {
             mv.setStatus(HttpStatus.NOT_FOUND);
             return mv;
         }
-        List<Event> listEvents = eventService.getEventBySprintId(sprintId);
+        List<Event> listEvents = eventService.getEventsBySprintId(sprintId);
         listEvents.forEach(eventService::updateEventColors);
 
-        List<Deadline> listDeadlines = deadlineService.getDeadlineBySprintId(sprintId);
+        List<Deadline> listDeadlines = deadlineService.getDeadlinesBySprintId(sprintId);
         listDeadlines.forEach(deadlineService::updateDeadlineColors);
         
         mv = new ModelAndView("project::sprintAccordion");

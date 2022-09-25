@@ -1,12 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.service.*;
-import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
-import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,16 +16,12 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = SprintController.class)
@@ -82,8 +74,27 @@ public class SprintControllerTest {
     @Test
     void givenServer_WhenGetSprints_ThenSprintsReturnedSuccessfully() throws Exception{
         when(sprintService.getSprintsByProject(anyInt())).thenReturn(List.of(new Sprint()));
+
         this.mockMvc
                 .perform(get("/project/1/sprints"))
-                .andExpect(status().isOk());
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("listSprints", List.of(new Sprint())));
+    }
+
+    @Test
+    void givenServer_WhenGetSprintAccordion_ThenElementsReturnedCorrectly() throws Exception{
+        when(sprintService.getSprint(anyInt())).thenReturn(new Sprint());
+        when(projectService.getProjectById(anyInt())).thenReturn(new Project());
+
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(List.of(new Sprint()));
+        when(eventService.getEventsBySprintId(anyInt())).thenReturn(List.of(new Event()));
+        when(deadlineService.getDeadlinesBySprintId(anyInt())).thenReturn(List.of(new Deadline()));
+
+
+        this.mockMvc
+                .perform(get("/project/1/sprint/1/accordion"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("listEvents", List.of(new Event())))
+                .andExpect(model().attribute("listDeadlines", List.of(new Deadline())));
     }
 }

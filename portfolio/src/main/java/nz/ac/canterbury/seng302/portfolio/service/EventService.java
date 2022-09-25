@@ -219,7 +219,7 @@ public class EventService {
      * @param sprintId The id of the sprint (int).
      * @return A list of deadlines from a sprint specified by its id.
      */
-    public List<Event> getEventBySprintId(int sprintId) {
+    public List<Event> getEventsBySprintId(int sprintId) {
         Optional<Sprint> current = sprintRepository.findById(sprintId);
         return current.map(sprint -> eventRepository.findEventsBySprint(sprint).stream()
                 .sorted(Comparator.comparing(Event::getStartDate)).toList()).orElse(List.of());

@@ -117,7 +117,7 @@ public class DeadlineService {
      * @param sprintId The id of the sprint (int).
      * @return A list of deadlines from a sprint specified by its id.
      */
-    public List<Deadline> getDeadlineBySprintId(int sprintId) {
+    public List<Deadline> getDeadlinesBySprintId(int sprintId) {
         Optional<Sprint> current = sprintRepository.findById(sprintId);
         return current.map(sprint -> deadlineRepository.findDeadlinesBySprint(sprint).stream()
                 .sorted(Comparator.comparing(Deadline::getDate)).toList()).orElse(List.of());
