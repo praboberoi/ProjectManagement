@@ -61,7 +61,7 @@ public class SprintController {
      */
     @GetMapping(path = "/project/{projectId}/sprints")
     public ModelAndView sprintList(@PathVariable("projectId") int projectId) {
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+        List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("project::sprints");
@@ -268,8 +268,8 @@ public class SprintController {
         try {
             String message = sprintService.deleteSprint(sprintId);
             ra.addFlashAttribute("messageSuccess", message);
-            sprintService.updateSprintLabelsAndColor(sprintService.getSprintByProject(projectId));
-            List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            sprintService.updateSprintLabelsAndColor(sprintService.getSprintsByProject(projectId));
+            List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
             ra.addFlashAttribute("listEvents", listEvents);

@@ -44,7 +44,7 @@ public class ProjectController {
     @GetMapping(path="/project/{projectId}/getAllSprints")
     public ResponseEntity<List<Sprint>> getAllSprints(
             @PathVariable("projectId") int projectId) {
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+        List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
         return ResponseEntity.status(HttpStatus.OK).body(listSprints);
     }
 
@@ -64,7 +64,7 @@ public class ProjectController {
             Model model,
             RedirectAttributes ra) {
         try {
-            List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
 
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
