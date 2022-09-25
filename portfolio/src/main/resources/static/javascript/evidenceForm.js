@@ -3,6 +3,7 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
+
 /**
  * Calls the server to save the evidence
  */
@@ -84,7 +85,7 @@ function editEvidence(evidenceId, evidenceProjectId) {
     httpRequest.open('GET', `${window.location.pathname}/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, evidenceProjectId, "Update Evidence");
     httpRequest.send();
-    stompClient.publish({destination: "/app/evidence/edit", body: JSON.stringify({'evidenceId': evidenceId, 'action': "editing", 'firstEvidenceId': 0, 'userUpdating': null, 'userId':userId})});
+    stompClient.publish({destination: "/app/evidence/edit", body: JSON.stringify({'evidenceId': evidenceId, 'action': "editing", 'firstEvidenceId': 0, 'userUpdating': null, 'userId':userId, 'sessionId': 0})});
 
 }
 

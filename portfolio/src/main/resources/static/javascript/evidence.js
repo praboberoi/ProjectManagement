@@ -1,7 +1,5 @@
 let stompClient = null;
 
-let previousDivInnerHTML = null;
-
 /**
  * Connects to the websocket server
  */
@@ -34,6 +32,7 @@ function connect() {
  */
 function subscribe() {
     stompClient.subscribe('/element/evidence/' + userId, updateEvidencePage);
+    getEvidenceList();
 }
 
 /**

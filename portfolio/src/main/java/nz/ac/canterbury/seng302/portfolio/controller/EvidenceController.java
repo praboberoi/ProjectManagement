@@ -17,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.event.EventListener;
+import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -26,9 +28,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 import static org.springframework.http.HttpStatus. *;
 
@@ -53,7 +55,7 @@ public class EvidenceController {
 
     private final Logger logger = LoggerFactory.getLogger(EventController.class);
 
-    private HashMap<Integer, EvidenceNotification> editing = new HashMap<Integer, EvidenceNotification>();
+    private final HashMap<Integer, EvidenceNotification> editing = new HashMap<Integer, EvidenceNotification>();
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
@@ -73,7 +75,7 @@ public class EvidenceController {
      * @return Page fragment containing events
      */
     @GetMapping(path="/evidence/{userId}")
-    public String evidenceList(
+    public String getEvidencePage(
             @AuthenticationPrincipal AuthState principal,
             @PathVariable("userId") int userId,
             Model model) {
@@ -128,7 +130,8 @@ public class EvidenceController {
             @ModelAttribute EvidenceDTO evidenceDTO,
             @PathVariable("userId") int userId,
             RedirectAttributes ra,
-            @AuthenticationPrincipal AuthState principal) {
+            @AuthenticationPrincipal AuthState principal,
+            @Header("simpSessionId") String sessionId) {
         Evidence evidence = new Evidence(evidenceDTO);
         try {
             int editingUser = PrincipalUtils.getUserId(principal);
@@ -139,7 +142,7 @@ public class EvidenceController {
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
             EvidenceNotification notification = new EvidenceNotification(evidence.getEvidenceId(), "saved",
-                    0, PrincipalUtils.getUserName(principal), userId);
+                    0, PrincipalUtils.getUserName(principal), userId, sessionId);
             notifyEvidence(notification);
             ra.addFlashAttribute("messageSuccess", message);
         } catch(IncorrectDetailsException e) {
@@ -205,12 +208,13 @@ public class EvidenceController {
             @PathVariable int evidenceId,
             @PathVariable int userId,
             @AuthenticationPrincipal AuthState principal,
+            @Header("simpSessionId") String sessionId,
             RedirectAttributes ra) {
         try {
             String message = evidenceService.deleteEvidence(evidenceId);
             ra.addFlashAttribute("messageSuccess", message);
             EvidenceNotification notification = new EvidenceNotification(evidenceId, "deleted",
-                    0, PrincipalUtils.getUserName(principal), userId);
+                    0, PrincipalUtils.getUserName(principal), userId, sessionId);
 
             notifyEvidence(notification);
         } catch (IncorrectDetailsException e) {
@@ -248,22 +252,20 @@ public class EvidenceController {
      * @param sessionId Session ID of the websocket communication
      */
     @MessageMapping("/evidence/edit")
-    public void editing(EvidenceNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal) {
+    public void editing(EvidenceNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal, @Header("simpSessionId") String sessionId) {
         notification.setUserUpdating(principal.getName());
-
+        notification.setSessionId(sessionId);
+        notifyEvidence(notification);
         if (notification.getAction().equals("editing"))
             editing.put(notification.getEvidenceId(), notification);
         else
             editing.remove(notification.getEvidenceId());
 
-        notifyEvidence(notification);
     }
 
     /**
      * Sends an update message to all clients connected to the websocket
-     * @param evidenceId the ID of the evidence to be updated
-     * @param action the action performed on the evidence
-     * @param userId the ID of the user making the changes to the evidence
+     * @param notification encapsulated data to be exchanged between front and back end
      */
     private void notifyEvidence(EvidenceNotification notification) {
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(notification.getUserId());
@@ -276,6 +278,22 @@ public class EvidenceController {
         }
     }
 
+    /**
+     * Detects when a websocket disconnects to remove them from the list of editors
+     * @param event Websocket disconnect event
+     */
+    @EventListener
+    public void onApplicationEvent(SessionDisconnectEvent event) {
+        for (Map.Entry<Integer, EvidenceNotification> current : editing.entrySet()) {
+            EvidenceNotification currentNotification = current.getValue();
+            if (currentNotification.getSessionId().equals(event.getSessionId())) {
+                currentNotification.setAction("finished");
+                notifyEvidence(currentNotification);
+                editing.remove(current.getKey());
+            }
+        }
+
+    }
 
 
 }

@@ -1,8 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.model.notifications;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 
-
+/**
+ * Notification class for Evidence. Encapsulates the required data for exchanging data between front and back end
+ */
 public class EvidenceNotification {
 
     private int evidenceId;
@@ -15,13 +16,16 @@ public class EvidenceNotification {
     
     private int userId;
 
+    private String sessionId;
 
-    public EvidenceNotification(int evidenceId, String action, int firstEvidenceId, String userUpdating, int userId) {
+
+    public EvidenceNotification(int evidenceId, String action, int firstEvidenceId, String userUpdating, int userId, String sessionId) {
         this.evidenceId = evidenceId;
         this.action = action;
         this.firstEvidenceId = firstEvidenceId;
         this.userUpdating = userUpdating;
         this.userId = userId;
+        this.sessionId = sessionId;
     }
 
     public int getEvidenceId() {
@@ -52,10 +56,17 @@ public class EvidenceNotification {
         return userUpdating;
     }
 
+    public String getSessionId() {
+        return sessionId;
+    }
+
     public void setFirstEvidenceId(int firstEvidenceId) {
         this.firstEvidenceId = firstEvidenceId;
     }
 
+    public void setSessionId(String sessionId) {
+        this.sessionId = sessionId;
+    }
 
     public void setUserUpdating(String userUpdating) {
         this.userUpdating = userUpdating;
@@ -73,6 +84,7 @@ public class EvidenceNotification {
                 ", firstEvidenceId=" + firstEvidenceId +
                 ", userUpdating='" + userUpdating + '\'' +
                 ", userId=" + userId +
+                ", sessionId='" + sessionId + '\'' +
                 '}';
     }
 }
