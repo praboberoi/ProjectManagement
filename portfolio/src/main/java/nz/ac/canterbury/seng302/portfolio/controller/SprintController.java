@@ -82,7 +82,6 @@ public class SprintController {
         ModelAndView mv;
         try {
             sprint = sprintService.getSprint(sprintId);
-
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView();
             mv.setStatus(HttpStatus.NOT_FOUND);
@@ -93,6 +92,7 @@ public class SprintController {
 
         List<Deadline> listDeadlines = deadlineService.getDeadlineBySprintId(sprintId);
         listDeadlines.forEach(deadlineService::updateDeadlineColors);
+        
         mv = new ModelAndView("project::sprintAccordion");
         mv.addObject("sprint", sprint);
         mv.addObject("listEvents", listEvents);

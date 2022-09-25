@@ -37,8 +37,8 @@ public interface EventRepository extends CrudRepository<Event, Integer>{
      * @return A list of deadlines occuring within the given sprint
      */
 
-    @Query(value = "SELECT DISTINCT event from Event event where event.startDate between :#{#sprint.startDate} " +
-            "and :#{#sprint.endDate}")
+    @Query(value = "SELECT DISTINCT event FROM Event event WHERE event.startDate BETWEEN :#{#sprint.startDate} " +
+            "AND :#{#sprint.endDate} AND event.project = :#{#sprint.project}")
     List<Event> findEventsBySprint(@Param("sprint") Sprint sprint);
 
 
