@@ -47,7 +47,7 @@ Feature: U5. Groups and group membership
   Scenario: AC6 I can select user(s) from a group and remove them from the group.
     Given I login as an admin
     And I navigate to 'Groups'
-    And I select group Cypress1
+    And I select group "Cypress1"
     When I select user CypressGroupGuineaPig
     And I remove users from group
     Then User CypressGroupGuineaPig is not in group
@@ -61,7 +61,7 @@ Feature: U5. Groups and group membership
   Scenario: AC1 removing a user from this group removes their teacher role.
     Given I login as an admin
     And I navigate to 'Groups'
-    And I select the Teaching Staff group
+    And I select group "Teaching Staff"
     When I select user CypressGroupGuineaPig
     And I remove users from group
     Then User CypressGroupGuineaPig is not in group
@@ -69,29 +69,35 @@ Feature: U5. Groups and group membership
   Scenario: AC4 I can select ... copy them to another group. If the source group is “members without a group”, then the user is moved to the other group
     Given I login as an admin
     And I navigate to 'Groups'
-    When I drag user CypressGroupGuineaPig to group Cypress2
+    When I drag user CypressGroupGuineaPig to group "Cypress2"
     Then User CypressGroupGuineaPig is not in group
-    And User CypressGroupGuineaPig is in group Cypress2
+    And User CypressGroupGuineaPig is in group "Cypress2"
 
   Scenario: AC4 As a teacher, I can select one or more users from any groups and copy them to another group.
     Given I login as an admin
     And I navigate to 'Groups'
-    And I select group Cypress2
-    When I drag user CypressGroupGuineaPig to group Cypress1
+    And I select group "Cypress2"
+    When I drag user CypressGroupGuineaPig to group "Cypress1"
     Then User CypressGroupGuineaPig is in group
-    And User CypressGroupGuineaPig is in group Cypress1
+    And User CypressGroupGuineaPig is in group "Cypress1"
 
   Scenario: AC8 I can delete groups. I am asked to confirm that I want to remove the x group members (users will not be deleted) and delete the group and that deleting a group cannot be undone. On confirmation, the group is deleted permanently, and group members removed.
     Given I login as an admin
     And I navigate to 'Groups'
-    And I select group Cypress2
+    And I select group "Cypress2"
     When I delete the group
-    Then Group Cypress2 doesn't exist
+    Then Group "Cypress2" doesn't exist
+
+  Scenario: AC3 As a teacher, I can create a group with a short name and a long name.
+    Given I login as an admin
+    And I navigate to 'Groups'
+    When I create the group "Cypress create", "Cypress create long name"
+    And Group "Cypress create" exists
 
   Scenario: Editing a group
     Given I login as an admin
     And I navigate to 'Groups'
-    And I select group Cypress1
-    When I change the group name to Cypress3
-    Then Group Cypress1 doesn't exist
-    And Group Cypress3 exists
+    And I select group "Cypress1"
+    When I change the group name to "Cypress3"
+    Then Group "Cypress1" doesn't exist
+    And Group "Cypress3" exists
