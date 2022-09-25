@@ -155,8 +155,10 @@ function subscribe() {
     stompClient.subscribe('/element/project/' + projectId + '/sprints', updateSprint);
     stompClient.subscribe('/element/project/' + projectId + '/events', handleEventNotification);
     stompClient.subscribe('/element/project/' + projectId + '/deadlines', handleDeadlineNotification);
+    stompClient.subscribe('/element/project/' + projectId + '/milestones', handleMilestoneNotification);
     loadEventCards()
     loadDeadlineCards()
+    loadMilestoneCards()
 }
 
 /**
@@ -233,6 +235,36 @@ function updateSprintAccordions() {
 
 
 /**
+ * Handles milestone updates from the server
+ * @param message Message with milestone and edit type
+ */
+ function handleMilestoneNotification(message) {
+    let array = message.body.split(' ')
+    let milestone = array[0]
+    let action = array[1]
+
+    let milestoneCard = document.getElementById(milestone + "-card");
+
+    if (action === "edited") {
+        loadMilestoneCards()
+    } else if (action === "deleted" && milestoneCard) {
+        milestoneCard.outerHTML = ""
+        return
+    } else if (action === "editing" && milestoneCard) {
+        let user = array[2]
+        document.getElementById(milestone + '-notification').innerText =`${user} is currently editing`
+        document.getElementById(milestone + '-edit-btn').hidden = true
+        document.getElementById(milestone + '-delete-btn').hidden = true
+    } else if (action === "finished" && milestoneCard) {
+        document.getElementById(milestone + '-notification').innerText = ""
+        document.getElementById(milestone + '-edit-btn').hidden = false
+        document.getElementById(milestone + '-delete-btn').hidden= false
+    } else {
+        console.log("Unknown event or command: " + milestone + " " + action)
+    }
+}
+
+/**
  * Handles event updates from the server
  * @param message Message with event and edit type
  */
@@ -274,19 +306,19 @@ document.addEventListener('DOMContentLoaded', function() {
  * Replaces the old http component with the new one contained in the request
  * @param httpRequest Request containing a model view element
  * @param element The element to replace
+ * @param errorMessage Optional variable, changes the default error message location
  */
-function updateElement(httpRequest, element){
+function updateElement(httpRequest, element, errorMessage = messageDanger){
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        errorMessage.innerText = ""
         if (httpRequest.status === 200) {
             element.innerHTML = httpRequest.responseText;
         } else if (httpRequest.status === 400) {
-            messageDanger.hidden = false;
-            messageSuccess.hidden = true;
-            messageDanger.innerText = "Bad Request";
+            errorMessage.innerText = "Bad Request";
+        } else if (httpRequest.status === 404) {
+            errorMessage.innerText = "Unable to load " + element.id;
         } else {
-            messageDanger.hidden = false;
-            messageSuccess.hidden = true;
-            messageDanger.innerText = "Something went wrong.";
+            errorMessage.innerText = "Something went wrong.";
         }
     }
 }
@@ -335,6 +367,18 @@ function loadDeadlineCards() {
     let deadlineElement = document.getElementById("deadline-list")
     httpRequest.open('GET', window.location.pathname + `/deadlines`);
     httpRequest.onreadystatechange = () => updateElement(httpRequest, deadlineElement)
+    httpRequest.send();
+}
+
+/**
+ * Loads the list of milestone cards under the event tab
+ */
+ function loadMilestoneCards() {
+    let httpRequest = new XMLHttpRequest();
+
+    let milestoneElement = document.getElementById("milestone-list")
+    httpRequest.open('GET', window.location.pathname + `/milestones`);
+    httpRequest.onreadystatechange = () => updateElement(httpRequest, milestoneElement)
     httpRequest.send();
 }
 

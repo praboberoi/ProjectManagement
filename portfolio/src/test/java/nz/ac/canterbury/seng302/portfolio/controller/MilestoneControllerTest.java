@@ -206,6 +206,32 @@ class MilestoneControllerTest {
 				.andExpect(content().string("Milestone name must be at least 3 characters"));
 	}
 
+	/**
+	 * Tests that the page returns an error message if the project doesn't exist
+	 * @throws Exception
+	 */
+	@Test
+	void givenProjectDoesNotExist_whenGetMilestones_thenErrorPageReturned() throws Exception {
+		when(projectService.getProjectById(anyInt())).thenThrow(new IncorrectDetailsException("Project not found"));
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/project/1/milestones"))
+		.andExpect(status().isNotFound())
+		.andExpect(model().attribute("errorMessage", "Project 1 does not exist"));
+	}
+
+	/**
+	 * Tests that the page returns all the milestones that exist within a project
+	 */
+	@Test
+	void givenProjectExists_whenGetMilestones_thenMilestones() throws Exception {
+		when(projectService.getProjectById(anyInt())).thenReturn(project);
+		when(milestoneService.getMilestonesByProject(any())).thenReturn(List.of(milestone, newMilestone));
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/project/1/milestones"))
+		.andExpect(status().isOk())
+		.andExpect(model().attribute("listMilestones", List.of(milestone, newMilestone)));
+	}
+
 	@AfterAll
 	private static void tearDown() {
 		utilities.close();

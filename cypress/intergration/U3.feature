@@ -6,17 +6,17 @@ Feature: U3. Milestones on the project details page
     And I select Create Milestone
     When I enter "CypressTest1" milestone name and "2022-07-15" date
     And I select save on the milestone form
-  # Then A new milestone is created
+    Then A new milestone is created
 
   # Uncomment when edit functionality is added
-  # Scenario: AC1 I should be able to edit a milestone from the project details page.
-  #   Given I login as an admin
-  #   And I select the CypressProject project
-  #   And I select the milestones tab
-  #   When I select edit for "CypressTest1" milestone
-  #   And I change the name to "CypressTest2"
-  #   And I select save on the milestone form
-  #   Then Milestone name is updated successfully to "CypressTest2"
+  Scenario: AC1 I should be able to edit a milestone from the project details page.
+    Given I login as an admin
+    And I select the CypressProject project
+    And I select the milestones tab
+    When I select edit for "CypressTest1" milestone
+    And I change the name to "CypressTest2"
+    And I select save on the milestone form
+    Then Milestone name is updated successfully to "CypressTest2"
 
   # Uncomment when delete functionality is added
   # Scenario: AC1 I should be able to delete a milestone from the project details page.
@@ -49,3 +49,10 @@ Feature: U3. Milestones on the project details page
     And I select the milestones tab
     When I select Create Milestone
     Then The current date is the milestone date
+
+  Scenario: AC10 My page should display any updates/changes without me having to refresh the page.
+    Given I login as an admin
+    And I select the CypressProject project
+    And I select the milestones tab
+    When I call create milestone 'Cypress auto update'
+    Then 'Cypress auto update' exists

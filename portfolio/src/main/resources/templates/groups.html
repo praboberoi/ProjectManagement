@@ -10,7 +10,6 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Custom css for body-->
     <link th:href="@{{apiPrefix}/css/body.css(apiPrefix=${apiPrefix})}" rel="stylesheet" type="text/css" />
-    <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
 </head>
 
 <!--fragments-->
@@ -21,20 +20,16 @@
 <div th:replace="fragments :: sidebar"></div>
 
 <body>
-<div class="main">
-    <br>
-    <div class="page-title">
-        <h2 id="name">Groups</h2>
-    </div>
-    <div class="alert alert-danger text-center" id="messageDanger">[[${messageDanger}]]</div>
-    <div class="alert alert-success text-center" id="messageSuccess">[[${messageSuccess}]]</div>
+    <div class="main">
+        <br>
+        <div class="page-title">
+            <h2 id="name">Groups</h2>
+        </div>
+        <div class="alert alert-danger text-center" id="messageDanger">[[${messageDanger}]]</div>
+        <div class="alert alert-success text-center" id="messageSuccess">[[${messageSuccess}]]</div>
 
         <div th:if="${adminOrTeacher}">
-            <a class="btn btn-outline-primary ms-0 mb-1" id="create-btn" data-toggle="modal" data-target="#createModal">
-                <img class="icon img-color-primary"
-                    th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" />
-                Create Group
-            </a>
+            <span th:replace="groupsFragments::createGroupComponent"></span>
         </div>
 
         <div class="" id="group-container">
@@ -43,7 +38,9 @@
                     <th:block th:each="group : ${listGroups}">
                         <div class="card project-card mb-3" th:id="'group' + ${group.groupId} + 'Card'"
                             th:ondrop="'dropUsers(event, ' + ${group.groupId} + ')'" ondragover="allowDrop(event)">
-                            <input type="hidden" th:value="${group.groupId!=0?group.groupId:(group.shortName.contains('Teaching Staff')?'teacher':'unassigned')}" class="group-id">
+                            <input type="hidden"
+                                th:value="${group.groupId!=0?group.groupId:(group.shortName.contains('Teaching Staff')?'teacher':'unassigned')}"
+                                class="group-id">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="card-body">
@@ -77,7 +74,7 @@
                 </div>
 
                 <div id="group-display" class="col-sm-12 col-md-8" th:insert="groupsFragments::group">
-                    
+
                 </div>
             </div>
         </div>
