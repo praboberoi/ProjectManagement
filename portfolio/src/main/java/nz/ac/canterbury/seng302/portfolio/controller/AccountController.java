@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -57,6 +58,22 @@ public class AccountController {
     ) {
         this.addAttributesToModel(principal, model);
         return ACCOUNT_PAGE;
+    }
+
+    @GetMapping(path="/account/roles")
+    public ModelAndView roles(@AuthenticationPrincipal AuthState principal) {
+        UserResponse idpResponse = userAccountClientService.getUser(principal);
+
+        User user = new User(idpResponse);
+
+        StringBuilder roles = new StringBuilder();
+
+        ModelAndView mv = new ModelAndView("accountFragments::rolesList");
+
+        user.getRoles().forEach(role -> roles.append(formatRoleName(role.toString() + ", ")));
+        mv.addObject("roles",
+                !user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
+        return mv;
     }
 
     /**
