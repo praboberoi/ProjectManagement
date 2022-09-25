@@ -189,7 +189,7 @@ import static org.junit.jupiter.api.Assertions.*;
      void givenDeadlineExists_whenToStringOfDeadlineIsRetested_thenStringRepresentationOfDeadlineIsReturned() {
         String expectedString ="Deadline{" +
                 "deadlineId=" + deadline1.getDeadlineId() +
-                ", projectId=" + project.getProjectId() +
+                ", project=" + project +
                 ", name='" + deadline1.getName() +  "'" +
                 ", date=" + deadline1.getDate() +
                 ", colors= " + deadline1.getColors() +
