@@ -21,7 +21,7 @@ function saveEvidence() {
 /**
  * Updates the submission button and current char count displayed to the user.
  */
-function checkEvidenceTitle(){
+function checkEvidenceTitle() {
     const evidenceTitle = document.getElementById('evidence-title');
     let charMessage = document.getElementById("evidenceCharCount");
     let charCount = evidenceTitle.value.length;
@@ -84,6 +84,7 @@ function editEvidence(evidenceId, evidenceProjectId) {
     httpRequest.open('GET', `${window.location.pathname}/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, evidenceProjectId, "Update Evidence");
     httpRequest.send();
+    stompClient.publish({destination: "/app/evidence/edit", body: JSON.stringify({'evidenceId': evidenceId, 'action': "editing", 'firstEvidenceId': 0, 'userUpdating': null, 'userId':userId})});
 
 }
 
@@ -97,6 +98,14 @@ function openEvidenceModal() {
         backdrop: "static"
     });
     modal.show();
+}
+
+function updateEditMessage() {
+    const evidenceId = document.getElementById('evidenceId').value
+    document.getElementById(`evidence-${evidenceId}-message-div`).hidden = true
+    document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = false
+    stompClient.publish({destination: "/app/evidence/edit", body: JSON.stringify({'evidenceId': evidenceId, 'action': "finished", 'firstEvidenceId': 0, 'userUpdating': null, 'userId':userId})})
+
 }
 
 /**

@@ -1,5 +1,7 @@
 let stompClient = null;
 
+let previousDivInnerHTML = null;
+
 /**
  * Connects to the websocket server
  */
@@ -46,14 +48,16 @@ document.addEventListener('DOMContentLoaded', function() {
  * @param message
  */
 function updateEvidencePage(message) {
-    let array = message.body.split(' ')
-    let evidenceId = parseInt(array[1])
-    let action = array[2]
-    let firstEvidenceId = parseInt(array[3])
-
+    const evidenceNotification  = JSON.parse(message.body)
+    const evidenceId = evidenceNotification.evidenceId
+    const action = evidenceNotification.action
+    const firstEvidenceId = evidenceNotification.firstEvidenceId
     const selectedEvidenceIdElement = document.getElementById('selectedEvidenceId')
     const selectedEvidenceId = selectedEvidenceIdElement === null ? 0 : parseInt(selectedEvidenceIdElement.value)
-    getEvidenceList()
+
+    if (action === "deleted" || action === 'saved') {
+        getEvidenceList()
+    }
 
     if (action === "deleted" && selectedEvidenceId === evidenceId && firstEvidenceId !== 0) {
         getSelectedEvidence(firstEvidenceId)
@@ -69,10 +73,25 @@ function updateEvidencePage(message) {
         getSelectedEvidence(evidenceId)
         document.getElementById('selectedEvidence').hidden = false
     }
+
     else if (action === 'saved' && firstEvidenceId !== 0 && selectedEvidenceId === 0) {
         getSelectedEvidence(firstEvidenceId)
         document.getElementById('selectedEvidence').hidden = false
     }
+
+    else if (action === 'editing') {
+        const messageDiv = document.getElementById(`evidence-${evidenceId}-message-div`)
+        messageDiv.innerHTML = `<p class="h6 text-align-start font-italic text-black-50">${evidenceNotification.userUpdating} is currently editing</p>`
+        messageDiv.hidden = false
+        document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = true
+    }
+
+    else if (action === 'finished') {
+        const messageDiv = document.getElementById(`evidence-${evidenceId}-message-div`)
+        messageDiv.hidden = true
+        document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = false
+    }
+
 }
 
 /**

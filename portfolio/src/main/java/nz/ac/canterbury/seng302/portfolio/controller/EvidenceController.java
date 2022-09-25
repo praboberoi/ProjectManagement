@@ -1,17 +1,23 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.EvidenceNotification;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
@@ -19,7 +25,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus. *;
@@ -42,6 +50,10 @@ public class EvidenceController {
 
     @Autowired
     private SimpMessagingTemplate template;
+
+    private final Logger logger = LoggerFactory.getLogger(EventController.class);
+
+    private HashMap<Integer, EvidenceNotification> editing = new HashMap<Integer, EvidenceNotification>();
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
@@ -73,6 +85,9 @@ public class EvidenceController {
         model.addAttribute("listEvidence", listEvidence);
         model.addAttribute("listProjects", listProjects);
         model.addAttribute("isCurrentUserEvidence", user.getUserId()==userId);
+        model.addAttribute("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
+        model.addAttribute("userName", PrincipalUtils.getUserName(principal));
+        model.addAttribute("notifications", editing);
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }
@@ -120,11 +135,12 @@ public class EvidenceController {
             if (editingUser != userId) {
                 throw new IncorrectDetailsException("You may only create evidence on your own evidence page");
             }
-
             evidence.setOwnerId(userId);
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
-            notifyEvidence(evidence.getEvidenceId(), "saved", userId);
+            EvidenceNotification notification = new EvidenceNotification(evidence.getEvidenceId(), "saved",
+                    0, PrincipalUtils.getUserName(principal), userId);
+            notifyEvidence(notification);
             ra.addFlashAttribute("messageSuccess", message);
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
@@ -138,8 +154,9 @@ public class EvidenceController {
      * @return evidence form fragment
      */
     @GetMapping(path="/evidence/{userId}/{evidenceId}/editEvidence")
-    public ModelAndView getEvidence(
-            @PathVariable int evidenceId) {
+    public ModelAndView editEvidence(
+            @PathVariable int evidenceId,
+            @PathVariable int userId) {
         ModelAndView mv = new ModelAndView("evidence::evidenceForm");
         try {
             Evidence evidence = evidenceService.getEvidence(evidenceId);
@@ -148,6 +165,7 @@ public class EvidenceController {
             mv.addObject("listProjects", listProjects);
             mv.addObject("submissionImg", apiPrefix+"/icons/save-icon.svg");
             mv.addObject("submissionName", "Save");
+            mv.addObject("isCreate", false);
 
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
@@ -172,6 +190,7 @@ public class EvidenceController {
         mv.addObject("listProjects", listProjects);
         mv.addObject("submissionImg", apiPrefix+"/icons/create-icon.svg");
         mv.addObject("submissionName", "Create");
+        mv.addObject("isCreate", true);
         return mv;
     }
 
@@ -185,11 +204,15 @@ public class EvidenceController {
     public String deleteEvidence(
             @PathVariable int evidenceId,
             @PathVariable int userId,
+            @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra) {
         try {
             String message = evidenceService.deleteEvidence(evidenceId);
             ra.addFlashAttribute("messageSuccess", message);
-            notifyEvidence(evidenceId, "deleted", userId);
+            EvidenceNotification notification = new EvidenceNotification(evidenceId, "deleted",
+                    0, PrincipalUtils.getUserName(principal), userId);
+
+            notifyEvidence(notification);
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
@@ -204,11 +227,36 @@ public class EvidenceController {
      */
     @GetMapping(path="/evidence/{userId}/getEvidenceList")
     public ModelAndView getEvidenceList(
-            @PathVariable int userId) {
+            @PathVariable int userId,
+            @AuthenticationPrincipal AuthState principal) {
+        User user = new User(userAccountClientService.getUser(principal));
         ModelAndView mv = new ModelAndView("evidence::evidenceList");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject("listEvidence", listEvidence);
+        mv.addObject("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
+        mv.addObject("isCurrentUserEvidence", user.getUserId()==userId);
+        mv.addObject("userName", PrincipalUtils.getUserName(principal));
+        mv.addObject("notifications", editing);
         return mv;
+    }
+
+    /**
+     * Receives update messages from the client where the changes to the deadlines are made and notifies all the other
+     * clients subscribed for updates
+     * @param notification Notification containing the deadline ID and project ID that is being edited
+     * @param principal Authentication information containing user info
+     * @param sessionId Session ID of the websocket communication
+     */
+    @MessageMapping("/evidence/edit")
+    public void editing(EvidenceNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal) {
+        notification.setUserUpdating(principal.getName());
+
+        if (notification.getAction().equals("editing"))
+            editing.put(notification.getEvidenceId(), notification);
+        else
+            editing.remove(notification.getEvidenceId());
+
+        notifyEvidence(notification);
     }
 
     /**
@@ -217,11 +265,15 @@ public class EvidenceController {
      * @param action the action performed on the evidence
      * @param userId the ID of the user making the changes to the evidence
      */
-    private void notifyEvidence(int evidenceId, String action, int userId) {
-        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+    private void notifyEvidence(EvidenceNotification notification) {
+        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(notification.getUserId());
         int firstEvidenceId = listEvidence.isEmpty() ? 0 : listEvidence.get(0).getEvidenceId();
-        template.convertAndSend("/element/evidence/" + userId ,
-                ("evidence " + evidenceId + " "  + action + " " + firstEvidenceId));
+        notification.setFirstEvidenceId(firstEvidenceId);
+        try {
+            template.convertAndSend("/element/evidence/" + notification.getUserId(), new ObjectMapper().writeValueAsString(notification));
+        } catch (JsonProcessingException e) {
+            logger.info("Unable to convert and send notification {}", notification);
+        }
     }
 
 
