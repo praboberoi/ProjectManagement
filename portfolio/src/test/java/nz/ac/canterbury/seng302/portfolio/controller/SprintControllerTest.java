@@ -20,6 +20,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -210,6 +211,82 @@ public class SprintControllerTest {
         when(sprintService.verifySprint(any())).thenThrow(new IncorrectDetailsException("Invalid Sprint"));
 
         this.mockMvc.perform(post("/project/1/sprint").flashAttr("sprintDTO", toDTO(sprint)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/project/1"))
+                .andExpect(flash().attribute("messageDanger", "Invalid Sprint"));
+    }
+
+    /**
+     * Tests that students are unable to edit sprint dates
+     * @throws Exception
+     */
+    @Test
+    void givenStudentUser_whenEditSprint_thenForbidden() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+
+        LocalDate now = LocalDate.now();
+        this.mockMvc.perform(post("/sprint/1/editSprint").flashAttr("startDate", Date.valueOf(now)).flashAttr("endDate", Date.valueOf(now.plusDays(30))))
+                .andExpect(status().isForbidden());
+    }
+
+    /**
+     * Tests that a sprint with valid dates can be saved
+     * @throws Exception
+     */
+    @Test
+    void givenValidSprintDates_whenEditSprint_thenSprintSaved() throws Exception {   
+        when(sprintService.getSprint(anyInt())).thenReturn(new Sprint());
+        LocalDate now = LocalDate.now();
+        this.mockMvc.perform(post("/sprint/1/editSprint").flashAttr("startDate", Date.valueOf(now)).flashAttr("endDate", Date.valueOf(now.plusDays(30))))
+                .andExpect(status().isOk());
+    }
+    
+    /**
+     * Tests that a sprint with invalid dates can't be saved
+     * @throws Exception
+     */
+    @Test
+    void givenValidSprintDates_whenEditSprint_thenBadRequest() throws Exception {   
+        when(sprintService.getSprint(anyInt())).thenReturn(new Sprint());
+        when(sprintService.verifySprint(any())).thenThrow(new IncorrectDetailsException("Invalid Sprint"));
+        LocalDate now = LocalDate.now();
+        this.mockMvc.perform(post("/sprint/1/editSprint").flashAttr("startDate", Date.valueOf(now)).flashAttr("endDate", Date.valueOf(now.plusDays(30))))
+                .andExpect(status().isBadRequest());
+    }
+
+    /**
+     * Tests that students are unable to delete a sprint
+     * @throws Exception
+     */
+    @Test
+    void givenStudentUser_whenDeleteSprint_thenForbidden() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        this.mockMvc.perform(post("/project/1/deleteSprint/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/dashboard"));
+    }
+
+    /**
+     * Tests that a sprint redirects to the project page on successful deletion
+     * @throws Exception
+     */
+    @Test
+    void givenValidSprint_whenDeleteSprint_thenSprintDeleted() throws Exception {
+
+        this.mockMvc.perform(post("/project/1/deleteSprint/1"))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/project/1"));
+    }
+
+    /**
+     * Tests that a sprint redirects to the project page on unsuccessful deletion
+     * @throws Exception
+     */
+    @Test
+    void givenInvalidSprint_whenDeleteSprint_thenErrorMessagePresent() throws Exception {
+        when(sprintService.verifySprint(any())).thenThrow(new IncorrectDetailsException("Invalid Sprint"));
+
+        this.mockMvc.perform(post("/project/1/deleteSprint/1"))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(view().name("redirect:/project/1"))
                 .andExpect(flash().attribute("messageDanger", "Invalid Sprint"));
