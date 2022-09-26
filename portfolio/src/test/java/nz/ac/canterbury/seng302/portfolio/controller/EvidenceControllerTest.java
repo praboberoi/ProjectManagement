@@ -196,7 +196,7 @@ public class EvidenceControllerTest {
                 .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
                 .andExpect(model().attribute("listProjects", projectList))
                 .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99))
-                .andExpect(model().attribute("userName", user.getFirstName()));
+                .andExpect(model().attribute("userFirstName", user.getFirstName()));
 
     }
 
