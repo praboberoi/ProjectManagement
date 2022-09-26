@@ -1,9 +1,15 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
+
 import javax.persistence.PersistenceException;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,16 +24,22 @@ public class MilestoneService {
     @Autowired
     private MilestoneRepository milestoneRepository;
     @Autowired
-    private ProjectRepository projectRepository;
-    @Autowired
     private SprintRepository sprintRepository;
     private Logger logger = LoggerFactory.getLogger(MilestoneService.class);
 
-    public MilestoneService(MilestoneRepository milestoneRepository, ProjectRepository projectRepository,
-            SprintRepository sprintRepository) {
+    public MilestoneService(MilestoneRepository milestoneRepository, SprintRepository sprintRepository) {
         this.milestoneRepository = milestoneRepository;
         this.sprintRepository = sprintRepository;
-        this.projectRepository = projectRepository;
+    }
+
+    /**
+     * Returns a list of milestones that are related to the given project
+     * 
+     * @param project The project to retrieve the milestones from
+     * @return a list of milestones from a project specified by its Id.
+     */
+    public List<Milestone> getMilestonesByProject(Project project) {
+        return milestoneRepository.findByProject(project).stream().sorted(Comparator.comparing(Milestone::getDate)).toList();
     }
 
     /**
@@ -55,5 +67,14 @@ public class MilestoneService {
             logger.error("Failed to save the milestone", e);
             throw new IncorrectDetailsException("Failed to save the milestone");
         }
+    }
+
+    /**
+     * Updates the colors for the given milestone
+     * @param milestone Milestone to set the colors for
+     */
+    public void updateMilestoneColor(Milestone milestone) {
+        Optional<Sprint> sprint = sprintRepository.findSprintByMilestone(milestone);
+        milestone.setColor(sprint.map(Sprint::getColor).orElse(SprintColor.WHITE));
     }
 }

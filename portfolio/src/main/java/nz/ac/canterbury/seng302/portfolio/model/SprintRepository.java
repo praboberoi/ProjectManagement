@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository class that extends Crud repository and provides methods for making query calls to the database;
@@ -98,4 +99,12 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      */
     @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#deadline.date} <= sprint.endDate and :#{#deadline.date} >= sprint.startDate")
     List<Sprint> findSprintsByDeadline(@Param("deadline") Deadline deadline);
+
+    /**
+     * Obtains the sprint that falls under the given milestone
+     * @param milestone Milestone object to find the sprint for
+     * @return a list of Sprint
+     */
+    @Query(value = "SELECT sprint from Sprint sprint where :#{#milestone.date} <= sprint.endDate and :#{#milestone.date} >= sprint.startDate")
+    Optional<Sprint> findSprintByMilestone(@Param("milestone") Milestone milestone);
 }

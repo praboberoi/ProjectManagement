@@ -20,17 +20,17 @@
 <div th:replace="fragments :: sidebar"></div>
 
 <body>
-    <div class="main">
+<div class="main">
+    <br>
+    <div class="page-title">
+        <h2 id="name">Evidence Owner: [[${userName}]]</h2>
+    </div>
+    <div id="toRefresh">
         <br>
-        <div class="page-title">
-            <h2 id="name">Evidence</h2>
-        </div>
-        <div id="toRefresh">
-            <br>
-            <div id="messageSuccess" class="alert alert-success text-center">[[${messageSuccess}]]</div>
-            <div id="messageDanger" class="alert alert-danger text-center">[[${messageDanger}]]</div>
-        </div>
-        <br>
+        <div id="messageSuccess" class="alert alert-success text-center">[[${messageSuccess}]]</div>
+        <div id="messageDanger" class="alert alert-danger text-center">[[${messageDanger}]]</div>
+    </div>
+    <br>
 
 
         <div th:if="${isCurrentUserEvidence}" class="createBtn">
@@ -103,10 +103,7 @@
                 </div>
             </div>
         </div>
-
-
     </div>
-
 
     <div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">

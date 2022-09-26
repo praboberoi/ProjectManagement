@@ -71,3 +71,11 @@ Then("The current date is the milestone date", () => {
     cy.get('#milestoneDate').should("have.value",
         new Date().toLocaleDateString("en-CA"))
 })
+
+When("I call create milestone {string}", (milestoneName) => {
+    cy.getCookie("lens-session-token").then((cookie) => {
+        cy.setCookie('lens-session-token', cookie.value)
+    })
+
+    cy.request('POST', Cypress.config().baseUrl + '/project/1000/milestone?milestoneId=0&name=' + milestoneName.replaceAll(' ', '+') + '&date=2022-09-24')
+})

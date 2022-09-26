@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -66,6 +65,8 @@ public class ProjectController {
             Model model,
             RedirectAttributes ra) {
         try {
+            Project project = projectService.getProjectById(projectId);
+
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
 
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
@@ -77,13 +78,16 @@ public class ProjectController {
 
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
 
-            Project project = projectService.getProjectById(projectId);
+            List<Milestone> listMilestones = milestoneService.getMilestonesByProject(project);
+            listMilestones.forEach(milestoneService::updateMilestoneColor);
+
             Event newEvent = eventService.getNewEvent(project);
             Deadline newDeadline = deadlineService.getNewDeadline(project);
             Milestone newMilestone = milestoneService.getNewMilestone(project);
 
             model.addAttribute("listEvents", listEvents);
             model.addAttribute("listDeadlines", listDeadlines);
+            model.addAttribute("listMilestones", listMilestones);
             model.addAttribute("listSprints", listSprints);
 
             model.addAttribute("project", project);

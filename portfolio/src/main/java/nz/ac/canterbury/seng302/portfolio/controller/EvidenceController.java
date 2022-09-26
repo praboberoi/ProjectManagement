@@ -60,10 +60,12 @@ public class EvidenceController {
         List<Project> listProjects = projectService.getAllProjects();
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         Evidence newEvidence = evidenceService.getNewEvidence(userId);
+        User userName = new User(userAccountClientService.getUser(userId));
         model.addAttribute("evidence", newEvidence);
         model.addAttribute("listEvidence", listEvidence);
         model.addAttribute("listProjects", listProjects);
         model.addAttribute("isCurrentUserEvidence", user.getUserId()==userId);
+        model.addAttribute("userName", userName.getFirstName());
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }
