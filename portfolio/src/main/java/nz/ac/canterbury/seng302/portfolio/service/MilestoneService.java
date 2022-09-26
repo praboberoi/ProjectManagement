@@ -84,9 +84,9 @@ public class MilestoneService {
         } else if (milestone.getName().length() > 50) {
             throw new IncorrectDetailsException("Milestone Name cannot exceed 50 characters");
         } else if (milestone.getDate().after(milestone.getProject().getEndDate())) {
-            throw new IncorrectDetailsException(" Milestone must start on or before the project end date");
+            throw new IncorrectDetailsException("Milestone date cannot be after project end date");
         } else if (milestone.getDate().before(milestone.getProject().getStartDate())) {
-            throw new IncorrectDetailsException("Milestone must end on or before the project start date");
+            throw new IncorrectDetailsException("Milestone date cannot be before project start date");
         }
     }
 

@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import javax.persistence.PersistenceException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
@@ -144,4 +146,121 @@ class MilestoneServiceTest {
 
         assertEquals(milestone2, milestones.get(0));
     }
+
+    /**
+     * Test to make sure an error is thrown with an appropriate error message when a null object
+     * is sent for verifying a milestone
+     */
+    @Test
+    void givenMilestoneDoesNotExist_whenVerifyMilestoneRequested_thenExceptionIsThrown() {
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.verifyMileStone(null));
+        Assertions.assertEquals("No milestone", exception.getMessage());
+    }
+
+    /**
+     * Test to make sure an error is thrown with an appropriate error message shown when a milestone
+     * has null values
+     */
+    @Test
+    void givenMilestoneExistWithNullValues_whenVerifyMilestone_thenExceptionIsThrown() {
+        Milestone newMilestone = new Milestone.Builder()
+                .milestoneId(0)
+                .date(new Date())
+                .project(project)
+                .build();
+
+        Milestone newMilestone1 = new Milestone.Builder()
+                .milestoneId(0)
+                .name("name")
+                .project(project)
+                .build();
+
+        Milestone newMilestone2 = new Milestone.Builder()
+                .milestoneId(0)
+                .name("name")
+                .date(new Date())
+                .build();
+
+        List<Milestone> milestones = List.of(newMilestone1, newMilestone2, newMilestone);
+        milestones.forEach(currentMilestone -> {
+            IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                    milestoneService.verifyMileStone(currentMilestone));
+            Assertions.assertEquals("Milestone values cannot be null", exception.getMessage());
+        });
+    }
+
+    /**
+     * Test to make sure an error is thrown with appropriate error message when a milestone object
+     * with empty name is sent in for validation
+     */
+    @Test
+    void givenMilestoneWithEmptyName_whenVerifyMilestone_thenExceptionIsThrown() {
+        Milestone newMilestone3 = new Milestone.Builder()
+                .name("")
+                .milestoneId(0)
+                .date(new Date())
+                .project(project)
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.verifyMileStone(newMilestone3));
+        assertEquals("Milestone Name must not be empty", exception.getMessage());
+    }
+
+    /**
+     * Test to make sure an error is thrown with appropriate error message when a milestone object
+     * with name outside the character limit is sent for verifying a milestone
+     */
+    @Test
+    void givenMilestoneNameOutsideCharacterLimit_whenVerifyMilestone_thenExceptionIsThrown() {
+        Milestone newMilestone4 = new Milestone.Builder()
+                .name("hi")
+                .milestoneId(0)
+                .date(new Date())
+                .project(project)
+                .build();
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.verifyMileStone(newMilestone4));
+        assertEquals("Milestone name must be at least 3 characters", exception.getMessage());
+
+        Milestone newMilestone5 = new Milestone.Builder()
+                .name("A Milestone with a reallllyyyy looonnggg name to test that it the name cannot exceed the character limit of 50 characters")
+                .milestoneId(0)
+                .date(new Date())
+                .project(project)
+                .build();
+        IncorrectDetailsException exception2 = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.verifyMileStone(newMilestone5));
+        assertEquals("Milestone Name cannot exceed 50 characters", exception2.getMessage());
+    }
+
+    /**
+     * Test to make sure an error is thrown with appropriate error message when a milestone object
+     * with dates outside the project is sent for verifying a milestone
+     */
+    @Test
+    void givenMilestoneWithDatesOutsideProject_whenVerifyMilestone_thenExceptionIsThrown() {
+        Milestone newMilestone6 = new Milestone.Builder()
+                .name("new milestone")
+                .milestoneId(0)
+                .date(new java.sql.Date(2024, 11, 12))
+                .project(project)
+                .build();
+            IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                    milestoneService.verifyMileStone(newMilestone6));
+            assertEquals("Milestone date cannot be after project end date", exception.getMessage());
+
+        Milestone newMilestone7 = new Milestone.Builder()
+                .name("new milestone")
+                .milestoneId(0)
+                .date(new java.sql.Date(100, 11, 12))
+                .project(project)
+                .build();
+        IncorrectDetailsException exception2 = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.verifyMileStone(newMilestone7));
+        assertEquals("Milestone date cannot be before project start date", exception2.getMessage());
+
+    }
+
 }
