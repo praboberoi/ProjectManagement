@@ -104,6 +104,7 @@ public class MilestoneController {
         try {
             milestoneDTO.setProject(projectService.getProjectById(projectId));
             Milestone milestone = new Milestone(milestoneDTO);
+            milestoneService.verifyMileStone(milestone);
             milestoneService.saveMilestone(milestone);
             logger.info("Milestone {} has been edited", milestone.getMilestoneId());
             notifyMilestone(projectId, milestone.getMilestoneId(), "edited");

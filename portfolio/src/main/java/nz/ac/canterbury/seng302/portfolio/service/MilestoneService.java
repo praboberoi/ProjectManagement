@@ -6,6 +6,8 @@ import java.util.List;
 import java.util.Optional;
 
 import javax.persistence.PersistenceException;
+import javax.persistence.criteria.CriteriaBuilder;
+
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
@@ -61,6 +63,7 @@ public class MilestoneService {
      * @throws IncorrectDetailsException if unable to save a milestone
      */
     public void saveMilestone(Milestone milestone) throws IncorrectDetailsException {
+        String message;
         try {
             milestoneRepository.save(milestone);
         } catch (PersistenceException e) {
@@ -68,6 +71,26 @@ public class MilestoneService {
             throw new IncorrectDetailsException("Failed to save the milestone");
         }
     }
+
+    public void verifyMileStone(Milestone milestone) throws IncorrectDetailsException {
+        if (milestone == null) {
+            throw new IncorrectDetailsException("No milestone");
+        } else if (milestone.getName() == null || milestone.getDate() == null || milestone.getProject() == null) {
+            throw new IncorrectDetailsException("Milestone values cannot be null");
+        } else if (milestone.getName().length() < 1) {
+            throw new IncorrectDetailsException("Milestone Name must not be empty");
+        } else if (milestone.getName().length() < 3) {
+            throw new IncorrectDetailsException("Milestone name must be at least 3 characters");
+        } else if (milestone.getName().length() > 50) {
+            throw new IncorrectDetailsException("Milestone Name cannot exceed 50 characters");
+        } else if (milestone.getDate().after(milestone.getProject().getEndDate())) {
+            throw new IncorrectDetailsException(" Milestone must start on or before the project end date");
+        } else if (milestone.getDate().before(milestone.getProject().getStartDate())) {
+            throw new IncorrectDetailsException("Milestone must end on or before the project start date");
+        }
+    }
+
+
 
     /**
      * Updates the colors for the given milestone
