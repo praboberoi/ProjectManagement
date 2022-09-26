@@ -354,7 +354,7 @@ public class EvidenceControllerTest {
         StompSubProtocolHandler testSource = new StompSubProtocolHandler();
         GenericMessage<byte[]> testMessage = new GenericMessage<byte[]>(HexFormat.of().parseHex("FF"));
 
-        SessionDisconnectEvent disconnectEvent = new SessionDisconnectEvent(testSource, testMessage, "0", CloseStatus.TLS_HANDSHAKE_FAILURE);
+        SessionDisconnectEvent disconnectEvent = new SessionDisconnectEvent(testSource, testMessage, "testing", CloseStatus.TLS_HANDSHAKE_FAILURE);
 
         when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
 
