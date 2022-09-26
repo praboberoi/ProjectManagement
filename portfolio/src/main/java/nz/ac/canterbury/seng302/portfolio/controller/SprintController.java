@@ -160,15 +160,20 @@ public class SprintController {
             @PathVariable int projectId,
             @ModelAttribute SprintDTO sprintDTO,
             @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+
         try {
             Project project = projectService.getProjectById(projectId);
             Sprint sprint = new Sprint(sprintDTO);
+
             sprint.setProject(project);
             sprintService.verifySprint(sprint);
+
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (IncorrectDetailsException e) {
-            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -271,7 +276,7 @@ public class SprintController {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return redirectDashboard;
         } 
-        
+
         try {
             String responseMessage = sprintService.deleteSprint(sprintId);
             sprintService.updateSprintLabelsAndColor(sprintService.getSprintsByProject(projectId));
