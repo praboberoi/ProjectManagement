@@ -346,12 +346,10 @@ public class EvidenceControllerTest {
         evidence.setEvidenceId(1);
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
-        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), "editing",
+        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), "finished",
                 1, "tes2", 99, "testing");
 
         HashMap<Integer, EvidenceNotification> expectedNotifications = new HashMap<>();
-
-        expectedNotifications.put(evidence.getEvidenceId(),evidenceNotification );
 
         StompSubProtocolHandler testSource = new StompSubProtocolHandler();
         GenericMessage<byte[]> testMessage = new GenericMessage<byte[]>(HexFormat.of().parseHex("FF"));

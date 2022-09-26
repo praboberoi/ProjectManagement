@@ -61,17 +61,17 @@ public class EvidenceController {
         this.evidenceService = evidenceService;
     }
 
-    private final String EVIDENCE = "evidence";
+    private static final String EVIDENCE = "evidence";
 
-    private final String LIST_PROJECTS = "listProjects";
+    private static final String LIST_PROJECTS = "listProjects";
 
-    private final String LIST_EVIDENCE = "listEvidence";
+    private static final String LIST_EVIDENCE = "listEvidence";
 
-    private final String NOTIFICATIONS = "notifications";
+    private static final String NOTIFICATIONS = "notifications";
 
-    private final String MESSAGE_DANGER = "messageDanger";
+    private static final String MESSAGE_DANGER = "messageDanger";
 
-    private final String MESSAGE_SUCCESS = "messageSuccess";
+    private static final String MESSAGE_SUCCESS = "messageSuccess";
 
     /**
      * Adds common model elements used by all controller methods.
