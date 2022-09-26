@@ -147,10 +147,7 @@
                   Create Milestone</button>
               </div>
             </div>
-            <div class="card" id="milestoneCard">
-              <h6 class="card-title">Seng 302: </h6>
-              <p class="eventDates">End Date: 21 July 2022 5pm</p>
-            </div>
+            <div id="milestone-list" th:insert="milestoneFragments::milestoneTab"></div>
           </div>
         </div>
       </div>
@@ -370,7 +367,7 @@
 
   <div th:replace="forms :: eventsForm"></div>
   <div th:replace="forms :: deadlineForm"></div>
-  <div th:replace="milestoneFragments::milestoneForm"></div>
+  <div th:replace="forms :: milestoneForm"></div>
   <script th:inline="javascript">
     let userRoles = [[${ roles }]];
     const projectId = [[${ project.projectId }]];

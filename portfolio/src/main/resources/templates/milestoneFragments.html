@@ -1,63 +1,77 @@
-<th:block th:each="milestone : ${listMilestones}" th:fragment="milestoneTab">
+<th:block th:each="milestone:${listMilestones}" th:fragment="milestoneTab">
+    <div class="card shadow-sm bg-white rounded milestone-card p-0 m-2"
+        th:id="'milestone' + ${milestone.milestoneId} + '-card'">
+        <div class="container-fluid">
+            <div class="d-flex justify-content-between pt-2">
+                <div>
+                    <h6 class="card-title" th:id="'milestone' + ${milestone.milestoneId} + 'Name'">[[${milestone.name}]]
+                    </h6>
+                    <p class="eventDates" th:id="'milestone' + ${milestone.milestoneId} + 'date'"><b>Date:</b>
+                        [[${#dates.format(milestone.date, 'dd MMM yyyy')}]]
+                </div>
+                <div class="d-flex align-items-baseline pt-2 mt-2" th:if="${adminOrTeacher}">
+                    <th:block th:each="notification : ${editMilestoneNotifications}" th:object="${notification}"
+                        th:if="${notification.milestoneId} == ${milestone.milestoneId}">
+                        <p class="text-align-start font-italic text-black-50 mb-0 ml-5 ml-md-0"
+                            th:id="'milestone' + ${milestone.milestoneId} + '-notification'"
+                            th:text="${notification.username} + ' is currently editing'"></p>
+                    </th:block>
+                    <p class="text-align-start font-italic text-black-50 mb-0 ml-5 ml-md-0"
+                        th:if="${editMilestoneNotifications != null && editMilestoneNotifications.^[milestoneId == #root.milestone.milestoneId] == null}"
+                        th:id="'milestone' + ${milestone.milestoneId} + '-notification'"></p>
+                    <button type="button" class="btn btn-outline-primary btn-sm mr-2"
+                        th:hidden="${editMilestoneNotifications != null && editMilestoneNotifications.^[milestoneId == #root.milestone.milestoneId] != null}"
+                        th:id="'milestone' + ${milestone.milestoneId} + '-edit-btn'"
+                        th:data-milestoneId="${milestone.milestoneId}" th:data-milestoneName="${milestone.name}"
+                        th:data-milestoneDate="${milestone.date}"
+                        th:onclick="editMilestone(this.getAttribute('data-milestoneName'), this.getAttribute('data-milestoneDate'), this.getAttribute('data-milestoneId'))">
+                        <img class="icon img-color-primary"
+                            th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Edit</span>
+                    </button>
 
-</th:block>
-
-<div th:fragment="milestoneForm">
-    <div class="modal fade" id="milestoneFormModal" tabindex="-1" role="dialog"
+                    <button type="button" class="btn btn-outline-secondary btn-sm"
+                        th:hidden="${editMilestoneNotifications != null && editMilestoneNotifications.^[milestoneId == #root.milestone.milestoneId] != null}"
+                        th:id="'milestone' + ${milestone.milestoneId} + '-delete-btn'" data-toggle="modal"
+                        data-target="#conformationModalMilestone" th:data-milestoneId="${milestone.milestoneId}"
+                        th:data-milestoneName="${milestone.name}"
+                        th:onclick="deleteMilestone(this.getAttribute('data-milestoneId'), this.getAttribute('data-milestoneName'))">
+                        <img class="icon img-color-secondary"
+                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span class="d-none d-md-inline-block">Delete</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="container-fluid row px-0 mx-0" style="height: 5px;">
+            <div class="col" th:style="'background-color: ' + ${milestone.getColor()}"></div>
+        </div>
+    </div>
+    <div class="modal fade" id="conformationModalMilestone" tabindex="-1" role="dialog"
         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="milestoneFormTitle">Create New Milestone</h5>
-                    <button type="button" class="close" aria-label="Close" data-bs-dismiss="modal">
+                    <h5 class="modal-title">Delete Milestone</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                    <div class="alert alert-danger text-center" id="milestoneFormModalError"></div>
-                    <div class="projectForm">
-                        <form id="createMilestoneForm" name="createMilestoneForm" onsubmit="saveMilestone(); return false"
-                            th:object="${milestone}">
-                            <input type="hidden" id="milestoneId" th:field="*{milestoneId}">
-                            <div class="mb-3">
-                                <label for="milestone-name" class="col-form-label required">Milestone Name</label>
-                                <input style="font-size:20px;" type="text" class="form-control required"
-                                    id="milestone-name" maxlength="50" th:field="*{name}" oninput="checkMilestoneName()"
-                                    required>
-                                <div>
-                                    <span id="milestoneCharCount" th:value="${charCount}">[[*{name.length}]] </span> / 50
-                                    characters used.
-                                </div>
-                                <p id="milestoneNameError" class="error-msg"></p>
-                            </div>
-                            <!-- Date & Time-->
-                            <div class="row mb-4">
-                                <div class="col-12">
-                                    <label for="milestoneDate" class="form-label date-font required">Date</label>
-                                    <input type="date" class="form-control date-font" id="milestoneDate"
-                                        th:field="*{date}" th:min="@{${projectDateMin}}"
-                                        th:max="@{${projectDateMax}}" oninput="checkMilestoneDates()" required>
-                                    <p id="milestoneDateError" class="error-msg"></p>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="submit" name="submit" id="milestoneFormSubmitButton"
-                                    class="btn btn-outline-primary">
-                                    <img class="icon img-color-primary" id="milestoneFromSubmitImg"
-                                        th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}" />
-                                    <span id="milestoneFormSubmitLabel">Create</span></button>
-                                <button type="button" class="btn btn-outline-secondary"
-                                    data-bs-dismiss="modal">
-                                    <img class="icon img-color-secondary"
-                                        th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
-                                    Close</button>
-                            </div>
-                        </form>
-                    </div>
+                    <p id="messageMilestone"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" id="deleteMilestoneModalBtn"
+                        data-dismiss="modal">
+                        <img class="icon img-color-secondary"
+                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                        Delete
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
+                        <img class="icon img-color-secondary"
+                            th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" /> Close</button>
                 </div>
             </div>
         </div>
     </div>
-    <script th:src="@{{apiPrefix}/javascript/milestoneForm.js(apiPrefix=${apiPrefix})}"></script>
-    <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
-</div>
+</th:block>

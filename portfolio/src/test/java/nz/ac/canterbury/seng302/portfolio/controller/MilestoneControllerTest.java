@@ -5,12 +5,15 @@ import nz.ac.canterbury.seng302.portfolio.model.Milestone;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.model.dto.MilestoneDTO;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.DeadlineNotification;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.MilestoneNotification;
 import nz.ac.canterbury.seng302.portfolio.service.MilestoneService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import org.junit.jupiter.api.*;
 import org.mockito.MockedStatic;
@@ -21,14 +24,20 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 /**
@@ -40,6 +49,9 @@ class MilestoneControllerTest {
 
 	@Autowired
 	private MockMvc mockMvc;
+
+	@Autowired
+	private MilestoneController milestoneController;
 
 	@MockBean
 	private MilestoneService milestoneService;
@@ -68,6 +80,8 @@ class MilestoneControllerTest {
 	private Milestone newMilestone;
 
 	private static MockedStatic<PrincipalUtils> utilities;
+
+	private WebSocketPrincipal mockedWebSocketPrincipal;
 
 	private User user;
 
@@ -132,6 +146,8 @@ class MilestoneControllerTest {
 		userResponse.setCreated(Timestamp.newBuilder()
 				.setSeconds(user.getDateCreated().getTime())
 				.build());
+
+		mockedWebSocketPrincipal = mock(WebSocketPrincipal.class);
 	}
 
 	public MilestoneDTO toDTO(Milestone milestone) {
@@ -204,6 +220,96 @@ class MilestoneControllerTest {
 				.flashAttr("milestoneDTO", toDTO(invalidMilestone)))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().string("Milestone name must be at least 3 characters"));
+	}
+
+	/**
+	 * Tests that the page returns an error message if the project doesn't exist
+	 * @throws Exception
+	 */
+	@Test
+	void givenProjectDoesNotExist_whenGetMilestones_thenErrorPageReturned() throws Exception {
+		when(projectService.getProjectById(anyInt())).thenThrow(new IncorrectDetailsException("Project not found"));
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/project/1/milestones"))
+		.andExpect(status().isNotFound())
+		.andExpect(model().attribute("errorMessage", "Project 1 does not exist"));
+	}
+
+	/**
+	 * Tests that the page returns all the milestones that exist within a project
+	 */
+	@Test
+	void givenProjectExists_whenGetMilestones_thenMilestones() throws Exception {
+		when(projectService.getProjectById(anyInt())).thenReturn(project);
+		when(milestoneService.getMilestonesByProject(any())).thenReturn(List.of(milestone, newMilestone));
+
+		mockMvc.perform(MockMvcRequestBuilders.get("/project/1/milestones"))
+		.andExpect(status().isOk())
+		.andExpect(model().attribute("listMilestones", List.of(milestone, newMilestone)));
+	}
+
+	/**
+	 * Tests that the user is added to the list of editing users when they start editing
+	 * @throws Exception Thrown during mockmvc run time
+	 */
+	@Test
+	void givenUserDecidesToEditAMilestone_whenMilestoneListIsRequested_thenNotificationIsPresent() throws Exception {
+		Set<MilestoneNotification> expectedNotifications = new HashSet<>(List.of(new MilestoneNotification(1, 1, "Tester", true,
+				"0")));
+
+		when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+		milestoneController.editing(new MilestoneNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+
+		this.mockMvc
+				.perform(get("/project/1/milestones"))
+				.andExpect(status().isOk())
+				.andExpect(model().attribute("editMilestoneNotifications", expectedNotifications));
+	}
+
+	/**
+	 * Check that the user is removed from the list of editing users when they finish editing
+	 * @throws Exception Thrown during mockmvc run time
+	 */
+	@Test
+	void givenAUserIsEditing_whenTheyFinishEditing_thenUserIsNotEditing() throws Exception {
+		Set<DeadlineNotification> expectedNotifications = new HashSet<>();
+
+		when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+		milestoneController.editing(new MilestoneNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+		milestoneController.editing(new MilestoneNotification(1, 1, "Tester", false, "0"), mockedWebSocketPrincipal, "0");
+
+
+		this.mockMvc
+				.perform(get("/project/1/milestones"))
+				.andExpect(status().isOk())
+				.andExpect(model().attribute("editMilestoneNotifications", expectedNotifications));
+	}
+
+	/**
+	 * Check that the user is removed from the list of editing users when they are disconnected
+	 * @throws Exception Thrown during mockmvc run time
+	 */
+	@Test
+	void givenAUserIsEditing_whenDisconnectEvent_thenUserIsNotEditing() throws Exception {
+		Set<DeadlineNotification> expectedNotifications = new HashSet<>();
+
+		StompSubProtocolHandler testSource = new StompSubProtocolHandler();
+		GenericMessage<byte[]> testMessage = new GenericMessage<byte[]>(HexFormat.of().parseHex("FF"));
+
+		SessionDisconnectEvent disconnectEvent = new SessionDisconnectEvent(testSource, testMessage, "0", CloseStatus.TLS_HANDSHAKE_FAILURE);
+
+		when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+		milestoneController.editing(new MilestoneNotification(1, 1, "Tester", true, "0"), mockedWebSocketPrincipal, "0");
+
+		milestoneController.onApplicationEvent(disconnectEvent);
+
+		this.mockMvc
+				.perform(get("/project/1/milestones"))
+				.andExpect(status().isOk())
+				.andExpect(model().attribute("editMilestoneNotifications", expectedNotifications));
 	}
 
 	@AfterAll

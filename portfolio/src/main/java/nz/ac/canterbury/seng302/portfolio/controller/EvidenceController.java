@@ -98,10 +98,15 @@ public class EvidenceController {
         model.addAttribute(EVIDENCE, newEvidence);
         model.addAttribute(LIST_EVIDENCE, listEvidence);
         model.addAttribute(LIST_PROJECTS, listProjects);
+        User userName = new User(userAccountClientService.getUser(userId));
+        model.addAttribute("evidence", newEvidence);
+        model.addAttribute("listEvidence", listEvidence);
+        model.addAttribute("listProjects", listProjects);
         model.addAttribute("isCurrentUserEvidence", user.getUserId()==userId);
         model.addAttribute("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
         model.addAttribute("userName", PrincipalUtils.getUserName(principal));
         model.addAttribute(NOTIFICATIONS, editing);
+        model.addAttribute("userName", userName.getFirstName());
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }

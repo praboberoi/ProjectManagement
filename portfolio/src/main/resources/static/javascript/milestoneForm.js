@@ -43,12 +43,12 @@ function checkMilestoneDates() {
     const checkMilestoneDate = new Date(milestoneDateElement.value);
 
     milestoneDateElement.setCustomValidity("");
-    if (checkMilestoneDate < new Date(projectStartDate + 'T00:00')) {
+    if (checkMilestoneDate < new Date(projectStartDate)) {
         milestoneDateError.innerText = "Milestone must start on or after " + new Date(projectStartDate).toLocaleDateString('en-NZ', DATE_OPTIONS);
         milestoneDateElement.classList.add("formError");
         milestoneCreateBtn.disabled = true;
         return;
-    } else if (checkMilestoneDate > new Date(projectEndDate + 'T00:00')) {
+    } else if (checkMilestoneDate > new Date(projectEndDate)) {
         milestoneDateError.innerText = "Milestone must end on or before the " + new Date(projectEndDate).toLocaleDateString('en-NZ', DATE_OPTIONS);
         milestoneDateElement.classList.add("formError");
         milestoneCreateBtn.disabled = true;
@@ -75,7 +75,7 @@ function editMilestone(name, date, id) {
     document.getElementById('milestone-name').value = name;
     document.getElementById('milestoneId').value = id;
     document.getElementById('milestoneCharCount').value = name.length;
-    document.getElementById('milestoneDate').value = date.replace(" ", "T");
+    document.getElementById('milestoneDate').value;
     document.getElementById('milestoneFormTitle').textContent = "Edit milestone";
     document.getElementById('milestoneFormModalError').innerText=""
     const modalElement = document.getElementById('milestoneFormModal');

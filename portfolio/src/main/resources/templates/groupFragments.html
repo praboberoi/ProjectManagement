@@ -84,7 +84,7 @@
     <p>Unable to retrieve repo settings</p>
 </div>
 
-<div th:if="${group.getGroupId() != 0}" class="position-absolute top-0 end-0 mr-2" th:fragment="groupOptions">
+<div th:fragment="groupOptions" th:if="${group.getGroupId() != 0}" class="position-absolute top-0 end-0 mr-2">
     <div class="dropdown float-right">
         <a id="group-settings-icon" href="#" class="text-decoration-none" data-bs-toggle="dropdown">
             <img class="icon img-color-secondary"
@@ -92,96 +92,11 @@
         </a>
         <ul class="dropdown-menu">
             <li th:if="${adminOrTeacher || group.members.contains(user)}">
-                <a id="edit-group-btn" type="button" class="dropdown-item" data-toggle="modal" data-target="#editModal">
+                <a id="edit-group-btn" type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#editModal">
                     <img class="icon img-color-secondary"
                         th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
                     Edit</a>
             </li>
         </ul>
-    </div>
-</div>
-
-<div class="modal fade" id="editModal" tabindex="-1" role="dialog" aria-labelledby="conformationModalCenterTitle"
-    aria-hidden="true" th:fragment="editGroupModal">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="conformationModalLongTitle" th:text="'Edit Group' + ${group.shortName}">
-                    Edit Group</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <div class="groupForm">
-                    <form id="editGroupForm" name="editGroupForm" onsubmit="saveGroup();return false;" th:object="${group}"
-                        th:action="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}">
-                        <div class="mb-3">
-                            <input hidden type="number" name="groupId" th:value="${group.groupId}" required>
-                            <label class="col-form-label required">Group Short Name</label>
-                            <input type="text" class="form-control required" name="shortName"
-                                oninput="checkShortName(event)" th:value="${group.shortName}" id="shortName"
-                                maxlength="50" placeholder="Short Group Name" required>
-                            <span id="charCount" th:value="${charCount}" th:text="${#strings.length(group.shortName)}">
-                            </span> / 50
-                            characters used.
-                            <p id="shortNameError" th:text="${shortNameError}" class="error-msg"></p>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label required">Group Long Name</label>
-                            <input type="text" class="form-control mt-50" th:value="${group.longName}" name="longName"
-                                id="longName" placeholder="Long Group Name" maxlength="100" rows="6"
-                                oninput="checkLongName(event)" required />
-                            <span id="charCountLong" th:value="${charCount}"
-                                th:text="${group.longName!=null?#strings.length(group.longName):0}">
-                            </span> / 100 characters used.
-                            <p id="longNameError" th:text="${longNameError}" class="error-msg">
-                            </p>
-                        </div>
-                        <div class="modal-footer">
-                            <button type="submit" id="save-submit-button" class="btn btn-outline-primary me-3" th:onclick="closeGroupModal()">
-                                <img class="icon img-color-primary"
-                                    th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}" />
-                                Save</button>
-                            <button id="editModalClose" type="button" class="btn btn-outline-secondary" data-dismiss="modal">
-                                <img class="icon img-color-secondary"
-                                    th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
-                                Close</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog" aria-labelledby="deleteModalCenterTitle"
-    aria-hidden="true" th:fragment="deleteGroupModal">
-    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="conformationModalLongTitle">Delete Group</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p id="delete-message"
-                    th:utext="'Are you sure you want to delete this group? <br/>It will remove ' + ${#lists.size(group.members)} + ' members from the group.<br/>This action cannot be undone.'">
-                </p>
-            </div>
-            <div class="modal-footer">
-                <button id="delete-group-btn" class="btn btn-outline-primary"
-                    th:onclick="'deleteGroup(' + ${group.groupId} + ')'" data-dismiss="modal">
-                    <img class="icon img-color-primary"
-                        th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
-                    Delete
-                </button>
-                <button type="button" class="btn btn-outline-secondary" data-dismiss="modal">
-                    <img class="icon img-color-secondary"
-                        th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
-                    Close</button>
-            </div>
-        </div>
     </div>
 </div>
