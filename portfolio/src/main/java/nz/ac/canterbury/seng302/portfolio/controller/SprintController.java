@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.model.dto.SprintDTO;
 import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
@@ -40,8 +39,6 @@ public class SprintController {
     @Autowired
     private ProjectService projectService;
     @Autowired
-    private UserAccountClientService userAccountClientService;
-    @Autowired
     private EventService eventService;
     @Autowired
     private DeadlineService deadlineService;
@@ -54,6 +51,8 @@ public class SprintController {
     private static final String LIST_DEADLINES_OBJECT = "listDeadlines";
 
     private static final String ERROR = "error";
+    private static final String DANGER_MESSAGE = "messageDanger";
+    private static final String PROJECT_REDIRECT = "redirect:/project/";
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -141,7 +140,7 @@ public class SprintController {
             return "sprintForm";
 
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
             return "redirect:/project/{projectId}";
         }
     }
@@ -215,10 +214,10 @@ public class SprintController {
             ra.addFlashAttribute(LIST_EVENTS_OBJECT, listEvents);
             ra.addFlashAttribute(LIST_DEADLINES_OBJECT, listDeadlines);
             ra.addFlashAttribute("messageSuccess", message);
-            return "redirect:/project/" + projectId;
+            return PROJECT_REDIRECT + projectId;
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/" + projectId;
+            ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
+            return PROJECT_REDIRECT + projectId;
         } catch (PersistenceException e) {
             return ERROR;
         }
@@ -293,14 +292,14 @@ public class SprintController {
                 ra.addFlashAttribute(LIST_DEADLINES_OBJECT, listDeadlines);
                 ra.addAttribute("listSprints", listSprints);
                 
-                return "redirect:/project/" + projectId;
+                return PROJECT_REDIRECT + projectId;
             } catch (IncorrectDetailsException e) {
-                ra.addFlashAttribute("messageDanger", e.getMessage());
-                return "redirect:/project/" + projectId;
+                ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
+                return PROJECT_REDIRECT + projectId;
             } catch (PersistenceException e) {
                 return ERROR;
             } catch (Exception e) {
-                ra.addFlashAttribute("messageDanger", e.getMessage());
+                ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
                 return ERROR;
             }
         }
@@ -339,7 +338,7 @@ public class SprintController {
                     model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
                     return "sprintForm";
                 } catch (IncorrectDetailsException e) {
-                    ra.addFlashAttribute("messageDanger", e.getMessage());
+                    ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
                     return "redirect:/project/{projectId}";
                 }
             }
