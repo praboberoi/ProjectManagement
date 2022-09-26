@@ -56,8 +56,8 @@ function navToPlanner() {
 }
 
 function deletingEvent(eventId, eventName) {
-    document.getElementById('messageEvent').innerText =  `Are you sure you want to delete ${eventName}`;
-    document.getElementById('deleteEvent-btn').onclick = function() {
+    document.getElementById('messageEvent').innerText = `Are you sure you want to delete ${eventName}`;
+    document.getElementById('deleteEvent-btn').onclick = function () {
         deleteEvent(eventId);
     }
 }
@@ -78,7 +78,7 @@ function deleteEvent(eventId) {
  * Calls the server to delete the selected event and provide an error message on failure
  * @param eventId Id of the group to delete
  */
- function saveEvent() {
+function saveEvent() {
     let httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = () => processAction(httpRequest)
@@ -94,8 +94,8 @@ function deleteEvent(eventId) {
  * Updates the conformation message and action of the form to delete the deadline
  */
 function deleteDeadline(deadlineId, deadlineName) {
-    document.getElementById('messageDeadline').innerText =  `Are you sure you want to delete ${deadlineName}`;
-    document.getElementById('deleteDeadlineModalBtn').onclick = function() {
+    document.getElementById('messageDeadline').innerText = `Are you sure you want to delete ${deadlineName}`;
+    document.getElementById('deleteDeadlineModalBtn').onclick = function () {
         let httpRequest = new XMLHttpRequest();
         httpRequest.onreadystatechange = () => processAction(httpRequest)
         httpRequest.open('DELETE', apiPrefix + `/${projectId}/deleteDeadline/${deadlineId}`);
@@ -106,7 +106,7 @@ function deleteDeadline(deadlineId, deadlineName) {
 /**
  * Runs when the page is loaded and hide calendar
  */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     cal.hidden = true
     projectDescription.hidden = false
     projectDescriptionNav.ariaSelected = "true";
@@ -125,17 +125,17 @@ let stompClient = null;
  * Connects to the websocket server
  */
 function connect() {
-    let websocketProtocol = window.location.protocol === 'http:'?'ws://':'wss://'
+    let websocketProtocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://'
     stompClient = new StompJs.Client({
         brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
-        debug: function(str) {
+        debug: function (str) {
             // console.log(str);
         },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
     });
-    
+
     stompClient.onConnect = function () {
         subscribe()
         document.getElementById("websocket-status").value = "connected"
@@ -203,13 +203,13 @@ function handleDeadlineNotification(message) {
         return
     } else if (action === "editing" && deadlineCard) {
         let user = array[2]
-        document.getElementById(deadline + '-notification').innerText =`${user} is currently editing`
+        document.getElementById(deadline + '-notification').innerText = `${user} is currently editing`
         document.getElementById(deadline + '-edit-btn').hidden = true
         document.getElementById(deadline + '-delete-btn').hidden = true
     } else if (action === "finished" && deadlineCard) {
         document.getElementById(deadline + '-notification').innerText = ""
         document.getElementById(deadline + '-edit-btn').hidden = false
-        document.getElementById(deadline + '-delete-btn').hidden= false
+        document.getElementById(deadline + '-delete-btn').hidden = false
     } else {
         console.log("Unknown event or command: " + deadline + " " + action)
     }
@@ -219,7 +219,7 @@ function handleDeadlineNotification(message) {
  * Handles milestone updates from the server
  * @param message Message with milestone and edit type
  */
- function handleMilestoneNotification(message) {
+function handleMilestoneNotification(message) {
     let array = message.body.split(' ')
     let milestone = array[0]
     let action = array[1]
@@ -233,13 +233,13 @@ function handleDeadlineNotification(message) {
         return
     } else if (action === "editing" && milestoneCard) {
         let user = array[2]
-        document.getElementById(milestone + '-notification').innerText =`${user} is currently editing`
+        document.getElementById(milestone + '-notification').innerText = `${user} is currently editing`
         document.getElementById(milestone + '-edit-btn').hidden = true
         document.getElementById(milestone + '-delete-btn').hidden = true
     } else if (action === "finished" && milestoneCard) {
         document.getElementById(milestone + '-notification').innerText = ""
         document.getElementById(milestone + '-edit-btn').hidden = false
-        document.getElementById(milestone + '-delete-btn').hidden= false
+        document.getElementById(milestone + '-delete-btn').hidden = false
     } else {
         console.log("Unknown event or command: " + milestone + " " + action)
     }
@@ -278,7 +278,7 @@ function handleEventNotification(message) {
 /**
  * Runs the connect function when the document is loaded
  */
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     connect();
 })
 
@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
  * @param element The element to replace
  * @param errorMessage Optional variable, changes the default error message location
  */
-function updateElement(httpRequest, element, errorMessage = messageDanger){
+function updateElement(httpRequest, element, errorMessage = messageDanger) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         errorMessage.innerText = ""
         if (httpRequest.status === 200) {
@@ -307,7 +307,7 @@ function updateElement(httpRequest, element, errorMessage = messageDanger){
  * Replaces the old messages with the new one contained in the request
  * @param httpRequest Request containing a model view element
  */
- function processAction(httpRequest){
+function processAction(httpRequest) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
             messageSuccess.hidden = false
@@ -353,7 +353,7 @@ function loadDeadlineCards() {
 /**
  * Loads the list of milestone cards under the event tab
  */
- function loadMilestoneCards() {
+function loadMilestoneCards() {
     let httpRequest = new XMLHttpRequest();
 
     let milestoneElement = document.getElementById("milestone-list")
@@ -368,8 +368,10 @@ function loadDeadlineCards() {
  * @param modal Which modal is being edited
  * @param modalError Error message div that displays an error
  */
- function updateModal(httpRequest, modal, modalError) {
+function updateModal(httpRequest, modal, modalError) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        console.log(httpRequest.status)
+        console.log(httpRequest.responseText)
         if (httpRequest.status === 200) {
             modalError.innerText = ""
             messageSuccess.innerText = httpRequest.responseText;

@@ -34,9 +34,6 @@ public class GroupController {
     private GroupService groupService;
 
     @Autowired
-    private UserAccountClientService userAccountClientService;
-
-    @Autowired
     private RepoRepository repoRepository;
 
     @Autowired

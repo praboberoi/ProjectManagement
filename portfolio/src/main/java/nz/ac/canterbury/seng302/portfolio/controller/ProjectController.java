@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.model.dto.ProjectDTO;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -10,10 +11,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
@@ -35,10 +39,13 @@ public class ProjectController {
     @Autowired private DeadlineService deadlineService;
     @Autowired private MilestoneService milestoneService;
 
+    @Autowired
+    private SimpMessagingTemplate template;
+
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
-    private static final String ERROR_PAGE = "error";
     private static final String DASHBOARD_REDIRECT = "redirect:/dashboard";
+    private static final String NOTIFICATION_DESTINATION = "/element/project";
 
     /**
      * Gets all of the sprints and returns it in a ResponseEntity
@@ -168,27 +175,26 @@ public class ProjectController {
     /**
      * Deletes the project and all the related sprints
      * @param projectId Of type int
-     * @param ra Of type {@link RedirectAttributes}
-     * @param model of type {@link Model}
      * @param principal of type {@link AuthState}
      * @return dashboard.html file or error.html file
      */
-    @PostMapping(path="/dashboard/deleteProject/{projectId}")
-    public String deleteProject(
+    @DeleteMapping(path="/project/{projectId}")
+    public ResponseEntity<String> deleteProject(
         @PathVariable("projectId") int projectId,
-        RedirectAttributes ra,
-        Model model,
         @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+
         try {
             Project project  = dashboardService.getProject(projectId);
-            String message = "Successfully Deleted " + project.getProjectName();
             dashboardService.deleteProject(projectId);
-            ra.addFlashAttribute("messageSuccess", message);
-            return DASHBOARD_REDIRECT;
+            notifyProject(projectId, "deleted");
+
+            logger.info("Project {} has been deleted by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
+            return ResponseEntity.status(HttpStatus.OK).body("Successfully Deleted " + project.getProjectName());
         } catch (IncorrectDetailsException e) {
-            model.addAttribute("user", userAccountClientService.getUser(principal));
-            return ERROR_PAGE;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred deleting the project");
         }
     }
 
@@ -200,26 +206,27 @@ public class ProjectController {
      * @param principal Of type {@link AuthState}
      * @return Either the dashboard.html file or error.html file
      */
-    @PostMapping(path="/dashboard/saveProject")
-    public String saveProject(
-            Project project,
-            Model model,
-            RedirectAttributes ra,
+    @PostMapping(path="/project")
+    public ResponseEntity<String> saveProject(
+            @ModelAttribute ProjectDTO projectDTO,
             @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+        }
+        Project project = new Project(projectDTO);
+
         try {
             dashboardService.verifyProject(project);
             String message =  dashboardService.saveProject(project);
-            ra.addFlashAttribute("messageSuccess", message);
+
+            notifyProject(project.getProjectId(), "edited");
             logger.info("Project {} has been created by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
-            return DASHBOARD_REDIRECT;
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-            return DASHBOARD_REDIRECT;
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (Exception e) {
-            model.addAttribute("user", userAccountClientService.getUser(principal));
-            logger.error("An error occured while saving a project.", e);
-            return ERROR_PAGE;
+            logger.error("An error occurred while saving a project.", e);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -256,6 +263,17 @@ public class ProjectController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
                 return DASHBOARD_REDIRECT;
         }
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * 
+     * @param projectId   Id of the event's project updated
+     * @param action      The action taken (delete, created, edited)
+     */
+    private void notifyProject(int projectId, String action) {
+        template.convertAndSend(String.format(NOTIFICATION_DESTINATION, projectId),
+                String.format("project%d %s", projectId, action));
     }
 
 }

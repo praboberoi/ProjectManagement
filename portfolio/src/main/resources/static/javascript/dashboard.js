@@ -104,6 +104,33 @@ function updateProjectDetails(projectId, projectName, apiPrefix) {
 }
 
 /**
+ * Updates the error message and removes the modal if there is no issues
+ * @param httpRequest Request made to the server
+ * @param modal Which modal is being edited
+ * @param modalError Error message div that displays an error
+ */
+ function updateModal(httpRequest, modal, modalError) {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        console.log(httpRequest.status)
+        console.log(httpRequest.responseText)
+        if (httpRequest.status === 200) {
+            modalError.innerText = ""
+            messageSuccess.innerText = httpRequest.responseText;
+            modal.hide()
+        } else if (httpRequest.status === 500) {
+            messageSuccess.innerText = ""
+            modalError.innerText = "An error occurred on the server, please try again later";
+        } else if (httpRequest.status == 400) {
+            messageSuccess.innerText = ""
+            modalError.innerText = httpRequest.responseText;
+        } else {
+            messageSuccess.innerText = ""
+            modalError.innerText = "Something went wrong.";
+        }
+    }
+}
+
+/**
  * Runs the connect function when the document is loaded
  */
  document.addEventListener('DOMContentLoaded', function() {

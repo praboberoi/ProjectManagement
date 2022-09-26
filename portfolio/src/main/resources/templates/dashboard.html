@@ -36,28 +36,14 @@
                 <thead>
                     <tr>
                         <th>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th>
                             <div th:if="${adminOrTeacher}">
-                                <a class="btn btn-outline-primary ms-0" id="create-btn"
-                                    th:href="@{{apiPrefix}/dashboard/newProject(apiPrefix=${apiPrefix})}">
+                                <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#projectFormModal">
                                     <img class="icon img-color-primary"
-                                        th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /> Create
-                                    Project</a>
+                                        th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" />
+                                    Create Project</button>
                             </div>
                         </th>
                     </tr>
-                    <div id="toRefresh">
-                        <br>
-                        <div th:if="${messageSuccess}" class="alert alert-success text-center">
-                            [[${messageSuccess}]]
-                        </div>
-                        <div th:if="${messageDanger}" class="alert alert-danger text-center">
-                            [[${messageDanger}]]
-                        </div>
-                    </div>
                 </thead>
                 <tbody th:fragment="projectList" id="project-list">
                     <th:block th:each="project : ${listProjects}">
@@ -84,11 +70,10 @@
                                                     <p class="date-color" th:text="${project.description}" />
                                                     <div class="container-fluid p-0"
                                                         th:if="${adminOrTeacher}">
-                                                        <a type="button" class="btn btn-outline-primary me-2"
-                                                            th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
+                                                        <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal" data-bs-target="#projectFormModal">
                                                             <img class="icon img-color-primary"
                                                                 th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
-                                                            Edit</a>
+                                                            Edit</button>
                                                         <button type="button" class="btn btn-outline-secondary"
                                                             data-toggle="modal" data-target="#conformationModal"
                                                             th:data-id="${project.projectId}"
@@ -136,6 +121,9 @@
             </div>
         </div>
     </div>
+
+    <div th:replace="projectFragments::projectForm"></div>
+
     <script th:inline="javascript">
         const apiPrefix = [[${ apiPrefix }]];
       </script>

@@ -1,6 +1,9 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
+
+import nz.ac.canterbury.seng302.portfolio.model.dto.ProjectDTO;
+
 import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
@@ -77,6 +80,14 @@ public class Project {
         this.description = description;
         this.startDate = startDate;
         this.endDate = endDate;
+    }
+
+    public Project(ProjectDTO projectDTO) {
+        setProjectId(projectDTO.getProjectId());
+        setProjectName(projectDTO.getProjectName());
+        setDescription(projectDTO.getDescription());
+        setStartDate(projectDTO.getStartDate());
+        setEndDate(projectDTO.getEndDate());
     }
 
     /**

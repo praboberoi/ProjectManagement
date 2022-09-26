@@ -1,0 +1,77 @@
+<div th:fragment="projectForm">
+    <div class="modal fade" id="projectFormModal" tabindex="-1" role="dialog"
+        aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="projectFormTitle">Create New Project</h5>
+                    <button type="button" class="close" aria-label="Close" data-bs-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger text-center" id="projectFormModalError"></div>
+
+                    <div class="projectForm">
+                        <form id="createProjectForm" onsubmit="saveProject();return false" name="createProjectForm">
+                            <input type="hidden" id="projectIdInput" name="projectId" value="0">
+                            <div class="mb-3">
+                                <label for="project-name" class="col-form-label required">Project Name</label>
+                                <input style="font-size:20px;" type="text" class="form-control required" id="project-name"
+                                    placeholder="Project {Year}" oninput="checkProjectName()"
+                                    name="projectName" required>
+                                    <div>
+                                        <span id="projectCharCount">0 </span> / 50
+                                        characters used.
+                                    </div>
+                                <p id="projectNameError" class="error-msg"></p>
+                            </div>
+
+                            <div style="height:30px;" class="row">
+
+                                <div class="col-md-6 ms-auto">
+                                    <label for="startDate" class="form-label date-font required">Start Date</label>
+                                </div>
+                                <div class="col-md-6 ms-auto">
+                                    <label for="endDate" class="form-label required">End Date</label>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6 ms-auto">
+                                    <input type="date" class="form-control date-font" id="startDate"
+                                        oninput="checkProjectDates()" name="startDate" required>
+                                    <p id="startDateError" class="error-msg"></p>
+                                </div>
+                                <div class="col-md-6 ms-auto">
+                                    <input type="date" class="form-control date-font" id="endDate"
+                                        oninput="checkProjectDates()" name="endDate" required>
+                                    <p id="endDateError" class="error-msg"></p>
+                                </div>
+                            </div>
+                            <div class="mb-3">
+                                <label style="font-size:20px;" for="projectDescription" class="form-label">Project
+                                    Description</label>
+                                <textarea class="form-control mt-50" id="projectDescription" maxlength="250" rows="5"
+                                    oninput="checkProjectDescription()" name="description"></textarea>
+                                <span id="charCount">0</span>/250
+                                characters used.
+                                <p id="descriptionError" class="error-msg"></p>
+                            </div>
+                            <div class="d-flex flex-row justify-content-end p-0">
+                                <button type="submit" name="submit" id="projectFormSubmitButton"
+                                    class="btn btn-outline-primary">
+                                    <img class="icon img-color-primary" id="projectFromSubmitImg"
+                                        th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}" />
+                                    <span id="projectFormSubmitLabel">Create</span></button>
+                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                                    <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script th:src="@{{apiPrefix}/javascript/projectForm.js(apiPrefix=${apiPrefix})}"></script>
+        <script th:src="@{{apiPrefix}/javascript/form.js(apiPrefix=${apiPrefix})}"></script>
+    </div>
+</div>

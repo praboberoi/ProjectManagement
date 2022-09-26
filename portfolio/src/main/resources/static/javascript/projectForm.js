@@ -6,18 +6,17 @@
 // Regular expression for Project Name field. No leading white spaces or empty field.
 const projectNameRegex = /^\S/
 
-const startDateElement = document.querySelector('#startDate');
-const endDateElement = document.querySelector('#endDate');
-const startDateError = document.getElementById('startDateError');
-const endDateError = document.getElementById('endDateError');
-const projectId = document.getElementById('projectId').value;
-
 /**
  * Checks the start date and end date of the project and displays an error if it is invalid
  */
 function checkProjectDates() {
+    const startDateElement = document.querySelector('#startDate');
+    const endDateElement = document.querySelector('#endDate');
+    const startDateError = document.getElementById('startDateError');
+    const endDateError = document.getElementById('endDateError');
     const startDate = startDateElement.value;
     const endDate = endDateElement.value;
+
     startDateElement.setCustomValidity("");
     endDateElement.setCustomValidity("");
 
@@ -43,6 +42,8 @@ function checkProjectDates() {
  * Checks that the start date of the project is valid
  */
 function checkStartDate() {
+    const startDateElement = document.querySelector('#startDate');
+    const startDateError = document.getElementById('startDateError');
     const startDate = new Date(startDateElement.value);
     
     let tenYearsFromNow = new Date();
@@ -80,6 +81,8 @@ function checkStartDate() {
  * Checks that the end date of the project is valid
  */
 function checkEndDate() {
+    const endDateElement = document.querySelector('#endDate');
+    const endDateError = document.getElementById('endDateError');
     const endDate = new Date(endDateElement.value);
     
     var tenYearsFromNow = new Date();
@@ -158,6 +161,12 @@ function checkProjectDescription () {
  * Calls the server to test for sprints falling outside of the project
  */
  function verifyOverlap(startDate, endDate) {
+    const startDateElement = document.querySelector('#startDate');
+    const endDateElement = document.querySelector('#endDate');
+    const startDateError = document.getElementById('startDateError');
+    const endDateError = document.getElementById('endDateError');
+    const projectId = document.getElementById('projectId').value;
+
     httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = function() {
@@ -176,11 +185,26 @@ function checkProjectDescription () {
         }
     }
 
-
-
-
-
     httpRequest.open('POST', '/verifyProject/' + projectId, true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
     httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+}
+
+/**
+ * Send a request to the server to save the newly created project
+ */
+ function saveProject() {
+    let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('projectFormModal'))
+    let modalError = document.getElementById('projectFormModalError')
+    if (validateForm()) {
+        let httpRequest = new XMLHttpRequest();
+
+        httpRequest.onreadystatechange = () => updateModal(httpRequest, modal, modalError)
+
+        httpRequest.open('POST', apiPrefix + `/project`);
+
+        let formData = new FormData(document.forms.createProjectForm)
+
+        httpRequest.send(formData);
+    }
 }
