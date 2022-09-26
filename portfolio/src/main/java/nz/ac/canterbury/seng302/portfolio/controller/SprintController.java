@@ -187,34 +187,73 @@ public class SprintController {
      * @param ra        Redirect Attribute frontend message object
      * @return Project page of corrosponding projectId
      */
-    @PostMapping(path = "/project/{projectId}/saveSprint")
+    @PostMapping(path = "/project/{projectId}/sprint")
     public String saveSprint(
             @PathVariable int projectId,
-            @ModelAttribute Sprint sprint,
+            @ModelAttribute SprintDTO sprintDTO,
             @AuthenticationPrincipal AuthState principal,
             Model model,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return redirectDashboard;
+        } 
+
+        Sprint sprint = new Sprint(sprintDTO);
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
+
             String message = sprintService.saveSprint(sprint);
             notifySprint(projectId, sprint.getSprintId(), "edited");
+
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
+
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
+
             ra.addFlashAttribute(LIST_EVENTS_OBJECT, listEvents);
             ra.addFlashAttribute(LIST_DEADLINES_OBJECT, listDeadlines);
             ra.addFlashAttribute("messageSuccess", message);
-            return "redirect:/project/{projectId}";
+            return "redirect:/project/" + projectId;
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/project/{projectId}";
+            return "redirect:/project/" + projectId;
         } catch (PersistenceException e) {
-            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             return ERROR;
         }
+    }
+
+    /**
+     * Tries to set the selected sprint's start and end date to those provided
+     * 
+     * @param sprintId  Sprint to change
+     * @param startDate New start date of the sprint
+     * @param endDate   New end date of the sprint
+     * @param principal Current user
+     * @return An error message if sprint can't save
+     */
+    @PostMapping("/sprint/{sprintId}/editSprint")
+    public ResponseEntity<String> editSprint(
+            @PathVariable("sprintId") int sprintId,
+            Date startDate,
+            Date endDate,
+            @AuthenticationPrincipal AuthState principal
+        ) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
+        }
+
+        try {
+            Sprint sprint = sprintService.getSprint(sprintId);
+            sprint.setStartDate(startDate);
+            sprint.setEndDate(endDate);
+            sprintService.verifySprint(sprint);
+            sprintService.saveSprint(sprint);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     /**
@@ -304,37 +343,6 @@ public class SprintController {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return ERROR;
         }
-    }
-
-    /**
-     * Tries to set the selected sprint's start and end date to those provided
-     * 
-     * @param sprintId  Sprint to change
-     * @param startDate New start date of the sprint
-     * @param endDate   New end date of the sprint
-     * @param principal Current user
-     * @return An error message if sprint can't save
-     */
-    @PostMapping("/sprint/{sprintId}/editSprint")
-    public ResponseEntity<String> editSprint(
-            @PathVariable("sprintId") int sprintId,
-            Date startDate,
-            Date endDate,
-            @AuthenticationPrincipal AuthState principal
-        ) {
-            if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
-                return ResponseEntity.status(HttpStatus.OK).body("Unable to edit sprint. Incorrect permissions.");
-
-        try {
-            Sprint sprint = sprintService.getSprint(sprintId);
-            sprint.setStartDate(startDate);
-            sprint.setEndDate(endDate);
-            sprintService.verifySprint(sprint);
-            sprintService.saveSprint(sprint);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     /**

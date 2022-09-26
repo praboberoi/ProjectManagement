@@ -21,7 +21,6 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -66,6 +65,7 @@ public class SprintControllerTest {
 
     @BeforeEach
     public void beforeEachInit() {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
     }
 
     @AfterAll
@@ -145,6 +145,17 @@ public class SprintControllerTest {
     }
 
     /**
+     * Tests that students are unable to request verification
+     * @throws Exception
+     */
+    @Test
+    void givenStudentUser_whenVerifySprint_thenForbidden() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        this.mockMvc.perform(post("/project/1/verifySprint").flashAttr("sprintDTO", toDTO(new Sprint())))
+                .andExpect(status().isForbidden());
+    }
+
+    /**
      * Tests that the only sprint in a project will be verified successfully
      * @throws Exception
      */
@@ -158,5 +169,48 @@ public class SprintControllerTest {
         this.mockMvc.perform(post("/project/1/verifySprint").flashAttr("sprintDTO", toDTO(sprint)))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Invalid Sprint"));
+    }
+
+    /**
+     * Tests that students are unable to save a sprint
+     * @throws Exception
+     */
+    @Test
+    void givenStudentUser_whenSaveSprint_thenForbidden() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        this.mockMvc.perform(post("/project/1/sprint").flashAttr("sprintDTO", toDTO(new Sprint())))
+                .andExpect(status().isForbidden());
+    }
+
+    /**
+     * Tests that a sprint redirects to the project page on successful saving
+     * @throws Exception
+     */
+    @Test
+    void givenValidSprint_whenSaveSprint_thenSprintSaved() throws Exception {
+        LocalDate now = LocalDate.now();
+        Sprint sprint = new Sprint(1, new Project(), "Sprint 1", "Test Sprint", "This is a description",
+        java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(30)), SprintColor.BLUE);
+
+        this.mockMvc.perform(post("/project/1/sprint").flashAttr("sprintDTO", toDTO(sprint)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/project/1"));
+    }
+
+    /**
+     * Tests that a sprint redirects to the project page on successful saving
+     * @throws Exception
+     */
+    @Test
+    void givenInvalidSprint_whenSaveSprint_thenErrorMessagePresent() throws Exception {
+        LocalDate now = LocalDate.now();
+        Sprint sprint = new Sprint(1, new Project(), "Sprint 1", "Test Sprint", "This is a description",
+        java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(30)), SprintColor.BLUE);
+        when(sprintService.verifySprint(any())).thenThrow(new IncorrectDetailsException("Invalid Sprint"));
+
+        this.mockMvc.perform(post("/project/1/sprint").flashAttr("sprintDTO", toDTO(sprint)))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/project/1"))
+                .andExpect(flash().attribute("messageDanger", "Invalid Sprint"));
     }
 }
