@@ -346,19 +346,20 @@ public class EvidenceControllerTest {
         evidence.setEvidenceId(1);
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
+
         EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), "finished",
-                1, "tes2", 99, "testing");
+                1, "tes2", 99, "0");
 
         HashMap<Integer, EvidenceNotification> expectedNotifications = new HashMap<>();
 
         StompSubProtocolHandler testSource = new StompSubProtocolHandler();
         GenericMessage<byte[]> testMessage = new GenericMessage<byte[]>(HexFormat.of().parseHex("FF"));
 
-        SessionDisconnectEvent disconnectEvent = new SessionDisconnectEvent(testSource, testMessage, "testing", CloseStatus.TLS_HANDSHAKE_FAILURE);
+        SessionDisconnectEvent disconnectEvent = new SessionDisconnectEvent(testSource, testMessage, "0", CloseStatus.TLS_HANDSHAKE_FAILURE);
 
-        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+        when(mockedWebSocketPrincipal.getName()).thenReturn("tes2");
 
-        evidenceController.editing(evidenceNotification, mockedWebSocketPrincipal, "testing");
+        evidenceController.editing(evidenceNotification, mockedWebSocketPrincipal, "0");
 
         evidenceController.onApplicationEvent(disconnectEvent);
 
