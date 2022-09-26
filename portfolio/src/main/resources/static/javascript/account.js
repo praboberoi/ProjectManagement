@@ -46,7 +46,7 @@ function subscribe() {
  * Replaces roles of the user
  * @param message Message with userId
  */
-function updateRoles(message) {
+function updateRoles() {
     let httpRequest = new XMLHttpRequest();
     roleElement = document.getElementById("roleList")
     httpRequest.open('GET', window.location.pathname + `/roles`);

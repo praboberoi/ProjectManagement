@@ -60,6 +60,11 @@ public class AccountController {
         return ACCOUNT_PAGE;
     }
 
+    /**
+     * This method returns a html fragment containing the list of roles a user has
+     * @param principal The authentication information containing user info
+     * @return A html fragment containing the roles
+     */
     @GetMapping(path="/account/roles")
     public ModelAndView roles(@AuthenticationPrincipal AuthState principal) {
         UserResponse idpResponse = userAccountClientService.getUser(principal);
