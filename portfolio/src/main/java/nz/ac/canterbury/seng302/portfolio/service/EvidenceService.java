@@ -109,6 +109,7 @@ public class EvidenceService {
      * 
      * @param evidence The evidence object to be saved
      * @throws IncorrectDetailsException If the evidence has incorrect
+     * @return message based on whether it is a new or an existing evidence being saved
      */
     public String saveEvidence(Evidence evidence) throws IncorrectDetailsException {
         try {
