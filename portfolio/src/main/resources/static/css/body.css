@@ -191,7 +191,7 @@ a.project-name {
 }
 
 #detailsCard, #calendarOb {
-    overflow-y: auto;
+    /*overflow-y: scroll;*/
     height: 300px;
 }
 
@@ -200,7 +200,13 @@ td.hiddenRow {
 }
 
 
-#myTabContent{
+/*#myTabContent{*/
+/*    overflow-y: scroll;*/
+/*}*/
+
+#staticButton {
+    height: 200px;
+    margin-top: 50px;
     overflow-y: auto;
 }
 
@@ -219,6 +225,7 @@ td.hiddenRow {
     line-height: 1;
     font-size: 12px;
 }
+
 
 /* styling for display under sprints */
 
@@ -298,6 +305,11 @@ div.upcomingEvents  {
     margin-left: 20px;
     margin-top: 7px;
     margin-bottom: 7px;
+    position: absolute;
+}
+
+#event-list {
+    /*padding-top: 50px;*/
 }
 
 /* Sort button styles from https://codepen.io/xaprio/pen/NWPXwOj */
