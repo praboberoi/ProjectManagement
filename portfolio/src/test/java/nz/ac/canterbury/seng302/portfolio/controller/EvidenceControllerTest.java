@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
-import nz.ac.canterbury.seng302.portfolio.model.notifications.DeadlineNotification;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.EvidenceNotification;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
@@ -344,6 +343,7 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenAUserIsEditing_whenDisconnectEvent_thenUserIsNotEditing() throws Exception {
+        evidence.setEvidenceId(1);
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
         EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), "editing",
