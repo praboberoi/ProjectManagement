@@ -367,7 +367,7 @@
 
   <div th:replace="forms :: eventsForm"></div>
   <div th:replace="forms :: deadlineForm"></div>
-  <div th:replace="milestoneFragments::milestoneForm"></div>
+  <div th:replace="forms :: milestoneForm"></div>
   <script th:inline="javascript">
     let userRoles = [[${ roles }]];
     const projectId = [[${ project.projectId }]];
