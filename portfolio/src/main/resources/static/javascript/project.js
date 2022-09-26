@@ -169,22 +169,22 @@ function updateSprint(message) {
     let array = message.body.split(' ')
     let sprint = array[0]
     let action = array[1]
-    let httpRequest = new XMLHttpRequest();
-    if (action === "edited") {
-        sprintElement = document.getElementById("sprint-list")
-        httpRequest.open('GET', window.location.pathname + `/sprints`);
-    } else if (action === "deleted") {
-        document.getElementById(sprint + "Row").outerHTML = ""
-        return
-    } else {
-        console.log("Unknown command: " + action)
-        return
-    }
-    httpRequest.onreadystatechange = () => updateElement(httpRequest, sprintElement)
-
-    httpRequest.send();
 
     updateSprintAccordions()
+
+    let httpRequest = new XMLHttpRequest();
+    if (action === "edited") {
+        let sprintElement = document.getElementById("sprint-list")
+        httpRequest.open('GET', window.location.pathname + `/sprints`);
+        httpRequest.onreadystatechange = () => updateElement(httpRequest, sprintElement)
+    
+        httpRequest.send();
+    } else if (action === "deleted") {
+        document.getElementById(sprint + "Row").outerHTML = ""
+    } else {
+        console.log("Unknown command: " + action)
+    }
+    
 }
 
 /**
@@ -216,8 +216,6 @@ function handleDeadlineNotification(message) {
     } else {
         console.log("Unknown event or command: " + deadline + " " + action)
     }
-
-    updateSprintAccordions()
 }
 
 function updateSprintAccordions() {
