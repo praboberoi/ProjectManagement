@@ -172,6 +172,7 @@ public class EvidenceControllerTest {
         when(projectService.getAllProjects()).thenReturn(projectList);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getNewEvidence(99)).thenReturn(evidence);
+        when(userAccountClientService.getUser(99)).thenReturn(user);
 
         this.mockMvc
                 .perform(get("/evidence/99"))
@@ -179,7 +180,8 @@ public class EvidenceControllerTest {
                 .andExpect(model().attribute("evidence", evidence))
                 .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
                 .andExpect(model().attribute("listProjects", projectList))
-                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99));
+                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99))
+                .andExpect(model().attribute("userName", user.getFirstName()));
 
     }
 
