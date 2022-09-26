@@ -3,11 +3,14 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.DeadlineNotification;
+import nz.ac.canterbury.seng302.portfolio.model.notifications.EvidenceNotification;
 import nz.ac.canterbury.seng302.portfolio.service.EvidenceService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.junit.jupiter.api.AfterAll;
@@ -21,15 +24,18 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
+import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
@@ -51,6 +57,9 @@ public class EvidenceControllerTest {
 
     @MockBean private SimpMessagingTemplate template;
 
+    @Autowired
+    private EvidenceController evidenceController;
+
     @MockBean
     private UserAccountClientService userAccountClientService;
 
@@ -59,6 +68,9 @@ public class EvidenceControllerTest {
     private Project project;
 
     private static MockedStatic<PrincipalUtils> utilities;
+
+    private static WebSocketPrincipal mockedWebSocketPrincipal;
+
 
     /**
      * Helper function which creates a new user for testing with
@@ -83,6 +95,7 @@ public class EvidenceControllerTest {
     private static void beforeAllInit() {
         utilities = Mockito.mockStatic(PrincipalUtils.class);
         utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        mockedWebSocketPrincipal = mock(WebSocketPrincipal.class);
     }
 
     @BeforeEach
@@ -281,6 +294,80 @@ public class EvidenceControllerTest {
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageSuccess", "Successfully Deleted Test Evidence"))
                 .andExpect(view().name("redirect:/evidence/{userId}"));
+    }
+
+    /**
+     * Asserts that given a user ID when evidence list is requested then a correct list of evidence is returned
+     */
+    @Test
+    void givenAUserExists_whenEvidenceListIsRequested_thenCorrectModelViewObjectReturned() throws Exception {
+        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        when(userAccountClientService.getUser(any())).thenReturn(user);
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+
+        this.mockMvc
+                .perform(get("/evidence/99/getEvidenceList"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
+                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99));
+    }
+
+    /**
+     * Tests that the user is added to the list of editing users when they start editing
+     */
+    @Test
+    void givenUserDecidesToEditAnEvidence_whenEvidenceListIsRequested_thenNotificationIsPresent() throws Exception {
+        evidence.setEvidenceId(1);
+        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        when(userAccountClientService.getUser(any())).thenReturn(user);
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+
+        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), "editing",
+                1, "tes2", 99, "testing");
+
+        HashMap<Integer, EvidenceNotification> expectedNotifications = new HashMap<>();
+
+        expectedNotifications.put(evidence.getEvidenceId(),evidenceNotification );
+
+        when(mockedWebSocketPrincipal.getName()).thenReturn("tes2");
+
+        evidenceController.editing(evidenceNotification, mockedWebSocketPrincipal, "testing");
+
+        this.mockMvc
+                .perform(get("/evidence/99/getEvidenceList"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("notifications", expectedNotifications));
+    }
+
+    /**
+     * Check that the user is removed from the list of editing users when they are disconnected
+     */
+    @Test
+    void givenAUserIsEditing_whenDisconnectEvent_thenUserIsNotEditing() throws Exception {
+        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        when(userAccountClientService.getUser(any())).thenReturn(user);
+        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), "editing",
+                1, "tes2", 99, "testing");
+
+        HashMap<Integer, EvidenceNotification> expectedNotifications = new HashMap<>();
+
+        expectedNotifications.put(evidence.getEvidenceId(),evidenceNotification );
+
+        StompSubProtocolHandler testSource = new StompSubProtocolHandler();
+        GenericMessage<byte[]> testMessage = new GenericMessage<byte[]>(HexFormat.of().parseHex("FF"));
+
+        SessionDisconnectEvent disconnectEvent = new SessionDisconnectEvent(testSource, testMessage, "0", CloseStatus.TLS_HANDSHAKE_FAILURE);
+
+        when(mockedWebSocketPrincipal.getName()).thenReturn("Tester");
+
+        evidenceController.editing(evidenceNotification, mockedWebSocketPrincipal, "testing");
+
+        evidenceController.onApplicationEvent(disconnectEvent);
+
+        this.mockMvc
+                .perform(get("/evidence/99/getEvidenceList"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("notifications", expectedNotifications));
     }
 
     @AfterAll

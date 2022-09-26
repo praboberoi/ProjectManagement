@@ -53,13 +53,25 @@ public class EvidenceController {
     @Autowired
     private SimpMessagingTemplate template;
 
-    private final Logger logger = LoggerFactory.getLogger(EventController.class);
+    private final Logger logger = LoggerFactory.getLogger(EvidenceController.class);
 
-    private final HashMap<Integer, EvidenceNotification> editing = new HashMap<Integer, EvidenceNotification>();
+    private final HashMap<Integer, EvidenceNotification> editing = new HashMap<>();
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
     }
+
+    private final String EVIDENCE = "evidence";
+
+    private final String LIST_PROJECTS = "listProjects";
+
+    private final String LIST_EVIDENCE = "listEvidence";
+
+    private final String NOTIFICATIONS = "notifications";
+
+    private final String MESSAGE_DANGER = "messageDanger";
+
+    private final String MESSAGE_SUCCESS = "messageSuccess";
 
     /**
      * Adds common model elements used by all controller methods.
@@ -83,13 +95,13 @@ public class EvidenceController {
         List<Project> listProjects = projectService.getAllProjects();
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         Evidence newEvidence = evidenceService.getNewEvidence(userId);
-        model.addAttribute("evidence", newEvidence);
-        model.addAttribute("listEvidence", listEvidence);
-        model.addAttribute("listProjects", listProjects);
+        model.addAttribute(EVIDENCE, newEvidence);
+        model.addAttribute(LIST_EVIDENCE, listEvidence);
+        model.addAttribute(LIST_PROJECTS, listProjects);
         model.addAttribute("isCurrentUserEvidence", user.getUserId()==userId);
         model.addAttribute("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
         model.addAttribute("userName", PrincipalUtils.getUserName(principal));
-        model.addAttribute("notifications", editing);
+        model.addAttribute(NOTIFICATIONS, editing);
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }
@@ -109,14 +121,14 @@ public class EvidenceController {
             @PathVariable int evidenceId) {
         ModelAndView mv = new ModelAndView("evidence::selectedEvidence");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-        mv.addObject("listEvidence", listEvidence);
+        mv.addObject(LIST_EVIDENCE, listEvidence);
         try {
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
             mv.addObject("selectedEvidence", selectedEvidence);
-            mv.addObject("notifications", editing);
+            mv.addObject(NOTIFICATIONS, editing);
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
-            mv.addObject("messageDanger", e.getMessage());
+            mv.addObject(MESSAGE_DANGER, e.getMessage());
         }
         return mv;
     }
@@ -145,9 +157,9 @@ public class EvidenceController {
             EvidenceNotification notification = new EvidenceNotification(evidence.getEvidenceId(), "saved",
                     0, PrincipalUtils.getUserName(principal), userId, sessionId);
             notifyEvidence(notification);
-            ra.addFlashAttribute("messageSuccess", message);
+            ra.addFlashAttribute(MESSAGE_SUCCESS, message);
         } catch(IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute(MESSAGE_DANGER, e.getMessage());
         }
         return "redirect:/evidence/{userId}";
     }
@@ -165,14 +177,14 @@ public class EvidenceController {
         try {
             Evidence evidence = evidenceService.getEvidence(evidenceId);
             List<Project> listProjects = projectService.getAllProjects();
-            mv.addObject("evidence", evidence);
-            mv.addObject("listProjects", listProjects);
+            mv.addObject(EVIDENCE, evidence);
+            mv.addObject(LIST_PROJECTS, listProjects);
             mv.addObject("submissionImg", apiPrefix+"/icons/save-icon.svg");
             mv.addObject("submissionName", "Save");
 
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
-            mv.addObject("messageDanger", e.getMessage());
+            mv.addObject(MESSAGE_DANGER, e.getMessage());
         }
         return mv;
 
@@ -189,8 +201,8 @@ public class EvidenceController {
         ModelAndView mv = new ModelAndView("evidence::evidenceForm");
         Evidence evidence = evidenceService.getNewEvidence(userId);
         List<Project> listProjects = projectService.getAllProjects();
-        mv.addObject("evidence", evidence);
-        mv.addObject("listProjects", listProjects);
+        mv.addObject(EVIDENCE, evidence);
+        mv.addObject(LIST_PROJECTS, listProjects);
         mv.addObject("submissionImg", apiPrefix+"/icons/create-icon.svg");
         mv.addObject("submissionName", "Create");
         return mv;
@@ -211,13 +223,13 @@ public class EvidenceController {
             RedirectAttributes ra) {
         try {
             String message = evidenceService.deleteEvidence(evidenceId);
-            ra.addFlashAttribute("messageSuccess", message);
+            ra.addFlashAttribute(MESSAGE_SUCCESS, message);
             EvidenceNotification notification = new EvidenceNotification(evidenceId, "deleted",
                     0, PrincipalUtils.getUserName(principal), userId, sessionId);
 
             notifyEvidence(notification);
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
+            ra.addFlashAttribute(MESSAGE_DANGER, e.getMessage());
         }
 
         return "redirect:/evidence/{userId}";
@@ -235,11 +247,11 @@ public class EvidenceController {
         User user = new User(userAccountClientService.getUser(principal));
         ModelAndView mv = new ModelAndView("evidence::evidenceList");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-        mv.addObject("listEvidence", listEvidence);
+        mv.addObject(LIST_EVIDENCE, listEvidence);
         mv.addObject("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
         mv.addObject("isCurrentUserEvidence", user.getUserId()==userId);
         mv.addObject("userName", PrincipalUtils.getUserName(principal));
-        mv.addObject("notifications", editing);
+        mv.addObject(NOTIFICATIONS, editing);
         return mv;
     }
 

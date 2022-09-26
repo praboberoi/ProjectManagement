@@ -3,10 +3,10 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
-let currentTitle = null;
-let currentDate = null;
-let currentDescription = null;
-let currentProjectId = null;
+let evidenceTitleEditing = null;
+let evidenceDateEditing = null;
+let evidenceDescriptionEditing = null;
+let evidenceProjectIdEditing = null;
 
 /**
  * Calls the server to save the evidence
@@ -87,10 +87,10 @@ function createNewEvidence() {
  * @param evidenceDescription description of the selected evidence
  */
 function editEvidence(evidenceId, evidenceProjectId, evidenceTitle, evidenceDate, evidenceDescription) {
-    currentTitle = evidenceTitle;
-    currentDate = evidenceDate.substring(0, 10);
-    currentDescription = evidenceDescription;
-    currentProjectId = document.getElementById('evidence-project').value;
+    evidenceTitleEditing = evidenceTitle;
+    evidenceDateEditing = evidenceDate.substring(0, 10);
+    evidenceDescriptionEditing = evidenceDescription;
+    evidenceProjectIdEditing = document.getElementById('evidence-project').value;
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `${window.location.pathname}/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, evidenceProjectId, "Update Evidence");
@@ -144,7 +144,7 @@ function updateSubmissionButton() {
     const projectId = document.getElementById('evidence-project').value;
 
     if ((date.length === 0 || description.length === 0 || title.length === 0) ||
-        (date === currentDate && description === currentDescription && title === currentTitle && projectId === currentProjectId))
+        (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing))
 
         document.getElementById('evidenceFormSubmitButton').disabled = true
 
