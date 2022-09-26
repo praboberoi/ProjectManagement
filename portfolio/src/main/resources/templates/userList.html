@@ -42,9 +42,11 @@
           <tbody>
             <th:block th:each="user : ${usersList}">
               <tr th:id="'user' + ${user.userId} + 'Row'" th:fragment="userFragment">
-                <td th:id="'user' + ${user.userId} + 'Username'">[[${user.username}]]</td>
-                <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]] [[${user.lastName}]]</td>
-                <td th:id="'user' + ${user.userId} + 'Nickname'">[[${user.nickname}]]</td>
+                <div id="userInfo">
+                  <td th:id="'user' + ${user.userId} + 'Username'">[[${user.username}]]</td>
+                  <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]] [[${user.lastName}]]</td>
+                  <td th:id="'user' + ${user.userId} + 'Nickname'">[[${user.nickname}]]</td>
+                </div>
                 <td th:id="'user' + ${user.userId} + 'Roles'">
                   <ul style="list-style-type: none">
                     <th:block th:each = "role : ${user.getRoles()}">

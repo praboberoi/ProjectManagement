@@ -1,0 +1,5 @@
+<div th:fragment="userInfo">
+    <td th:id="'user' + ${user.userId} + 'Username'">[[${user.username}]]</td>
+    <td th:id="'user' + ${user.userId} + 'Name'">[[${user.firstName}]] [[${user.lastName}]]</td>
+    <td th:id="'user' + ${user.userId} + 'Nickname'">[[${user.nickname}]]</td>
+</div>

@@ -4,17 +4,21 @@ import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -35,9 +39,15 @@ import java.util.List;
 public class AccountController {
 
     private final UserAccountClientService userAccountClientService;
-    @Value("${apiPrefix}") private String apiPrefix;
+
+    @Value("${apiPrefix}")
+    private String apiPrefix;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     private static final String EDIT_ACCOUNT_PAGE = "editAccount";
+
     private static final String ACCOUNT_PAGE = "account";
 
     public AccountController (UserAccountClientService userAccountClientService) {
@@ -113,6 +123,20 @@ public class AccountController {
     }
 
     /**
+     * Returns a fragment containing information about a specific user
+     * @param userId The id of the user the information is wanted about
+     * @return A html fragment containing the user's information.
+     */
+    @GetMapping(path="/user/{userId}/info")
+    public ModelAndView userInfo(@PathVariable("userId") int userId) {
+        ModelAndView mv = new ModelAndView("userFragment::userInfo");
+        UserResponse userResponse = userAccountClientService.getUser(userId);
+        User user = new User(userResponse);
+        mv.addObject("user", user);
+        return mv;
+    }
+
+    /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
      * @param multipartFile  The image file of the user
@@ -173,6 +197,7 @@ public class AccountController {
 
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
+            notifyUserInfoChange(userId);
             String msgString;
             msgString = "Successfully updated details";
             ra.addFlashAttribute("messageSuccess", msgString);
@@ -180,8 +205,15 @@ public class AccountController {
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
-
         return EDIT_ACCOUNT_PAGE;
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of the changed user
+     */
+    private void notifyUserInfoChange(int userId) {
+        template.convertAndSend("/element/user/" + userId  , "");
     }
 
 
