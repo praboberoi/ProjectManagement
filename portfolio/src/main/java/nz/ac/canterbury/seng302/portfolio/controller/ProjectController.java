@@ -37,6 +37,9 @@ public class ProjectController {
 
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
+    private static final String ERROR_PAGE = "error";
+    private static final String DASHBOARD_REDIRECT = "redirect:/dashboard";
+
     /**
      * Gets all of the sprints and returns it in a ResponseEntity
      * @param projectId The Id of the project to get sprints from
@@ -48,6 +51,20 @@ public class ProjectController {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         return ResponseEntity.status(HttpStatus.OK).body(listSprints);
     }
+
+        /**
+     * Return the html component which contains the specified project's events
+      * @param projectId Project containing the desired events
+      * @return Page fragment containing events
+      */
+      @GetMapping(path="/projects")
+      public ModelAndView events() {
+          List<Project> listProjects = projectService.getAllProjects();
+
+          ModelAndView mv = new ModelAndView("dashboard::projectList");
+          mv.addObject("listProjects", listProjects);
+          return mv;
+      }
 
     /**
      * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
@@ -146,6 +163,99 @@ public class ProjectController {
         mv.addObject("project", project);
         mv.addObject("listSprints", listSprints);
         return mv;
+    }
+
+    /**
+     * Deletes the project and all the related sprints
+     * @param projectId Of type int
+     * @param ra Of type {@link RedirectAttributes}
+     * @param model of type {@link Model}
+     * @param principal of type {@link AuthState}
+     * @return dashboard.html file or error.html file
+     */
+    @PostMapping(path="/dashboard/deleteProject/{projectId}")
+    public String deleteProject(
+        @PathVariable("projectId") int projectId,
+        RedirectAttributes ra,
+        Model model,
+        @AuthenticationPrincipal AuthState principal) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
+        try {
+            Project project  = dashboardService.getProject(projectId);
+            String message = "Successfully Deleted " + project.getProjectName();
+            dashboardService.deleteProject(projectId);
+            ra.addFlashAttribute("messageSuccess", message);
+            return DASHBOARD_REDIRECT;
+        } catch (IncorrectDetailsException e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
+            return ERROR_PAGE;
+        }
+    }
+
+    /**
+     * Saves project object to the database and redirects to dashboard page
+     * @param project Of type {@link Project}
+     * @param model Of type {@link Model}
+     * @param ra Of type {@link RedirectAttributes}
+     * @param principal Of type {@link AuthState}
+     * @return Either the dashboard.html file or error.html file
+     */
+    @PostMapping(path="/dashboard/saveProject")
+    public String saveProject(
+            Project project,
+            Model model,
+            RedirectAttributes ra,
+            @AuthenticationPrincipal AuthState principal) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
+        try {
+            dashboardService.verifyProject(project);
+            String message =  dashboardService.saveProject(project);
+            ra.addFlashAttribute("messageSuccess", message);
+            logger.info("Project {} has been created by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
+            return DASHBOARD_REDIRECT;
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+            return DASHBOARD_REDIRECT;
+        } catch (Exception e) {
+            model.addAttribute("user", userAccountClientService.getUser(principal));
+            logger.error("An error occured while saving a project.", e);
+            return ERROR_PAGE;
+        }
+    }
+
+    /**
+     * Maps an existing project, current user, user's role and button info to projectForm.html
+     * @param projectId Of type int
+     * @param model Of type {@link Model}
+     * @param ra Of type {@link RedirectAttributes}
+     * @param principal Of type {@link AuthState}
+     * @return projectForm.html file or dashboard.html file
+     */
+    @GetMapping(path="/dashboard/editProject/{projectId}")
+    public String showEditForm(
+        @PathVariable(
+        value = "projectId") int projectId,
+        Model model,
+        RedirectAttributes ra,
+        @AuthenticationPrincipal AuthState principal) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
+        try {
+            Project project  = dashboardService.getProject(projectId);
+            List<Date> dateRange = dashboardService.getProjectDateRange(project);
+            model.addAttribute("project", project);
+            model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
+            model.addAttribute("submissionName", "Save");
+            model.addAttribute("image", "/icons/save-icon.svg");
+            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
+            model.addAttribute("projectStartDateMin", dateRange.get(0));
+            model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
+            model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
+            model.addAttribute("projectEndDateMax", dateRange.get(1));
+            return "projectForm";
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute("messageDanger", e.getMessage());
+                return DASHBOARD_REDIRECT;
+        }
     }
 
 }

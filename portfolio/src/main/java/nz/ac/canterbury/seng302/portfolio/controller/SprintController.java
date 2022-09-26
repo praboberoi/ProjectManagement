@@ -265,8 +265,6 @@ public class SprintController {
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
-    
-
     /**
      * Sends an update message to all clients connected to the websocket
      * @param projectId Id of the sprint's project updated
