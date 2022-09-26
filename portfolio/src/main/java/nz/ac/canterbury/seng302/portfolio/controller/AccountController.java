@@ -123,20 +123,6 @@ public class AccountController {
     }
 
     /**
-     * Returns a fragment containing information about a specific user
-     * @param userId The id of the user the information is wanted about
-     * @return A html fragment containing the user's information.
-     */
-    @GetMapping(path="/user/{userId}/info")
-    public ModelAndView userInfo(@PathVariable("userId") int userId) {
-        ModelAndView mv = new ModelAndView("userFragment::userInfo");
-        UserResponse userResponse = userAccountClientService.getUser(userId);
-        User user = new User(userResponse);
-        mv.addObject("user", user);
-        return mv;
-    }
-
-    /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
      * @param multipartFile  The image file of the user
@@ -213,7 +199,7 @@ public class AccountController {
      * @param userId Id of the changed user
      */
     private void notifyUserInfoChange(int userId) {
-        template.convertAndSend("/element/user/" + userId  , "");
+        template.convertAndSend("/element/user/", userId);
     }
 
 

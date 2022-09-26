@@ -1,6 +1,85 @@
-// let page = 0;
 let messageDanger = document.getElementById("messageDanger");
 let messageSuccess = document.getElementById("messageSuccess");
+let stompClient = null;
+
+/**
+ * Runs the connect function when the document is loaded
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    connect();
+})
+
+/**
+ * Connects to the websocket server
+ */
+function connect() {
+    let websocketProtocol = window.location.protocol === 'http:'?'ws://':'wss://'
+    stompClient = new StompJs.Client({
+        brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
+        debug: function(str) {
+            // console.log(str);
+        },
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+    });
+
+    stompClient.onConnect = function () {
+        subscribe()
+        document.getElementById("websocket-status").value = "connected"
+    };
+
+    stompClient.onStompError = function () {
+        console.log('Websocket communication error')
+    }
+
+    stompClient.activate();
+}
+
+/**
+ * Subscribes to the required websocket notification channels
+ */
+function subscribe() {
+    stompClient.subscribe('/element/user/', updateUser);
+}
+
+/**
+ * Replaces the relevant component of the user table
+ * @param message Message with userId
+ */
+function updateUser(message) {
+    let array = message.body.split(' ')
+    let userId = array[0]
+    let userInfo = document.getElementById(`user` + userId + `Row`)
+    if (userInfo) {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.open('GET', window.location.pathname + `/` + userId + '/info');
+        httpRequest.onreadystatechange = () => updateElement(httpRequest, userInfo)
+        httpRequest.send();
+    }
+}
+
+/**
+ * Replaces the old http component with the new one contained in the request
+ * @param httpRequest Request containing a model view element
+ * @param element The element to replace
+ * @param errorMessage Optional variable, changes the default error message location
+ */
+function updateElement(httpRequest, element, errorMessage = messageDanger){
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        errorMessage.innerText = ""
+        if (httpRequest.status === 200) {
+            element.innerHTML = httpRequest.responseText;
+        } else if (httpRequest.status === 400) {
+            errorMessage.innerText = "Bad Request";
+        } else if (httpRequest.status === 404) {
+            errorMessage.innerText = "Unable to load " + element.id;
+        } else {
+            errorMessage.innerText = "Something went wrong.";
+        }
+    }
+}
+
 
 /**
  * Increment page count and load the new data
