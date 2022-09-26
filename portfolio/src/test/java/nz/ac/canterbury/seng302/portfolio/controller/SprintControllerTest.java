@@ -179,7 +179,8 @@ public class SprintControllerTest {
     void givenStudentUser_whenSaveSprint_thenForbidden() throws Exception {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         this.mockMvc.perform(post("/project/1/sprint").flashAttr("sprintDTO", toDTO(new Sprint())))
-                .andExpect(status().isForbidden());
+                .andExpect(status().is3xxRedirection())
+                .andExpect(view().name("redirect:/dashboard"));
     }
 
     /**
