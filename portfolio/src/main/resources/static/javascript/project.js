@@ -197,6 +197,7 @@ function handleDeadlineNotification(message) {
     let action = array[1]
 
     let deadlineCard = document.getElementById(deadline + "-card");
+    updateSprintAccordions()
 
     if (action === "edited") {
         loadDeadlineCards()
@@ -244,6 +245,7 @@ function updateSprintAccordions() {
     let action = array[1]
 
     let milestoneCard = document.getElementById(milestone + "-card");
+    updateSprintAccordions()
 
     if (action === "edited") {
         loadMilestoneCards()
