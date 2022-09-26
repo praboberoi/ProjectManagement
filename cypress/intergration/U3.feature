@@ -8,7 +8,6 @@ Feature: U3. Milestones on the project details page
     And I select save on the milestone form
     Then A new milestone is created
 
-  # Uncomment when edit functionality is added
   Scenario: AC1 I should be able to edit a milestone from the project details page.
     Given I login as an admin
     And I select the CypressProject project
