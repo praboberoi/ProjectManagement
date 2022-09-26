@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.ui.Model;
@@ -28,7 +29,8 @@ import java.util.GregorianCalendar;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -45,6 +47,9 @@ class AccountControllerTest {
 
     @InjectMocks
     private ControllerAdvisor controllerAdvisor;
+
+    @MockBean
+    private SimpMessagingTemplate template;
 
     User user;
 
@@ -218,11 +223,11 @@ class AccountControllerTest {
 
         AccountController accountController = new AccountController(mockUserAccountClientService);
         AuthState principal = AuthState.newBuilder().build();
-
         String testString = "";
         MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "image/png", "some image".getBytes());
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
+        doNothing().when(template).convertAndSend(any(Object.class), any(Object.class));
         assertEquals( "redirect:account", accountController.editUser(principal, testFile,testString,
                 testString, testString, testString, testString, testString, false, mockModel, ra ));
     }
