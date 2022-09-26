@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,11 +29,18 @@ import java.util.List;
 public class EvidenceController {
     @Value("${apiPrefix}")
     private String apiPrefix;
+
     @Autowired
     private EvidenceService evidenceService;
+
     @Autowired
     private ProjectService projectService;
-    @Autowired private UserAccountClientService userAccountClientService;
+
+    @Autowired
+    private UserAccountClientService userAccountClientService;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
@@ -47,12 +55,12 @@ public class EvidenceController {
     }
 
     /**
-     * Updates the model with the correct list of evidence
+     * Updates the model with the correct evidence
      * @param userId UserId containing the desired evidence
      * @return Page fragment containing events
      */
     @GetMapping(path="/evidence/{userId}")
-    public String evidenceList(
+    public String evidence(
             @AuthenticationPrincipal AuthState principal,
             @PathVariable("userId") int userId,
             Model model) {
@@ -118,10 +126,20 @@ public class EvidenceController {
             evidence.setOwnerId(userId);
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
+            notifyEvidence(userId, evidence.getEvidenceId());
             ra.addFlashAttribute("messageSuccess", message);
         } catch(IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
         }
         return "redirect:/evidence/{userId}";
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of user's who has had changes to their evidence
+     * @param evidenceId Id of the evidence changed.
+     */
+    private void notifyEvidence(int userId, int evidenceId) {
+        template.convertAndSend("/element/evidence/" + userId , evidenceId);
     }
 }

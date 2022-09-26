@@ -1,0 +1,25 @@
+<th:block t th:each="evidence : ${listEvidence}">
+    <div class="card project-card mb-3" th:id="'evidence' + ${evidence.evidenceId} + 'Card'"
+         th:ondrop="'dropUsers(event, ' + ${evidence.evidenceId} + ')'"
+         ondragover="allowDrop(event)">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <div>
+                            <a role="button" class="project-name" href="javascript:void(0);"
+                               th:onclick="'getSelectedEvidence(' + ${evidence.evidenceId} + ')'"
+                               th:text="${evidence.title}"></a>
+                        </div>
+                    </h5>
+                    <b class="evidenceCardText">Project: </b>
+                    <p th:text="${evidence.project.projectName}" class="mb-0 evidenceCardText"></p>
+                    <br />
+                    <b class="evidenceCardText">Date Created: </b>
+                    <p class="evidenceCardText">[[${#dates.format(evidence.dateOccurred,'dd MMM
+                        yyyy')}]]</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</th:block>
