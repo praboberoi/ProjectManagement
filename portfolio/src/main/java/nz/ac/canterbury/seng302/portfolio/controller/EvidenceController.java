@@ -92,13 +92,13 @@ public class EvidenceController {
             @PathVariable("userId") int userId,
             Model model) {
         User user = new User(userAccountClientService.getUser(principal));
+        User userName = new User(userAccountClientService.getUser(userId));
         List<Project> listProjects = projectService.getAllProjects();
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         Evidence newEvidence = evidenceService.getNewEvidence(userId);
         model.addAttribute(EVIDENCE, newEvidence);
         model.addAttribute(LIST_EVIDENCE, listEvidence);
         model.addAttribute(LIST_PROJECTS, listProjects);
-        User userName = new User(userAccountClientService.getUser(userId));
         model.addAttribute("evidence", newEvidence);
         model.addAttribute("listEvidence", listEvidence);
         model.addAttribute("listProjects", listProjects);
@@ -106,7 +106,7 @@ public class EvidenceController {
         model.addAttribute("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
         model.addAttribute("userName", PrincipalUtils.getUserName(principal));
         model.addAttribute(NOTIFICATIONS, editing);
-        model.addAttribute("userName", userName.getFirstName());
+        model.addAttribute("userFirstName", userName.getFirstName());
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }
