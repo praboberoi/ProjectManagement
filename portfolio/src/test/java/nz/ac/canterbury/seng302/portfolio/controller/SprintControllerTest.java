@@ -284,7 +284,7 @@ public class SprintControllerTest {
      */
     @Test
     void givenInvalidSprint_whenDeleteSprint_thenErrorMessagePresent() throws Exception {
-        when(sprintService.verifySprint(any())).thenThrow(new IncorrectDetailsException("Invalid Sprint"));
+        when(sprintService.deleteSprint(anyInt())).thenThrow(new IncorrectDetailsException("Invalid Sprint"));
 
         this.mockMvc.perform(post("/project/1/deleteSprint/1"))
                 .andExpect(status().is3xxRedirection())
