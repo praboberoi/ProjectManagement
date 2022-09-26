@@ -61,8 +61,14 @@
                                                         <button class="btn btn-outline-primary btn-sm"
                                                                 th:data-id="${evidence.evidenceId}"
                                                                 th:data-projectid="${evidence.project.projectId}"
+                                                                th:data-title="${evidence.title}"
+                                                                th:data-date="${evidence.dateOccurred}"
+                                                                th:data-description="${evidence.description}"
                                                                 th:onclick="editEvidence(this.getAttribute('data-id'),
-                                                                                          this.getAttribute('data-projectid'))">
+                                                                                          this.getAttribute('data-projectid'),
+                                                                                          this.getAttribute('data-title'),
+                                                                                          this.getAttribute('data-date'),
+                                                                                          this.getAttribute('data-description'))">
                                                             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
                                                             Edit
                                                         </button>
@@ -131,8 +137,7 @@
                                         <div class="row">
                                             <div class="col-auto me-auto">
                                                 <input type="hidden" id="selectedEvidenceId" th:value="${selectedEvidence.evidenceId}">
-                                                <h3 id="selectedEvidenceTitle" class="card-title"
-                                                    th:text="${selectedEvidence.title}" />
+                                                <h3 id="selectedEvidenceTitle" class="card-title" th:text="${selectedEvidence.title}" />
                                                 <b class="evidenceCardText">Project: </b>
                                                 <p th:text="${selectedEvidence.project.projectName}"
                                                     class="mb-0 evidenceCardText"></p>
@@ -192,7 +197,7 @@
                             <div class="mb-3">
                                 <label for="evidence-project" class="col-form-label required">Select Project</label>
                                 <select type="text" class="form-select required" id="evidence-project"
-                                    th:field="*{project}" required>
+                                    th:field="*{project}" required onchange="updateSubmissionButton()">
                                     <th:block th:each="project : ${listProjects}">
                                         <option th:id="'project-' + ${project.projectId}" th:value="${project.projectId}">
                                             [[${project.projectName}]]</option>
@@ -209,7 +214,7 @@
                                     <img class="icon img-color-primary"
                                         th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
                                 </span>
-                                <input type="date" class="form-control required" id="evidence-date"
+                                <input type="date" class="form-control required" id="evidence-date" oninput="updateSubmissionButton()"
                                     th:field="*{dateOccurred}" required>
                                 <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
                             </div>
@@ -217,7 +222,7 @@
                             <div class="mb-3">
                                 <label for="evidence-description" class="col-form-label required">Description</label>
                                 <textarea type="evidence-description" class="form-control required"
-                                    id="evidence-description" oninput="checkEvidenceDescription()" th:field="*{description}" required></textarea>
+                                    id="evidence-description" oninput="updateSubmissionButton()" th:field="*{description}" required></textarea>
                                 <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}"
                                     class="error-msg"></p>
                             </div>
@@ -227,7 +232,7 @@
                             </div>
                             <br>
                             <div class="modal-footer">
-                                <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" th:disabled="${isCreate}" onclick="updateEditMessage()">
+                                <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" onclick="updateEditMessage()" disabled>
                                     <img class="icon img-color-secondary" id="evidenceFromSubmitImg"
                                         th:src="${submissionImg}" />
                                     <span id="evidenceFormSubmitLabel" >[[${submissionName}]]</span></button>

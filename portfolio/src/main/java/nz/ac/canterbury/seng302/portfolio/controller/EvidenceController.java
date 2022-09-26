@@ -113,6 +113,7 @@ public class EvidenceController {
         try {
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
             mv.addObject("selectedEvidence", selectedEvidence);
+            mv.addObject("notifications", editing);
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
             mv.addObject("messageDanger", e.getMessage());
@@ -168,7 +169,6 @@ public class EvidenceController {
             mv.addObject("listProjects", listProjects);
             mv.addObject("submissionImg", apiPrefix+"/icons/save-icon.svg");
             mv.addObject("submissionName", "Save");
-            mv.addObject("isCreate", false);
 
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
@@ -193,7 +193,6 @@ public class EvidenceController {
         mv.addObject("listProjects", listProjects);
         mv.addObject("submissionImg", apiPrefix+"/icons/create-icon.svg");
         mv.addObject("submissionName", "Create");
-        mv.addObject("isCreate", true);
         return mv;
     }
 

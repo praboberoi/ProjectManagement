@@ -54,9 +54,7 @@ function updateEvidencePage(message) {
     const selectedEvidenceIdElement = document.getElementById('selectedEvidenceId')
     const selectedEvidenceId = selectedEvidenceIdElement === null ? 0 : parseInt(selectedEvidenceIdElement.value)
 
-    if (action === "deleted" || action === 'saved') {
-        getEvidenceList()
-    }
+    getEvidenceList()
 
     if (action === "deleted" && selectedEvidenceId === evidenceId && firstEvidenceId !== 0) {
         getSelectedEvidence(firstEvidenceId)
@@ -86,8 +84,7 @@ function updateEvidencePage(message) {
     }
 
     else if (action === 'finished') {
-        const messageDiv = document.getElementById(`evidence-${evidenceId}-message-div`)
-        messageDiv.hidden = true
+        document.getElementById(`evidence-${evidenceId}-message-div`).hidden = true
         document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = false
     }
 

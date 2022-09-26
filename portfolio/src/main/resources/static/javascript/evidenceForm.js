@@ -3,6 +3,10 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
+let currentTitle = null;
+let currentDate = null;
+let currentDescription = null;
+let currentProjectId = null;
 
 /**
  * Calls the server to save the evidence
@@ -27,8 +31,7 @@ function checkEvidenceTitle() {
     let charMessage = document.getElementById("evidenceCharCount");
     let charCount = evidenceTitle.value.length;
     charMessage.innerText = charCount + ' ';
-    document.getElementById('evidenceFormSubmitButton').disabled = evidenceTitle.value.length === 0;
-
+    updateSubmissionButton()
 }
 
 /**
@@ -79,14 +82,20 @@ function createNewEvidence() {
  * Obtains the evidence from the server to update an existing evidence
  * @param evidenceId the ID of the evidence selected
  * @param evidenceProjectId the project ID of the evidence
+ * @param evidenceTitle title of selected evidence
+ * @param evidenceDate date of the selected evidence
+ * @param evidenceDescription description of the selected evidence
  */
-function editEvidence(evidenceId, evidenceProjectId) {
+function editEvidence(evidenceId, evidenceProjectId, evidenceTitle, evidenceDate, evidenceDescription) {
+    currentTitle = evidenceTitle;
+    currentDate = evidenceDate.substring(0, 10);
+    currentDescription = evidenceDescription;
+    currentProjectId = document.getElementById('evidence-project').value;
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `${window.location.pathname}/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, evidenceProjectId, "Update Evidence");
     httpRequest.send();
     stompClient.publish({destination: "/app/evidence/edit", body: JSON.stringify({'evidenceId': evidenceId, 'action': "editing", 'firstEvidenceId': 0, 'userUpdating': null, 'userId':userId, 'sessionId': 0})});
-
 }
 
 /**
@@ -102,19 +111,15 @@ function openEvidenceModal() {
 }
 
 function updateEditMessage() {
+
     const evidenceId = document.getElementById('evidenceId').value
-    document.getElementById(`evidence-${evidenceId}-message-div`).hidden = true
-    document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = false
-    stompClient.publish({destination: "/app/evidence/edit", body: JSON.stringify({'evidenceId': evidenceId, 'action': "finished", 'firstEvidenceId': 0, 'userUpdating': null, 'userId':userId})})
+    if(document.getElementById(`evidence-${evidenceId}-message-div`) !== null) {
+        document.getElementById(`evidence-${evidenceId}-message-div`).hidden = true
+        document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = false
+        stompClient.publish({destination: "/app/evidence/edit", body: JSON.stringify({'evidenceId': evidenceId, 'action': "finished", 'firstEvidenceId': 0, 'userUpdating': null, 'userId':userId})})
+    }
 
-}
 
-/**
- * Checks the evidence description to update the status of the submission button
- */
-function checkEvidenceDescription() {
-    const description = document.getElementById('evidence-description').value;
-    document.getElementById('evidenceFormSubmitButton').disabled = description.length === 0;
 
 }
 
@@ -127,4 +132,22 @@ function updateDeleteDetails(evidenceId, evidenceTitle) {
     document.getElementById('deleteMessage').innerText = `Are you sure you want to delete ${evidenceTitle}?`
     document.getElementById('deleteEvidenceForm').action = `${window.location.pathname}/${evidenceId}/deleteEvidence`
 
+}
+
+/**
+ * Updates the status of submission button based on the input values entered
+ */
+function updateSubmissionButton() {
+    const date = document.getElementById('evidence-date').value;
+    const description = document.getElementById('evidence-description').value.trim();
+    const title = document.getElementById('evidence-title').value.trim();
+    const projectId = document.getElementById('evidence-project').value;
+
+    if ((date.length === 0 || description.length === 0 || title.length === 0) ||
+        (date === currentDate && description === currentDescription && title === currentTitle && projectId === currentProjectId))
+
+        document.getElementById('evidenceFormSubmitButton').disabled = true
+
+    else
+        document.getElementById('evidenceFormSubmitButton').disabled = false
 }
