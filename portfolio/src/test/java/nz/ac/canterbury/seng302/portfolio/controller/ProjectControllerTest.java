@@ -144,7 +144,7 @@ public class ProjectControllerTest {
         Deadline newDeadline = new Deadline.Builder().project(project).name("Test").build();
         Milestone newMilestone = new Milestone.Builder().project(project).name("Test").build();
         Event newEvent = new Event.Builder().eventName("Test").build();
-        
+
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
         when(eventService.getNewEvent(any())).thenReturn(newEvent);
@@ -175,6 +175,19 @@ public class ProjectControllerTest {
                 .perform(get("/project/9999"))
                 .andExpect(flash().attribute("messageDanger", "Project not found"))
                 .andExpect(view().name("redirect:/dashboard"));
+    }
+
+    /**
+     * Tests that the user is redirected to the dashboard if trying to view a non-existing project
+     * @throws Exception Thrown during mockmvc runtime
+     */
+    @Test
+    void whenProjectCalled_thenListOfProjectReturned() throws Exception {
+        when(projectService.getAllProjects()).thenReturn(List.of());
+        this.mockMvc
+                .perform(get("/projects/"))
+                .andExpect(view().name("dashboard::projectList"))
+                .andExpect(model().attribute("listProjects", List.of()));
     }
 
     /**
@@ -226,6 +239,22 @@ public class ProjectControllerTest {
                 .perform(post("/project/").flashAttr("projectDTO", toDTO(new Project())))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Project created successfully"));
+    }
+
+    /**
+     * Test project can not be saved by a student.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenStudent_WhenSaveProject_ThenErrorThrown() throws Exception{
+        when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(projectService.saveProject(any())).thenReturn("Project created successfully");
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+
+        this.mockMvc
+                .perform(post("/project/").flashAttr("projectDTO", toDTO(new Project())))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Insufficient Permissions"));
     }
 
     /**

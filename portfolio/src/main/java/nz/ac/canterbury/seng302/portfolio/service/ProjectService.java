@@ -77,11 +77,7 @@ public class ProjectService {
      * @throws IncorrectDetailsException If the given project ID does not exist
      */
     public Project getProject(int id) throws IncorrectDetailsException {
-        Optional<Project> result = projectRepository.findById(id);
-        if(result.isPresent())
-            return result.get();
-        else
-            throw new IncorrectDetailsException("Failed to locate the project in the database");
+        return projectRepository.findById(id).orElseThrow(() -> new IncorrectDetailsException("Failed to locate the project in the database"));
     }
 
     /**

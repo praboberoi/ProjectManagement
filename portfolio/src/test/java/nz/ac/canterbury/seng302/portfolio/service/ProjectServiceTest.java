@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -73,10 +74,10 @@ class ProjectServiceTest {
     }
 
     /**
-     * Tests that a sprint with too long a description will not be valid
+     * Tests that a project with too long a description will not be valid
      */
     @Test
-    void givenInvalidSprintDescription_whenSprintValidated_thenFailsValidation() {
+    void givenInvalidProjectDescription_whenProjectValidated_thenFailsValidation() {
         Project project = projectBuilder
             .description("0123456789".repeat(26)) //260 characters
             .build();
@@ -84,7 +85,7 @@ class ProjectServiceTest {
     }
 
     /**
-     * Tests that a sprint with too long a description will not be valid
+     * Tests that a project with too long a description will not be valid
      */
     @Test
     void givenDuplicateName_whenProjectValidated_thenFailsValidation() {
@@ -97,14 +98,46 @@ class ProjectServiceTest {
     }
 
     /**
-     * Tests that a sprint with the maximum character count will be valid
+     * Tests that a project with the maximum character count will be valid
      */
     @Test
-    void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
+    void givenValidLargeProjectDescription_whenProjectValidated_thenSucceedsValidation() {
         Project project = projectBuilder
             .description("0123456789".repeat(25)) //250 characters
             .build();
             assertDoesNotThrow(() -> {
+                projectService.verifyProject(project);
+            });
+    }
+    
+    /**
+     * Tests that a project with a start date 5 years ago will be valid
+     */
+    @Test
+    void givenInvalidStartDate_whenProjectValidated_thenFailsValidation() {
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.YEAR, -5);
+
+        Project project = projectBuilder
+            .startDate(new Date(startDate.getTimeInMillis()))
+            .build();
+            assertThrows(IncorrectDetailsException.class, () -> {
+                projectService.verifyProject(project);
+            });
+    }
+
+    /**
+     * Tests that a project with an end date 10 years in the future will be valid
+     */
+    @Test
+    void givenInvalidEndDate_whenProjectValidated_thenFailsValidation() {
+        Calendar endDate = Calendar.getInstance();
+        endDate.add(Calendar.YEAR, 10);
+
+        Project project = projectBuilder
+            .endDate(new Date(endDate.getTimeInMillis()))
+            .build();
+            assertThrows(IncorrectDetailsException.class, () -> {
                 projectService.verifyProject(project);
             });
     }
@@ -144,5 +177,14 @@ class ProjectServiceTest {
         when(projectRepository.save(any())).thenReturn(testProject);
         String returnMessage = projectService.saveProject(testProject);
         assertEquals("Successfully Updated " + testProject.getProjectName(), returnMessage);
+    }
+
+    @Test
+    void whenNewProject_thenProjectCreated() throws IncorrectDetailsException {
+        LocalDate now = LocalDate.now();
+        Project testProject = new Project(1, "Project " + now.getYear(), "", Date.valueOf(now), Date.valueOf(now.plusMonths(8)));
+        Project project = projectService.getNewProject();
+
+        assertEquals(testProject, project);
     }
 }
