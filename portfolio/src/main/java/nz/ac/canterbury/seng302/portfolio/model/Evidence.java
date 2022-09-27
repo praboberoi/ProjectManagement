@@ -121,13 +121,14 @@ public class Evidence {
      * @param description the description of the evidence.
      * @param ownerId the user id of the creator and owner of the evidence.
      */
-    public Evidence(int evidenceId, Project project, Date dateOccurred, String title, String description, int ownerId)  {
+    public Evidence(int evidenceId, Project project, Date dateOccurred, String title, String description, int ownerId, List<String> weblinks)  {
         this.evidenceId = evidenceId;
         this.project = project;
         this.dateOccurred = dateOccurred;
         this.title = title;
         this.description = description;
         this.ownerId = ownerId;
+        this.weblinks = weblinks;
     }
 
     /**
@@ -171,6 +172,8 @@ public class Evidence {
         private String description = "";
         private int ownerId;
         private Project project;
+
+        private List<String> weblinks;
 
         /**
          * Builds the current Builder with the given evidence id
@@ -233,12 +236,17 @@ public class Evidence {
             return this;
         }
 
+        public Evidence.Builder weblinks(List<String> weblinks) {
+            this.weblinks = weblinks;
+            return this;
+        }
+
         /**
          * Returns a new Evidence with all the parameters of the current Builder
          * @return Evidence object
          */
         public Evidence build() {
-            return new Evidence(evidenceId, project, dateOccurred, title, description, ownerId);
+            return new Evidence(evidenceId, project, dateOccurred, title, description, ownerId, weblinks);
         }
     }
 
