@@ -269,9 +269,9 @@
 
 <div th:fragment="groupFormSharedContent(formGroup)">
 
-    <div class="mb-3">
-        <label class="col-form-label required">Group Short Name</label>
-        <input type="text" class="form-control required" name="shortName" oninput="checkShortName(event)"
+    <div class="mb-3" >
+        <label  class="col-form-label required">Group Short Name</label>
+        <input th:readonly="${!adminOrTeacher}" type="text" class="form-control required" name="shortName" oninput="checkShortName(event)"
             th:value="${formGroup!=null?formGroup.shortName:''}" id="shortName" maxlength="50"
             placeholder="Short Group Name" required>
         <span id="charCount" th:value="${charCount}"
