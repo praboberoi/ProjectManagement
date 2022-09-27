@@ -1,10 +1,42 @@
-function updateProjectDetails(projectId) {
+/**
+ * Initilises the delete modal for deleting a project
+ * @param {int} projectId 
+ */
+function projectDeleteModalInit(projectId) {
     let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].text
     document.getElementById('messageProject').innerText =  `Are you sure you want to delete ${projectName}`;
     document.getElementById('confirmProjectDeleteBtn').setAttribute('onclick', `deleteProject(${projectId})`);
 }
 
+/**
+ * Initilises the project modal for editing the selected project
+ * @param {int} projectId 
+ */
+function editProjectModalInit(projectId) {
+    document.getElementById('projectId').value = projectId
 
+    let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].text
+    document.getElementById('project-name').value =  projectName;
+    // document.getElementById('projectCharCount').innerText =  projectName.length;
+    checkProjectName()
+
+    let projectStartDate = document.getElementById(`project${projectId}-startDate`).value
+    document.getElementById('startDate').value =  projectStartDate;
+
+    let projectEndDate = document.getElementById(`project${projectId}-endDate`).value
+    document.getElementById('endDate').value =  projectEndDate;
+    checkProjectDates()
+
+    let projectDescription = document.getElementById(`project${projectId}-description`).innerText
+    document.getElementById('projectDescription').value =  projectDescription;
+    // document.getElementById('charCount').innerText =  projectDescription.length;
+    checkProjectDescription()
+}
+
+/**
+ * Sends a delete request to the server and updates the delete modal
+ * @param {int} projectId 
+ */
 function deleteProject(projectId) {
     let httpRequest = new XMLHttpRequest();
 

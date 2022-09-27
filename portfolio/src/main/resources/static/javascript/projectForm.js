@@ -156,6 +156,28 @@ function checkProjectDescription () {
 
 }
 
+/**
+ * Updates the characters remaining in the project name.
+ */
+ function checkProjectName () {
+    let nameElement = document.getElementById("project-name");
+    let nameErrorElement = document.getElementById("projectNameError");
+
+    let charMessage = document.getElementById("projectCharCount");
+    let charCount = nameElement.value.length;
+    charMessage.innerText = charCount + ' '
+
+    if (nameElement.value.length > 250)
+    {
+        nameErrorElement.classList.add("formError");
+        nameErrorElement.innerText = "Description must be less than 250 characters."
+    } else {
+        nameErrorElement.classList.remove("formError");
+        nameErrorElement.innerText = null;
+    }
+
+}
+
 
 /**
  * Calls the server to test for sprints falling outside of the project

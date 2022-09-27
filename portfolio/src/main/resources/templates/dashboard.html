@@ -55,8 +55,6 @@
                                         <div class="row">
                                             <div class="card-body">
                                                 <div class="col-md-8">
-                                                    <!-- make a link to go to project detail page -->
-                                                    <!--<h2 th:text="'Name:  '  + ${project.projectName}"/>-->
                                                     <h5 class="card-title">
                                                         <a class=project-name
                                                             th:href="@{${apiPrefix} + '/project/'+ ${project.projectId}}"
@@ -64,20 +62,29 @@
                                                     </h5>
                                                     <h6 class="card-subtitle mb-2 text-muted">
                                                         <!-- displays the date start - finish -->
-                                                        <p class="date-color"
-                                                            th:text="${#dates.format(project.startDate, 'dd MMM yyyy')} + ' to ' + ${#dates.format(project.endDate, 'dd MMM yyyy')}">
+                                                        <input type="hidden"
+                                                            th:id="'project' + ${project.projectId} + '-startDate'"
+                                                            th:value="${project.startDate}">
+                                                        <input type="hidden"
+                                                            th:id="'project' + ${project.projectId} + '-endDate'"
+                                                            th:value="${project.endDate}">
+                                                        <p class="date-color"><span
+                                                                th:text="${#dates.format(project.startDate, 'dd MMM yyyy')}"></span>
+                                                            to <span
+                                                                th:text="${#dates.format(project.endDate, 'dd MMM yyyy')}">
                                                         </p>
                                                     </h6>
-                                                    <p class="date-color" th:text="${project.description}" />
+                                                    <p th:id="'project' + ${project.projectId} + '-description'" class="date-color" th:text="${project.description}" />
                                                     <div class="container-fluid p-0" th:if="${adminOrTeacher}">
                                                         <button type="button" class="btn btn-outline-primary me-2"
-                                                            data-bs-toggle="modal" data-bs-target="#projectFormModal">
+                                                            data-bs-toggle="modal" data-bs-target="#projectFormModal"
+                                                            th:onclick="'editProjectModalInit(' + ${project.projectId} + ')'">
                                                             <img class="icon img-color-primary"
                                                                 th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
                                                             Edit</button>
                                                         <button type="button" class="btn btn-outline-secondary"
                                                             data-bs-toggle="modal" data-bs-target="#conformationModal"
-                                                            th:onclick="'updateProjectDetails(' + ${project.projectId} + ')'">
+                                                            th:onclick="'projectDeleteModalInit(' + ${project.projectId} + ')'">
                                                             <img class="icon img-color-secondary"
                                                                 th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
                                                             Delete</button>

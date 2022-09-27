@@ -186,16 +186,19 @@ public class ProjectController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
 
-        try {
-            Project project  = dashboardService.getProject(projectId);
-            dashboardService.deleteProject(projectId);
-            notifyProject(projectId, "deleted");
+        Project project;
 
-            logger.info("Project {} has been deleted by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
-            return ResponseEntity.status(HttpStatus.OK).body("Successfully Deleted " + project.getProjectName());
+        try {
+            project = dashboardService.getProject(projectId);
         } catch (IncorrectDetailsException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("An error occurred deleting the project");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Unable to find specified project to delete");
         }
+
+        dashboardService.deleteProject(projectId);
+        notifyProject(projectId, "deleted");
+
+        logger.info("Project {} has been deleted by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
+        return ResponseEntity.status(HttpStatus.OK).body("Successfully Deleted " + project.getProjectName());
     }
 
     /**
