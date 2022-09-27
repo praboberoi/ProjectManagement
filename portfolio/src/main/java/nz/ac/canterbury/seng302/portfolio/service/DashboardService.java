@@ -103,10 +103,10 @@ public class DashboardService {
         String expected_description = String.join("", List.of(project.getDescription().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
 
         if (! expected_name.equals(project.getProjectName()))
-            throw new IncorrectDetailsException("Project name must not use an emoji");
+            throw new IncorrectDetailsException("Project name must not contain an emoji");
 
         if (! expected_description.equals(project.getDescription()))
-            throw new IncorrectDetailsException("Project description must not use an emoji");
+            throw new IncorrectDetailsException("Project description must not contain an emoji");
 
         if (projectName != null && projectName.getProjectId() != project.getProjectId()) {
             throw new IncorrectDetailsException("A project already exists with that name.");

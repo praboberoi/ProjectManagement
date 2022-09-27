@@ -172,7 +172,7 @@ public class DeadlineService {
         if (deadline == null) {
             throw new IncorrectDetailsException("No deadline");
         } else if (! expected_name.equals(deadline.getName())) {
-            throw new IncorrectDetailsException("Deadline name must not use an emoji");
+            throw new IncorrectDetailsException("Deadline name must not contain an emoji");
         } else if (deadline.getName() == null || deadline.getDate() == null || deadline.getProject() == null) {
             throw new IncorrectDetailsException("Deadline values cannot be null");
         } else if (deadline.getName().length() > 50) {

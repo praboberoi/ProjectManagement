@@ -28,7 +28,7 @@ function checkMilestoneName() {
         milestoneCreateBtn.disabled = true;
     } else if (emojiRegx.test(milestoneName.value)) {
         milestoneName.classList.add("formError");
-        milestoneNameError.innerText = "Milestone name must not use an emoji";
+        milestoneNameError.innerText = "Milestone name must not contain an emoji";
         milestoneCreateBtn.disabled = true;
     } else {
         milestoneName.classList.remove("formError");

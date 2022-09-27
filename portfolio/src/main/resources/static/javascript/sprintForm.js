@@ -37,7 +37,7 @@ function checkSprintName() {
         sprintNameError.innerText = "Sprint name must not start with empty space";
     } else if (emojiRegx.test(sprintName.value)) {
         sprintName.classList.add("formError");
-        sprintNameError.innerText = "Sprint name must not use an emoji";
+        sprintNameError.innerText = "Sprint name must not contain an emoji";
     } else {
         sprintName.classList.remove("formError");
         sprintNameError.innerText = null;
@@ -129,7 +129,7 @@ function checkSprintDescription () {
 
     } else if (emojiRegx.test(descriptionElement.value)) {
         descErrorElement.classList.add("formError");
-        descErrorElement.innerText = "Sprint description must not use an emoji";
+        descErrorElement.innerText = "Sprint description must not contain an emoji";
     } else {
         descErrorElement.classList.remove("formError");
         descErrorElement.innerText = null;

@@ -29,7 +29,7 @@ function checkDeadlineName() {
         deadlineCreateBtn.disabled = true;
     } else if (emojiRegx.test(deadlineName.value)) {
         deadlineName.classList.add("formError");
-        deadlineNameError.innerText = "Deadline name must not use an emoji";
+        deadlineNameError.innerText = "Deadline name must not contain an emoji";
         deadlineCreateBtn.disabled = true;
     } else {
         deadlineName.classList.remove("formError");

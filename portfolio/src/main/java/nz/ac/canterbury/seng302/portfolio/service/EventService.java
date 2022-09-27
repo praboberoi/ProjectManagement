@@ -124,7 +124,7 @@ public class EventService {
             throw new IncorrectDetailsException ("No Event");
 
         else if (! expected_name.equals(event.getEventName()))
-            throw new IncorrectDetailsException("Event name must not use an emoji");
+            throw new IncorrectDetailsException("Event name must not contain an emoji");
 
         else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null)
             throw new IncorrectDetailsException ("Event values are null");

@@ -128,7 +128,7 @@ function checkProjectName() {
         projectNameError.innerText = "Project name must not start with space characters";
     } else if (emojiRegx.test(projectName.value)) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project name must not use an emoji";
+        projectNameError.innerText = "Project name must not contain an emoji";
     } else {
         projectName.classList.remove("formError");
         projectNameError.innerText = null;
@@ -153,7 +153,7 @@ function checkProjectDescription () {
 
     } else if ( emojiRegx.test(descriptionElement.value)) {
         descErrorElement.classList.add("formError");
-        descErrorElement.innerText = "Project description must not use an emoji";
+        descErrorElement.innerText = "Project description must not contain an emoji";
 
     } else {
         descErrorElement.classList.remove("formError");
