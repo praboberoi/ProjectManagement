@@ -201,6 +201,15 @@ public class SprintService {
      * @return
      */
     public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
+        String expected_name = String.join("", List.of(sprint.getSprintName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+        String expected_description = String.join("", List.of(sprint.getDescription().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+
+        if (! expected_name.equals(sprint.getSprintName()))
+            throw new IncorrectDetailsException("Sprint name must not use an emoji");
+
+        if (! expected_description.equals(sprint.getDescription()))
+            throw new IncorrectDetailsException("Sprint description must not use an emoji");
+
         if (sprint.getSprintName().length() > 50)
             throw new IncorrectDetailsException("Sprint name must be less than 50 characters");
 

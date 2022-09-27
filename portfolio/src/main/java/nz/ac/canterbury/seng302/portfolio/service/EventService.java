@@ -118,8 +118,13 @@ public class EventService {
      * */
     public void verifyEvent(Event event) throws IncorrectDetailsException {
 
+        String expected_name = String.join("", List.of(event.getEventName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+
         if (event == null)
             throw new IncorrectDetailsException ("No Event");
+
+        else if (! expected_name.equals(event.getEventName()))
+            throw new IncorrectDetailsException("Event name must not use an emoji");
 
         else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null)
             throw new IncorrectDetailsException ("Event values are null");

@@ -99,6 +99,15 @@ public class DashboardService {
         List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
         Project projectName = projectRepo.findByProjectName(project.getProjectName());
 
+        String expected_name = String.join("", List.of(project.getProjectName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+        String expected_description = String.join("", List.of(project.getDescription().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+
+        if (! expected_name.equals(project.getProjectName()))
+            throw new IncorrectDetailsException("Project name must not use an emoji");
+
+        if (! expected_description.equals(project.getDescription()))
+            throw new IncorrectDetailsException("Project description must not use an emoji");
+
         if (projectName != null && projectName.getProjectId() != project.getProjectId()) {
             throw new IncorrectDetailsException("A project already exists with that name.");
         }
