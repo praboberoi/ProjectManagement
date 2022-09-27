@@ -398,7 +398,10 @@ function saveRepoSettings(event) {
 
     let httpRequest = new XMLHttpRequest();
 
-    httpRequest.onreadystatechange = () => processAction(httpRequest)
+    httpRequest.onreadystatechange = () => {
+        processAction(httpRequest)
+        connectToRepo(true)
+    }
 
     httpRequest.open('POST', apiPrefix + `/repo/${groupId}/save`);
 
@@ -406,7 +409,7 @@ function saveRepoSettings(event) {
 
     httpRequest.send(formData);
 
-    connectToRepo(true)
+
 
 }
 
