@@ -134,17 +134,4 @@ public class ProjectService {
             throw new IncorrectDetailsException("Project description cannot exceed 250 characters");
         }
     }
-
-
-
-    /**
-     * Obtains the date ranges of the project
-     * @param project Of type project
-     * @return List of project min and max dates
-     */
-    public List<Date> getProjectDateRange(Project project) {
-        Date projectMinDate = Date.valueOf(project.getStartDate().toLocalDate().minusYears(1));
-        Date projectMaxDate = Date.valueOf(project.getEndDate().toLocalDate().plusYears(10));
-        return List.of(projectMinDate,projectMaxDate);
-    }
 }

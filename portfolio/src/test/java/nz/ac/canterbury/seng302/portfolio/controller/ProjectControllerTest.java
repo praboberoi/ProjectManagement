@@ -144,9 +144,9 @@ public class ProjectControllerTest {
         Deadline newDeadline = new Deadline.Builder().project(project).name("Test").build();
         Milestone newMilestone = new Milestone.Builder().project(project).name("Test").build();
         Event newEvent = new Event.Builder().eventName("Test").build();
+        
         when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
-        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         when(eventService.getNewEvent(any())).thenReturn(newEvent);
         when(deadlineService.getNewDeadline(any())).thenReturn(newDeadline);
         when(milestoneService.getNewMilestone(any())).thenReturn(newMilestone);
@@ -161,10 +161,6 @@ public class ProjectControllerTest {
                 .andExpect(model().attribute("milestone", newMilestone))
                 .andExpect(model().attribute("project", project))
                 .andExpect(model().attribute("event", newEvent))
-                .andExpect(model().attribute("roles", testList))
-                .andExpect(model().attribute("user", new User(userResponse.build())))
-                .andExpect(model().attribute("projectDateMin", project.getStartDate()))
-                .andExpect(model().attribute("projectDateMax", project.getEndDate()))
                 .andExpect(view().name("project"));
     }
 

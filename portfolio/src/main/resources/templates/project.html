@@ -125,7 +125,7 @@
   <div th:replace="forms :: deadlineForm"></div>
   <div th:replace="forms :: milestoneForm"></div>
   <script th:inline="javascript">
-    let userRoles = [[${ roles }]];
+    let userRoles = [[${ user.roles }]];
     const projectId = [[${ project.projectId }]];
     let projectStartDate = [[${ project.startDate }]];
     let projectEndDate = [[${ project.endDate }]];

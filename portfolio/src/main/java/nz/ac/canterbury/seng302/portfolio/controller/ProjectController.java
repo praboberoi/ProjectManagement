@@ -124,15 +124,13 @@ public class ProjectController {
             model.addAttribute("deadline", newDeadline);
             model.addAttribute("milestone", newMilestone);
 
-            model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
-            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             model.addAttribute("projectDateMin", project.getStartDate());
             model.addAttribute("projectDateMax", project.getEndDate());
 
             return PROJECT_PAGE;
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
-            return "redirect:/dashboard";
+            return DASHBOARD_REDIRECT;
         }
     }
 
@@ -238,41 +236,6 @@ public class ProjectController {
         } catch (Exception e) {
             logger.error("An error occurred while saving a project.", e);
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
-    }
-
-    /**
-     * Maps an existing project, current user, user's role and button info to projectForm.html
-     * @param projectId Of type int
-     * @param model Of type {@link Model}
-     * @param ra Of type {@link RedirectAttributes}
-     * @param principal Of type {@link AuthState}
-     * @return projectForm.html file or dashboard.html file
-     */
-    @GetMapping(path="/dashboard/editProject/{projectId}")
-    public String showEditForm(
-        @PathVariable(
-        value = "projectId") int projectId,
-        Model model,
-        RedirectAttributes ra,
-        @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
-        try {
-            Project project  = projectService.getProject(projectId);
-            List<Date> dateRange = projectService.getProjectDateRange(project);
-            model.addAttribute(PROJECT_OBJECT, project);
-            model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
-            model.addAttribute("submissionName", "Save");
-            model.addAttribute("image", "/icons/save-icon.svg");
-            model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
-            model.addAttribute("projectStartDateMin", dateRange.get(0));
-            model.addAttribute("projectStartDateMax", Date.valueOf(project.getEndDate().toLocalDate().minusDays(1)));
-            model.addAttribute("projectEndDateMin", Date.valueOf(project.getStartDate().toLocalDate().plusDays(1)));
-            model.addAttribute("projectEndDateMax", dateRange.get(1));
-            return "projectForm";
-        } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute("messageDanger", e.getMessage());
-                return DASHBOARD_REDIRECT;
         }
     }
 
