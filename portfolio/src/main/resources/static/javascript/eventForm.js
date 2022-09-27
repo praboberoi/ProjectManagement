@@ -3,6 +3,7 @@ const eventEndDateElement = document.getElementById('eventEndDate');
 const startDateError = document.getElementById('eventStartDateError');
 const endDateError = document.getElementById('eventEndDateError');
 let currentEventId;
+const emojiRegx = /\p{Extended_Pictographic}/u;
 /**
  * Function for error validation of Event Name field.
  * Display error message if input is invalid.
@@ -21,6 +22,10 @@ function checkEventName() {
     } else if (charCount > 50){
         eventName.classList.add("eventFormError");
         eventNameError.innerText = "Event Name cannot exceed 50 characters";
+        document.getElementById("eventFormSubmitButton").disabled = true;
+    } else if (emojiRegx.test(eventName.value)) {
+        eventName.classList.add("formError");
+        eventNameError.innerText = "Event name must not use an emoji";
         document.getElementById("eventFormSubmitButton").disabled = true;
     } else {
         eventName.classList.remove("eventFormError");

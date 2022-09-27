@@ -5,7 +5,7 @@
 
 // Regular expression for Project Name field. No leading white spaces or empty field.
 const projectNameRegex = /^\S/
-const emojiRegx = /\p{Emoji}/u
+const emojiRegx = /\p{Extended_Pictographic}/u
 
 const startDateElement = document.querySelector('#startDate');
 const endDateElement = document.querySelector('#endDate');
@@ -122,13 +122,13 @@ function checkProjectName() {
     let projectNameError = document.getElementById('projectNameError');
     if (projectName.value.length < 1 || projectName.value.length > 32) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project Name must not be empty or greater than 32 characters";
+        projectNameError.innerText = "Project name must not be empty or greater than 32 characters";
     } else if (! projectNameRegex.test(projectName.value)) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project Name must not start with space characters";
+        projectNameError.innerText = "Project name must not start with space characters";
     } else if (emojiRegx.test(projectName.value)) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project Name must not use an emoji";
+        projectNameError.innerText = "Project name must not use an emoji";
     } else {
         projectName.classList.remove("formError");
         projectNameError.innerText = null;
@@ -152,8 +152,8 @@ function checkProjectDescription () {
         descErrorElement.innerText = "Description must be less than 250 characters."
 
     } else if ( emojiRegx.test(descriptionElement.value)) {
-        descriptionElement.classList.add("formError");
-        descriptionElement.innerText = "Project description must not use an emoji";
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Project description must not use an emoji";
 
     } else {
         descErrorElement.classList.remove("formError");

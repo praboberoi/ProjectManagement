@@ -16,7 +16,7 @@ function checkMilestoneName() {
     charMessage.innerText = charCount + ' '
     if (milestoneName.value.length < 1) {
         milestoneName.classList.add("formError");
-        milestoneNameError.innerText = "Milestone Name must not be empty";
+        milestoneNameError.innerText = "Milestone name must not be empty";
         milestoneCreateBtn.disabled = true;
     } else if (milestoneName.value.length < 3) {
         milestoneName.classList.add("formError");
@@ -24,7 +24,11 @@ function checkMilestoneName() {
         milestoneCreateBtn.disabled = true;
     } else if (milestoneName.value.length > 50) {
         milestoneName.classList.add("formError");
-        milestoneNameError.innerText = "Milestone Name cannot exceed 50 characters";
+        milestoneNameError.innerText = "Milestone name cannot exceed 50 characters";
+        milestoneCreateBtn.disabled = true;
+    } else if (emojiRegx.test(milestoneName.value)) {
+        milestoneName.classList.add("formError");
+        milestoneNameError.innerText = "Deadline name must not use an emoji";
         milestoneCreateBtn.disabled = true;
     } else {
         milestoneName.classList.remove("formError");

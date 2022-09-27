@@ -4,7 +4,7 @@
 
 // Regular expression for Sprint Name field. No leading white spaces or empty field.
 const sprintNameRegex = /^\S/;
-const emojiRegx = /\p{Emoji}/u;
+const emojiRegx = /\p{Extended_Pictographic}/u;
 const projectId = document.getElementById("projectId").value;
 const startDateElement = document.getElementById("sprint-start-date");
 const endDateElement = document.getElementById("sprint-end-date");
@@ -28,16 +28,16 @@ function checkSprintName() {
     let sprintNameError = document.getElementById('sprintNameError');
     if (sprintName.value.length < 1) {
         sprintName.classList.add("formError");
-        sprintNameError.innerText = "Sprint Name must not be empty";
+        sprintNameError.innerText = "Sprint name must not be empty";
     } else if (sprintName.value.length > 50) {
         sprintName.classList.add("formError");
-        sprintNameError.innerText = "Sprint Name must be less than 50 characters";
+        sprintNameError.innerText = "Sprint name must be less than 50 characters";
     } else if (! sprintNameRegex.test(sprintName.value)) {
         sprintName.classList.add("formError");
-        sprintNameError.innerText = "Sprint Name must not start with empty space";
+        sprintNameError.innerText = "Sprint name must not start with empty space";
     } else if (emojiRegx.test(sprintName.value)) {
         sprintName.classList.add("formError");
-        sprintName.innerText = "Sprint Name must not use an emoji";
+        sprintNameError.innerText = "Sprint name must not use an emoji";
     } else {
         sprintName.classList.remove("formError");
         sprintNameError.innerText = null;
@@ -128,8 +128,8 @@ function checkSprintDescription () {
         descErrorElement.innerText = "Description must be less than 250 characters."
 
     } else if (emojiRegx.test(descriptionElement.value)) {
-        descriptionElement.classList.add("formError");
-        descriptionElement.innerText = "Sprint description must not use an emoji";
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Sprint description must not use an emoji";
     } else {
         descErrorElement.classList.remove("formError");
         descErrorElement.innerText = null;
