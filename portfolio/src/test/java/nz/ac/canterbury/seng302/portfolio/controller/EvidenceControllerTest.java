@@ -93,6 +93,7 @@ public class EvidenceControllerTest {
             .dateOccurred(java.sql.Date.valueOf(now))
             .ownerId(1)
             .project(project)
+            .weblinks(Arrays.asList("http://www.google.co.nz"))
             .build();
 
         evidence1 = new Evidence.Builder()
@@ -101,6 +102,7 @@ public class EvidenceControllerTest {
             .dateOccurred(java.sql.Date.valueOf(now))
             .ownerId(1)
             .project(project)
+            .weblinks(Arrays.asList("http://www.google.co.nz"))
             .build();
 
     }
@@ -112,7 +114,10 @@ public class EvidenceControllerTest {
         evidence.getDateOccurred(),
         evidence.getTitle(),
         evidence.getDescription(),
-        evidence.getOwnerId());
+        evidence.getOwnerId(),
+        evidence.getWeblinks().toString()
+        );
+
     }
 
     /**
