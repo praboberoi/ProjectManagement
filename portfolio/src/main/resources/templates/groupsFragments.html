@@ -271,12 +271,9 @@
 
     <div class="mb-3" >
         <label  class="col-form-label required">Group Short Name</label>
-        <input th:if="${adminOrTeacher}" type="text" class="form-control required" name="shortName" oninput="checkShortName(event)"
+        <input th:readonly="${!adminOrTeacher}" type="text" class="form-control required" name="shortName" oninput="checkShortName(event)"
             th:value="${formGroup!=null?formGroup.shortName:''}" id="shortName" maxlength="50"
             placeholder="Short Group Name" required>
-        <input th:unless="${adminOrTeacher}" type="text" class="form-control required" name="shortName" oninput="checkShortName(event)"
-               th:value="${formGroup!=null?formGroup.shortName:''}" id="shortName" maxlength="50"
-               placeholder="Short Group Name" required readonly>
         <span id="charCount" th:value="${charCount}"
             th:text="${formGroup!=null?#strings.length(formGroup.shortName):0}"> </span> / 50
         characters used.
