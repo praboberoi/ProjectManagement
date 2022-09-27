@@ -85,8 +85,8 @@
         </div><br>
         <th:block th:each="milestone : ${listMilestones}">
           <div th:if="${(milestone.date >= sprint.startDate and milestone.date <= sprint.endDate)}">
-            <b>[[${deadline.name}]]</b>
-            <br><b>Date:</b> [[${#dates.format(deadline.date, 'dd MMM yyyy')}]]
+            <b>[[${milestone.name}]]</b>
+            <br><b>Date:</b> [[${#dates.format(milestone.date, 'dd MMM yyyy')}]]
           </div>
         </th:block>
       </div>
