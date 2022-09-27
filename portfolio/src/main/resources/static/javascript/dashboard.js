@@ -1,8 +1,20 @@
-function updateProjectDetails(projectId, projectName, apiPrefix) {
-    if(apiPrefix === null)
-        apiPrefix = ""
+function updateProjectDetails(projectId) {
+    let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].text
     document.getElementById('messageProject').innerText =  `Are you sure you want to delete ${projectName}`;
-    document.getElementById('deleteProject').setAttribute('action', `${apiPrefix}/dashboard/deleteProject/${projectId}`);
+    document.getElementById('confirmProjectDeleteBtn').setAttribute('onclick', `deleteProject(${projectId})`);
+}
+
+
+function deleteProject(projectId) {
+    let httpRequest = new XMLHttpRequest();
+
+    let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('conformationModal'))
+    let modalError = document.getElementById('projectDeleteModalError')
+
+    httpRequest.onreadystatechange = updateModal(httpRequest, modal, modalError)
+
+    httpRequest.open('DELETE', apiPrefix + `/project/${projectId}`);
+    httpRequest.send();
 }
 
 /**
@@ -111,8 +123,6 @@ function updateProjectDetails(projectId, projectName, apiPrefix) {
  */
  function updateModal(httpRequest, modal, modalError) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-        console.log(httpRequest.status)
-        console.log(httpRequest.responseText)
         if (httpRequest.status === 200) {
             modalError.innerText = ""
             messageSuccess.innerText = httpRequest.responseText;
