@@ -93,6 +93,7 @@
                                                 <br />
                                                 <br />
                                                 <p th:text="${selectedEvidence.description}"></p>
+                                                <p th:text="${selectedEvidence.weblinks}"></p>
                                             </div>
                                         </div>
                                     </div>
@@ -166,6 +167,18 @@
                                     id="evidence-description" th:field="*{description}" required></textarea>
                                 <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}"
                                     class="error-msg"></p>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="evidence-link" class="col-form-label">Web Link</label>
+                                <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                      aria-label="Add up to five relevant weblinks here, space separated." title="Add up to five relevant weblinks here, space separated.">
+                                    <img class="icon img-color-primary"
+                                         th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
+                                </span>
+                                <input type="text" class="form-control" id="evidence-link"
+                                       th:field="*{weblinks}" >
+                                <p id="evidenceLink" th:text="${evidenceLink}" class="error-msg"></p>
                             </div>
 
 
