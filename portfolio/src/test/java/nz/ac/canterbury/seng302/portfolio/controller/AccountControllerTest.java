@@ -13,7 +13,6 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
-import org.mockito.Mock;
 import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +36,6 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -56,9 +54,6 @@ class AccountControllerTest {
 
     @InjectMocks
     private ControllerAdvisor controllerAdvisor;
-
-    @InjectMocks
-    private AccountController accountController;
 
     User user;
 
@@ -214,7 +209,7 @@ class AccountControllerTest {
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
 
-        AccountController accountController = new AccountController(mockUserAccountClientService);
+        AccountController accountController = new AccountController(mockUserAccountClientService, template);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
 
@@ -232,18 +227,21 @@ class AccountControllerTest {
      */
     @Test
     void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws Exception {
+        UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
 
-        when(userAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
-        when(userAccountClientService.getUser(any())).thenReturn(reply.build());
+        when(mockUserAccountClientService.edit(anyInt(), any(), any(), any(), any(), any(), any())).thenReturn(editUserResponse);
+        when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
 
         when(PrincipalUtils.getUserId(any())).thenReturn(-1);
+
+        AccountController accountController = new AccountController(mockUserAccountClientService, template);
+
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
         MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "image/png", "some image".getBytes());
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-//        doNothing().when(template).convertAndSend(any(Object.class), any(Object.class));
         assertEquals( "redirect:account", accountController.editUser(principal, testFile,testString,
                 testString, testString, testString, testString, testString, false, mockModel, ra ));
     }
