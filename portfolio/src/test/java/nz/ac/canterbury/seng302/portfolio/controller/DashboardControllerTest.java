@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.User;
-import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
@@ -40,10 +39,7 @@ public class DashboardControllerTest {
     private SprintService sprintService;
 
     @MockBean
-    private ProjectService projectRepository;
-
-    @MockBean
-    private DashboardService dashboardService;
+    private ProjectService projectService;
 
     @MockBean
     private UserAccountClientService userAccountClientService;
@@ -112,7 +108,7 @@ public class DashboardControllerTest {
      */
     @Test
     void givenServer_WhenShowProjectList_ThenDashboardWithProjectListReturned() throws Exception{
-        when(dashboardService.getAllProjects()).thenReturn(listProjects);
+        when(projectService.getAllProjects()).thenReturn(listProjects);
         this.mockMvc
                 .perform(get("/dashboard"))
                 .andExpect(status().isOk())

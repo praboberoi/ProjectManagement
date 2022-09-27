@@ -1,9 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.User;
-import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +14,10 @@ import java.util.List;
 
 @Controller
 public class DashboardController {
-    @Autowired private DashboardService dashboardService;
-    @Autowired private UserAccountClientService userAccountClientService;
-    @Value("${apiPrefix}") private String apiPrefix;
+    @Autowired
+    private ProjectService projectService;
+    @Value("${apiPrefix}") 
+    private String apiPrefix;
 
     private static final String ERROR_PAGE = "error";
 
@@ -32,7 +31,7 @@ public class DashboardController {
     public String showProjectList( @AuthenticationPrincipal AuthState principal,
                                    Model model) {
         try {
-            List<Project> listProjects = dashboardService.getAllProjects();
+            List<Project> listProjects = projectService.getAllProjects();
 
             model.addAttribute("listProjects", listProjects);
             return "dashboard";

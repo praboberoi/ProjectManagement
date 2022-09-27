@@ -31,18 +31,26 @@ import java.util.List;
  */
 @Controller
 public class ProjectController {
-    @Autowired private SprintService sprintService;
-    @Autowired private DashboardService dashboardService;
-    @Autowired private ProjectService projectService;
-    @Autowired private EventService eventService;
-    @Autowired private UserAccountClientService userAccountClientService;
-    @Autowired private DeadlineService deadlineService;
-    @Autowired private MilestoneService milestoneService;
+    @Autowired 
+    private SprintService sprintService;
+    @Autowired 
+    private ProjectService projectService;
+    @Autowired 
+    private EventService eventService;
+    @Autowired 
+    private UserAccountClientService userAccountClientService;
+    @Autowired 
+    private DeadlineService deadlineService;
+    @Autowired 
+    private MilestoneService milestoneService;
 
     @Autowired
     private SimpMessagingTemplate template;
 
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
+
+    private static final String PROJECT_PAGE = "project";
+    private static final String PROJECT_OBJECT = "project";
 
     private static final String DASHBOARD_REDIRECT = "redirect:/dashboard";
     private static final String NOTIFICATION_DESTINATION = "/element/project";
@@ -65,7 +73,7 @@ public class ProjectController {
       * @return Page fragment containing events
       */
       @GetMapping(path="/projects")
-      public ModelAndView events() {
+      public ModelAndView projectList() {
           List<Project> listProjects = projectService.getAllProjects();
 
           ModelAndView mv = new ModelAndView("dashboard::projectList");
@@ -111,7 +119,7 @@ public class ProjectController {
             model.addAttribute("listMilestones", listMilestones);
             model.addAttribute("listSprints", listSprints);
 
-            model.addAttribute("project", project);
+            model.addAttribute(PROJECT_OBJECT, project);
             model.addAttribute("event", newEvent);
             model.addAttribute("deadline", newDeadline);
             model.addAttribute("milestone", newMilestone);
@@ -121,7 +129,7 @@ public class ProjectController {
             model.addAttribute("projectDateMin", project.getStartDate());
             model.addAttribute("projectDateMax", project.getEndDate());
 
-            return "project";
+            return PROJECT_PAGE;
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());
             return "redirect:/dashboard";
@@ -149,7 +157,7 @@ public class ProjectController {
                     .startDate(Date.valueOf(startDate))
                     .endDate(Date.valueOf(endDate))
                     .build();
-            dashboardService.verifyProject(project);
+            projectService.verifyProject(project);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.OK).body(e.getMessage());
@@ -167,7 +175,7 @@ public class ProjectController {
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("project::sprints");
-        mv.addObject("project", project);
+        mv.addObject(PROJECT_OBJECT, project);
         mv.addObject("listSprints", listSprints);
         return mv;
     }
@@ -189,12 +197,12 @@ public class ProjectController {
         Project project;
 
         try {
-            project = dashboardService.getProject(projectId);
+            project = projectService.getProject(projectId);
         } catch (IncorrectDetailsException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Unable to find specified project to delete");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
 
-        dashboardService.deleteProject(projectId);
+        projectService.deleteProject(projectId);
         notifyProject(projectId, "deleted");
 
         logger.info("Project {} has been deleted by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
@@ -219,8 +227,8 @@ public class ProjectController {
         Project project = new Project(projectDTO);
 
         try {
-            dashboardService.verifyProject(project);
-            String message =  dashboardService.saveProject(project);
+            projectService.verifyProject(project);
+            String message =  projectService.saveProject(project);
 
             notifyProject(project.getProjectId(), "edited");
             logger.info("Project {} has been created by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
@@ -250,9 +258,9 @@ public class ProjectController {
         @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return DASHBOARD_REDIRECT;
         try {
-            Project project  = dashboardService.getProject(projectId);
-            List<Date> dateRange = dashboardService.getProjectDateRange(project);
-            model.addAttribute("project", project);
+            Project project  = projectService.getProject(projectId);
+            List<Date> dateRange = projectService.getProjectDateRange(project);
+            model.addAttribute(PROJECT_OBJECT, project);
             model.addAttribute("pageTitle", "Edit Project: " + project.getProjectName());
             model.addAttribute("submissionName", "Save");
             model.addAttribute("image", "/icons/save-icon.svg");

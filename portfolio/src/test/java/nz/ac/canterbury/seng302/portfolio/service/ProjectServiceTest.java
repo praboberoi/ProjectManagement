@@ -23,11 +23,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for methods in the sprintService class
+ * Unit tests for methods in the projectService class
  */
 @SpringBootTest
 @ActiveProfiles("test")
-class DashboardServiceTest {
+class ProjectServiceTest {
     
     @SpyBean
     private SprintRepository sprintRepository;
@@ -38,7 +38,7 @@ class DashboardServiceTest {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private DashboardService dashboardService;
+    private ProjectService projectService;
 
     private Project.Builder projectBuilder;
 
@@ -68,7 +68,7 @@ class DashboardServiceTest {
     void givenValidProject_whenProjectValidated_thenSucceedsValidation() {
         Project project = projectBuilder.build();
         assertDoesNotThrow(() -> {
-            dashboardService.verifyProject(project);
+            projectService.verifyProject(project);
         });
     }
 
@@ -80,7 +80,7 @@ class DashboardServiceTest {
         Project project = projectBuilder
             .description("0123456789".repeat(26)) //260 characters
             .build();
-            assertThrows(Exception.class, () -> {dashboardService.verifyProject(project);});
+            assertThrows(Exception.class, () -> {projectService.verifyProject(project);});
     }
 
     /**
@@ -93,7 +93,7 @@ class DashboardServiceTest {
             .projectName("Test") //260 characters
             .build();
         when(projectRepository.findByProjectName("Test")).thenReturn(new Project());
-        assertThrows(Exception.class, () -> {dashboardService.verifyProject(project);});
+        assertThrows(Exception.class, () -> {projectService.verifyProject(project);});
     }
 
     /**
@@ -105,7 +105,7 @@ class DashboardServiceTest {
             .description("0123456789".repeat(25)) //250 characters
             .build();
             assertDoesNotThrow(() -> {
-                dashboardService.verifyProject(project);
+                projectService.verifyProject(project);
             });
     }
 
@@ -118,7 +118,7 @@ class DashboardServiceTest {
         list.add(defaultProject);
         Iterable<Project> iterable = list;
         when(projectRepository.findAll()).thenReturn(iterable);
-        List<Project> returnList = dashboardService.getAllProjects();
+        List<Project> returnList = projectService.getAllProjects();
         assertEquals(1, returnList.size());
     }
 
@@ -130,7 +130,7 @@ class DashboardServiceTest {
     void givenNewProject_whenSaveProject_thenProjectSaved() throws IncorrectDetailsException {
         Project testProject = projectBuilder.build();
         when(projectRepository.save(any())).thenReturn(testProject);
-        String returnMessage = dashboardService.saveProject(testProject);
+        String returnMessage = projectService.saveProject(testProject);
         assertEquals("Successfully Created " + testProject.getProjectName(), returnMessage);
     }
 
@@ -142,7 +142,7 @@ class DashboardServiceTest {
     void givenEditedProject_whenSaveProject_thenProjectSaved() throws IncorrectDetailsException {
         Project testProject = projectBuilder.projectId(1).build();
         when(projectRepository.save(any())).thenReturn(testProject);
-        String returnMessage = dashboardService.saveProject(testProject);
+        String returnMessage = projectService.saveProject(testProject);
         assertEquals("Successfully Updated " + testProject.getProjectName(), returnMessage);
     }
 }

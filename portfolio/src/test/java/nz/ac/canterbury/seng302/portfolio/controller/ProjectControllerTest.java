@@ -57,9 +57,6 @@ public class ProjectControllerTest {
     private MilestoneService milestoneService;
 
     @MockBean
-    private DashboardService dashboardService;
-
-    @MockBean
     private UserAccountClientService userAccountClientService;
 
     @MockBean
@@ -88,7 +85,7 @@ public class ProjectControllerTest {
 
     @BeforeEach
     public void beforeEachInit() {
-
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         testList = new ArrayList<String>();
         testSprintList = new ArrayList<Sprint>();
         testList.add("testRole");
@@ -221,32 +218,59 @@ public class ProjectControllerTest {
     }
 
     /**
-     * Test verification of event object and check that it redirect the user to the project page.
+     * Test project can be saved correctly.
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
     void givenServer_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
         when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(projectService.saveProject(any())).thenReturn("Project created successfully");
 
-        // when(dashboardService.saveProject(any())).thenReturn("Successfully Created " + defaultProject.getProjectName());
         this.mockMvc
                 .perform(post("/project/").flashAttr("projectDTO", toDTO(new Project())))
-                .andExpect(status().isOk());
-                // .andExpect(flash().attribute("messageDanger", nullValue()))
-                // .andExpect(flash().attribute("messageSuccess", "Successfully Created " + defaultProject.getProjectName()));
+                .andExpect(status().isOk())
+                .andExpect(content().string("Project created successfully"));
     }
 
     /**
-     * Test project is deleted and user redirected to dashboard with required model attributes when delete project called.
+     * Test project is deleted when delete project called.
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
-    void givenServer_WhenDeleteProject_ThenProjectDeleted_AndDashboardWithAttributesReturned() throws Exception {
-        when(dashboardService.getProject(anyInt())).thenReturn(new Project());
+    void givenServer_WhenDeleteProject_ThenProjectDeleted() throws Exception {
+        when(projectService.getProject(anyInt())).thenReturn(new Project());
         when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         this.mockMvc
                 .perform(delete("/project/1"))
-                .andExpect(status().isOk());
-                // .andExpect(flash().attribute("messageSuccess", "Successfully Deleted " + defaultProject.getProjectName()));
+                .andExpect(status().isOk())
+                .andExpect(content().string("Successfully Deleted " + null));
+    }
+
+    /**
+     * Tests that students are unable to delete a project
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenStudent_WhenDeleteProject_ThenErrorThrown() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+
+        this.mockMvc
+                .perform(delete("/project/1"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Insufficient Permissions"));
+    }
+
+    /**
+     * Tests that students are unable to delete a project
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenNoProject_WhenDeleteProject_ThenErrorThrown() throws Exception {
+        when(projectService.getProject(anyInt())).thenThrow(new IncorrectDetailsException("Project not found"));
+
+        this.mockMvc
+                .perform(delete("/project/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Project not found"));
     }
 }
