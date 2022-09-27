@@ -40,9 +40,9 @@ function checkLongName(event) {
         groupLongNameErrorElement.innerText = "Group long name must be between 3 and 100 characters."
         groupLongNameElement.setCustomValidity("Invalid Field")
 
-    } else if (emojiRegx.test(groupLongNameErrorElement.value)) {
-        groupLongNameErrorElement.classList.add("formError");
-        groupLongNameElement.innerText = "Group short name must not contain an emoji";
+    } else if (emojiRegx.test(groupLongNameElement.value)) {
+        groupLongNameElement.classList.add("formError");
+        groupLongNameErrorElement.innerText = "Group long name must not contain an emoji";
         groupLongNameElement.setCustomValidity("Invalid Field")
 
     } else {
