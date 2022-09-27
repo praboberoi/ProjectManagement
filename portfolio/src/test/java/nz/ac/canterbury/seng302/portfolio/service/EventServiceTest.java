@@ -546,6 +546,7 @@ class EventServiceTest {
 
         List<Sprint> sprintList = List.of(sprint1, sprint2, sprint3);
         when(sprintRepository.findSprintsByEvent(event)).thenReturn(sprintList);
+
         eventService.updateEventColors(event);
 
         assertArrayEquals(List.of(SprintColor.WHITE, SprintColor.BLUE, SprintColor.GREEN, SprintColor.NAVY).toArray(), event.getColors().toArray());
