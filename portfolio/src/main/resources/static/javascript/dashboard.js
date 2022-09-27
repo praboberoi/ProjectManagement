@@ -17,7 +17,6 @@ function editProjectModalInit(projectId) {
 
     let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].text
     document.getElementById('project-name').value =  projectName;
-    // document.getElementById('projectCharCount').innerText =  projectName.length;
     checkProjectName()
 
     let projectStartDate = document.getElementById(`project${projectId}-startDate`).value
@@ -29,8 +28,34 @@ function editProjectModalInit(projectId) {
 
     let projectDescription = document.getElementById(`project${projectId}-description`).innerText
     document.getElementById('projectDescription').value =  projectDescription;
-    // document.getElementById('charCount').innerText =  projectDescription.length;
     checkProjectDescription()
+
+    document.getElementById('projectFormCreateBtn').hidden = true
+    document.getElementById('projectFormEditBtn').hidden = false
+}
+
+/**
+ * Initilises the project modal for editing the selected project
+ */
+ function createProjectModalInit() {
+    document.getElementById('projectId').value = 0
+
+    document.getElementById('project-name').value = "";
+    checkProjectName()
+
+    document.getElementById('startDate').value = new Date().toLocaleDateString("en-CA");
+
+    let endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 8);
+
+    document.getElementById('endDate').value =  endDate.toLocaleDateString("en-CA");
+    checkProjectDates()
+
+    document.getElementById('projectDescription').value =  "";
+    checkProjectDescription()
+
+    document.getElementById('projectFormCreateBtn').hidden = false
+    document.getElementById('projectFormEditBtn').hidden = true
 }
 
 /**
