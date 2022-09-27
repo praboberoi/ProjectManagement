@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.model.dto;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -25,6 +26,8 @@ public class EvidenceDTO {
     private Date dateOccurred;
 
     private int ownerId;
+
+    private String weblinks;
 
 
     public int getEvidenceId() {
@@ -49,6 +52,10 @@ public class EvidenceDTO {
 
     public Project getProject() {return project;}
 
+    public String getWeblinks() {
+        return weblinks;
+    }
+
     /**
      * Creates a new evidenceDTO object with the provided details
      * @param evidenceId id of the evidence object.
@@ -57,12 +64,14 @@ public class EvidenceDTO {
      * @param description the description of the evidence.
      * @param ownerId the user id of the creator and owner of the evidence.
      */
-    public EvidenceDTO(int evidenceId, Project project, Date dateOccurred, String title, String description, int ownerId)  {
+    public EvidenceDTO(int evidenceId, Project project, Date dateOccurred, String title, String description, int ownerId,
+                       String weblinks)  {
         this.evidenceId = evidenceId;
         this.project = project;
         this.dateOccurred = dateOccurred;
         this.title = title;
         this.description = description;
         this.ownerId = ownerId;
+        this.weblinks = weblinks;
     }
 }
