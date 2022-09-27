@@ -211,6 +211,16 @@ function verifyOverlap(startDate, endDate) {
 }
 
 /**
+ * Initilises the delete modal for deleting a project
+ * @param {int} projectId 
+ */
+ function projectDeleteModalInit(projectId) {
+    let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].innerText
+    document.getElementById('messageProject').innerText =  `Are you sure you want to delete ${projectName}`;
+    document.getElementById('confirmProjectDeleteBtn').setAttribute('onclick', `deleteProject(${projectId})`);
+}
+
+/**
  * Initilises the project modal for editing the selected project
  * @param {int} projectId 
  */
@@ -282,4 +292,20 @@ function saveProject() {
 
         httpRequest.send(formData);
     }
+}
+
+/**
+ * Sends a delete request to the server and updates the delete modal
+ * @param {int} projectId 
+ */
+ function deleteProject(projectId) {
+    let httpRequest = new XMLHttpRequest();
+
+    let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('conformationModal'))
+    let modalError = document.getElementById('projectDeleteModalError')
+
+    httpRequest.onreadystatechange = updateModal(httpRequest, modal, modalError)
+
+    httpRequest.open('DELETE', apiPrefix + `/project/${projectId}`);
+    httpRequest.send();
 }

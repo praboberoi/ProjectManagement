@@ -39,12 +39,12 @@
                             <div class="row">
                                 <div class="col-md-6 ms-auto">
                                     <input type="date" class="form-control date-font" id="projectFormStartDate"
-                                        oninput="checkProjectDates()" name="projectFormStartDate" required>
+                                        oninput="checkProjectDates()" name="startDate" required>
                                     <p id="startDateError" class="error-msg"></p>
                                 </div>
                                 <div class="col-md-6 ms-auto">
                                     <input type="date" class="form-control date-font" id="projectFormEndDate"
-                                        oninput="checkProjectDates()" name="projectFormEndDate" required>
+                                        oninput="checkProjectDates()" name="endDate" required>
                                     <p id="endDateError" class="error-msg"></p>
                                 </div>
                             </div>
@@ -332,3 +332,30 @@
         </table>
     </div>
 </div>
+
+<div class="modal fade" id="conformationModal" tabindex="-1" role="dialog"
+        aria-labelledby="conformationModalCenterTitle" aria-hidden="true" th:fragment="projectDeleteModal">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="conformationModalLongTitle">Delete Project</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-danger text-center" id="projectDeleteModalError"></div>
+
+                    <p id="messageProject"></p>
+                </div>
+                <div class="modal-footer">
+                    <button id="confirmProjectDeleteBtn" type="submit" class="btn btn-outline-primary"
+                        data-bs-dismiss="modal"><img class="icon img-color-primary"
+                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete</button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <img class="icon img-color-secondary"
+                            th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" /> Close</button>
+                </div>
+            </div>
+        </div>
+    </div>

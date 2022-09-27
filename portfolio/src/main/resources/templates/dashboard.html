@@ -103,34 +103,10 @@
             </table>
         </div>
     </div>
-    <div class="modal fade" id="conformationModal" tabindex="-1" role="dialog"
-        aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="conformationModalLongTitle">Delete Project</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="alert alert-danger text-center" id="projectDeleteModalError"></div>
-
-                    <p id="messageProject"></p>
-                </div>
-                <div class="modal-footer">
-                    <button id="confirmProjectDeleteBtn" type="submit" class="btn btn-outline-primary"
-                        data-bs-dismiss="modal"><img class="icon img-color-primary"
-                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" /> Delete</button>
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        <img class="icon img-color-secondary"
-                            th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" /> Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    
 
     <div th:replace="projectFragments::projectForm"></div>
+    <div th:replace="projectFragments::projectDeleteModal"></div>
 
     <script th:inline="javascript">
         const apiPrefix = [[${ apiPrefix }]];
