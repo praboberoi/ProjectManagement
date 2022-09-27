@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.DashboardService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
@@ -26,12 +25,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = DashboardController.class)
@@ -117,87 +113,9 @@ public class DashboardControllerTest {
     @Test
     void givenServer_WhenShowProjectList_ThenDashboardWithProjectListReturned() throws Exception{
         when(dashboardService.getAllProjects()).thenReturn(listProjects);
-        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         this.mockMvc
                 .perform(get("/dashboard"))
                 .andExpect(status().isOk())
-                .andExpect(model().attribute("listProjects", listProjects))
-                .andExpect(model().attribute("roles", testList))
-                .andExpect(model().attribute("user", new User(userResponse.build())));
-    }
-
-    /**
-     * Test that the projectForm with required model attributes is returned when showNewForm called.
-     * @throws Exception Thrown during mockmvc run time
-     */
-    @Test
-    void givenServer_WhenShowNewForm_ThenProjectFormWithAttributesReturned() throws Exception{
-        when(dashboardService.getNewProject()).thenReturn(defaultProject);
-        List<Date> dateRange = List.of(Date.valueOf(defaultProject.getStartDate().toLocalDate().minusYears(1)), Date.valueOf(listProjects.get(0).getStartDate().toLocalDate().plusYears(10)));
-        when(dashboardService.getProjectDateRange(any())).thenReturn(dateRange);
-        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-        this.mockMvc
-                .perform(get("/dashboard/newProject"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("project", defaultProject))
-                .andExpect(model().attribute("pageTitle", "Add New Project"))
-                .andExpect(model().attribute("user", new User(userResponse.build())))
-                .andExpect(model().attribute("projectStartDateMin", dateRange.get(0)))
-                .andExpect(model().attribute("projectStartDateMax", Date.valueOf(defaultProject.getEndDate().toLocalDate().minusDays(1))))
-                .andExpect(model().attribute("projectEndDateMin", Date.valueOf(defaultProject.getStartDate().toLocalDate().plusDays(1))))
-                .andExpect(model().attribute("projectEndDateMax", dateRange.get(1)));
-    }
-
-    /**
-     * Test verification of event object and check that it redirect the user to the project page.
-     * @throws Exception Thrown during mockmvc run time
-     */
-    @Test
-    void givenServer_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
-        when(dashboardService.saveProject(any())).thenReturn("Successfully Created " + defaultProject.getProjectName());
-        this.mockMvc
-                .perform(post("/dashboard/saveProject").flashAttr("project", defaultProject))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", nullValue()))
-                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + defaultProject.getProjectName()));
-    }
-
-    /**
-     * Test that the projectForm with required model attributes is returned when showEditForm called.
-     * @throws Exception Thrown during mockmvc run time
-     */
-    @Test
-    void givenServer_WhenShowEditForm_ThenProjectFormWithAttributesReturned() throws Exception{
-        when(dashboardService.getProject(anyInt())).thenReturn(defaultProject);
-        List<Date> dateRange = List.of(Date.valueOf(defaultProject.getStartDate().toLocalDate().minusYears(1)), Date.valueOf(listProjects.get(0).getStartDate().toLocalDate().plusYears(10)));
-        when(dashboardService.getProjectDateRange(any())).thenReturn(dateRange);
-        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-        this.mockMvc
-                .perform(get("/dashboard/editProject/1"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("project", defaultProject))
-                .andExpect(model().attribute("pageTitle", "Edit Project: " + defaultProject.getProjectName()))
-                .andExpect(model().attribute("submissionName", "Save"))
-                .andExpect(model().attribute("user", new User(userResponse.build())))
-                .andExpect(model().attribute("projectStartDateMin", dateRange.get(0)))
-                .andExpect(model().attribute("projectStartDateMax", Date.valueOf(defaultProject.getEndDate().toLocalDate().minusDays(1))))
-                .andExpect(model().attribute("projectEndDateMin", Date.valueOf(defaultProject.getStartDate().toLocalDate().plusDays(1))))
-                .andExpect(model().attribute("projectEndDateMax", dateRange.get(1)));
-    }
-
-    /**
-     * Test project is deleted and user redirected to dashboard with required model attributes when delete project called.
-     * @throws Exception Thrown during mockmvc run time
-     */
-    @Test
-    void givenServer_WhenDeleteProject_ThenProjectDeleted_AndDashboardWithAttributesReturned() throws Exception {
-        when(dashboardService.getProject(anyInt())).thenReturn(defaultProject);
-        doNothing().when(dashboardService).deleteProject(anyInt());
-        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
-        this.mockMvc
-                .perform(post("/dashboard/deleteProject/1"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageSuccess", "Successfully Deleted " + defaultProject.getProjectName()));
-    }
+                .andExpect(model().attribute("listProjects", listProjects));
+    }    
 }

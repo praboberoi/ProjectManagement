@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.model.dto.ProjectDTO;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -29,6 +31,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = ProjectController.class)
@@ -58,6 +61,9 @@ public class ProjectControllerTest {
 
     @MockBean
     private UserAccountClientService userAccountClientService;
+
+    @MockBean
+    private SimpMessagingTemplate template;
 
     private List<Sprint> testSprintList;
 
@@ -122,6 +128,15 @@ public class ProjectControllerTest {
     public static void afterAll() {
         utilities.close();
     }
+
+    public ProjectDTO toDTO(Project project) {
+		return new ProjectDTO(
+				project.getProjectId(),
+				project.getProjectName(),
+				project.getDescription(),
+				project.getStartDate(),
+                project.getEndDate());
+	}
 
     /**
      * Tests that the project page is returned with correct information when called.
@@ -203,5 +218,35 @@ public class ProjectControllerTest {
         this.mockMvc
                 .perform(get("/project/1/sprints"))
                 .andExpect(status().isOk());
+    }
+
+    /**
+     * Test verification of event object and check that it redirect the user to the project page.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
+        when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+
+        // when(dashboardService.saveProject(any())).thenReturn("Successfully Created " + defaultProject.getProjectName());
+        this.mockMvc
+                .perform(post("/project/").flashAttr("projectDTO", toDTO(new Project())))
+                .andExpect(status().isOk());
+                // .andExpect(flash().attribute("messageDanger", nullValue()))
+                // .andExpect(flash().attribute("messageSuccess", "Successfully Created " + defaultProject.getProjectName()));
+    }
+
+    /**
+     * Test project is deleted and user redirected to dashboard with required model attributes when delete project called.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenDeleteProject_ThenProjectDeleted_AndDashboardWithAttributesReturned() throws Exception {
+        when(dashboardService.getProject(anyInt())).thenReturn(new Project());
+        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
+        this.mockMvc
+                .perform(delete("/project/1"))
+                .andExpect(status().isOk());
+                // .andExpect(flash().attribute("messageSuccess", "Successfully Deleted " + defaultProject.getProjectName()));
     }
 }
