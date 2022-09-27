@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,22 +64,8 @@ public class RepoService {
             throw new IncorrectDetailsException("Project Alias field must be between 1 and 50 characters");
         if (repo.getHostAddress().length() < 1)
             throw new IncorrectDetailsException("Project host address field must not be empty");
-        if (!isValidHttpUrl(repo.getHostAddress()))
+        if (!ValidationUtilities.isValidHttpUrl(repo.getHostAddress()))
             throw new IncorrectDetailsException("Project host address must be a valid HTTP URL");
     }
 
-    /**
-     * Asserts whether a given string is a valid URL
-     * @param urlTest A string to be validated
-     * @return True if the given string is a valid URL, False otherwise
-     */
-    public boolean isValidHttpUrl(String urlTest) {
-        URL url;
-        try {
-            url = new URL(urlTest);
-        } catch (MalformedURLException e) {
-            return false;
-        }
-        return Objects.equals(url.getProtocol(), "http") || Objects.equals(url.getProtocol(), "https");
-    }
 }
