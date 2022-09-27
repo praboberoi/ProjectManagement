@@ -63,7 +63,7 @@ public class EvidenceTest {
     }
 
     /**
-     * Test the deleting a single link from the list of web links related to evidence.
+     * Test the deleting multiple links from the list of web links related to evidence.
      */
     @Test
     void givenAListOfWeblinksWhenLinksAreRemovedThenTheyAreRemovedFromTheExistingList(){
