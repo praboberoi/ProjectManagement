@@ -8,18 +8,23 @@ import nz.ac.canterbury.seng302.portfolio.service.MilestoneService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
+import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.handler.annotation.Header;
+import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.HashSet;
 import java.util.List;
@@ -124,5 +129,39 @@ public class MilestoneController {
     private void notifyMilestone(int projectId, int milestoneId, String action) {
         template.convertAndSend(String.format(NOTIFICATION_DESTINATION, projectId),
                 String.format(NOTIFICATION_WITHOUT_USERNAME, milestoneId, action));
+    }
+
+    /**
+     * Receives update messages from the client where the changes to the milestones are made and notifies all the other
+     * clients subscribed for updates
+     * @param notification Notification containing the milestone ID and project ID that is being edited
+     * @param principal Authentication information containing user info
+     * @param sessionId Session ID of the websocket communication
+     */
+    @MessageMapping("/milestone/edit")
+    public void editing(MilestoneNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal, @Header("simpSessionId") String sessionId) {
+        notification.setUsername(principal.getName());
+        notification.setSessionId(sessionId);
+        if (notification.isActive()) {
+            template.convertAndSend(String.format(NOTIFICATION_DESTINATION, notification.getProjectId()),
+                    String.format("milestone%d %s %s", notification.getMilestoneId(),"editing", notification.getUsername()));
+            editing.add(notification);
+        } else {
+            template.convertAndSend(String.format(NOTIFICATION_DESTINATION,notification.getProjectId()),
+                    String.format(NOTIFICATION_WITHOUT_USERNAME,notification.getMilestoneId(), "finished"));
+            editing.remove(notification);
+        }
+    }
+
+    /**
+     * Detects when a websocket disconnects to remove them from the list of editors for milestones
+     * @param event Websocket disconnect event
+     */
+    @EventListener
+    public void onApplicationEvent(SessionDisconnectEvent event) {
+        editing.stream().filter(notification -> notification.getSessionId().equals(event.getSessionId()))
+                .forEach(notification -> template.convertAndSend("/element/project/" + notification.getProjectId() +
+                        "/milestone", ("milestone" + notification.getMilestoneId() + " finished")));
+        editing.removeIf(notification -> notification.getSessionId().equals(event.getSessionId()));
     }
 }

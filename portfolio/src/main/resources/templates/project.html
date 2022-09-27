@@ -62,7 +62,7 @@
               <a type="button" class="btn btn-outline-primary mx-1"
                 th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
                 <img class="icon img-color-primary"
-                  th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />Edit</a>
+                  th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" /> Edit</a>
               <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
                 data-bs-target="#conformationModalProject" th:data-id="${project.projectId}"
                 th:data-prefix="${apiPrefix}" th:data-name="${project.projectName}"
@@ -368,7 +368,7 @@
 
   <div th:replace="forms :: eventsForm"></div>
   <div th:replace="forms :: deadlineForm"></div>
-  <div th:replace="milestoneFragments::milestoneForm"></div>
+  <div th:replace="forms :: milestoneForm"></div>
   <script th:inline="javascript">
     let userRoles = [[${ roles }]];
     const projectId = [[${ project.projectId }]];
