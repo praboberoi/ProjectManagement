@@ -9,56 +9,6 @@ function projectDeleteModalInit(projectId) {
 }
 
 /**
- * Initilises the project modal for editing the selected project
- * @param {int} projectId 
- */
-function editProjectModalInit(projectId) {
-    document.getElementById('projectId').value = projectId
-
-    let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].text
-    document.getElementById('project-name').value =  projectName;
-    checkProjectName()
-
-    let projectStartDate = document.getElementById(`project${projectId}-startDate`).value
-    document.getElementById('startDate').value =  projectStartDate;
-
-    let projectEndDate = document.getElementById(`project${projectId}-endDate`).value
-    document.getElementById('endDate').value =  projectEndDate;
-    checkProjectDates()
-
-    let projectDescription = document.getElementById(`project${projectId}-description`).innerText
-    document.getElementById('projectDescription').value =  projectDescription;
-    checkProjectDescription()
-
-    document.getElementById('projectFormCreateBtn').hidden = true
-    document.getElementById('projectFormEditBtn').hidden = false
-}
-
-/**
- * Initilises the project modal for editing the selected project
- */
- function createProjectModalInit() {
-    document.getElementById('projectId').value = 0
-
-    document.getElementById('project-name').value = "";
-    checkProjectName()
-
-    document.getElementById('startDate').value = new Date().toLocaleDateString("en-CA");
-
-    let endDate = new Date();
-    endDate.setMonth(endDate.getMonth() + 8);
-
-    document.getElementById('endDate').value =  endDate.toLocaleDateString("en-CA");
-    checkProjectDates()
-
-    document.getElementById('projectDescription').value =  "";
-    checkProjectDescription()
-
-    document.getElementById('projectFormCreateBtn').hidden = false
-    document.getElementById('projectFormEditBtn').hidden = true
-}
-
-/**
  * Sends a delete request to the server and updates the delete modal
  * @param {int} projectId 
  */

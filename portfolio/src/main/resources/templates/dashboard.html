@@ -81,13 +81,15 @@
                                                             th:onclick="'editProjectModalInit(' + ${project.projectId} + ')'">
                                                             <img class="icon img-color-primary"
                                                                 th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
-                                                            Edit</button>
+                                                            Edit
+                                                        </button>
                                                         <button type="button" class="btn btn-outline-secondary"
                                                             data-bs-toggle="modal" data-bs-target="#conformationModal"
                                                             th:onclick="'projectDeleteModalInit(' + ${project.projectId} + ')'">
                                                             <img class="icon img-color-secondary"
                                                                 th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
-                                                            Delete</button>
+                                                            Delete
+                                                        </button>
                                                     </div>
                                                 </div>
                                             </div>
