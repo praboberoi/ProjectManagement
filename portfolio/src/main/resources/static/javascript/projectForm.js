@@ -5,6 +5,7 @@
 
 // Regular expression for Project Name field. No leading white spaces or empty field.
 const projectNameRegex = /^\S/
+const emojiRegx = /\p{Emoji}/u
 
 const startDateElement = document.querySelector('#startDate');
 const endDateElement = document.querySelector('#endDate');
@@ -125,6 +126,9 @@ function checkProjectName() {
     } else if (! projectNameRegex.test(projectName.value)) {
         projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not start with space characters";
+    } else if (emojiRegx.test(projectName.value)) {
+        projectName.classList.add("formError");
+        projectNameError.innerText = "Project Name must not use an emoji";
     } else {
         projectName.classList.remove("formError");
         projectNameError.innerText = null;
@@ -146,6 +150,11 @@ function checkProjectDescription () {
     {
         descErrorElement.classList.add("formError");
         descErrorElement.innerText = "Description must be less than 250 characters."
+
+    } else if ( emojiRegx.test(descriptionElement.value)) {
+        descriptionElement.classList.add("formError");
+        descriptionElement.innerText = "Project description must not use an emoji";
+
     } else {
         descErrorElement.classList.remove("formError");
         descErrorElement.innerText = null;
