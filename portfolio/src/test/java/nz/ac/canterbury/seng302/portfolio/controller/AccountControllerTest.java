@@ -4,12 +4,17 @@ import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockedStatic;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,15 +51,26 @@ class AccountControllerTest {
     @MockBean
     private UserAccountClientService userAccountClientService;
 
-    @InjectMocks
-    private ControllerAdvisor controllerAdvisor;
-
     @MockBean
     private SimpMessagingTemplate template;
 
+    @InjectMocks
+    private ControllerAdvisor controllerAdvisor;
+
+    @InjectMocks
+    private AccountController accountController;
+
     User user;
 
+    private static MockedStatic<PrincipalUtils> utilities;
+
     UserResponse.Builder reply;
+
+    @BeforeAll
+    private static void beforeAllInit() {
+        utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+    }
 
 
     @BeforeEach
@@ -214,21 +231,25 @@ class AccountControllerTest {
      * redirects back to the account page.
      */
     @Test
-    void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws IOException {
-        UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
+    void GivenExistingUser_WhenEditRequestMade_ThenRedirectAccountReturned() throws Exception {
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
 
-        when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
-        when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
+        when(userAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
+        when(userAccountClientService.getUser(any())).thenReturn(reply.build());
 
-        AccountController accountController = new AccountController(mockUserAccountClientService);
+        when(PrincipalUtils.getUserId(any())).thenReturn(-1);
         AuthState principal = AuthState.newBuilder().build();
         String testString = "";
         MockMultipartFile testFile = new MockMultipartFile("data", "image.png", "image/png", "some image".getBytes());
         Model mockModel = Mockito.mock(Model.class);
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
-        doNothing().when(template).convertAndSend(any(Object.class), any(Object.class));
+//        doNothing().when(template).convertAndSend(any(Object.class), any(Object.class));
         assertEquals( "redirect:account", accountController.editUser(principal, testFile,testString,
                 testString, testString, testString, testString, testString, false, mockModel, ra ));
+    }
+
+    @AfterAll
+    public static void afterAll() {
+        utilities.close();
     }
 }
