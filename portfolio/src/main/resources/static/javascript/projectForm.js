@@ -10,8 +10,8 @@ const projectNameRegex = /^\S/
  * Checks the start date and end date of the project and displays an error if it is invalid
  */
 function checkProjectDates() {
-    const startDateElement = document.querySelector('#startDate');
-    const endDateElement = document.querySelector('#endDate');
+    const startDateElement = document.querySelector('#projectFormStartDate');
+    const endDateElement = document.querySelector('#projectFormEndDate');
     const startDateError = document.getElementById('startDateError');
     const endDateError = document.getElementById('endDateError');
     const startDate = startDateElement.value;
@@ -23,7 +23,7 @@ function checkProjectDates() {
     checkStartDate();
     checkEndDate();
 
-    if (startDate > endDate ) {
+    if (startDate > endDate) {
         startDateError.innerText = "Start date must be before the end date.";
         endDateError.innerText = "End date must be after the start date";
         startDateElement.classList.add("formError");
@@ -33,19 +33,19 @@ function checkProjectDates() {
 
     if (
         startDateError.innerText == "" &&
-        endDateError.innerText == "" ) {
-            verifyOverlap(startDate, endDate);
-        }
+        endDateError.innerText == "") {
+        verifyOverlap(startDate, endDate);
+    }
 }
 
 /**
  * Checks that the start date of the project is valid
  */
 function checkStartDate() {
-    const startDateElement = document.querySelector('#startDate');
+    const startDateElement = document.querySelector('#projectFormStartDate');
     const startDateError = document.getElementById('startDateError');
     const startDate = new Date(startDateElement.value);
-    
+
     let tenYearsFromNow = new Date();
     tenYearsFromNow.setMilliseconds(0);
     tenYearsFromNow.setSeconds(0);
@@ -65,13 +65,13 @@ function checkStartDate() {
         startDateElement.classList.add("formError")
         return;
     }
-    
+
     if (startDate < oneYearAgo) {
         startDateError.innerText = "Project must have started in the last year.";
         startDateElement.classList.add("formError");
         return;
     }
-    
+
     startDateError.innerText = "";
     startDateElement.classList.remove("formError")
 
@@ -81,10 +81,10 @@ function checkStartDate() {
  * Checks that the end date of the project is valid
  */
 function checkEndDate() {
-    const endDateElement = document.querySelector('#endDate');
+    const endDateElement = document.querySelector('#projectFormEndDate');
     const endDateError = document.getElementById('endDateError');
     const endDate = new Date(endDateElement.value);
-    
+
     var tenYearsFromNow = new Date();
     tenYearsFromNow.setMilliseconds(0);
     tenYearsFromNow.setSeconds(0);
@@ -125,7 +125,7 @@ function checkProjectName() {
     if (projectName.value.length < 1 || projectName.value.length > 32) {
         projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not be empty or greater than 32 characters";
-    } else if (! projectNameRegex.test(projectName.value)) {
+    } else if (!projectNameRegex.test(projectName.value)) {
         projectName.classList.add("formError");
         projectNameError.innerText = "Project Name must not start with space characters";
     } else {
@@ -137,16 +137,15 @@ function checkProjectName() {
 /**
  * Updates the characters remaining in the description.
  */
-function checkProjectDescription () {
-    let descriptionElement = document.getElementById("projectDescription");
+function checkProjectDescription() {
+    let descriptionElement = document.getElementById("projectFormDescription");
     let descErrorElement = document.getElementById("descriptionError");
 
     let charMessage = document.getElementById("charCount");
     let charCount = descriptionElement.value.length;
     charMessage.innerText = charCount + ' '
 
-    if (descriptionElement.value.length > 250)
-    {
+    if (descriptionElement.value.length > 250) {
         descErrorElement.classList.add("formError");
         descErrorElement.innerText = "Description must be less than 250 characters."
     } else {
@@ -159,7 +158,7 @@ function checkProjectDescription () {
 /**
  * Updates the characters remaining in the project name.
  */
- function checkProjectName () {
+function checkProjectName() {
     let nameElement = document.getElementById("project-name");
     let nameErrorElement = document.getElementById("projectNameError");
 
@@ -167,8 +166,7 @@ function checkProjectDescription () {
     let charCount = nameElement.value.length;
     charMessage.innerText = charCount + ' '
 
-    if (nameElement.value.length > 250)
-    {
+    if (nameElement.value.length > 250) {
         nameErrorElement.classList.add("formError");
         nameErrorElement.innerText = "Description must be less than 250 characters."
     } else {
@@ -182,16 +180,16 @@ function checkProjectDescription () {
 /**
  * Calls the server to test for sprints falling outside of the project
  */
- function verifyOverlap(startDate, endDate) {
-    const startDateElement = document.querySelector('#startDate');
-    const endDateElement = document.querySelector('#endDate');
+function verifyOverlap(startDate, endDate) {
+    const startDateElement = document.querySelector('#projectFormStartDate');
+    const endDateElement = document.querySelector('#projectFormEndDate');
     const startDateError = document.getElementById('startDateError');
     const endDateError = document.getElementById('endDateError');
     const projectId = document.getElementById('projectId').value;
 
     httpRequest = new XMLHttpRequest();
 
-    httpRequest.onreadystatechange = function() {
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 if (httpRequest.response != "") {
@@ -216,22 +214,25 @@ function checkProjectDescription () {
  * Initilises the project modal for editing the selected project
  * @param {int} projectId 
  */
- function editProjectModalInit(projectId) {
+function editProjectModalInit(projectId) {
+    let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].innerText
+    
+    document.getElementById('projectFormTitle').innerText = "Edit " + projectName
+    
     document.getElementById('projectId').value = projectId
-
-    let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].text
-    document.getElementById('project-name').value =  projectName;
+    
+    document.getElementById('project-name').value = projectName;
     checkProjectName()
 
     let projectStartDate = document.getElementById(`project${projectId}-startDate`).value
-    document.getElementById('startDate').value =  projectStartDate;
+    document.getElementById('projectFormStartDate').value = projectStartDate;
 
     let projectEndDate = document.getElementById(`project${projectId}-endDate`).value
-    document.getElementById('endDate').value =  projectEndDate;
+    document.getElementById('projectFormEndDate').value = projectEndDate;
     checkProjectDates()
 
     let projectDescription = document.getElementById(`project${projectId}-description`).innerText
-    document.getElementById('projectDescription').value =  projectDescription;
+    document.getElementById('projectFormDescription').value = projectDescription;
     checkProjectDescription()
 
     document.getElementById('projectFormCreateBtn').hidden = true
@@ -241,21 +242,23 @@ function checkProjectDescription () {
 /**
  * Initilises the project modal for editing the selected project
  */
- function createProjectModalInit() {
+function createProjectModalInit() {
+    document.getElementById('projectFormTitle').innerText = "Create New Project"
+    
     document.getElementById('projectId').value = 0
-
+    
     document.getElementById('project-name').value = "";
     checkProjectName()
 
-    document.getElementById('startDate').value = new Date().toLocaleDateString("en-CA");
+    document.getElementById('projectFormStartDate').value = new Date().toLocaleDateString("en-CA");
 
     let endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 8);
 
-    document.getElementById('endDate').value =  endDate.toLocaleDateString("en-CA");
+    document.getElementById('projectFormEndDate').value = endDate.toLocaleDateString("en-CA");
     checkProjectDates()
 
-    document.getElementById('projectDescription').value =  "";
+    document.getElementById('projectFormDescription').value = "";
     checkProjectDescription()
 
     document.getElementById('projectFormCreateBtn').hidden = false
@@ -265,7 +268,7 @@ function checkProjectDescription () {
 /**
  * Send a request to the server to save the newly created project
  */
- function saveProject() {
+function saveProject() {
     let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('projectFormModal'))
     let modalError = document.getElementById('projectFormModalError')
     if (validateForm()) {

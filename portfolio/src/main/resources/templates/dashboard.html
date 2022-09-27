@@ -56,7 +56,7 @@
                                             <div class="card-body">
                                                 <div class="col-md-8">
                                                     <h5 class="card-title">
-                                                        <a class=project-name
+                                                        <a class=project-name th:id="'project' + ${project.projectId} + '-name'"
                                                             th:href="@{${apiPrefix} + '/project/'+ ${project.projectId}}"
                                                             th:text="${project.projectName}">Project Name</a>
                                                     </h5>
