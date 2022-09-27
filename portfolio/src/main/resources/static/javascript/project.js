@@ -323,7 +323,7 @@ function updateModal(httpRequest, modal, modalError) {
         } else if (httpRequest.status === 500) {
             messageSuccess.innerText = ""
             modalError.innerText = "An error occurred on the server, please try again later";
-        } else if (httpRequest.status == 400) {
+        } else if (httpRequest.status === 400) {
             messageSuccess.innerText = ""
             modalError.innerText = httpRequest.responseText;
         } else {
