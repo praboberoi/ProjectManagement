@@ -34,6 +34,13 @@ Feature: U3. Milestones on the project details page
     When I enter "CypressTest1" milestone name and "2022-07-15" date
     Then I can see I have used "12" characters
 
+    Given I login as an admin
+    And I select the CypressProject project
+    And I select the milestones tab
+    And I select Create Milestone
+    When I enter a milestone name with an emoji
+    Then An error messages is displayed for using an emoji
+
   Scenario: AC6 The calendar widget should only allow valid dates that are in the project range.
     Given I login as an admin
     And I select the CypressProject project

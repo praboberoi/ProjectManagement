@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -158,7 +157,7 @@ class SprintServiceTest {
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 sprintService.verifySprint(sprint2));
-        Assertions.assertEquals("Sprint name must not contain an emoji", exception.getMessage());
+        assertEquals("Sprint name must not contain an emoji", exception.getMessage());
     }
 
     /**
@@ -176,7 +175,7 @@ class SprintServiceTest {
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 sprintService.verifySprint(sprint2));
-        Assertions.assertEquals("Sprint description must not contain an emoji", exception.getMessage());
+        assertEquals("Sprint description must not contain an emoji", exception.getMessage());
     }
 
 }

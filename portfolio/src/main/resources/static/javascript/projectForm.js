@@ -188,8 +188,9 @@ function checkProjectDescription () {
 
 
 
-
+    const projectName = document.getElementById('project-name').value;
+    let description = document.getElementById("projectDescription").value;
     httpRequest.open('POST', '/verifyProject/' + projectId, true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate +  "&projectName=" + projectName + "&projectDescription=" + description);
 }

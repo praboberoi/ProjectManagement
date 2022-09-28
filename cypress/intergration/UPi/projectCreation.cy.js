@@ -8,8 +8,6 @@ When("I enter {word} as a Project Name", (word) => {
     cy.get('#project-name').should('have.value', `Project ${new Date().getFullYear()}`)
     cy.get('#project-name').clear()
     cy.get('#projectNameError').should('have.text','Project name must not be empty or greater than 32 characters')
-    cy.get('#project-name').type('😀')
-    cy.get('#projectNameError').should('have.text',"Project name must not contain an emoji");
     cy.get('#project-name').clear().type(word)
 
 
@@ -24,9 +22,16 @@ When("I enter {string} as the project end date", (date) => {
 })
 
 When("I enter {string} as the project description", (description) => {
-    cy.get('#projectDescription').clear().type('😀');
-    cy.get('#descriptionError').should('have.text',"Project description must not contain an emoji");
     cy.get('#projectDescription').clear().type(description);
+})
+
+When("I enter a emojis for the project name and description", () => {
+    cy.get('#project-name').clear().type('idsad😀')
+    cy.get('#projectDescription').clear().type('sudsiaudnasi😀');
+})
+Then("Error message is displayed for using emojis for both project name and description", () => {
+    cy.get('#projectNameError').should('have.text',"Project name must not contain an emoji");
+    cy.get('#descriptionError').should('have.text',"Project description must not contain an emoji");
 })
 
 When("I click on Create button", () => {

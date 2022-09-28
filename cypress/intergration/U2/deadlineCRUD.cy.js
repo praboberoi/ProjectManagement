@@ -11,11 +11,16 @@ Given("I select Create Deadline", () => {
 When("I enter {string} deadline name and {string} date", (deadlineName, deadlineDate) => {
     cy.get('#deadline-name').clear().should('have.value', '')
     cy.get('#deadlineNameError').should('have.text', 'Deadline name must not be empty')
-    cy.get('#deadline-name').type('fmsdpfm😀',{ delay: 0 })
-    cy.get('#deadlineNameError').should('have.text', "Deadline name must not contain an emoji")
     cy.get('#deadline-name').clear().type(deadlineName,{ delay: 0 }).should('have.value', deadlineName)
     cy.get('#deadlineNameError').should('have.text', '')
     cy.get('#deadlineDate').clear().type(deadlineDate).should('have.value', deadlineDate)
+})
+
+When("I enter a deadline name with an emoji" , () => {
+    cy.get('#deadline-name').clear().type('fmsdpfm😀',{ delay: 0 })
+})
+Then("An error messages is displayed for using an emoji", () => {
+    cy.get('#deadlineNameError').should('have.text', "Deadline name must not contain an emoji")
 })
 
 When('I select save on the deadline form',  () => {

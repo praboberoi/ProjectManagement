@@ -11,8 +11,6 @@ Given("I select Create Milestone", () => {
 When("I enter {string} milestone name and {string} date", (milestoneName, milestoneDate) => {
     cy.get('#milestone-name').clear().should('have.value', '')
     cy.get('#milestoneNameError').should('have.text', 'Milestone name must not be empty')
-    cy.get('#milestone-name').type("fgerg😀",{ delay: 0 })
-    cy.get('#milestoneNameError').should('have.text', "Milestone name must not contain an emoji")
     cy.get('#milestone-name').clear().type(milestoneName, { delay: 0 }).should('have.value', milestoneName)
     cy.get('#milestoneNameError').should('have.text', '')
     cy.get('#milestoneDate').clear().type(milestoneDate).should('have.value', milestoneDate)
@@ -20,6 +18,14 @@ When("I enter {string} milestone name and {string} date", (milestoneName, milest
 
 When('I select save on the milestone form', () => {
     cy.get('#milestoneFormSubmitButton').click()
+})
+
+When("I enter a milestone name with an emoji" , () => {
+    cy.get('#milestone-name').clear().type("fgerg😀", {delay: 0})
+})
+
+Then("An error messages is displayed for using an emoji", () => {
+    cy.get('#milestoneNameError').should('have.text', "Milestone name must not contain an emoji")
 })
 
 When("I select edit for {string} milestone", (milestone) => {

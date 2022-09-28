@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -13,7 +12,6 @@ import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
@@ -275,7 +273,7 @@ class EvidenceServiceTest {
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
-        Assertions.assertEquals("Evidence title must not contain an emoji", exception.getMessage());
+        assertEquals("Evidence title must not contain an emoji", exception.getMessage());
     }
 
     /**
@@ -287,7 +285,7 @@ class EvidenceServiceTest {
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
-        Assertions.assertEquals("Evidence description must not contain an emoji", exception.getMessage());
+        assertEquals("Evidence description must not contain an emoji", exception.getMessage());
     }
 
 }

@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -135,34 +136,30 @@ public class EventService {
         else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null)
             throw new IncorrectDetailsException("Event values are null");
 
-        else {
 
-            // Removes leading and trailing white spaces from the name
-            event.setEventName(event.getEventName().strip());
+        // Removes leading and trailing white spaces from the name
+        event.setEventName(event.getEventName().strip());
 
-            String expectedName = String.join("", List.of(event.getEventName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+        if (ValidationUtilities.hasEmoji(event.getEventName()))
+            throw new IncorrectDetailsException("Event name must not contain an emoji");
 
-            if (!expectedName.equals(event.getEventName()))
-                throw new IncorrectDetailsException("Event name must not contain an emoji");
+        else if (event.getEventName().length() < 1)
+            throw new IncorrectDetailsException("Event name must not be empty");
 
-            if (event.getEventName().length() < 1)
-                throw new IncorrectDetailsException("Event name must not be empty");
+        else if (event.getEventName().length() > 50)
+            throw new IncorrectDetailsException("Event name cannot be more than 50 characters");
 
-            else if (event.getEventName().length() > 50)
-                throw new IncorrectDetailsException("Event name cannot be more than 50 characters");
+        else if (event.getEndDate().before(event.getStartDate()))
+            throw new IncorrectDetailsException("The event end date and time cannot be before the event start date and time");
 
-            else if (event.getEndDate().before(event.getStartDate()))
-                throw new IncorrectDetailsException("The event end date and time cannot be before the event start date and time");
+        else if (event.getEndDate().equals(event.getStartDate()))
+            throw new IncorrectDetailsException("The event end date and time cannot be the same as event start date and time");
 
-            else if (event.getEndDate().equals(event.getStartDate()))
-                throw new IncorrectDetailsException("The event end date and time cannot be the same as event start date and time");
+        else if (event.getStartDate().before(event.getProject().getStartDate()))
+            throw new IncorrectDetailsException("The event cannot start before the project");
 
-            else if (event.getStartDate().before(event.getProject().getStartDate()))
-                throw new IncorrectDetailsException("The event cannot start before the project");
-
-            else if (event.getStartDate().after(event.getProject().getEndDate()) || event.getEndDate().after(event.getProject().getEndDate()))
-                throw new IncorrectDetailsException("The event cannot start or end after the project");
-        }
+        else if (event.getStartDate().after(event.getProject().getEndDate()) || event.getEndDate().after(event.getProject().getEndDate()))
+            throw new IncorrectDetailsException("The event cannot start or end after the project");
     }
 
     /**

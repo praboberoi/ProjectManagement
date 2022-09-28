@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -99,15 +100,10 @@ public class DashboardService {
         List<Sprint> sprints = sprintService.getSprintsByProject(project.getProjectId());
         Project projectName = projectRepo.findByProjectName(project.getProjectName());
 
-        String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";
-
-        String expectedName = String.join("", List.of(project.getProjectName().strip().split(emojiRex)));
-        String expectedDescription = String.join("", List.of(project.getDescription().strip().split(emojiRex)));
-
-        if (! expectedName.equals(project.getProjectName()))
+        if (ValidationUtilities.hasEmoji(project.getProjectName()))
             throw new IncorrectDetailsException("Project name must not contain an emoji");
 
-        if (! expectedDescription.equals(project.getDescription()))
+        if (ValidationUtilities.hasEmoji(project.getDescription()))
             throw new IncorrectDetailsException("Project description must not contain an emoji");
 
         if (projectName != null && projectName.getProjectId() != project.getProjectId()) {

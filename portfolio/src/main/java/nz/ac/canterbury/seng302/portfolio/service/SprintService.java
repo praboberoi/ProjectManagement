@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -201,15 +202,11 @@ public class SprintService {
      * @return
      */
     public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
-        String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";
 
-        String expectedName = String.join("", List.of(sprint.getSprintName().strip().split(emojiRex)));
-        String expectedDescription = String.join("", List.of(sprint.getDescription().strip().split(emojiRex)));
-
-        if (! expectedName.equals(sprint.getSprintName()))
+        if (ValidationUtilities.hasEmoji(sprint.getSprintName()))
             throw new IncorrectDetailsException("Sprint name must not contain an emoji");
 
-        if (! expectedDescription.equals(sprint.getDescription()))
+        if (ValidationUtilities.hasEmoji(sprint.getDescription()))
             throw new IncorrectDetailsException("Sprint description must not contain an emoji");
 
         if (sprint.getSprintName().length() > 50)

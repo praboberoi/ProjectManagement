@@ -3,7 +3,6 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -108,7 +107,7 @@ class DeadlineServiceTest {
      void givenDeadlineDoesNotExist_whenDeadlineRequested_thenExceptionThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.getDeadline(2));
-        Assertions.assertEquals("Failed to locate deadline in the database" , exception.getMessage());
+        assertEquals("Failed to locate deadline in the database" , exception.getMessage());
 
     }
 
@@ -117,7 +116,7 @@ class DeadlineServiceTest {
      */
     @Test
      void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlinesIsReturned() {
-        Assertions.assertEquals(List.of(deadline), deadlineService.getDeadlineByProject(1));
+        assertEquals(List.of(deadline), deadlineService.getDeadlineByProject(1));
     }
 
     /**
@@ -126,7 +125,7 @@ class DeadlineServiceTest {
      */
     @Test
     void givenDeadlineAndSprintExist_whenDeadlineBySprintRequested_thenAListOfDeadlinesIsReturned() {
-        Assertions.assertEquals(List.of(deadline2), deadlineService.getDeadlinesBySprintId(1));
+        assertEquals(List.of(deadline2), deadlineService.getDeadlinesBySprintId(1));
     }
 
     /**
@@ -134,7 +133,7 @@ class DeadlineServiceTest {
      */
     @Test
      void givenDeadlineAndProjectDoesNotExist_whenDeadlineByProjectRequested_thenAnEmptyListIsReturned() {
-        Assertions.assertEquals(List.of(), deadlineService.getDeadlineByProject(2));
+        assertEquals(List.of(), deadlineService.getDeadlineByProject(2));
     }
 
     /**
@@ -143,7 +142,7 @@ class DeadlineServiceTest {
     @Test
      void givenDeadlineExists_whenDeleteDeadlineByIdRequested_thenAMessageIsReturned(){
         assertDoesNotThrow(() -> {
-            Assertions.assertEquals("Successfully deleted " + deadline.getName(), deadlineService.deleteDeadline(1));
+            assertEquals("Successfully deleted " + deadline.getName(), deadlineService.deleteDeadline(1));
         });
     }
 
@@ -154,12 +153,12 @@ class DeadlineServiceTest {
      void givenDeadlineDoesNotExist_whenDeleteDeadlineByIdRequested_thenAnExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.deleteDeadline(2));
-        Assertions.assertEquals("Could not find given Deadline" , exception.getMessage());
+        assertEquals("Could not find given Deadline" , exception.getMessage());
 
         when(deadlineRepository.findById(1)).thenThrow(PersistenceException.class);
         IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.deleteDeadline(1));
-        Assertions.assertEquals("Failure deleting Deadline" , exception1.getMessage());
+        assertEquals("Failure deleting Deadline" , exception1.getMessage());
     }
 
     /**
@@ -169,7 +168,7 @@ class DeadlineServiceTest {
      void givenDeadlineExist_whenSaveDeadlineRequested_successfulUpdateMessageDisplayed() {
         deadline.setName("Updated");
         try {
-            Assertions.assertEquals("Successfully Updated " + deadline.getName(), deadlineService.saveDeadline(deadline));
+            assertEquals("Successfully Updated " + deadline.getName(), deadlineService.saveDeadline(deadline));
         } catch (IncorrectDetailsException e) {
             e.printStackTrace();
         }
@@ -188,7 +187,7 @@ class DeadlineServiceTest {
                                     .build();
 
         try {
-            Assertions.assertEquals("Successfully Created " + deadline1.getName(), deadlineService.saveDeadline(deadline1));
+            assertEquals("Successfully Created " + deadline1.getName(), deadlineService.saveDeadline(deadline1));
         } catch (IncorrectDetailsException e) {
             e.printStackTrace();
         }
@@ -202,7 +201,7 @@ class DeadlineServiceTest {
      void givenADeadlineDoesNotExist_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(null));
-        Assertions.assertEquals("No deadline", exception.getMessage());
+        assertEquals("No deadline", exception.getMessage());
     }
 
     /**
@@ -232,7 +231,7 @@ class DeadlineServiceTest {
         deadlines.forEach(currentDeadline -> {
             IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                     deadlineService.verifyDeadline(currentDeadline));
-            Assertions.assertEquals("Deadline values cannot be null", exception.getMessage());
+            assertEquals("Deadline values cannot be null", exception.getMessage());
                 });
     }
 
@@ -251,7 +250,7 @@ class DeadlineServiceTest {
 
         IncorrectDetailsException exception3 = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(deadline1));
-        Assertions.assertEquals("Deadline name cannot exceed 50 characters", exception3.getMessage());
+        assertEquals("Deadline name cannot exceed 50 characters", exception3.getMessage());
 
     }
 
@@ -266,12 +265,12 @@ class DeadlineServiceTest {
             deadline.setDate(dateformat.parse("10/01/2024"));
             IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                     deadlineService.verifyDeadline(deadline));
-            Assertions.assertEquals("Deadline date cannot be after project end date", exception.getMessage());
+            assertEquals("Deadline date cannot be after project end date", exception.getMessage());
 
             deadline.setDate(dateformat.parse("10/01/2000"));
             IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
                     deadlineService.verifyDeadline(deadline));
-            Assertions.assertEquals("Deadline date cannot be before project start date", exception1.getMessage());
+            assertEquals("Deadline date cannot be before project start date", exception1.getMessage());
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -310,7 +309,7 @@ class DeadlineServiceTest {
         when(deadlineRepository.save(deadline)).thenThrow(PersistenceException.class);
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
             deadlineService.saveDeadline(deadline));
-        Assertions.assertEquals("Failed to save the deadline", exception.getMessage());
+        assertEquals("Failed to save the deadline", exception.getMessage());
     }
 
     /**
@@ -354,7 +353,7 @@ class DeadlineServiceTest {
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(deadline2));
-        Assertions.assertEquals("Deadline name must be at least 3 characters", exception.getMessage());
+        assertEquals("Deadline name must be at least 3 characters", exception.getMessage());
     }
 
 
@@ -373,7 +372,7 @@ class DeadlineServiceTest {
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(deadline2));
-        Assertions.assertEquals("Deadline name must not contain an emoji", exception.getMessage());
+        assertEquals("Deadline name must not contain an emoji", exception.getMessage());
     }
 
     /**

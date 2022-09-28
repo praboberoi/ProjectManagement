@@ -5,7 +5,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -165,7 +164,7 @@ class DashboardServiceTest {
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 dashboardService.verifyProject(project));
-        Assertions.assertEquals("Project name must not contain an emoji", exception.getMessage());
+        assertEquals("Project name must not contain an emoji", exception.getMessage());
     }
 
     /**
@@ -185,6 +184,6 @@ class DashboardServiceTest {
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 dashboardService.verifyProject(project));
-        Assertions.assertEquals("Project description must not contain an emoji", exception.getMessage());
+        assertEquals("Project description must not contain an emoji", exception.getMessage());
     }
 }

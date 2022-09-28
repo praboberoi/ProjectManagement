@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -184,11 +185,8 @@ public class DeadlineService {
             throw new IncorrectDetailsException("Deadline date cannot be after project end date");
         } else if (deadline.getDate().before(deadline.getProject().getStartDate())) {
             throw new IncorrectDetailsException("Deadline date cannot be before project start date");
-        } else {
-            String expectedName = String.join("", List.of(deadline.getName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
-
-            if (! expectedName.equals(deadline.getName()))
-                throw new IncorrectDetailsException("Deadline name must not contain an emoji");
+        } else if (ValidationUtilities.hasEmoji(deadline.getName())) {
+            throw new IncorrectDetailsException("Deadline name must not contain an emoji");
         }
 
     }

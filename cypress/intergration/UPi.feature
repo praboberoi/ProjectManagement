@@ -27,6 +27,11 @@ Feature: UPi Project Details
     Then I am redirected to "/dashboard" URL
     And A new Project with CypressTest is created
 
+    Given I login as an admin
+    When I select Create Project
+    And I enter a emojis for the project name and description
+    Then Error message is displayed for using emojis for both project name and description
+
   Scenario: AC6: As a teacher, I can create a sprint easily (e.g., a “+” button to add another).
     Given I login as an admin
     When I select the CypressProject project
