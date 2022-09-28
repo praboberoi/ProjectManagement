@@ -137,9 +137,10 @@ public class Evidence {
         setTitle(evidenceDTO.getTitle());
         setDescription(evidenceDTO.getDescription());
         setOwnerId(evidenceDTO.getOwnerId());
+
         String[] links = evidenceDTO.getWeblinks().split(" ");
-        List<String> weblinks = Arrays.asList(links);
-        setWeblinks(weblinks);
+        List<String> linkList = Arrays.asList(links);
+        setWeblinks(linkList);
     }
 
     /**
