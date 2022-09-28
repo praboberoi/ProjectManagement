@@ -56,7 +56,8 @@ public class EventController {
       public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
           listEvents.forEach(eventService::updateEventColors);
-          HashMap<Integer, List<String>> eventDateMappingDictionary = eventService.getSprintLabelsForStartAndEndDates(listEvents);
+          Map<Integer, List<String>> eventDateMappingDictionary =
+                  eventService.getSprintLabelsForStartAndEndDates(listEvents);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);

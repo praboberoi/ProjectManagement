@@ -606,7 +606,7 @@ class EventServiceTest {
                 new Date(event.getStartDate().getTime()))).thenReturn(sprint1);
         when(sprintRepository.findByDateAndProject(event.getProject(),
                 new Date(event.getEndDate().getTime()))).thenReturn(sprint2);
-        HashMap<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
+        Map<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
         assertEquals("(TestSprint 1)", testData.get(event.getEventId()).get(0));
         assertEquals("(TestSprint 2)", testData.get(event.getEventId()).get(1));
     }
@@ -632,7 +632,7 @@ class EventServiceTest {
                 new Date(event.getStartDate().getTime()))).thenReturn(null);
         when(sprintRepository.findByDateAndProject(event.getProject(),
                 new Date(event.getEndDate().getTime()))).thenReturn(null);
-        HashMap<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
+        Map<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
         assertEquals("(No Sprint)", testData.get(event.getEventId()).get(0));
         assertEquals("(No Sprint)", testData.get(event.getEventId()).get(1));
     }

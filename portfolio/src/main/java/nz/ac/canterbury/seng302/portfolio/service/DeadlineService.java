@@ -55,8 +55,8 @@ public class DeadlineService {
      * @param deadlineList A list of deadlines to create mappings for
      * @return A mapping between the deadline id and the name of the sprint occurring on the deadline
      */
-    public HashMap<Integer, String> getSprintOccurringOnDeadlines(List<Deadline> deadlineList) {
-        HashMap<Integer, String> deadlineDateMapping = new HashMap<Integer, String>();
+    public Map<Integer, String> getSprintOccurringOnDeadlines(List<Deadline> deadlineList) {
+        HashMap<Integer, String> deadlineDateMapping = new HashMap<>();
         for (Deadline deadline : deadlineList) {
             List<String> sprintNames = new ArrayList<String>();
             java.sql.Date date = new Date(deadline.getDate().getTime());
