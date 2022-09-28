@@ -125,7 +125,7 @@
                             <label for="evidence-title" class="col-form-label required">Evidence Title</label>
                             <input type="text" class="form-control required" id="evidence-title" name="title" th:field="*{title}" maxlength="50" oninput="checkEvidenceTitle()" required>
                             <div>
-                                <span id="evidenceCharCount" th:value="${charCount}">[[*{title.length}]] </span> / 50 characters used.
+                                <span id="evidenceTitleCharCount" th:value="${charCountTitle}">[[*{title.length}]] </span> / 50 characters used.
                             </div>
                             <p id="evidenceTitleError" th:text="${evidenceTitleError}" class="error-msg"></p>
                         </div>
@@ -152,14 +152,17 @@
                                      th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
                             </span>
                             <input type="date" class="form-control required" id="evidence-date"
-                                   th:field="*{dateOccurred}" th:min="${projectStartDate}" th:max="${projectEndDate}" onchange="checkEvidenceDate()" required>
+                                   th:field="*{dateOccurred}" th:min="${projectStartDate}" th:max="${projectEndDate}" oninput="checkEvidenceDate()" required>
                             <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
                         </div>
 
                         <div class="mb-3">
                             <label for="evidence-description" class="col-form-label required">Description</label>
-                            <textarea type="evidence-description" class="form-control required"
+                            <textarea type="evidence-description" class="form-control required" name="description"
                                       id="evidence-description" th:field="*{description}" oninput="checkEvidenceDescription()" maxlength="200" required></textarea>
+                            <div>
+                                <span id="evidenceDescriptionCharCount" th:value="${charCountDescription}">[[*{description.length}]] </span> / 200 characters used.
+                            </div>
                             <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}" class="error-msg"></p>
                         </div>
 

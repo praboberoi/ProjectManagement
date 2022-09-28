@@ -26,7 +26,7 @@ function checkEvidenceTitle() {
     let evidenceTitleError = document.getElementById('evidenceTitleError')
     let evidenceTitle = document.getElementById('evidence-title');
     let evidenceTitleStrip = evidenceTitle.value.trim()
-    let charMessage = document.getElementById("evidenceCharCount");
+    let charMessage = document.getElementById("evidenceTitleCharCount");
     let charCount = evidenceTitleStrip.length;
     charMessage.innerText = charCount + ' ';
     if (evidenceTitleStrip.length <= 1) {
@@ -73,10 +73,13 @@ function checkEvidenceDescription() {
     let evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
     let evidenceDescription = document.getElementById('evidence-description');
     let evidenceDescriptionStrip = evidenceDescription.value.trim()
+    let charMessage = document.getElementById("evidenceDescriptionCharCount");
+    let charCount = evidenceDescriptionStrip.length;
+    charMessage.innerText = charCount + ' ';
     if (evidenceDescriptionStrip.length < 2) {
         evidenceDescriptionError.innerText = "Evidence description must be at least 2 characters"
-    } else if (evidenceDescriptionStrip.length >= 200) {
-        evidenceDescriptionError.innerText = "Evidence description must be less that 200 characters"
+    } else if (evidenceDescriptionStrip.length > 200) {
+        evidenceDescriptionError.innerText = "Evidence description must be equal or less that 200 characters"
     } else {
         evidenceDescriptionError.innerText = ""
     }
