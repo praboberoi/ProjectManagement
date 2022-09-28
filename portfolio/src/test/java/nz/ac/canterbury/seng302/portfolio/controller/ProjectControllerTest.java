@@ -66,6 +66,8 @@ public class ProjectControllerTest {
 
     private Project project;
 
+    private Project invalidProject;
+
     private User user;
 
     private UserResponse.Builder userResponse;
@@ -92,6 +94,7 @@ public class ProjectControllerTest {
         when(PrincipalUtils.getUserRole(any())).thenReturn(testList);
         LocalDate now = LocalDate.now();
         project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
+        invalidProject = new Project(1, "", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
         user = new User.Builder()
                 .userId(0)
                 .username("TimeTester")
@@ -239,6 +242,21 @@ public class ProjectControllerTest {
                 .perform(post("/project/").flashAttr("projectDTO", toDTO(project)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Project created successfully"));
+    }
+
+    /**
+     * Test project can be saved correctly.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenInvalidProject_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
+        when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(projectService.saveProject(any())).thenReturn("Project created successfully");
+
+        this.mockMvc
+                .perform(post("/project/").flashAttr("projectDTO", toDTO(invalidProject)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Project Name must not be empty or greater than 50 characters."));
     }
 
     /**
