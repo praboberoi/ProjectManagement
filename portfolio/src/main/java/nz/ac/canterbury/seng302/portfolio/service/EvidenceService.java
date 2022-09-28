@@ -109,13 +109,19 @@ public class EvidenceService {
      * 
      * @param evidence The evidence object to be saved
      * @throws IncorrectDetailsException If the evidence has incorrect
+     * @return message based on whether it is a new or an existing evidence being saved
      */
     public String saveEvidence(Evidence evidence) throws IncorrectDetailsException {
         try {
+            String message = "";
+            if (evidence.getEvidenceId() == 0 )
+                message = "Successfully Created " + evidence.getTitle();
+            else
+                message = "Successfully Updated " + evidence.getTitle();
             evidenceRepository.save(evidence);
             logger.info("Successfully created evidence {} for user with ID: {}", evidence.getEvidenceId(),
                     evidence.getOwnerId());
-            return "Successfully Created " + evidence.getTitle();
+            return message;
         } catch (PersistenceException e) {
             logger.error("Failure saving evidence", e);
             throw new IncorrectDetailsException("Failure Saving Evidence");
@@ -127,16 +133,17 @@ public class EvidenceService {
      * 
      * @param evidenceId id of evidence to be deleted
      * @return Message of the outcome of the delete operation
-     * @throws IncorrectDetailsException
+     * @throws IncorrectDetailsException if the evidence cannot be found
      */
-    public String deleteEvidence(int evidenceId) {
+    public String deleteEvidence(int evidenceId) throws IncorrectDetailsException {
         try {
+            Evidence evidence = evidenceRepository.getEvidenceByEvidenceId(evidenceId);
             evidenceRepository.deleteById(evidenceId);
             logger.info("Successfully deleted evidence {}", evidenceId);
-            return "Successfully Deleted " + evidenceId;
+            return "Successfully Deleted " + evidence.getTitle();
         } catch (IllegalArgumentException ex) {
             logger.error("Failure deleting evidence");
-            throw new IllegalArgumentException("Could not find an existing piece of evidence");
+            throw new IncorrectDetailsException("Could not find an existing piece of evidence");
         }
     }
 }

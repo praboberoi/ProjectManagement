@@ -9,9 +9,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import nz.ac.canterbury.seng302.portfolio.model.dto.MilestoneDTO;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -36,9 +34,7 @@ public class Milestone {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-    @Column
-    @ElementCollection
-    private final List<SprintColor> colors = new ArrayList<>();
+    private SprintColor color;
 
     /**
      * No args Constructor for the Milestone.
@@ -119,16 +115,12 @@ public class Milestone {
         this.date = date;
     }
 
-    public List<SprintColor> getColors() {
-        return this.colors;
+    public SprintColor getColor() {
+        return this.color;
     }
 
-    public void addColor(SprintColor color, int index) {
-        this.colors.add(index, color);
-    }
-
-    public void clearColorList() {
-        colors.clear();
+    public void setColor(SprintColor color) {
+        this.color = color;
     }
 
     @Override
@@ -138,7 +130,7 @@ public class Milestone {
                 ", projectId=" + project.getProjectId() +
                 ", name='" + name + '\'' +
                 ", date=" + date +
-                ", colors= " + colors +
+                ", color= " + color +
                 '}';
     }
 

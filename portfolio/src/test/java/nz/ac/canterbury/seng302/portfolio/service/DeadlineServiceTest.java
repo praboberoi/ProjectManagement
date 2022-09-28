@@ -312,7 +312,4 @@ class DeadlineServiceTest {
             deadlineService.saveDeadline(deadline));
         Assertions.assertEquals("Failed to save the deadline", exception.getMessage());
     }
-
-
-
 }

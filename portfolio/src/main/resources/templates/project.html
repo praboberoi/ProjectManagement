@@ -62,7 +62,7 @@
               <a type="button" class="btn btn-outline-primary mx-1"
                 th:href="@{${apiPrefix} + '/dashboard/editProject/'+ ${project.projectId}}">
                 <img class="icon img-color-primary"
-                  th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />Edit</a>
+                  th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" /> Edit</a>
               <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
                 data-bs-target="#conformationModalProject" th:data-id="${project.projectId}"
                 th:data-prefix="${apiPrefix}" th:data-name="${project.projectName}"
@@ -147,10 +147,7 @@
                   Create Milestone</button>
               </div>
             </div>
-            <div class="card" id="milestoneCard">
-              <h6 class="card-title">Seng 302: </h6>
-              <p class="eventDates">End Date: 21 July 2022 5pm</p>
-            </div>
+            <div id="milestone-list" th:insert="milestoneFragments::milestoneTab"></div>
           </div>
         </div>
       </div>
@@ -263,14 +260,8 @@
                             </th:block>
                           </div>
                         </div>
-                        <div class="outer-box" id="milestone-display">
-                          <div class="inner-box">
-                            <div class="heading-size">
-                              <img hidden th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events"
-                                height=16 width=16 class="calendarIcons">
-                            </div><br>
-                          </div>
-                        </div>
+                        <span th:replace="milestoneFragments::accordionComponent"></span>
+                        
                       </div>
                     </div>
                   </td>
@@ -370,7 +361,7 @@
 
   <div th:replace="forms :: eventsForm"></div>
   <div th:replace="forms :: deadlineForm"></div>
-  <div th:replace="milestoneFragments::milestoneForm"></div>
+  <div th:replace="forms :: milestoneForm"></div>
   <script th:inline="javascript">
     let userRoles = [[${ roles }]];
     const projectId = [[${ project.projectId }]];
