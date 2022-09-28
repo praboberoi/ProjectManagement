@@ -80,6 +80,7 @@ public class EvidenceService {
      * @throws IncorrectDetailsException Message explaining any incorrect values
      */
     public void verifyEvidence(Evidence evidence) throws IncorrectDetailsException {
+
         if (evidence == null)
             throw new IncorrectDetailsException("No evidence to verify");
 
@@ -87,20 +88,33 @@ public class EvidenceService {
                 evidence.getTitle() == null || evidence.getProject() == null)
             throw new IncorrectDetailsException("Evidence values are null");
 
-        // Removes leading and trailing white spaces from the title
-        evidence.setTitle(evidence.getTitle().strip());
+        else {
 
-        if (evidence.getTitle().length() < 1)
-            throw new IncorrectDetailsException("Evidence title must not be empty");
+            // Removes leading and trailing white spaces from the title
+            evidence.setTitle(evidence.getTitle().strip());
 
-        else if (evidence.getTitle().length() > 50)
-            throw new IncorrectDetailsException("Evidence title cannot be more than 50 characters");
+            String expected_name = String.join("", List.of(evidence.getTitle().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
 
-        else if (evidence.getDateOccurred().before(evidence.getProject().getStartDate()))
-            throw new IncorrectDetailsException("The evidence cannot exist before the project date");
+            String expected_description = String.join("", List.of(evidence.getDescription().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
 
-        else if (evidence.getDateOccurred().after(evidence.getProject().getEndDate()))
-            throw new IncorrectDetailsException("The evidence cannot exist after the project date");
+            if (!expected_name.equals(evidence.getTitle()))
+                throw new IncorrectDetailsException("Evidence title must not contain an emoji");
+
+            else if (!expected_description.equals(evidence.getDescription()))
+                throw new IncorrectDetailsException("Evidence description must not contain an emoji");
+
+            if (evidence.getTitle().length() < 1)
+                throw new IncorrectDetailsException("Evidence title must not be empty");
+
+            else if (evidence.getTitle().length() > 50)
+                throw new IncorrectDetailsException("Evidence title cannot be more than 50 characters");
+
+            else if (evidence.getDateOccurred().before(evidence.getProject().getStartDate()))
+                throw new IncorrectDetailsException("The evidence cannot exist before the project date");
+
+            else if (evidence.getDateOccurred().after(evidence.getProject().getEndDate()))
+                throw new IncorrectDetailsException("The evidence cannot exist after the project date");
+        }
 
     }
 

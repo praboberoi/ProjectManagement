@@ -26,6 +26,12 @@ Feature: U1 Events on the project details page
     When I type in an event name that is very long
     Then An error message is displayed showing that the event name has exceeded the maximum characters
 
+    Given I login as an admin
+    And I select the CypressProject project
+    And I select the create event button
+    When I enter an emoji for the event name
+    Then An error messages is displayed for using an emoji
+
   Scenario: AC7: I should be able to enter dates using a calendar widget to reduce errors.
   The calendar widget should only allow valid dates that are in the project range.
     Given I login as an admin

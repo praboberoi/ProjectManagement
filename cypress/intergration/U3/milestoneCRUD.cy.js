@@ -10,8 +10,10 @@ Given("I select Create Milestone", () => {
 
 When("I enter {string} milestone name and {string} date", (milestoneName, milestoneDate) => {
     cy.get('#milestone-name').clear().should('have.value', '')
-    cy.get('#milestoneNameError').should('have.text', 'Milestone Name must not be empty')
-    cy.get('#milestone-name').type(milestoneName, { delay: 0 }).should('have.value', milestoneName)
+    cy.get('#milestoneNameError').should('have.text', 'Milestone name must not be empty')
+    cy.get('#milestone-name').type("fgerg😀",{ delay: 0 })
+    cy.get('#milestoneNameError').should('have.text', "Milestone name must not contain an emoji")
+    cy.get('#milestone-name').clear().type(milestoneName, { delay: 0 }).should('have.value', milestoneName)
     cy.get('#milestoneNameError').should('have.text', '')
     cy.get('#milestoneDate').clear().type(milestoneDate).should('have.value', milestoneDate)
 })

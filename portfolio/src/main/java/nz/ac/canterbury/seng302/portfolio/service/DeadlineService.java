@@ -168,11 +168,9 @@ public class DeadlineService {
      * @throws IncorrectDetailsException raised if deadline values are invalid
      */
     public void verifyDeadline(Deadline deadline) throws IncorrectDetailsException {
-        String expected_name = String.join("", List.of(deadline.getName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+
         if (deadline == null) {
             throw new IncorrectDetailsException("No deadline");
-        } else if (! expected_name.equals(deadline.getName())) {
-            throw new IncorrectDetailsException("Deadline name must not contain an emoji");
         } else if (deadline.getName() == null || deadline.getDate() == null || deadline.getProject() == null) {
             throw new IncorrectDetailsException("Deadline values cannot be null");
         } else if (deadline.getName().length() > 50) {
@@ -183,7 +181,13 @@ public class DeadlineService {
             throw new IncorrectDetailsException("Deadline date cannot be after project end date");
         } else if (deadline.getDate().before(deadline.getProject().getStartDate())) {
             throw new IncorrectDetailsException("Deadline date cannot be before project start date");
+        } else {
+            String expected_name = String.join("", List.of(deadline.getName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+
+            if (! expected_name.equals(deadline.getName()))
+                throw new IncorrectDetailsException("Deadline name must not contain an emoji");
         }
+
     }
 
     /**

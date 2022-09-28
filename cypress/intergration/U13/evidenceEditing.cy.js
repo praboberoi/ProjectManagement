@@ -7,6 +7,8 @@ Given("I navigate to {string} page", (address) => {
 
 Given("I Create a new Evidence with {string} as the title", (title) => {
     cy.get("#create-evidence-btn").click()
+    cy.get("#evidence-title").clear().type('sdf😀', {delay:0})
+    cy.get('#evidenceFormSubmitButton').should('have.attr', "disabled")
     cy.get("#evidence-title").clear().type(title, {delay:0})
     cy.get("#evidence-description").clear().type("This is a test",{delay:0})
     cy.get("#evidenceFormSubmitButton").click()

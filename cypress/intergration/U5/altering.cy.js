@@ -50,7 +50,11 @@ When("I create the group {string}, {string}", (groupName, groupLongName) => {
     }).as('update')
 
     cy.get('#create-btn').click()
+    cy.get('#shortName').clear().type('dfg😀', {delay: 0})
+    cy.get('#shortNameError').should('have.text', "Group short name must not contain an emoji");
     cy.get('#shortName').clear().type(groupName, { delay: 0 })
+    cy.get('#longName').clear().type('dfg😀', { delay: 0 })
+    cy.get('#longNameError').should('have.text', "Group long name must not contain an emoji");
     cy.get('#longName').clear().type(groupLongName, { delay: 0 })
     cy.get('#save-submit-button').contains("Create").should('be.visible').click()
     cy.get('#messageSuccess').should('contain', `Group created successfully`)
