@@ -241,11 +241,28 @@ function editProjectModalInit(projectId) {
     
     document.getElementById('project-name').value = projectName;
 
+    
     let projectStartDate = document.getElementById(`project${projectId}-startDate`).value
     document.getElementById('projectFormStartDate').value = projectStartDate;
 
+    
     let projectEndDate = document.getElementById(`project${projectId}-endDate`).value
     document.getElementById('projectFormEndDate').value = projectEndDate;
+    
+
+    let minStartDate = new Date();
+    minStartDate.setFullYear(minStartDate.getFullYear() - 1);
+
+    let maxEndDate = new Date();
+    maxEndDate.setFullYear(maxEndDate.getFullYear() + 10);
+    
+
+    document.getElementById('projectFormStartDate').setAttribute("min", min(minStartDate, projectStartDate));
+    document.getElementById('projectFormStartDate').setAttribute("max", max(minStartDate, projectEndDate));
+    
+    document.getElementById('projectFormEndDate').setAttribute("min", min(minStartDate, projectStartDate));
+    document.getElementById('projectFormEndDate').setAttribute("max", max(minStartDate, projectEndDate));
+
 
     let projectDescription = document.getElementById(`project${projectId}-description`).innerText
     document.getElementById('projectFormDescription').value = projectDescription;
@@ -266,12 +283,23 @@ function createProjectModalInit() {
     
     document.getElementById('project-name').value = "Project " + new Date().getFullYear();
 
+    let minStartDate = new Date();
+    minStartDate.setFullYear(minStartDate.getFullYear() - 1);
+    let maxEndDate = new Date();
+    maxEndDate.setFullYear(maxEndDate.getFullYear() + 10);
+
     document.getElementById('projectFormStartDate').value = new Date().toLocaleDateString("en-CA");
+    document.getElementById('projectFormStartDate').setAttribute("min", minStartDate.toLocaleDateString("en-CA"));
+    document.getElementById('projectFormStartDate').setAttribute("max", maxEndDate.toLocaleDateString("en-CA"));
 
     let endDate = new Date();
     endDate.setMonth(endDate.getMonth() + 8);
 
+
     document.getElementById('projectFormEndDate').value = endDate.toLocaleDateString("en-CA");
+
+    document.getElementById('projectFormEndDate').setAttribute("min", minStartDate.toLocaleDateString("en-CA"));
+    document.getElementById('projectFormEndDate').setAttribute("max", maxEndDate.toLocaleDateString("en-CA"));
 
     document.getElementById('projectFormDescription').value = "";
 
