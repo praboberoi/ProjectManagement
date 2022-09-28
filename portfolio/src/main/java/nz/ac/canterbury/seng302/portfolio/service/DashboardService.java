@@ -99,8 +99,10 @@ public class DashboardService {
         List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
         Project projectName = projectRepo.findByProjectName(project.getProjectName());
 
-        String expected_name = String.join("", List.of(project.getProjectName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
-        String expected_description = String.join("", List.of(project.getDescription().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+        String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";
+
+        String expected_name = String.join("", List.of(project.getProjectName().strip().split(emojiRex)));
+        String expected_description = String.join("", List.of(project.getDescription().strip().split(emojiRex)));
 
         if (! expected_name.equals(project.getProjectName()))
             throw new IncorrectDetailsException("Project name must not contain an emoji");

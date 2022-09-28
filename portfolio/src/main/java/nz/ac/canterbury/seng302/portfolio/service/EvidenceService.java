@@ -92,10 +92,11 @@ public class EvidenceService {
 
             // Removes leading and trailing white spaces from the title
             evidence.setTitle(evidence.getTitle().strip());
+            String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";
 
-            String expected_name = String.join("", List.of(evidence.getTitle().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+            String expected_name = String.join("", List.of(evidence.getTitle().strip().split(emojiRex)));
 
-            String expected_description = String.join("", List.of(evidence.getDescription().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+            String expected_description = String.join("", List.of(evidence.getDescription().strip().split(emojiRex)));
 
             if (!expected_name.equals(evidence.getTitle()))
                 throw new IncorrectDetailsException("Evidence title must not contain an emoji");
