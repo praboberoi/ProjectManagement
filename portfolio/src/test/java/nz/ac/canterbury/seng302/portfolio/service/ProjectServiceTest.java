@@ -179,6 +179,10 @@ class ProjectServiceTest {
         assertEquals("Successfully Updated " + testProject.getProjectName(), returnMessage);
     }
 
+    /**
+     * Checks that when a new project is requested it is initilized correctly
+     * @throws IncorrectDetailsException
+     */
     @Test
     void whenNewProject_thenProjectCreated() throws IncorrectDetailsException {
         LocalDate now = LocalDate.now();

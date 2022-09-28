@@ -234,6 +234,7 @@ function verifyOverlap(startDate, endDate) {
 function editProjectModalInit(projectId) {
     let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].innerText
     
+    document.getElementById('projectFormModalError').innerText = ""
     document.getElementById('projectFormTitle').innerText = "Edit " + projectName
     
     document.getElementById('projectId').value = projectId
@@ -258,6 +259,7 @@ function editProjectModalInit(projectId) {
  * Initilises the project modal for editing the selected project
  */
 function createProjectModalInit() {
+    document.getElementById('projectFormModalError').innerText = ""
     document.getElementById('projectFormTitle').innerText = "Create New Project"
     
     document.getElementById('projectId').value = 0
