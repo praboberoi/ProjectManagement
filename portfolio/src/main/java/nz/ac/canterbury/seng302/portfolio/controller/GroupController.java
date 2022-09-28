@@ -34,9 +34,6 @@ public class GroupController {
     private GroupService groupService;
 
     @Autowired
-    private UserAccountClientService userAccountClientService;
-
-    @Autowired
     private RepoRepository repoRepository;
 
     @Autowired
@@ -366,6 +363,7 @@ public class GroupController {
      * @param action    The action taken (deleted, created, edited)
      */
     private void notifyGroup(int groupId, String component, String action) {
+        template.convertAndSend("/element/group/" + groupId, (component + " " + action));
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
 
