@@ -38,7 +38,7 @@ public class GroupController {
 
     @Autowired
     private RepoRepository repoRepository;
-    
+
     @Autowired
     private SimpMessagingTemplate template;
 
@@ -178,8 +178,7 @@ public class GroupController {
             @AuthenticationPrincipal AuthState principal,
             @RequestParam(required = false) Integer groupId,
             @RequestParam String shortName,
-            @RequestParam String longName,
-            Model model) {
+            @RequestParam String longName) {
         Groups group;
         if (groupId == null) {
             group = null;
@@ -213,11 +212,9 @@ public class GroupController {
             }
             status = response.getIsSuccess();
             message = response.getMessage();
-            
+
         }
 
-        model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
-        model.addAttribute("user", userAccountClientService.getUser(principal));
         if (status) {
             if (groupId == null) {
                 notifyGroup(-1, DETAILS, "edited");
@@ -351,17 +348,15 @@ public class GroupController {
         mv.addObject("group", group);
         return mv;
     }
-    
 
     /**
      * Sends an update message to all clients connected to the websocket
-     * @param groupId Id of the event edited
+     * 
+     * @param groupId   Id of the event edited
      * @param component Component that has been modified (details or members)
-     * @param action The action taken (deleted, created, edited)
+     * @param action    The action taken (deleted, created, edited)
      */
     private void notifyGroup(int groupId, String component, String action) {
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
 }
-
-

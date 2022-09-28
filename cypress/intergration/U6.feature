@@ -25,7 +25,7 @@ Feature: U6. Group settings and single repository settings
         Given I login as an admin
         And I navigate directly to "group/1285322"
         When I toggle the recent actions component
-        Then The recent actions component is not visible
+        Then The recent actions component is not visible    
 
     Scenario: Misc. The user is able to toggle the recent actions tab.
         Given I login as an admin
