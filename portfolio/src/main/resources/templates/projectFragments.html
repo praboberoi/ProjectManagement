@@ -313,15 +313,7 @@
                                                 </th:block>
                                             </div>
                                         </div>
-                                        <div class="outer-box" id="milestone-display">
-                                            <div class="inner-box">
-                                                <div class="heading-size">
-                                                    <img hidden
-                                                        th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}"
-                                                        alt="Events" height=16 width=16 class="calendarIcons">
-                                                </div><br>
-                                            </div>
-                                        </div>
+                                        <span th:replace="milestoneFragments::accordionComponent"></span>
                                     </div>
                                 </div>
                             </td>

@@ -25,7 +25,7 @@ public interface DeadlineRepository extends CrudRepository<Deadline, Integer> {
      */
 
     @Query(value = "SELECT DISTINCT deadline from Deadline deadline where deadline.date between :#{#sprint.startDate} " +
-            "and :#{#sprint.endDate}")
+            "and :#{#sprint.endDate}" )
     List<Deadline> findDeadlinesBySprint(@Param("sprint") Sprint sprint);
 
 
