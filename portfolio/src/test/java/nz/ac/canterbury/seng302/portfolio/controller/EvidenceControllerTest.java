@@ -206,6 +206,8 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenCorrectEvidenceAndUserIds_whenSelectedEvidenceCalled_thenReturnSelectedEvidence() throws Exception {
+        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        when(userAccountClientService.getUser(any())).thenReturn(user);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getEvidence(33)).thenReturn(evidence);
 
@@ -213,7 +215,8 @@ public class EvidenceControllerTest {
                 .perform(get("/evidence/99/33"))
                 .andExpect(status().is2xxSuccessful())
                 .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
-                .andExpect(model().attribute("selectedEvidence", evidence));
+                .andExpect(model().attribute("selectedEvidence", evidence))
+                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99));
     }
 
     /**
@@ -222,6 +225,8 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenIncorrectEvidence_whenSelectedEvidenceCalled_thenNoEvidenceSelected() throws Exception {
+        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        when(userAccountClientService.getUser(any())).thenReturn(user);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getEvidence(33)).thenThrow(new IncorrectDetailsException("Failed to locate the piece of evidence with ID: 33"));
 
