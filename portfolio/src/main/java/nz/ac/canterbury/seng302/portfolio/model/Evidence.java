@@ -1,15 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import nz.ac.canterbury.seng302.portfolio.model.dto.EvidenceDTO;
-import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.nio.file.WatchEvent;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * The evidence entity stored in the database for the portfolio application
@@ -142,6 +137,9 @@ public class Evidence {
         setTitle(evidenceDTO.getTitle());
         setDescription(evidenceDTO.getDescription());
         setOwnerId(evidenceDTO.getOwnerId());
+        String[] links = evidenceDTO.getWeblinks().split(" ");
+        List<String> weblinks = Arrays.asList(links);
+        setWeblinks(weblinks);
     }
 
     /**
@@ -154,7 +152,11 @@ public class Evidence {
         if (this == o) return true;
         if (!(o instanceof Evidence)) return false;
         Evidence evidence = (Evidence) o;
-        return evidenceId == evidence.evidenceId && Objects.equals(project, evidence.project) && Objects.equals(title, evidence.title) && Objects.equals(dateOccurred, evidence.dateOccurred);
+        return evidenceId == evidence.evidenceId
+                && Objects.equals(project, evidence.project)
+                && Objects.equals(title, evidence.title)
+                && Objects.equals(dateOccurred, evidence.dateOccurred)
+                && Objects.equals(weblinks, evidence.weblinks);
     }
 
     @Override
