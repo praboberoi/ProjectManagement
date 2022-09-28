@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
@@ -35,6 +36,9 @@ public class UserController {
 
     @Autowired
     PersistentSortRepository persistentSortRepository;
+
+    @Autowired
+    private SimpMessagingTemplate template;
 
     public UserController (UserAccountClientService userAccountClientService) {
         this.userAccountClientService = userAccountClientService;
@@ -135,6 +139,14 @@ public class UserController {
     }
 
     /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of user that has been updated
+     */
+    private void notifyRoleChange(int userId) {
+        template.convertAndSend("/element/user/" + userId + "/roles", "");
+    }
+
+    /**
      * Delete method for removing a users role
      *
      * @param userId ID for the user
@@ -175,6 +187,7 @@ public class UserController {
             return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
+        notifyRoleChange(Integer.parseInt(userId));
         return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
     }
 
@@ -209,6 +222,7 @@ public class UserController {
             }
         }
 
+        notifyRoleChange(userId);
         return new ResponseEntity<>("Successfully added " + newRole, HttpStatus.OK);
     }
 }

@@ -5,7 +5,7 @@ function updateSprintDetails(sprintId, sprintName, projectId, prefix) {
     if (prefix === null)
         prefix = ""
     document.getElementById('message').innerText = `Are you sure you want to delete ${sprintName}`;
-    document.getElementById('deleteSprint').setAttribute('action', `${prefix}/${projectId}/deleteSprint/${sprintId}`);
+    document.getElementById('deleteSprint').setAttribute('action', `${prefix}/project/${projectId}/deleteSprint/${sprintId}`);
 }
 
 function deletingEvent(eventId, eventName) {
@@ -106,20 +106,22 @@ function updateSprint(message) {
     let array = message.body.split(' ')
     let sprint = array[0]
     let action = array[1]
+
+    updateSprintAccordions()
+
     let httpRequest = new XMLHttpRequest();
     if (action === "edited") {
-        sprintElement = document.getElementById("sprint-list")
+        let sprintElement = document.getElementById("sprint-list")
         httpRequest.open('GET', window.location.pathname + `/sprints`);
+        httpRequest.onreadystatechange = () => updateElement(httpRequest, sprintElement)
+    
+        httpRequest.send();
     } else if (action === "deleted") {
         document.getElementById(sprint + "Row").outerHTML = ""
-        return
     } else {
         console.log("Unknown command: " + action)
-        return
     }
-    httpRequest.onreadystatechange = () => updateElement(httpRequest, sprintElement)
-
-    httpRequest.send();
+    
 }
 
 /**
@@ -132,6 +134,7 @@ function handleDeadlineNotification(message) {
     let action = array[1]
 
     let deadlineCard = document.getElementById(deadline + "-card");
+    updateSprintAccordions()
 
     if (action === "edited") {
         loadDeadlineCards()
@@ -152,6 +155,21 @@ function handleDeadlineNotification(message) {
     }
 }
 
+function updateSprintAccordions() {
+    let httpRequest = new XMLHttpRequest();
+    let accordions = document.getElementById("showSprints").getElementsByClassName("accordion-body")
+
+    Array.from(accordions).forEach(element => {
+        let sprintId = element.parentNode.getElementsByClassName("accordion-sprint-id")[0].value
+        httpRequest.open('GET', window.location.pathname + `/sprint/${sprintId}/accordion`);
+        httpRequest.onreadystatechange = () => updateElement(httpRequest, element.parentNode)
+    
+        httpRequest.send();
+    });
+    
+}
+
+
 /**
  * Handles milestone updates from the server
  * @param message Message with milestone and edit type
@@ -162,6 +180,7 @@ function handleMilestoneNotification(message) {
     let action = array[1]
 
     let milestoneCard = document.getElementById(milestone + "-card");
+    updateSprintAccordions()
 
     if (action === "edited") {
         loadMilestoneCards()
@@ -192,6 +211,7 @@ function handleEventNotification(message) {
     let action = array[1]
 
     let eventCard = document.getElementById(event + "-card");
+    updateSprintAccordions()
 
     if (action === "edited") {
         loadEventCards()

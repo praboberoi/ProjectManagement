@@ -126,42 +126,12 @@
                     </th:block>
                 </div>
 
-                <div id="evidence-display" class="col-sm-12 col-md-8">
-                    <div id="selectedEvidence" th:fragment="selectedEvidence">
-                        <div class="card project-card"
-                        th:if="${selectedEvidence}">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="card-body">
-                                    <div class="container mb-2">
-                                        <div class="row">
-                                            <div class="col-auto me-auto">
-                                                <input type="hidden" id="selectedEvidenceId" th:value="${selectedEvidence.evidenceId}">
-                                                <h3 id="selectedEvidenceTitle" class="card-title" th:text="${selectedEvidence.title}" />
-                                                <b class="evidenceCardText">Project: </b>
-                                                <p th:text="${selectedEvidence.project.projectName}"
-                                                    class="mb-0 evidenceCardText"></p>
-                                                <br />
-                                                <br />
-                                                <b class="evidenceCardText">Date Created: </b>
-                                                <p class="evidenceCardText">
-                                                    [[${#dates.format(selectedEvidence.dateOccurred,'dd MMM yyyy')}]]
-                                                </p>
-                                                <br />
-                                                <br />
-                                                <p th:text="${selectedEvidence.description}"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+            <div id="evidence-display" class="col-sm-12 col-md-8" th:insert="evidenceFragments::selectedEvidence">
+
             </div>
         </div>
     </div>
+</div>
 
     <div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">

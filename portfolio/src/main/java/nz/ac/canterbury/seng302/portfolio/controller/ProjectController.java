@@ -62,7 +62,7 @@ public class ProjectController {
     @GetMapping(path = "/project/{projectId}/getAllSprints")
     public ResponseEntity<List<Sprint>> getAllSprints(
             @PathVariable("projectId") int projectId) {
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+        List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
         return ResponseEntity.status(HttpStatus.OK).body(listSprints);
     }
 
@@ -100,8 +100,8 @@ public class ProjectController {
             RedirectAttributes ra) {
         try {
             Project project = projectService.getProjectById(projectId);
-
-            List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+            
+            List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
 
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
@@ -175,7 +175,7 @@ public class ProjectController {
      */
     @GetMapping(path = "/project/{projectId}/sprints")
     public ModelAndView groupsList(@PathVariable("projectId") int projectId) {
-        List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+        List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("project::sprints");

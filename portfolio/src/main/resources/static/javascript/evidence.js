@@ -81,11 +81,21 @@ function updateEvidencePage(message) {
         messageDiv.innerHTML = `<p class="h6 text-align-start font-italic text-black-50">${evidenceNotification.userUpdating} is currently editing</p>`
         messageDiv.hidden = false
         document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = true
+
+        const messageDivResponsive = document.getElementById(`evidence-responsive-message-div`)
+        messageDivResponsive.innerHTML = `<p class="h6 text-center font-italic text-black-50">${evidenceNotification.userUpdating} is currently editing</p>`
+        messageDivResponsive.hidden = false
+        document.getElementById('edit-evidence-btn').hidden = true
+        document.getElementById('delete-evidence-btn').hidden = true
     }
 
     else if (action === 'finished') {
         document.getElementById(`evidence-${evidenceId}-message-div`).hidden = true
         document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = false
+
+        document.getElementById(`evidence-responsive-message-div`).hidden = true
+        document.getElementById('edit-evidence-btn').hidden = false
+        document.getElementById('delete-evidence-btn').hidden = false
     }
 
 }

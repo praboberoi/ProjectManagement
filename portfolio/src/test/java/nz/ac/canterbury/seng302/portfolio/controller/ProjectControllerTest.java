@@ -147,8 +147,7 @@ public class ProjectControllerTest {
         Deadline newDeadline = new Deadline.Builder().project(project).name("Test").build();
         Milestone newMilestone = new Milestone.Builder().project(project).name("Test").build();
         Event newEvent = new Event.Builder().eventName("Test").build();
-
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
         when(eventService.getNewEvent(any())).thenReturn(newEvent);
         when(deadlineService.getNewDeadline(any())).thenReturn(newDeadline);
@@ -211,7 +210,7 @@ public class ProjectControllerTest {
      */
     @Test
     void givenServer_WhenGetAllSprints_ThenSprintsReturnedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(testSprintList);
         this.mockMvc
                 .perform(get("/project/1/getAllSprints"))
                 .andExpect(status().isOk());
@@ -223,7 +222,7 @@ public class ProjectControllerTest {
      */
     @Test
     void givenServer_WhenGetSprints_ThenSprintsReturnedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(testSprintList);
         this.mockMvc
                 .perform(get("/project/1/sprints"))
                 .andExpect(status().isOk());
@@ -235,7 +234,7 @@ public class ProjectControllerTest {
      */
     @Test
     void givenServer_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
         when(projectService.saveProject(any())).thenReturn("Project created successfully");
 
         this.mockMvc
@@ -250,7 +249,7 @@ public class ProjectControllerTest {
      */
     @Test
     void givenInvalidProject_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
         when(projectService.saveProject(any())).thenReturn("Project created successfully");
 
         this.mockMvc
@@ -265,7 +264,7 @@ public class ProjectControllerTest {
      */
     @Test
     void givenStudent_WhenSaveProject_ThenErrorThrown() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
         when(projectService.saveProject(any())).thenReturn("Project created successfully");
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
 
