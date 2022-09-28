@@ -1,10 +1,7 @@
 package nz.ac.canterbury.seng302.portfolio.model.dto;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
-
 import java.util.Date;
-import java.util.List;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 /**
