@@ -12,10 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
@@ -585,6 +582,62 @@ class EventServiceTest {
         eventService.updateEventColors(event);
 
         assertArrayEquals(List.of(SprintColor.BLUE, SprintColor.GREEN, SprintColor.NAVY, SprintColor.WHITE).toArray(), event.getColors().toArray());
+    }
+
+    /**
+     * Tests that the correct sprint name for start and end date is mapped the corresponding id of the event.
+     */
+    @Test
+    void givenEventsExist_whenGetSprintLabelsForStartAndEndDatesCalled_thenAppropriateDataReturned() {
+        List<Event> events = new ArrayList<Event>();
+        Project project = new Project.Builder().projectId(1)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2023 - 1900, 11,2))
+                .build();
+        Event event = new Event.Builder().eventName("Test Event")
+                .eventId(1)
+                .project(project)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2020 - 1900, 11,3))
+                .build();
+        Sprint sprint1 = new Sprint.Builder().sprintName("TestSprint 1")
+                .build();
+        Sprint sprint2 = new Sprint.Builder().sprintName("TestSprint 2")
+                .build();
+        events.add(event);
+        when(sprintRepository.findByDateAndProject(event.getProject(),
+                new Date(event.getStartDate().getTime()))).thenReturn(sprint1);
+        when(sprintRepository.findByDateAndProject(event.getProject(),
+                new Date(event.getEndDate().getTime()))).thenReturn(sprint2);
+        Map<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
+        assertEquals("(TestSprint 1)", testData.get(event.getEventId()).get(0));
+        assertEquals("(TestSprint 2)", testData.get(event.getEventId()).get(1));
+    }
+
+    /**
+     * Tests that when no sprints occur on the end and start dates of an event, the correct mappings are returned.
+     */
+    @Test
+    void givenEventsExistButNoSprintsOccur_whenGetSprintLabelsForStartAndEndDatesCalled_thenAppropriateDataReturned() {
+        List<Event> events = new ArrayList<Event>();
+        Project project = new Project.Builder().projectId(1)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2023 - 1900, 11,2))
+                .build();
+        Event event = new Event.Builder().eventName("Test Event")
+                .eventId(1)
+                .project(project)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2020 - 1900, 11,3))
+                .build();
+        events.add(event);
+        when(sprintRepository.findByDateAndProject(event.getProject(),
+                new Date(event.getStartDate().getTime()))).thenReturn(null);
+        when(sprintRepository.findByDateAndProject(event.getProject(),
+                new Date(event.getEndDate().getTime()))).thenReturn(null);
+        Map<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
+        assertEquals("(No Sprint)", testData.get(event.getEventId()).get(0));
+        assertEquals("(No Sprint)", testData.get(event.getEventId()).get(1));
     }
 
     /**
