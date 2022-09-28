@@ -310,9 +310,6 @@ class DeadlineServiceTest {
         when(deadlineRepository.save(deadline)).thenThrow(PersistenceException.class);
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
             deadlineService.saveDeadline(deadline));
-        Assertions.assertEquals("Failure to save the deadline", exception.getMessage());
+        Assertions.assertEquals("Failed to save the deadline", exception.getMessage());
     }
-
-
-
 }

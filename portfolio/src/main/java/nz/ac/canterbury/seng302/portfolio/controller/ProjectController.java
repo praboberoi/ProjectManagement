@@ -20,7 +20,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
-import java.util.Hashtable;
 import java.util.List;
 
 /**
@@ -34,6 +33,7 @@ public class ProjectController {
     @Autowired private EventService eventService;
     @Autowired private UserAccountClientService userAccountClientService;
     @Autowired private DeadlineService deadlineService;
+    @Autowired private MilestoneService milestoneService;
 
     private Logger logger = LoggerFactory.getLogger(ProjectController.class);
 
@@ -65,24 +65,38 @@ public class ProjectController {
             Model model,
             RedirectAttributes ra) {
         try {
+            Project project = projectService.getProjectById(projectId);
+
             List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
+
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
+
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
-            Project project = projectService.getProjectById(projectId);
+
+            List<Milestone> listMilestones = milestoneService.getMilestonesByProject(project);
+            listMilestones.forEach(milestoneService::updateMilestoneColor);
+
             Event newEvent = eventService.getNewEvent(project);
             Deadline newDeadline = deadlineService.getNewDeadline(project);
+            Milestone newMilestone = milestoneService.getNewMilestone(project);
+
             model.addAttribute("listEvents", listEvents);
             model.addAttribute("listDeadlines", listDeadlines);
+            model.addAttribute("listMilestones", listMilestones);
             model.addAttribute("listSprints", listSprints);
+
             model.addAttribute("project", project);
             model.addAttribute("event", newEvent);
             model.addAttribute("deadline", newDeadline);
+            model.addAttribute("milestone", newMilestone);
+
             model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
             model.addAttribute("user", new User(userAccountClientService.getUser(principal)));
             model.addAttribute("projectDateMin", project.getStartDate());
             model.addAttribute("projectDateMax", project.getEndDate());
+
             return "project";
         } catch (IncorrectDetailsException e) {
             ra.addFlashAttribute("messageDanger", e.getMessage());

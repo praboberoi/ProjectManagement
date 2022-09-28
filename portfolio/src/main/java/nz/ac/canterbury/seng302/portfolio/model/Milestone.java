@@ -1,14 +1,15 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
+
 import org.springframework.format.annotation.DateTimeFormat;
 
 import nz.ac.canterbury.seng302.portfolio.model.dto.MilestoneDTO;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 import java.util.Objects;
 
 /**
@@ -33,9 +34,7 @@ public class Milestone {
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private Date date;
 
-    @Column
-    @ElementCollection
-    private final List<SprintColor> colors = new ArrayList<>();
+    private SprintColor color;
 
     /**
      * No args Constructor for the Milestone.
@@ -55,7 +54,7 @@ public class Milestone {
         this.date = date;
     }
 
-    public Milestone(MilestoneDTO milestoneDTO) {
+    public Milestone(MilestoneDTO milestoneDTO) throws IncorrectDetailsException {
         setMilestoneId(milestoneDTO.getMilestoneId());
         setName(milestoneDTO.getName());
         setProject(milestoneDTO.getProject());
@@ -86,8 +85,18 @@ public class Milestone {
      * Removes the extra whitespace from the given name and updates then milestone name
      * @param name of type String
      */
-    public void setName(String name) {
-        this.name = name;
+    public void setName(String name) throws IncorrectDetailsException {
+        if (name == null) {
+            throw new IncorrectDetailsException("Milestone values cannot be null");
+        } else if (name.length() > 50) {
+            throw new IncorrectDetailsException("Milestone name cannot exceed 50 characters");
+        } else if (name.length() < 3) {
+            throw new IncorrectDetailsException("Milestone name must be at least 3 characters");
+        } else if (ValidationUtilities.hasMultipleSpaces(name)) {
+            throw new IncorrectDetailsException("Milestone name must not contain multiple consecutive spaces.");
+        }
+
+        this.name = name.strip();
     }
 
 
@@ -95,20 +104,23 @@ public class Milestone {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(Date date) throws IncorrectDetailsException {
+        if (project == null) {
+            throw new IncorrectDetailsException("Milestone must be associated with a project");
+        } else if (date.after(project.getEndDate())) {
+            throw new IncorrectDetailsException("Milestone date cannot be after project end date");
+        } else if (date.before(project.getStartDate())) {
+            throw new IncorrectDetailsException("Milestone date cannot be before project start date");
+        }
         this.date = date;
     }
 
-    public List<SprintColor> getColors() {
-        return this.colors;
+    public SprintColor getColor() {
+        return this.color;
     }
 
-    public void addColor(SprintColor color, int index) {
-        this.colors.add(index, color);
-    }
-
-    public void clearColorList() {
-        colors.clear();
+    public void setColor(SprintColor color) {
+        this.color = color;
     }
 
     @Override
@@ -118,7 +130,7 @@ public class Milestone {
                 ", projectId=" + project.getProjectId() +
                 ", name='" + name + '\'' +
                 ", date=" + date +
-                ", colors= " + colors +
+                ", color= " + color +
                 '}';
     }
 

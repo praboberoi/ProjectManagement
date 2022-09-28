@@ -156,8 +156,8 @@ public class DeadlineService {
             deadlineRepository.save(deadline);
             return message;
         } catch (PersistenceException e) {
-            logger.error("Failure to save the deadline", e);
-            throw new IncorrectDetailsException("Failure to save the deadline");
+            logger.error("Failed to save the deadline", e);
+            throw new IncorrectDetailsException("Failed to save the deadline");
         }
     }
 
