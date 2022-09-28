@@ -217,18 +217,6 @@ public class ProjectControllerTest {
     }
 
     /**
-     * Test get sprints and check that it returns the correct response.
-     * @throws Exception Thrown during mockmvc run time
-     */
-    @Test
-    void givenServer_WhenGetSprints_ThenSprintsReturnedSuccessfully() throws Exception{
-        when(sprintService.getSprintsByProject(anyInt())).thenReturn(testSprintList);
-        this.mockMvc
-                .perform(get("/project/1/sprints"))
-                .andExpect(status().isOk());
-    }
-
-    /**
      * Test project can be saved correctly.
      * @throws Exception Thrown during mockmvc run time
      */
