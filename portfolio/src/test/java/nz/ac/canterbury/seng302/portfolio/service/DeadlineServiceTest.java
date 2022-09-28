@@ -126,7 +126,7 @@ class DeadlineServiceTest {
      */
     @Test
     void givenDeadlineAndSprintExist_whenDeadlineBySprintRequested_thenAListOfDeadlinesIsReturned() {
-        Assertions.assertEquals(List.of(deadline2), deadlineService.getDeadlineBySprint(1));
+        Assertions.assertEquals(List.of(deadline2), deadlineService.getDeadlinesBySprintId(1));
     }
 
     /**

@@ -154,7 +154,7 @@ public class DashboardControllerTest {
      */
     @Test
     void givenServer_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
         when(dashboardService.saveProject(any())).thenReturn("Successfully Created " + defaultProject.getProjectName());
         this.mockMvc
                 .perform(post("/dashboard/saveProject").flashAttr("project", defaultProject))
