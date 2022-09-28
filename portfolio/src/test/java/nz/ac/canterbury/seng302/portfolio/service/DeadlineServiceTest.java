@@ -321,7 +321,7 @@ class DeadlineServiceTest {
         deadlines.add(deadline);
         when(sprintRepository.findByDateAndProject(deadline.getProject(),
                  new java.sql.Date(deadline.getDate().getTime()))).thenReturn(sprint);
-        Hashtable<Integer, String> testData = deadlineService.getSprintOccurringOnDeadlines(deadlines);
+        HashMap<Integer, String> testData = deadlineService.getSprintOccurringOnDeadlines(deadlines);
         assertEquals("(Test Sprint)", testData.get(deadline.getDeadlineId()));
     }
 
@@ -334,7 +334,7 @@ class DeadlineServiceTest {
         deadlines.add(deadline2);
         when(sprintRepository.findByDateAndProject(deadline2.getProject(),
                 new java.sql.Date(deadline2.getDate().getTime()))).thenReturn(null);
-        Hashtable<Integer, String> testData = deadlineService.getSprintOccurringOnDeadlines(deadlines);
+        HashMap<Integer, String> testData = deadlineService.getSprintOccurringOnDeadlines(deadlines);
         assertEquals("(No Sprint)", testData.get(deadline2.getDeadlineId()));
     }
 
