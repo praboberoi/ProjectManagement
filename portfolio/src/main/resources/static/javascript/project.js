@@ -134,12 +134,13 @@ function handleDeadlineNotification(message) {
     let action = array[1]
 
     let deadlineCard = document.getElementById(deadline + "-card");
-    updateSprintAccordions()
-
+    
     if (action === "edited") {
         loadDeadlineCards()
+        updateSprintAccordions()
     } else if (action === "deleted" && deadlineCard) {
         deadlineCard.outerHTML = ""
+        updateSprintAccordions()
         return
     } else if (action === "editing" && deadlineCard) {
         let user = array[2]
@@ -180,12 +181,13 @@ function handleMilestoneNotification(message) {
     let action = array[1]
 
     let milestoneCard = document.getElementById(milestone + "-card");
-    updateSprintAccordions()
-
+    
     if (action === "edited") {
         loadMilestoneCards()
+        updateSprintAccordions()
     } else if (action === "deleted" && milestoneCard) {
         milestoneCard.outerHTML = ""
+        updateSprintAccordions()
         return
     } else if (action === "editing" && milestoneCard) {
         let user = array[2]
@@ -211,12 +213,13 @@ function handleEventNotification(message) {
     let action = array[1]
 
     let eventCard = document.getElementById(event + "-card");
-    updateSprintAccordions()
-
+    
     if (action === "edited") {
         loadEventCards()
+        updateSprintAccordions()
     } else if (action === "deleted" && eventCard) {
         eventCard.outerHTML = ""
+        updateSprintAccordions()
         return
     } else if (action === "editing" && eventCard) {
         let user = array[2]
@@ -239,11 +242,6 @@ document.addEventListener('DOMContentLoaded', function () {
     connect();
 })
 
-var tabEl = document.querySelector('button[data-bs-toggle="tab"]')
-tabEl.addEventListener('shown.bs.tab', function (event) {
-  event.target // newly activated tab
-  event.relatedTarget // previous active tab
-})
 document.getElementById('planner-tab').addEventListener('shown.bs.tab', loadCalendar);
 
 /**

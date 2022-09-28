@@ -70,7 +70,7 @@ public class SprintController {
         List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
         Project project = new Project();
         project.setProjectId(projectId);
-        ModelAndView mv = new ModelAndView("project::sprints");
+        ModelAndView mv = new ModelAndView("projectFragments::sprints");
         mv.addObject(PROJECT_OBJECT, project);
         mv.addObject("listSprints", listSprints);
         return mv;
@@ -105,7 +105,7 @@ public class SprintController {
         Map<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
         
 
-        mv = new ModelAndView("project::sprintAccordion");
+        mv = new ModelAndView("projectFragments::sprintAccordion");
         mv.addObject(SPRINT_OBJECT, sprint);
         mv.addObject(LIST_EVENTS_OBJECT, listEvents);
         mv.addObject(LIST_DEADLINES_OBJECT, listDeadlines);
