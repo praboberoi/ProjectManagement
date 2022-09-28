@@ -63,7 +63,7 @@ class EvidenceServiceTest {
      * Asserts that the correct exception is thrown when verify evidence is called when given a null value
      */
     @Test
-    void givenEvidenceIsNull_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceIsNull_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(null));
 
@@ -71,10 +71,37 @@ class EvidenceServiceTest {
     }
 
     /**
+     * Asserts that the correct exception is thrown when verify evidence is called when the evidence
+     * title doesn't contain any letters
+     */
+    @Test
+    void givenEvidenceWithNoLettersInTitle_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
+        evidence1.setTitle("123123");
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+
+        assertEquals("Evidence title must contain some letters", exception.getMessage());
+    }
+
+    /**
+     * Asserts that the correct exception is thrown when verify evidence called with a description too small
+     */
+    @Test
+    void givenEvidenceDescriptionTooSmall_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
+        evidence1.setDescription("");
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+
+        assertEquals("Evidence description must be at least 2 characters", exception.getMessage());
+    }
+
+    /**
      * Asserts that the correct exception is thrown when verify evidence is called when given an object with null attributes
      */
     @Test
-    void givenEvidenceContainsNull_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceContainsNull_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         Evidence incorrectEvidence = evidenceBuilder
                 .evidenceId(99)
                 .title(null)
@@ -93,19 +120,19 @@ class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with an empty title
      */
     @Test
-    void givenEvidenceTitleIsEmpty_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceTitleIsEmpty_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         evidence1.setTitle("");
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
 
-        assertEquals("Evidence title must not be empty", exception.getMessage());
+        assertEquals("Evidence title must be at least 2 characters", exception.getMessage());
     }
 
     /**
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a too long title
      */
     @Test
-    void givenEvidenceTitleIsTooLong_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceTitleIsTooLong_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         evidence1.setTitle("This is a too long title for a piece of evidence, This is a too long title for a piece of evidence");
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -114,10 +141,23 @@ class EvidenceServiceTest {
     }
 
     /**
+     * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a too long description
+     */
+    @Test
+    void givenEvidenceDescriptionIsTooLong_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
+        evidence1.setDescription("This is a too long description for a piece of evidence This is a too long description for a piece of evidenceThis is a too long description " +
+                "for a piece of evidence This is a too long description for asasd");
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+
+        assertEquals("Evidence description must be equal or less that 200 characters", exception.getMessage());
+    }
+
+    /**
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a date too early
      */
     @Test
-    void givenEvidenceDateTooEarly_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceDateTooEarly_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         evidence1.setDateOccurred(new Date(0));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -129,7 +169,7 @@ class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a date too late
      */
     @Test
-    void givenEvidenceDateTooLate_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceDateTooLate_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         evidence1.setDateOccurred(new Date(3025, Calendar.MARCH, 2));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -141,7 +181,7 @@ class EvidenceServiceTest {
      * Asserts that the no exception is thrown by verifyEvidence when given evidence is a valid object
      */
     @Test
-    void givenCorrectEvidence_whenVerifyEvent_thenNoExceptionIsThrown() throws IncorrectDetailsException {
+    void givenCorrectEvidence_whenVerifyEvidence_thenNoExceptionIsThrown() throws IncorrectDetailsException {
         evidenceService.verifyEvidence(evidence1);
     }
 

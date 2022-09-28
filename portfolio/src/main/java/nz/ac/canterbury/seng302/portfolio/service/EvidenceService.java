@@ -96,7 +96,7 @@ public class EvidenceService {
         // find match between given string and pattern
         Matcher matcherText = Pattern.compile(regex).matcher(evidence.getTitle());
 
-        if (evidence.getTitle().length() < 1)
+        if (evidence.getTitle().length() < 2)
             throw new IncorrectDetailsException("Evidence title must be at least 2 characters");
 
         else if (evidence.getTitle().length() > 50)
@@ -108,7 +108,7 @@ public class EvidenceService {
         if (evidence.getDescription().length() <= 2)
             throw new IncorrectDetailsException("Evidence description must be at least 2 characters");
 
-        else if (evidence.getTitle().length() > 200)
+        else if (evidence.getDescription().length() > 200)
             throw new IncorrectDetailsException("Evidence description must be equal or less that 200 characters");
 
         else if (evidence.getDateOccurred().before(evidence.getProject().getStartDate()))
