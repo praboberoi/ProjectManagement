@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * Test class for the Evidence Entity.
  */
-public class EvidenceTest {
+class EvidenceTest {
 
     private Evidence evidence;
 
