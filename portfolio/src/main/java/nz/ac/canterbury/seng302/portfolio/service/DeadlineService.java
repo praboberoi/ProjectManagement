@@ -205,14 +205,6 @@ public class DeadlineService {
             if ( !deadline.getColors().contains(sprint.getColor()) )
                 deadline.addColor(sprint.getColor(), counter.getAndIncrement());
         });
-
-        if (!sprintList.isEmpty()) {
-            if ( sprintList.get(0).getStartDate().after(deadline.getDate()) )
-                deadline.addColor(SprintColor.WHITE, 0);
-
-            if (sprintList.get(sprintList.size() - 1).getEndDate().before(deadline.getDate()))
-                deadline.addColor(SprintColor.WHITE, deadline.getColors().size());
-        }
     }
 
 }

@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -311,5 +312,59 @@ class DeadlineServiceTest {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
             deadlineService.saveDeadline(deadline));
         Assertions.assertEquals("Failed to save the deadline", exception.getMessage());
+    }
+
+    /**
+     * Test to check that when a deadline with an invalid name is verified an appropriate error is thrown
+     */
+    @Test
+    void givenInvalidDeadlineWithNameLessThanThreeCharactersExists_whenVerifyDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
+        Deadline deadline2 = new Deadline.Builder()
+                .deadlineId(1)
+                .name("Te")
+                .project(project)
+                .date(project.getStartDate())
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                deadlineService.verifyDeadline(deadline2));
+        Assertions.assertEquals("Deadline name must be at least 3 characters", exception.getMessage());
+    }
+
+
+    /**
+     * Test to check when an invalid deadline with an emoji is passed for verification an inappropriate errror
+     * thrown
+     */
+    @Test
+    void givenInvalidDeadlineWithAnEmojiInNameExists_whenVerifyDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
+        Deadline deadline2 = new Deadline.Builder()
+                .deadlineId(1)
+                .name("Test 😀")
+                .project(project)
+                .date(project.getStartDate())
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                deadlineService.verifyDeadline(deadline2));
+        Assertions.assertEquals("Deadline name must not contain an emoji", exception.getMessage());
+    }
+
+    /**
+     * Asserts that the colours for the given deadline is updated based on the given list of sprint
+     */
+    @Test
+    void givenEventExists_whenUpdateEventColorsIsRequested_thenEventColorsListIsUpdatedWithSprintList() {
+
+        Sprint sprint1 = new Sprint.Builder().sprintName("Sprint 1").sprintId(1)
+                .startDate(new java.sql.Date(2020 - 1900, 11, 1))
+                .endDate(new java.sql.Date(2020 - 1900, 11, 2))
+                .color(SprintColor.BLUE).build();
+
+        List<Sprint> sprintList = List.of(sprint1);
+        when(sprintRepository.findSprintsByDeadline(deadline)).thenReturn(sprintList);
+        deadlineService.updateDeadlineColors(deadline);
+
+        assertArrayEquals(List.of(SprintColor.BLUE).toArray(), deadline.getColors().toArray());
     }
 }
