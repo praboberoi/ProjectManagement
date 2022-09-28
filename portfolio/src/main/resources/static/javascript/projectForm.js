@@ -242,12 +242,12 @@ function editProjectModalInit(projectId) {
     document.getElementById('project-name').value = projectName;
 
     
-    let projectStartDate = document.getElementById(`project${projectId}-startDate`).value
-    document.getElementById('projectFormStartDate').value = projectStartDate;
+    let projectStartDate = new Date(document.getElementById(`project${projectId}-startDate`).value)
+    document.getElementById('projectFormStartDate').value = new Date(projectStartDate).toLocaleDateString("en-CA");
 
     
-    let projectEndDate = document.getElementById(`project${projectId}-endDate`).value
-    document.getElementById('projectFormEndDate').value = projectEndDate;
+    let projectEndDate = new Date(document.getElementById(`project${projectId}-endDate`).value)
+    document.getElementById('projectFormEndDate').value = projectEndDate.toLocaleDateString("en-CA");
     
 
     let minStartDate = new Date();
@@ -257,11 +257,11 @@ function editProjectModalInit(projectId) {
     maxEndDate.setFullYear(maxEndDate.getFullYear() + 10);
     
 
-    document.getElementById('projectFormStartDate').setAttribute("min", Math.min(minStartDate, projectStartDate));
-    document.getElementById('projectFormStartDate').setAttribute("max", Math.max(minStartDate, projectEndDate));
+    document.getElementById('projectFormStartDate').setAttribute("min", new Date(Math.min(minStartDate, projectStartDate)).toLocaleDateString("en-CA"));
+    document.getElementById('projectFormStartDate').setAttribute("max", new Date(Math.max(maxEndDate, projectEndDate)).toLocaleDateString("en-CA"));
     
-    document.getElementById('projectFormEndDate').setAttribute("min", Math.min(minStartDate, projectStartDate));
-    document.getElementById('projectFormEndDate').setAttribute("max", Math.max(minStartDate, projectEndDate));
+    document.getElementById('projectFormEndDate').setAttribute("min", new Date(Math.min(minStartDate, projectStartDate)).toLocaleDateString("en-CA"));
+    document.getElementById('projectFormEndDate').setAttribute("max", new Date(Math.max(maxEndDate, projectEndDate)).toLocaleDateString("en-CA"));
 
 
     let projectDescription = document.getElementById(`project${projectId}-description`).innerText
