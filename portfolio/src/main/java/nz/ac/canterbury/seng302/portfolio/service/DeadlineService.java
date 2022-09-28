@@ -181,9 +181,9 @@ public class DeadlineService {
         } else if (deadline.getDate().before(deadline.getProject().getStartDate())) {
             throw new IncorrectDetailsException("Deadline date cannot be before project start date");
         } else {
-            String expected_name = String.join("", List.of(deadline.getName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+            String expectedName = String.join("", List.of(deadline.getName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
 
-            if (! expected_name.equals(deadline.getName()))
+            if (! expectedName.equals(deadline.getName()))
                 throw new IncorrectDetailsException("Deadline name must not contain an emoji");
         }
 

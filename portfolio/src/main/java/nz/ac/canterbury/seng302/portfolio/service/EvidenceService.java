@@ -94,14 +94,14 @@ public class EvidenceService {
             evidence.setTitle(evidence.getTitle().strip());
             String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";
 
-            String expected_name = String.join("", List.of(evidence.getTitle().strip().split(emojiRex)));
+            String expectedName = String.join("", List.of(evidence.getTitle().strip().split(emojiRex)));
 
-            String expected_description = String.join("", List.of(evidence.getDescription().strip().split(emojiRex)));
+            String expectedDescription = String.join("", List.of(evidence.getDescription().strip().split(emojiRex)));
 
-            if (!expected_name.equals(evidence.getTitle()))
+            if (!expectedName.equals(evidence.getTitle()))
                 throw new IncorrectDetailsException("Evidence title must not contain an emoji");
 
-            else if (!expected_description.equals(evidence.getDescription()))
+            else if (!expectedDescription.equals(evidence.getDescription()))
                 throw new IncorrectDetailsException("Evidence description must not contain an emoji");
 
             if (evidence.getTitle().length() < 1)

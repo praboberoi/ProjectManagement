@@ -203,13 +203,13 @@ public class SprintService {
     public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
         String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";
 
-        String expected_name = String.join("", List.of(sprint.getSprintName().strip().split(emojiRex)));
-        String expected_description = String.join("", List.of(sprint.getDescription().strip().split(emojiRex)));
+        String expectedName = String.join("", List.of(sprint.getSprintName().strip().split(emojiRex)));
+        String expectedDescription = String.join("", List.of(sprint.getDescription().strip().split(emojiRex)));
 
-        if (! expected_name.equals(sprint.getSprintName()))
+        if (! expectedName.equals(sprint.getSprintName()))
             throw new IncorrectDetailsException("Sprint name must not contain an emoji");
 
-        if (! expected_description.equals(sprint.getDescription()))
+        if (! expectedDescription.equals(sprint.getDescription()))
             throw new IncorrectDetailsException("Sprint description must not contain an emoji");
 
         if (sprint.getSprintName().length() > 50)

@@ -101,13 +101,13 @@ public class DashboardService {
 
         String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";
 
-        String expected_name = String.join("", List.of(project.getProjectName().strip().split(emojiRex)));
-        String expected_description = String.join("", List.of(project.getDescription().strip().split(emojiRex)));
+        String expectedName = String.join("", List.of(project.getProjectName().strip().split(emojiRex)));
+        String expectedDescription = String.join("", List.of(project.getDescription().strip().split(emojiRex)));
 
-        if (! expected_name.equals(project.getProjectName()))
+        if (! expectedName.equals(project.getProjectName()))
             throw new IncorrectDetailsException("Project name must not contain an emoji");
 
-        if (! expected_description.equals(project.getDescription()))
+        if (! expectedDescription.equals(project.getDescription()))
             throw new IncorrectDetailsException("Project description must not contain an emoji");
 
         if (projectName != null && projectName.getProjectId() != project.getProjectId()) {
@@ -129,8 +129,6 @@ public class DashboardService {
             throw new IncorrectDetailsException("Project description cannot exceed 250 characters");
         }
     }
-
-
 
     /**
      * Obtains the date ranges of the project

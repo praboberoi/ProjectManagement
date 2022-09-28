@@ -129,9 +129,9 @@ public class EventService {
             // Removes leading and trailing white spaces from the name
             event.setEventName(event.getEventName().strip());
 
-            String expected_name = String.join("", List.of(event.getEventName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
+            String expectedName = String.join("", List.of(event.getEventName().strip().split("[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]")));
 
-            if (!expected_name.equals(event.getEventName()))
+            if (!expectedName.equals(event.getEventName()))
                 throw new IncorrectDetailsException("Event name must not contain an emoji");
 
             if (event.getEventName().length() < 1)
