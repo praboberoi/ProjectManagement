@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import java.sql.Date;
 import java.util.Calendar;
 import java.util.List;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
@@ -139,6 +141,42 @@ class SprintServiceTest {
         sprintService.updateSprintLabelsAndColor(sprintList);
         assertEquals("blue", sprint2.getColor().getColor());
         assertEquals("Sprint 1", sprint2.getSprintLabel());
+    }
+
+    /**
+     * Checks that for an invalid sprint with an emoji in the name throws an appropriate exception
+     */
+    @Test
+    void givenInvalidSprintWithEmojiInName_whenVerifyRequested_thenAppropriateExceptionThrown() {
+        Sprint sprint2 = new Sprint.Builder()
+                .sprintLabel("Sprint 2")
+                .sprintName("Sprint 😀")
+                .description("This is a sprint description")
+                .project(project)
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(Calendar.getInstance().getTimeInMillis())).build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                sprintService.verifySprint(sprint2));
+        Assertions.assertEquals("Sprint name must not contain an emoji", exception.getMessage());
+    }
+
+    /**
+     * Checks that for an invalid sprint with an emoji in the description throws an appropriate exception
+     */
+    @Test
+    void givenInvalidSprintWithEmojiInDescription_whenVerifyRequested_thenAppropriateExceptionThrown() {
+        Sprint sprint2 = new Sprint.Builder()
+                .sprintLabel("Sprint 2")
+                .sprintName("Sprint 2")
+                .description("This is a sprint description 😀")
+                .project(project)
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(Calendar.getInstance().getTimeInMillis())).build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                sprintService.verifySprint(sprint2));
+        Assertions.assertEquals("Sprint description must not contain an emoji", exception.getMessage());
     }
 
 }

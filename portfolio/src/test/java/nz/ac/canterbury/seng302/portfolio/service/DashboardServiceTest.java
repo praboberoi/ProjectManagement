@@ -169,7 +169,7 @@ class DashboardServiceTest {
     }
 
     /**
-     * Checks that for an invalid project with an emoji in the name throws an appropriate exception
+     * Checks that for an invalid project with an emoji in the description throws an appropriate exception
      */
     @Test
     void givenInvalidProjectWithEmojiInDescription_whenVerifyProjectRequested_thenAppropriateExceptionIsThrown() {
