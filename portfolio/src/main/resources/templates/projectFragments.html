@@ -275,6 +275,7 @@
                                 <div th:id="'showSprint'+ ${sprint.sprintId}" class="accordion-collapse collapse"
                                     data-bs-parent=".table">
                                     <div class="accordion-body">
+                                        <input type="hidden" class="accordion-sprint-id" th:value="${sprint.sprintId}">
                                         <!-- Show Events -->
                                         <div class="outer-box" id="event-display">
                                             <div class="inner-box">
