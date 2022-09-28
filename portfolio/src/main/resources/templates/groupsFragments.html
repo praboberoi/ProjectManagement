@@ -297,8 +297,8 @@
     </div>
 </div>
 
-<div th:if="${adminOrTeacher}" class="container-fluid p-0 my-2" th:fragment="moveUsers">
-    <button id="move-users" type="button" class="btn btn-outline-secondary col-12 col-md-6" data-bs-toggle="modal"
+<div th:if="${adminOrTeacher}" class="container-fluid p-0 my-2 col-12 col-md-6" th:fragment="moveUsers">
+    <button id="move-users" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
         data-bs-target="#moveModal" disabled>
         Add selected users to group...
     </button>
