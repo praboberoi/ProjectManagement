@@ -133,7 +133,7 @@
                         <div class="mb-3">
                             <label for="evidence-project" class="col-form-label required">Select Project</label>
                             <select type="text" class="form-select required" id="evidence-project"
-                                    th:field="*{project}" onclick="evidenceProjectChange()" required>
+                                    th:field="*{project}" onchange="evidenceProjectChange()" required>
                                 <th:block th:each="project : ${listProjects}">
                                     <option  id="selectedProject" th:value ="${project.projectId}"
                                              th:data-startDate="${project.startDate}" th:data-endDate="${project.endDate}">
@@ -152,7 +152,7 @@
                                      th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
                             </span>
                             <input type="date" class="form-control required" id="evidence-date"
-                                   th:field="*{dateOccurred}" th:min="${projectStartDate}" th:max="${projectEndDate}" oninput="checkEvidenceDate()" required>
+                                   th:field="*{dateOccurred}" th:min="${projectStartDate}" th:max="${projectEndDate}" onchange="checkEvidenceDate()" required>
                             <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
                         </div>
 
