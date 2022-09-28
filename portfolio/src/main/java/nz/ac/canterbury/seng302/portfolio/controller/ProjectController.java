@@ -168,23 +168,6 @@ public class ProjectController {
     }
 
     /**
-     * Return the html component which contains the specified project's sprints
-     * 
-     * @param projectId Project containing the desired sprints
-     * @return Page fragment containing sprints
-     */
-    @GetMapping(path = "/project/{projectId}/sprints")
-    public ModelAndView groupsList(@PathVariable("projectId") int projectId) {
-        List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
-        Project project = new Project();
-        project.setProjectId(projectId);
-        ModelAndView mv = new ModelAndView("project::sprints");
-        mv.addObject(PROJECT_OBJECT, project);
-        mv.addObject("listSprints", listSprints);
-        return mv;
-    }
-
-    /**
      * Deletes the project and all the related sprints
      * 
      * @param projectId Of type int

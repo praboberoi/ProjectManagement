@@ -28,8 +28,8 @@ function checkProjectDates() {
 
     let valid = true
 
-    valid = valid && checkStartDate();
-    valid = valid && checkEndDate();
+    valid = valid && checkProjectStartDate();
+    valid = valid && checkProjectEndDate();
 
     if (startDate > endDate) {
         startDateError.innerText = "Start date must be before the end date.";
@@ -50,7 +50,7 @@ function checkProjectDates() {
 /**
  * Checks that the start date of the project is valid
  */
-function checkStartDate() {
+function checkProjectStartDate() {
     const startDateElement = document.querySelector('#projectFormStartDate');
     const startDateError = document.getElementById('startDateError');
     const startDate = new Date(startDateElement.value);
@@ -89,7 +89,7 @@ function checkStartDate() {
 /**
  * Checks that the end date of the project is valid
  */
-function checkEndDate() {
+function checkProjectEndDate() {
     const endDateElement = document.querySelector('#projectFormEndDate');
     const endDateError = document.getElementById('endDateError');
     const endDate = new Date(endDateElement.value);
