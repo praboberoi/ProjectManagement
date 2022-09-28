@@ -20,6 +20,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 
@@ -72,10 +73,10 @@ public class ProjectController {
 
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
-            Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getSprintLabelsForStartAndEndDates(listEvents);
+            HashMap<Integer, List<String>> eventDateMappingDictionary = eventService.getSprintLabelsForStartAndEndDates(listEvents);
 
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
-            Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
+            HashMap<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
 
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
 

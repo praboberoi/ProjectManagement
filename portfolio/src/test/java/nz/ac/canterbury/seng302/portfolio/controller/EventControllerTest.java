@@ -297,7 +297,7 @@ public class EventControllerTest {
      */
     @Test
     void givenServer_WhenGetRequestMade_ThenDateMappingPresent() throws Exception {
-        Hashtable<Integer, List<String>> testData = new Hashtable<Integer, List<String>>();
+        HashMap<Integer, List<String>> testData = new HashMap<Integer, List<String>>();
         List<String> testNames = new ArrayList<String>();
         testNames.add("TestName 1");
         testNames.add("TestName 2");
