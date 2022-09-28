@@ -38,11 +38,11 @@
                     </button>
                 </div>
             </div>
-            <div class="container-fluid row px-0 mx-0" style="height: 5px;">
-                <th:block th:each="color : ${deadline.getColors()}">
-                    <div class="col" th:style="'background-color: ' + ${color.getColor()}"></div>
-                </th:block>
-            </div>
+        </div>
+        <div class="container-fluid row px-0 mx-0" style="height: 5px;">
+            <th:block th:each="color : ${deadline.getColors()}">
+                <div class="col" th:style="'background-color: ' + ${color.getColor()}"></div>
+            </th:block>
         </div>
     </div>
 

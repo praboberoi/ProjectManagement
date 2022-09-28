@@ -96,7 +96,7 @@ public class DashboardService {
      * @throws IncorrectDetailsException indicating page values of the HTML page are manually changed.
      */
     public void verifyProject(Project project) throws IncorrectDetailsException {
-        List<Sprint> sprints = sprintService.getSprintByProject(project.getProjectId());
+        List<Sprint> sprints = sprintService.getSprintsByProject(project.getProjectId());
         Project projectName = projectRepo.findByProjectName(project.getProjectName());
 
         String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";

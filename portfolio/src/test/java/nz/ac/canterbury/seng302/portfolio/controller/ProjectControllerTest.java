@@ -132,7 +132,7 @@ public class ProjectControllerTest {
         Deadline newDeadline = new Deadline.Builder().project(project).name("Test").build();
         Milestone newMilestone = new Milestone.Builder().project(project).name("Test").build();
         Event newEvent = new Event.Builder().eventName("Test").build();
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
         when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         when(eventService.getNewEvent(any())).thenReturn(newEvent);
@@ -187,21 +187,9 @@ public class ProjectControllerTest {
      */
     @Test
     void givenServer_WhenGetAllSprints_ThenSprintsReturnedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(testSprintList);
         this.mockMvc
                 .perform(get("/project/1/getAllSprints"))
-                .andExpect(status().isOk());
-    }
-
-    /**
-     * Test get sprints and check that it returns the correct response.
-     * @throws Exception Thrown during mockmvc run time
-     */
-    @Test
-    void givenServer_WhenGetSprints_ThenSprintsReturnedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
-        this.mockMvc
-                .perform(get("/project/1/sprints"))
                 .andExpect(status().isOk());
     }
 }

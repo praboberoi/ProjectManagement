@@ -14,36 +14,41 @@ import java.time.LocalDate;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.*;
 
-
 /**
-    Client service used to communicate to the database
+ * Client service used to communicate to the database
  */
 @Service
 public class EventService {
-    @Autowired private EventRepository eventRepository;
-    @Autowired private ProjectRepository projectRepository;
-    @Autowired private SprintRepository sprintRepository;
+    @Autowired
+    private EventRepository eventRepository;
+    @Autowired
+    private ProjectRepository projectRepository;
+    @Autowired
+    private SprintRepository sprintRepository;
     private Logger logger = LoggerFactory.getLogger(EventService.class);
 
-
-    public EventService(ProjectRepository projectRepository, EventRepository eventRepository, SprintRepository sprintRepository) {
+    public EventService(ProjectRepository projectRepository, EventRepository eventRepository,
+            SprintRepository sprintRepository) {
         this.eventRepository = eventRepository;
         this.projectRepository = projectRepository;
         this.sprintRepository = sprintRepository;
     }
 
     /**
-     * Returns an event object from the database. If the event is not present then it throws an exception.
+     * Returns an event object from the database. If the event is not present then
+     * it throws an exception.
+     *
      * @param eventId The unique id (integer) of the requested event.
      * @return Event The event requested with the associated id.
-     * @throws IncorrectDetailsException If null value is returned by {@link EventRepository#findById(Object) findById}
+     * @throws IncorrectDetailsException If null value is returned by
+     *                                   {@link EventRepository#findById(Object)
+     *                                   findById}
      */
     public Event getEvent(int eventId) throws IncorrectDetailsException {
         Event result = eventRepository.findById(eventId);
-        if(result != null)
+        if (result != null)
             return result;
         else
             throw new IncorrectDetailsException("Failed to locate the event in the database");
@@ -52,6 +57,7 @@ public class EventService {
 
     /**
      * Creates a new event with a name
+     *
      * @return of type Event
      */
     public Event getNewEvent(Project project) {
@@ -67,10 +73,14 @@ public class EventService {
     }
 
     /**
-     * This method maps the id's of events to the names of sprints that occur at the start and end of the event
+     * This method maps the id's of events to the names of sprints that occur at the
+     * start and end of the event
+     *
      * @param eventList The list of events to have sprints mapped to them
-     * @return Hashtable containing a mapping between the id of an event to a List containing the sprint occurring at
-     * the start of the event and then the sprint that occurs at the end of an event.
+     * @return Hashtable containing a mapping between the id of an event to a List
+     *         containing the sprint occurring at
+     *         the start of the event and then the sprint that occurs at the end of
+     *         an event.
      */
     public Hashtable<Integer, List<String>> getStartAndEndDates(List<Event> eventList) {
         Hashtable<Integer, List<String>> eventDateMappingDictionary = new Hashtable<Integer, List<String>>();
@@ -97,25 +107,26 @@ public class EventService {
 
     /**
      * Returns a list of events that are related to the given project ID
+     *
      * @param projectId of type int
      * @return a list of events from a project specified by its Id.
      */
     public List<Event> getEventByProjectId(int projectId) {
         Optional<Project> current = projectRepository.findById(projectId);
         return current.map(project -> eventRepository
-                    .findByProject(project)
-                    .stream()
-                    .sorted(Comparator.comparing(Event::getStartDate))
-                    .toList())
+                .findByProject(project)
+                .stream()
+                .sorted(Comparator.comparing(Event::getStartDate))
+                .toList())
                 .orElse(List.of());
     }
 
-
     /**
      * Verifies the event date and time
+     *
      * @param event The event object to verify
      * @throws IncorrectDetailsException Message explaining the error
-     * */
+     */
     public void verifyEvent(Event event) throws IncorrectDetailsException {
 
         if (event == null)
@@ -156,11 +167,12 @@ public class EventService {
 
     /**
      * Updates the colours for the given event
+     *
      * @param event of type Event
      */
     public void updateEventColors(Event event) {
         List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event)
-                .stream().sorted((sprint1, sprint2)-> sprint1.getEndDate().before(sprint2.getStartDate()) ? 1 : 0)
+                .stream().sorted((sprint1, sprint2) -> sprint1.getEndDate().before(sprint2.getStartDate()) ? 1 : 0)
                 .toList();
         ArrayList<SprintColor> eventColours = new ArrayList<>();
         sprintList.forEach(sprint -> {

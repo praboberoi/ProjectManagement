@@ -75,3 +75,19 @@
         </div>
     </div>
 </th:block>
+
+<div class="outer-box" id="milestone-display" th:fragment="accordionComponent">
+    <div class="inner-box">
+        <div class="heading-size">
+          <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events"
+            height=16 width=16 class="calendarIcons">
+          Milestones
+        </div><br>
+        <th:block th:each="milestone : ${listMilestones}">
+          <div th:if="${(milestone.date >= sprint.startDate and milestone.date <= sprint.endDate)}">
+            <b>[[${milestone.name}]]</b>
+            <br><b>Date:</b> [[${#dates.format(milestone.date, 'dd MMM yyyy')}]]
+          </div>
+        </th:block>
+      </div>
+</div>

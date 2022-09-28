@@ -127,7 +127,7 @@ public class Deadline {
     public String toString() {
         return "Deadline{" +
                 "deadlineId=" + deadlineId +
-                ", projectId=" + project.getProjectId() +
+                ", project=" + project +
                 ", name='" + name + '\'' +
                 ", date=" + date +
                 ", colors= " + colors +
@@ -138,7 +138,7 @@ public class Deadline {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Deadline deadline)) return false;
-        return deadlineId == deadline.deadlineId && project.equals(deadline.project) && name.equals(deadline.name) && date.equals(deadline.date);
+        return deadlineId == deadline.deadlineId && Objects.equals(project, deadline.project) && Objects.equals(name, deadline.name) && Objects.equals(date, deadline.date);
     }
 
     @Override

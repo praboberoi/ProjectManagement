@@ -226,7 +226,8 @@
                   <td colspan="100%" class="hidden-row">
                     <div th:id="'showSprint'+ ${sprint.sprintId}" class="accordion-collapse collapse"
                       data-bs-parent=".table">
-                      <div class="accordion-body">
+                      <div class="accordion-body" th:fragment="sprintAccordion">
+                        <input type="hidden" class="accordion-sprint-id" th:value="${sprint.sprintId}">
                         <!-- Show Events -->
                         <div class="outer-box" id="event-display">
                           <div class="inner-box">
@@ -260,14 +261,8 @@
                             </th:block>
                           </div>
                         </div>
-                        <div class="outer-box" id="milestone-display">
-                          <div class="inner-box">
-                            <div class="heading-size">
-                              <img hidden th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events"
-                                height=16 width=16 class="calendarIcons">
-                            </div><br>
-                          </div>
-                        </div>
+                        <span th:replace="milestoneFragments::accordionComponent"></span>
+                        
                       </div>
                     </div>
                   </td>

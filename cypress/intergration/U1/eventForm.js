@@ -69,3 +69,11 @@ When("I enter the valid date and times for the event", () => {
 Then("The event is successfully saved", ()=> {
     cy.get('.alert-success').should('contain.text', 'Successfully Created New Event')
 })
+
+Then("{string} in Sprint {int} accordion", (element, label) => {
+    cy.get("button").contains("Sprint " + label).parents("tbody").should('contain.text', element)
+})
+
+Then("{string} not in Sprint {int} accordion", (element, label) => {
+    cy.get("button").contains("Sprint " + label).parents("tbody").should('not.contain.text', element)
+})

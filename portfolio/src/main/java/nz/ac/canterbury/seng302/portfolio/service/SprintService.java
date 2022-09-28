@@ -44,7 +44,7 @@ public class SprintService {
                                   .sprintName("Sprint " + sprintNo)
                 .color(SprintColor.valueOf(sprintNo % 8 == 0 ? 7 : sprintNo % 8)).build();
 
-        List<Sprint> listSprints = getSprintByProject(project.getProjectId());
+        List<Sprint> listSprints = getSprintsByProject(project.getProjectId());
         if (listSprints.isEmpty()) {
             LocalDate startDate = project.getStartDate().toLocalDate();
             sprint.setStartDate(Date.valueOf(startDate));
@@ -143,7 +143,7 @@ public class SprintService {
      * @param projectId of type int
      * @return a list of sprints from a project specified by its Id.
      */
-    public List<Sprint> getSprintByProject(int projectId) {
+    public List<Sprint> getSprintsByProject(int projectId) {
         Optional<Project> current = projectRepo.findById(projectId);
         return current.map(project -> sprintRepository.findByProject(project)).orElse(List.of());
     }
@@ -155,7 +155,7 @@ public class SprintService {
      * @return a list of Strings containing the date range.
      */
     public List<String> getSprintDateRange(Project project, Sprint sprint) {
-        List<Sprint> sprints = getSprintByProject(project.getProjectId());
+        List<Sprint> sprints = getSprintsByProject(project.getProjectId());
         String stringSprintMinDate;
         String stringSprintMaxDate;
         if(sprints.isEmpty()) {
