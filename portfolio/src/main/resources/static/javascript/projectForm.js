@@ -237,7 +237,7 @@ function editProjectModalInit(projectId) {
     document.getElementById('projectFormModalError').innerText = ""
     document.getElementById('projectFormTitle').innerText = "Edit " + projectName
     
-    document.getElementById('projectId').value = projectId
+    document.getElementById('projectFormProjectId').value = projectId
     
     document.getElementById('project-name').value = projectName;
 
@@ -279,7 +279,7 @@ function createProjectModalInit() {
     document.getElementById('projectFormModalError').innerText = ""
     document.getElementById('projectFormTitle').innerText = "Create New Project"
     
-    document.getElementById('projectId').value = 0
+    document.getElementById('projectFormProjectId').value = 0
     
     document.getElementById('project-name').value = "Project " + new Date().getFullYear();
 
