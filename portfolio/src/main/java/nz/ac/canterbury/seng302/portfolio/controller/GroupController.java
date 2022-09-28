@@ -264,6 +264,11 @@ public class GroupController {
 
         RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
         if (response.getIsSuccess() && "".equals(additionalInfo)) {
+            if (groupId == -1) {
+                for (int userId : userIds) {
+                    notifyRoleChange(userId);
+                }
+            }
             notifyGroup(groupId, "members", "removed");
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
@@ -300,6 +305,11 @@ public class GroupController {
         AddGroupMembersResponse response = groupService.addGroupMembers(userIds, groupId);
         if (response.getIsSuccess()) {
             notifyGroup(groupId, "members", "added");
+            if (groupId == -1) {
+                for (int userId : userIds) {
+                    notifyRoleChange(userId);
+                }
+            }
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
@@ -338,7 +348,6 @@ public class GroupController {
      * Gets the individual group's title.
      * 
      * @param groupId The pages group id for future implementation
-     * @param model   Parameters sent to thymeleaf template to be rendered into HTML
      * @return The group page
      */
     @GetMapping(path = "/group/{groupId}/title")
@@ -358,5 +367,13 @@ public class GroupController {
      */
     private void notifyGroup(int groupId, String component, String action) {
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of user that has been updated
+     */
+    private void notifyRoleChange(int userId) {
+        template.convertAndSend("/element/user/" + userId + "/roles", "");
     }
 }
