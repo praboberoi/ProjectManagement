@@ -5,6 +5,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -144,5 +146,45 @@ class DashboardServiceTest {
         when(projectRepository.save(any())).thenReturn(testProject);
         String returnMessage = dashboardService.saveProject(testProject);
         assertEquals("Successfully Updated " + testProject.getProjectName(), returnMessage);
+    }
+
+    /**
+     * Checks that for an invalid project with an emoji in the name throws an appropriate exception
+     */
+    @Test
+    void givenInvalidProjectWithEmojiInName_whenVerifyProjectRequested_thenAppropriateExceptionIsThrown() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 1);
+
+        Project project = projectBuilder
+                .projectName("Project 😀")
+                .description("First Attempt")
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(c.getTimeInMillis()))
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                dashboardService.verifyProject(project));
+        Assertions.assertEquals("Project name must not contain an emoji", exception.getMessage());
+    }
+
+    /**
+     * Checks that for an invalid project with an emoji in the name throws an appropriate exception
+     */
+    @Test
+    void givenInvalidProjectWithEmojiInDescription_whenVerifyProjectRequested_thenAppropriateExceptionIsThrown() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 1);
+
+        Project project = projectBuilder
+                .projectName("Project 1")
+                .description("First Attempt 😀")
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(c.getTimeInMillis()))
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                dashboardService.verifyProject(project));
+        Assertions.assertEquals("Project description must not contain an emoji", exception.getMessage());
     }
 }
