@@ -236,7 +236,7 @@ public class ProjectControllerTest {
         when(projectService.saveProject(any())).thenReturn("Project created successfully");
 
         this.mockMvc
-                .perform(post("/project/").flashAttr("projectDTO", toDTO(new Project())))
+                .perform(post("/project/").flashAttr("projectDTO", toDTO(project)))
                 .andExpect(status().isOk())
                 .andExpect(content().string("Project created successfully"));
     }
