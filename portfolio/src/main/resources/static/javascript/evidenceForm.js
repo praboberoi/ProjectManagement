@@ -1,10 +1,3 @@
-const evidenceTitleError = document.getElementById('evidenceTitleError')
-const evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
-const evidenceDescription = document.getElementById('evidence-description');
-const evidence_project = document.getElementById("evidence-project");
-const evidenceDateElement = document.getElementById("evidence-date");
-const evidenceDateErrorElement = document.getElementById("evidenceDateError");
-
 let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
@@ -30,7 +23,8 @@ function saveEvidence() {
  * Validation for the evidence title
  */
 function checkEvidenceTitle() {
-    const evidenceTitle = document.getElementById('evidence-title');
+    let evidenceTitleError = document.getElementById('evidenceTitleError')
+    let evidenceTitle = document.getElementById('evidence-title');
     let evidenceTitleStrip = evidenceTitle.value.trim()
     let charMessage = document.getElementById("evidenceCharCount");
     let charCount = evidenceTitleStrip.length;
@@ -49,7 +43,10 @@ function checkEvidenceTitle() {
  * Validation for the evidence date
  */
 function checkEvidenceDate() {
-    const value = evidence_project.options[evidence_project.selectedIndex]
+    let evidence_project = document.getElementById("evidence-project");
+    let evidenceDateElement = document.getElementById("evidence-date");
+    let evidenceDateErrorElement = document.getElementById("evidenceDateError");
+    let value = evidence_project.options[evidence_project.selectedIndex]
     if (evidenceDateElement.value > value.dataset.enddate || evidenceDateElement.value < value.dataset.startdate) {
         evidenceDateErrorElement.innerText = "The evidence date must be within the selected project range"
     } else {
@@ -62,8 +59,9 @@ function checkEvidenceDate() {
  * Changes the dates min and max value when the project changes
  */
 function evidenceProjectChange() {
-    const evidence_project = document.getElementById("evidence-project");
-    const value = evidence_project.options[evidence_project.selectedIndex]
+    let evidenceDateElement = document.getElementById("evidence-date");
+    let evidence_project = document.getElementById("evidence-project");
+    let value = evidence_project.options[evidence_project.selectedIndex]
     evidenceDateElement.min = value.dataset.startdate;
     evidenceDateElement.max = value.dataset.enddate;
     checkEvidenceDate();
@@ -72,6 +70,8 @@ function evidenceProjectChange() {
  * Validation for the evidence description
  */
 function checkEvidenceDescription() {
+    let evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
+    let evidenceDescription = document.getElementById('evidence-description');
     let evidenceDescriptionStrip = evidenceDescription.value.trim()
     if (evidenceDescriptionStrip.length < 2) {
         evidenceDescriptionError.innerText = "Evidence description must be at least 2 characters"
@@ -86,6 +86,10 @@ function checkEvidenceDescription() {
  * Disables or enables the create button
  */
 function checkCreateButton() {
+    let evidenceTitleError = document.getElementById('evidenceTitleError')
+    let evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
+    let evidenceDescription = document.getElementById('evidence-description');
+    let evidenceDateErrorElement = document.getElementById("evidenceDateError");
     let evidenceDescriptionStrip = evidenceDescription.value.trim()
     evidenceCreateBtn.disabled = false;
 

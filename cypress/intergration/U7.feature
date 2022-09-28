@@ -5,3 +5,4 @@ Feature: U7. Evidence page
     When I click create evidence
     And I enter invalid evidence details
     Then Correct evidence validation carried out
+    And Correct evidence title character type validation carried out

@@ -171,7 +171,7 @@ public class EvidenceControllerTest {
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
         Project project = new Project.Builder().startDate(new Date(2022)).endDate(new Date(2022)).build();
-        ArrayList<Project> projectList = new ArrayList<>(Arrays.asList(project));
+        List<Project> projectList =  List.of(project);
         when(projectService.getAllProjects()).thenReturn(projectList);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getNewEvidence(99)).thenReturn(evidence);
