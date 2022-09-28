@@ -303,7 +303,7 @@ class DeadlineControllerTest {
      */
     @Test
     void givenServer_WhenGetRequestMade_ThenDateMappingPresent() throws Exception {
-        Hashtable<Integer, String> testData = new Hashtable<Integer, String>();
+        HashMap<Integer, String> testData = new HashMap<Integer, String>();
         String testName = "TestName 1";
         testData.put(deadline.getDeadlineId(), testName);
         when(deadlineService.getSprintOccurringOnDeadlines(any())).thenReturn(testData);
