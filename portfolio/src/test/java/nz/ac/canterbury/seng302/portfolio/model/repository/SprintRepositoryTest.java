@@ -45,6 +45,7 @@ class SprintRepositoryTest {
     @BeforeEach
     public void setUp() {
         project = new Project.Builder()
+                .projectId(0)
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new Date(2020, 3, 12))

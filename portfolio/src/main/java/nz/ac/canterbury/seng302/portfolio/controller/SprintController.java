@@ -31,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class SprintController {
@@ -83,7 +84,8 @@ public class SprintController {
      * @return Page fragment containing sprints
      */
     @GetMapping(path = "/project/{projectId}/sprint/{sprintId}/accordion")
-    public ModelAndView sprintAccordion(@PathVariable("projectId") int projectId, @PathVariable("sprintId") int sprintId) {
+    public ModelAndView sprintAccordion(@PathVariable("projectId") int projectId,
+            @PathVariable("sprintId") int sprintId) {
         Sprint sprint;
         ModelAndView mv;
         try {
@@ -96,14 +98,21 @@ public class SprintController {
         }
         List<Event> listEvents = eventService.getEventsBySprintId(sprintId);
         listEvents.forEach(eventService::updateEventColors);
+        Map<Integer, List<String>> eventDateMappingDictionary = eventService
+                .getSprintLabelsForStartAndEndDates(listEvents);
 
         List<Deadline> listDeadlines = deadlineService.getDeadlinesBySprintId(sprintId);
         listDeadlines.forEach(deadlineService::updateDeadlineColors);
+        Map<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
         
+
         mv = new ModelAndView("project::sprintAccordion");
         mv.addObject(SPRINT_OBJECT, sprint);
         mv.addObject(LIST_EVENTS_OBJECT, listEvents);
         mv.addObject(LIST_DEADLINES_OBJECT, listDeadlines);
+
+        mv.addObject("eventDateMappingDictionary", eventDateMappingDictionary);
+        mv.addObject("deadlineDateMapping", deadlineDateMapping);
 
         return mv;
     }
@@ -123,7 +132,8 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             Model model,
             RedirectAttributes ra) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return redirectDashboard;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+            return redirectDashboard;
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
@@ -195,7 +205,7 @@ public class SprintController {
             RedirectAttributes ra) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return redirectDashboard;
-        } 
+        }
 
         Sprint sprint = new Sprint(sprintDTO);
         try {
@@ -237,8 +247,7 @@ public class SprintController {
             @PathVariable("sprintId") int sprintId,
             Date startDate,
             Date endDate,
-            @AuthenticationPrincipal AuthState principal
-        ) {
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Unable to edit sprint. Incorrect permissions.");
         }
@@ -254,7 +263,7 @@ public class SprintController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-    
+
     /**
      * Deletes a sprint and redirects back to project page
      * 
@@ -267,91 +276,91 @@ public class SprintController {
      */
     @PostMapping(path = "project/{projectId}/deleteSprint/{sprintId}")
     public String deleteSprint(
-        @PathVariable("sprintId") int sprintId,
-        Model model,
-        @PathVariable int projectId,
-        @AuthenticationPrincipal AuthState principal,
-        RedirectAttributes ra) {
-            if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
-                return redirectDashboard;
-            } 
-            
-            try {
-                String responseMessage = sprintService.deleteSprint(sprintId);
-                sprintService.updateSprintLabelsAndColor(sprintService.getSprintsByProject(projectId));
-                List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
-                
-                List<Event> listEvents = eventService.getEventByProjectId(projectId);
-                listEvents.forEach(eventService::updateEventColors);
-                
-                List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
-                listDeadlines.forEach(deadlineService::updateDeadlineColors);
-                
-                ra.addFlashAttribute("messageSuccess", responseMessage);
-                ra.addFlashAttribute(LIST_EVENTS_OBJECT, listEvents);
-                ra.addFlashAttribute(LIST_DEADLINES_OBJECT, listDeadlines);
-                ra.addAttribute("listSprints", listSprints);
-                
-                return PROJECT_REDIRECT + projectId;
-            } catch (IncorrectDetailsException e) {
-                ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
-                return PROJECT_REDIRECT + projectId;
-            } catch (PersistenceException e) {
-                return ERROR;
-            } catch (Exception e) {
-                ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
-                return ERROR;
-            }
+            @PathVariable("sprintId") int sprintId,
+            Model model,
+            @PathVariable int projectId,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return redirectDashboard;
         }
-        
-            /**
-             * Directs to page for editing a sprint
-             * 
-             * @param sprintId  ID for sprint being edited
-             * @param projectId ID of the project
-             * @param model
-             * @param principal Current user
-             * @param ra        Redirect Attribute frontend message object
-             * @return Sprint form page with selected sprint or redirect to project page on
-             *         error
-             */
-            @GetMapping(path = "/project/{projectId}/editSprint/{sprintId}")
-            public String sprintEditForm(
-                    @PathVariable("sprintId") int sprintId,
-                    @PathVariable("projectId") int projectId,
-                    Model model,
-                    @AuthenticationPrincipal AuthState principal,
-                    RedirectAttributes ra) {
-                if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
-                    return redirectDashboard;
-                }
-                try {
-        
-                    Project currentProject = projectService.getProjectById(projectId);
-                    Sprint sprint = sprintService.getSprint(sprintId);
-                    model.addAttribute(SPRINT_OBJECT, sprint);
-                    model.addAttribute(PROJECT_OBJECT, currentProject);
-                    model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
-                    model.addAttribute("sprintDateMin", currentProject.getStartDate());
-                    model.addAttribute("sprintDateMax", currentProject.getEndDate());
-                    model.addAttribute("submissionName", "Save");
-                    model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
-                    return "sprintForm";
-                } catch (IncorrectDetailsException e) {
-                    ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
-                    return "redirect:/project/{projectId}";
-                }
-            }
-        
-        /**
-         * Sends an update message to all clients connected to the websocket
-         * 
-         * @param projectId Id of the sprint's project updated
-         * @param sprintId  Id of the sprint edited
-         * @param action    The action taken (delete, created, edited)
-         */
-        public void notifySprint(int projectId, int sprintId, String action) {
-            template.convertAndSend("/element/project" + projectId + "/sprint", ("sprint" + sprintId + " " + action));
+
+        try {
+            String responseMessage = sprintService.deleteSprint(sprintId);
+            sprintService.updateSprintLabelsAndColor(sprintService.getSprintsByProject(projectId));
+            List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
+
+            List<Event> listEvents = eventService.getEventByProjectId(projectId);
+            listEvents.forEach(eventService::updateEventColors);
+
+            List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            listDeadlines.forEach(deadlineService::updateDeadlineColors);
+
+            ra.addFlashAttribute("messageSuccess", responseMessage);
+            ra.addFlashAttribute(LIST_EVENTS_OBJECT, listEvents);
+            ra.addFlashAttribute(LIST_DEADLINES_OBJECT, listDeadlines);
+            ra.addAttribute("listSprints", listSprints);
+
+            return PROJECT_REDIRECT + projectId;
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
+            return PROJECT_REDIRECT + projectId;
+        } catch (PersistenceException e) {
+            return ERROR;
+        } catch (Exception e) {
+            ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
+            return ERROR;
+        }
+    }
+
+    /**
+     * Directs to page for editing a sprint
+     * 
+     * @param sprintId  ID for sprint being edited
+     * @param projectId ID of the project
+     * @param model
+     * @param principal Current user
+     * @param ra        Redirect Attribute frontend message object
+     * @return Sprint form page with selected sprint or redirect to project page on
+     *         error
+     */
+    @GetMapping(path = "/project/{projectId}/editSprint/{sprintId}")
+    public String sprintEditForm(
+            @PathVariable("sprintId") int sprintId,
+            @PathVariable("projectId") int projectId,
+            Model model,
+            @AuthenticationPrincipal AuthState principal,
+            RedirectAttributes ra) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
+            return redirectDashboard;
+        }
+        try {
+
+            Project currentProject = projectService.getProjectById(projectId);
+            Sprint sprint = sprintService.getSprint(sprintId);
+            model.addAttribute(SPRINT_OBJECT, sprint);
+            model.addAttribute(PROJECT_OBJECT, currentProject);
+            model.addAttribute("pageTitle", "Edit Sprint: " + sprint.getSprintName());
+            model.addAttribute("sprintDateMin", currentProject.getStartDate());
+            model.addAttribute("sprintDateMax", currentProject.getEndDate());
+            model.addAttribute("submissionName", "Save");
+            model.addAttribute("image", apiPrefix + "/icons/save-icon.svg");
+            return "sprintForm";
+        } catch (IncorrectDetailsException e) {
+            ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
+            return "redirect:/project/{projectId}";
+        }
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * 
+     * @param projectId Id of the sprint's project updated
+     * @param sprintId  Id of the sprint edited
+     * @param action    The action taken (delete, created, edited)
+     */
+    public void notifySprint(int projectId, int sprintId, String action) {
+        template.convertAndSend("/element/project" + projectId + "/sprint", ("sprint" + sprintId + " " + action));
     }
 
 }

@@ -22,7 +22,10 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -107,6 +110,18 @@ public class SprintControllerTest {
         when(sprintService.getSprintsByProject(anyInt())).thenReturn(List.of(new Sprint()));
         when(eventService.getEventsBySprintId(anyInt())).thenReturn(List.of(new Event()));
         when(deadlineService.getDeadlinesBySprintId(anyInt())).thenReturn(List.of(new Deadline()));
+
+        List<String> testNames = new ArrayList<String>();
+        testNames.add("TestName 1");
+        testNames.add("TestName 2");
+
+        Map<Integer, List<String>> testData = new HashMap<Integer, List<String>>();
+        testData.put(0, testNames);
+        when(eventService.getSprintLabelsForStartAndEndDates(any())).thenReturn(testData);
+
+        Map<Integer, String> deadlineDateMapping = new HashMap<Integer, String>();
+        deadlineDateMapping.put(0, "Test name");
+        when(deadlineService.getSprintOccurringOnDeadlines(any())).thenReturn(deadlineDateMapping);
 
         this.mockMvc
                 .perform(get("/project/1/sprint/1/accordion"))
