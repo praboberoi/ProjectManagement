@@ -94,14 +94,14 @@ function checkProjectEndDate() {
     const endDateError = document.getElementById('endDateError');
     const endDate = new Date(endDateElement.value);
 
-    var tenYearsFromNow = new Date();
+    let tenYearsFromNow = new Date();
     tenYearsFromNow.setMilliseconds(0);
     tenYearsFromNow.setSeconds(0);
     tenYearsFromNow.setMinutes(0);
     tenYearsFromNow.setHours(12);
     tenYearsFromNow.setFullYear(tenYearsFromNow.getFullYear() + 10);
 
-    var oneYearAgo = new Date();
+    let oneYearAgo = new Date();
     oneYearAgo.setMilliseconds(0);
     oneYearAgo.setSeconds(0);
     oneYearAgo.setMinutes(0);
@@ -194,7 +194,7 @@ function verifyOverlap(startDate, endDate) {
     const endDateError = document.getElementById('endDateError');
     const projectId = document.getElementById('projectId').value;
 
-    httpRequest = new XMLHttpRequest();
+    let httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
@@ -257,11 +257,11 @@ function editProjectModalInit(projectId) {
     maxEndDate.setFullYear(maxEndDate.getFullYear() + 10);
     
 
-    document.getElementById('projectFormStartDate').setAttribute("min", min(minStartDate, projectStartDate));
-    document.getElementById('projectFormStartDate').setAttribute("max", max(minStartDate, projectEndDate));
+    document.getElementById('projectFormStartDate').setAttribute("min", Math.min(minStartDate, projectStartDate));
+    document.getElementById('projectFormStartDate').setAttribute("max", Math.max(minStartDate, projectEndDate));
     
-    document.getElementById('projectFormEndDate').setAttribute("min", min(minStartDate, projectStartDate));
-    document.getElementById('projectFormEndDate').setAttribute("max", max(minStartDate, projectEndDate));
+    document.getElementById('projectFormEndDate').setAttribute("min", Math.min(minStartDate, projectStartDate));
+    document.getElementById('projectFormEndDate').setAttribute("max", Math.max(minStartDate, projectEndDate));
 
 
     let projectDescription = document.getElementById(`project${projectId}-description`).innerText
