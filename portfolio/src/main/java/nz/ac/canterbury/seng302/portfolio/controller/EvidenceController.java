@@ -48,6 +48,7 @@ public class EvidenceController {
 
     @Autowired
     private ProjectService projectService;
+
     @Autowired private UserAccountClientService userAccountClientService;
 
     @Autowired
@@ -56,10 +57,6 @@ public class EvidenceController {
     private final Logger logger = LoggerFactory.getLogger(EvidenceController.class);
 
     private final HashMap<Integer, EvidenceNotification> editing = new HashMap<>();
-
-    public EvidenceController(EvidenceService evidenceService) {
-        this.evidenceService = evidenceService;
-    }
 
     private static final String EVIDENCE = "evidence";
 
@@ -72,6 +69,10 @@ public class EvidenceController {
     private static final String MESSAGE_DANGER = "messageDanger";
 
     private static final String MESSAGE_SUCCESS = "messageSuccess";
+
+    public EvidenceController(EvidenceService evidenceService) {
+        this.evidenceService = evidenceService;
+    }
 
     /**
      * Adds common model elements used by all controller methods.
@@ -123,13 +124,17 @@ public class EvidenceController {
     @GetMapping(path="/evidence/{userId}/{evidenceId}")
     public ModelAndView selectedEvidence(
             @PathVariable int userId,
-            @PathVariable int evidenceId) {
-        ModelAndView mv = new ModelAndView("evidence::selectedEvidence");
+            @PathVariable int evidenceId,
+            @AuthenticationPrincipal AuthState principal) {
+        ModelAndView mv = new ModelAndView("evidenceFragments::selectedEvidence");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject(LIST_EVIDENCE, listEvidence);
         try {
+            User user = new User(userAccountClientService.getUser(principal));
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
             mv.addObject("selectedEvidence", selectedEvidence);
+            mv.addObject("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
+            mv.addObject("isCurrentUserEvidence", user.getUserId()==userId);
             mv.addObject(NOTIFICATIONS, editing);
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);

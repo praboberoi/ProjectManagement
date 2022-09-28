@@ -4,15 +4,20 @@ Given("I navigate to {string} page", (address) => {
     cy.contains(".nav-link", address).click()
 })
 
-Given("I Create a new Evidence with {string} as the title", (title) => {
+Then("I Create a new Evidence with {string} as the title", (title) => {
+    cy.intercept({
+        method: 'GET',
+        url: '/evidence/*',
+    }).as('update')
     cy.get("#create-evidence-btn").click()
     cy.get("#evidence-title").clear().type(title, {delay:0})
     cy.get("#evidence-description").clear().type("This is a test",{delay:0})
     cy.get("#evidenceFormSubmitButton").click()
+    cy.wait('@update')
 })
 
 Given("Evidence with {string} as the title exists", (title) => {
-    cy.get('.project-name').should('have.text', title)
+    cy.get('#evidence-name').should('have.text', title)
 })
 
 
@@ -35,7 +40,7 @@ Then("The evidence delete prompt disappears", () => {
 })
 
 Then("Evidence with {string} as the title still exists", (title) => {
-    cy.get('.project-name').should('have.text', title)
+    cy.get('#evidence-name').should('have.text', title)
 })
 
 Then("Evidence with {string} as the title is deleted", (title) => {
