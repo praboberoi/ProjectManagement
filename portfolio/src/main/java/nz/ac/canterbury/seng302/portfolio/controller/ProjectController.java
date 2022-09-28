@@ -24,7 +24,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.sql.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A controller which accepts api calls and directs it to the correct service
@@ -105,8 +107,12 @@ public class ProjectController {
 
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
+            Map<Integer, List<String>> eventDateMappingDictionary =
+                    eventService.getSprintLabelsForStartAndEndDates(listEvents);
 
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+            Map<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
+
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
 
             List<Milestone> listMilestones = milestoneService.getMilestonesByProject(project);
@@ -124,7 +130,10 @@ public class ProjectController {
             model.addAttribute(PROJECT_OBJECT, project);
             model.addAttribute("event", newEvent);
             model.addAttribute("deadline", newDeadline);
+            model.addAttribute("deadlineDateMapping", deadlineDateMapping);
             model.addAttribute("milestone", newMilestone);
+            model.addAttribute("eventDateMappingDictionary", eventDateMappingDictionary);
+
 
             model.addAttribute("projectDateMin", project.getStartDate());
             model.addAttribute("projectDateMax", project.getEndDate());

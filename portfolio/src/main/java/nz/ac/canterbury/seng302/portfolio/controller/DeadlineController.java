@@ -27,10 +27,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Controller for the deadlines
@@ -66,12 +63,14 @@ public class DeadlineController {
     public ModelAndView deadlines(@PathVariable("projectId") int projectId) {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
         listDeadlines.forEach(deadlineService::updateDeadlineColors);
+        Map<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("deadlineFragments::deadlineTab");
         mv.addObject("project", project);
         mv.addObject("listDeadlines", listDeadlines);
         mv.addObject("editDeadlineNotifications", editing);
+        mv.addObject("deadlineDateMapping", deadlineDateMapping);
         return mv;
     }
 
