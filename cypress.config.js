@@ -50,5 +50,9 @@ module.exports = defineConfig({
     scrollBehavior: 'center',
     specPattern: "**/cypress/**/*.feature",
     setupNodeEvents,
+    retries: {
+      runMode: 2,
+      openMode: 1
+    }
   },
 });
