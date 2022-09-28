@@ -228,12 +228,13 @@
                             </div>
 
                             <div class="mb-3">
-                                <label for="evidence-link" class="col-form-label">Web Link</label>
+                                <label for="evidence-link" class="col-form-label">Web Links</label>
                                 <span data-bs-toggle="tooltip" data-bs-placement="top"
                                       aria-label="Add up to five relevant weblinks here, space separated." title="Add up to five relevant weblinks here, space separated.">
                                     <img class="icon img-color-primary"
                                          th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
                                 </span>
+                                <p style="color: #07173B">Add up to five relevant weblinks by separating them with a space.</p>
                                 <input type="text" class="form-control" id="evidence-link"
                                        th:field="*{weblinks}" >
                                 <p id="evidenceLink" th:text="${evidenceLink}" class="error-msg"></p>
