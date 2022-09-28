@@ -1,15 +1,5 @@
 import { Given, When, Then } from "@badeball/cypress-cucumber-preprocessor";
 
-Given("I select group {string}", (group) => {
-    cy.intercept({
-        method: 'GET',
-        url: '/groups/*',
-    }).as('groupCheck')
-
-    cy.get('.project-card a').contains(group).click()
-    cy.wait('@groupCheck')
-});
-
 When("I select user {word}", (user) => {
     cy.get('tr.user-row').contains(user).click()
 });

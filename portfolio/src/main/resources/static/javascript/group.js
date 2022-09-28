@@ -171,6 +171,11 @@ function connectToRepo(saving = false) {
 
 
                     document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
+                } else {
+                    if (!repo.hasOwnProperty('id')) {
+                        clearRecentActions()
+                        return
+                    }
                 }
 
                 if (repoName !== undefined) {
@@ -220,7 +225,14 @@ async function getRecentActions(repo) {
     });
 
     let events = await response.json();
+
     let recentActions = document.getElementById("recent-action-cards")
+
+    if (events == undefined) {
+        clearRecentActions()
+        return
+    }
+
     updateFilters(events);
     recentActions.innerHTML = ""
     if (filterByUser.length > 0)
@@ -484,10 +496,11 @@ function updateFilters(events) {
  * Event listener for change in the userFilter
  */
 document.getElementById('userFilter').addEventListener('change', function () {
-    if (this.value === 'Clear Filter')
+    if (this.value === 'Clear Filter') {
         filterByUser = ""
-    else
+    } else {
         filterByUser = this.value
+    }
 
     getRecentActions(jsonRepo)
 
@@ -496,10 +509,11 @@ document.getElementById('userFilter').addEventListener('change', function () {
  * Event listener for change in the actionTypeFilter
  */
 document.getElementById('actionType').addEventListener('change', function () {
-    if (this.value === 'Clear Filter')
+    if (this.value === 'Clear Filter') {
         filterByActionType = ""
-    else
+    } else{
         filterByActionType = this.value
+    }
 
     getRecentActions(jsonRepo)
 
