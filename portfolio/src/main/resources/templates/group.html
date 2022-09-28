@@ -33,7 +33,7 @@
         <div class="" id="settings-container">
             <div class="row mt-3">
                 <div id="main-content" class="col-12 col-lg-8" th:fragment="groupList">
-                    <div class="card project-card mb-3 page-container">
+                    <div class="card project-card mb-3">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="card-head navbar">
@@ -59,7 +59,7 @@
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body page-container">
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="members-tab-pane" role="tabpanel"
                                             aria-labelledby="members-tab" th:insert="groupFragments::groupUserList">
@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div id="recent-actions-container" class="col-12 col-lg-4" th:fragment="groupList">
-                    <div class="card project-card mb-3 page-container">
+                    <div class="card project-card mb-3">
                         <div class="container-fluid">
                             <div class="row">
                                 <div id="recent-actions-header">
@@ -84,8 +84,6 @@
                                         onclick="toggleRecentActions()">
                                         <span aria-hidden="true">×</span>
                                     </button>
-                                </div>
-                                <div class="card-body">
                                     <div class="container-fluid row pr-0">
                                         <div class="col pl-2 pr-1">
                                             <select class="form-select" id="userFilter" aria-label="userFilter">
@@ -96,6 +94,8 @@
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="card-body page-container">
                                     <div id="recent-action-cards">
                                     </div>
                                 </div>
