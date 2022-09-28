@@ -337,7 +337,7 @@ class DeadlineServiceTest {
      * thrown
      */
     @Test
-    void givenInvalidDeadlineWithAnEmojiInNameExists_whenVerifyDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
+    void givenInvalidDeadlineWithAnEmojiInName_whenVerifyDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
         Deadline deadline2 = new Deadline.Builder()
                 .deadlineId(1)
                 .name("Test 😀")

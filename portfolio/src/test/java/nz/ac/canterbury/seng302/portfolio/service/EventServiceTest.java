@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -16,6 +17,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Optional;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -583,5 +585,31 @@ class EventServiceTest {
         eventService.updateEventColors(event);
 
         assertArrayEquals(List.of(SprintColor.BLUE, SprintColor.GREEN, SprintColor.NAVY, SprintColor.WHITE).toArray(), event.getColors().toArray());
+    }
+
+    /**
+     * Test to check when an invalid deadline with an emoji is passed for verification an inappropriate errror
+     * thrown
+     */
+    @Test
+    void givenInvalidEventWithAnEmojiInName_whenVerifyEventRequested_thenAnAppropriateExceptionIsThrown() {
+        Project project = new Project.Builder()
+                .description("This is a test project")
+                .startDate(new java.sql.Date(2020 - 1900, 11, 12))
+                .endDate(new java.sql.Date(2023 - 1900, 1, 10))
+                .projectName("Project 2020")
+                .projectId(1)
+                .build();
+
+        Event event = new Event.Builder().eventName("Test 😀")
+                .eventId(1)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2020 - 1900, 11, 8))
+                .project(project)
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                eventService.verifyEvent(event));
+        Assertions.assertEquals("Event name must not contain an emoji", exception.getMessage());
     }
 }

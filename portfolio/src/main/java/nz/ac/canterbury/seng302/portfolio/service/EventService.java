@@ -182,7 +182,7 @@ public class EventService {
         });
 
         if (!sprintList.isEmpty()) {
-            if ( sprintList.get(0).getStartDate().after(event.getStartDate()) )
+            if (sprintList.get(0).getStartDate().after(event.getStartDate()))
                 eventColours.add(0, SprintColor.WHITE);
 
             if (sprintList.get(sprintList.size() - 1).getEndDate().before(event.getEndDate()))
@@ -193,6 +193,7 @@ public class EventService {
 
     /**
      * Saves event into the database
+     *
      * @param event The event object to be saved
      * @return Message based on saving edit or creating event
      */
@@ -213,7 +214,21 @@ public class EventService {
     }
 
     /**
+     * Returns a list of deadlines that occur within the given sprint related to the
+     * sprint ID.
+     *
+     * @param sprintId The id of the sprint (int).
+     * @return A list of deadlines from a sprint specified by its id.
+     */
+    public List<Event> getEventsBySprintId(int sprintId) {
+        Optional<Sprint> current = sprintRepository.findById(sprintId);
+        return current.map(sprint -> eventRepository.findEventsBySprint(sprint).stream()
+                .sorted(Comparator.comparing(Event::getStartDate)).toList()).orElse(List.of());
+    }
+
+    /**
      * Deletes event object from the database
+     *
      * @param eventId of type int
      * @return Message of type String
      * @throws IncorrectDetailsException if unable to delete the event
@@ -229,5 +244,3 @@ public class EventService {
         }
     }
 }
-
-
