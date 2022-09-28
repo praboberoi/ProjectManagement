@@ -222,9 +222,9 @@ public class ProjectController {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
-        Project project = new Project(projectDTO);
-
+        
         try {
+            Project project = new Project(projectDTO);
             projectService.verifyProject(project);
             String message =  projectService.saveProject(project);
 

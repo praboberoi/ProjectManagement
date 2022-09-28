@@ -37,7 +37,7 @@
                     <tr>
                         <th>
                             <div th:if="${adminOrTeacher}">
-                                <button type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal"
+                                <button id="create-project-btn" type="button" class="btn btn-outline-primary me-2" data-bs-toggle="modal"
                                     data-bs-target="#projectFormModal" onclick="createProjectModalInit()">
                                     <img class="icon img-color-primary"
                                         th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" />
