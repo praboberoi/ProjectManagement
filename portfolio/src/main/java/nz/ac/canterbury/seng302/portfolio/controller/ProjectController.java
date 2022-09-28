@@ -31,17 +31,15 @@ import java.util.List;
  */
 @Controller
 public class ProjectController {
-    @Autowired 
+    @Autowired
     private SprintService sprintService;
-    @Autowired 
+    @Autowired
     private ProjectService projectService;
-    @Autowired 
+    @Autowired
     private EventService eventService;
-    @Autowired 
-    private UserAccountClientService userAccountClientService;
-    @Autowired 
+    @Autowired
     private DeadlineService deadlineService;
-    @Autowired 
+    @Autowired
     private MilestoneService milestoneService;
 
     @Autowired
@@ -57,40 +55,44 @@ public class ProjectController {
 
     /**
      * Gets all of the sprints and returns it in a ResponseEntity
+     * 
      * @param projectId The Id of the project to get sprints from
      * @return A ResponseEntity containing a list of sprints
      */
-    @GetMapping(path="/project/{projectId}/getAllSprints")
+    @GetMapping(path = "/project/{projectId}/getAllSprints")
     public ResponseEntity<List<Sprint>> getAllSprints(
             @PathVariable("projectId") int projectId) {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         return ResponseEntity.status(HttpStatus.OK).body(listSprints);
     }
 
-        /**
+    /**
      * Return the html component which contains the specified project's events
-      * @param projectId Project containing the desired events
-      * @return Page fragment containing events
-      */
-      @GetMapping(path="/projects")
-      public ModelAndView projectList() {
-          List<Project> listProjects = projectService.getAllProjects();
+     * 
+     * @param projectId Project containing the desired events
+     * @return Page fragment containing events
+     */
+    @GetMapping(path = "/projects")
+    public ModelAndView projectList() {
+        List<Project> listProjects = projectService.getAllProjects();
 
-          ModelAndView mv = new ModelAndView("dashboard::projectList");
-          mv.addObject("listProjects", listProjects);
-          return mv;
-      }
+        ModelAndView mv = new ModelAndView("dashboard::projectList");
+        mv.addObject("listProjects", listProjects);
+        return mv;
+    }
 
     /**
-     * Add project details, sprints, and current user roles (to determine access to add, edit, delete sprints)
+     * Add project details, sprints, and current user roles (to determine access to
+     * add, edit, delete sprints)
      * to the individual project pages.
+     * 
      * @param projectId ID of the project selected to view
      * @param principal Current User of type {@link AuthState}
-     * @param model Of type {@link Model}
-     * @param ra Redirect Attribute frontend message object
+     * @param model     Of type {@link Model}
+     * @param ra        Redirect Attribute frontend message object
      * @return - name of the html page to display
      */
-    @GetMapping(path="/project/{projectId}")
+    @GetMapping(path = "/project/{projectId}")
     public String showProject(
             @PathVariable("projectId") int projectId,
             @AuthenticationPrincipal AuthState principal,
@@ -135,10 +137,12 @@ public class ProjectController {
     }
 
     /**
-     * Checks if a sprints dates are valid and returns a Response containing a message
+     * Checks if a sprints dates are valid and returns a Response containing a
+     * message
+     * 
      * @param projectId ID of the project to check
      * @param startDate New start date of the project
-     * @param endDate New end date of the project
+     * @param endDate   New end date of the project
      * @param principal
      * @return ResponseEntity containing a string message
      */
@@ -148,7 +152,8 @@ public class ProjectController {
             String startDate,
             String endDate,
             @AuthenticationPrincipal AuthState principal) {
-        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) return null;
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+            return null;
         try {
             Project project = new Project.Builder()
                     .projectId(projectId)
@@ -164,10 +169,11 @@ public class ProjectController {
 
     /**
      * Return the html component which contains the specified project's sprints
-      * @param projectId Project containing the desired sprints
-      * @return Page fragment containing sprints
-      */
-    @GetMapping(path="/project/{projectId}/sprints")
+     * 
+     * @param projectId Project containing the desired sprints
+     * @return Page fragment containing sprints
+     */
+    @GetMapping(path = "/project/{projectId}/sprints")
     public ModelAndView groupsList(@PathVariable("projectId") int projectId) {
         List<Sprint> listSprints = sprintService.getSprintByProject(projectId);
         Project project = new Project();
@@ -180,14 +186,15 @@ public class ProjectController {
 
     /**
      * Deletes the project and all the related sprints
+     * 
      * @param projectId Of type int
      * @param principal of type {@link AuthState}
      * @return dashboard.html file or error.html file
      */
-    @DeleteMapping(path="/project/{projectId}")
+    @DeleteMapping(path = "/project/{projectId}")
     public ResponseEntity<String> deleteProject(
-        @PathVariable("projectId") int projectId,
-        @AuthenticationPrincipal AuthState principal) {
+            @PathVariable("projectId") int projectId,
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
@@ -203,33 +210,34 @@ public class ProjectController {
         projectService.deleteProject(projectId);
         notifyProject(projectId, "deleted");
 
-        logger.info("Project {} has been deleted by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
+        logger.info("Project {} has been deleted by user {}", project.getProjectId(),
+                PrincipalUtils.getUserId(principal));
         return ResponseEntity.status(HttpStatus.OK).body("Successfully Deleted " + project.getProjectName());
     }
 
     /**
-     * Saves project object to the database and redirects to dashboard page
-     * @param project Of type {@link Project}
-     * @param model Of type {@link Model}
-     * @param ra Of type {@link RedirectAttributes}
-     * @param principal Of type {@link AuthState}
-     * @return Either the dashboard.html file or error.html file
+     * Saves project object to the database
+     * 
+     * @param projectDTo Project object to save parsed as a {@link ProjectDTO}
+     * @param principal  Of type {@link AuthState}
+     * @return The result of the operation
      */
-    @PostMapping(path="/project")
+    @PostMapping(path = "/project")
     public ResponseEntity<String> saveProject(
             @ModelAttribute ProjectDTO projectDTO,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
-        
+
         try {
             Project project = new Project(projectDTO);
             projectService.verifyProject(project);
-            String message =  projectService.saveProject(project);
+            String message = projectService.saveProject(project);
 
             notifyProject(project.getProjectId(), "edited");
-            logger.info("Project {} has been created by user {}", project.getProjectId(), PrincipalUtils.getUserId(principal));
+            logger.info("Project {} has been created by user {}", project.getProjectId(),
+                    PrincipalUtils.getUserId(principal));
             return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (IncorrectDetailsException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
@@ -242,8 +250,8 @@ public class ProjectController {
     /**
      * Sends an update message to all clients connected to the websocket
      * 
-     * @param projectId   Id of the event's project updated
-     * @param action      The action taken (delete, created, edited)
+     * @param projectId Id of the event's project updated
+     * @param action    The action taken (delete, created, edited)
      */
     private void notifyProject(int projectId, String action) {
         template.convertAndSend(String.format(NOTIFICATION_DESTINATION, projectId),
