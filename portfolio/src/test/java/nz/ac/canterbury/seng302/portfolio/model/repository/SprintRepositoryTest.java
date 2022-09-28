@@ -45,6 +45,7 @@ class SprintRepositoryTest {
     @BeforeEach
     public void setUp() {
         project = new Project.Builder()
+                .projectId(0)
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new Date(2020, 3, 12))
@@ -90,6 +91,24 @@ class SprintRepositoryTest {
         List<Sprint> emptyList = Collections.<Sprint>emptyList();
         assertArrayEquals(emptyList.toArray(), sprintRepository.findBySprintName("No").toArray());
 
+    }
+
+    /**
+     * Given a date and project this test asserts that the repository can find the corresponding sprint.
+     */
+    @Test
+    void givenSprintExists_FindByProjectAndDate() {
+        Date date = new Date(2021, 1, 2);
+        assertEquals(sprint1, sprintRepository.findByDateAndProject(project, date));
+    }
+
+    /**
+     * Given a date not relating to a sprint, this test asserts that the repository returns null.
+     */
+    @Test
+    void givenSprintDoesntExist_FindByProjectAndDateReturnsNull() {
+        Date date = new Date(1999, 1, 2);
+        assertEquals(null, sprintRepository.findByDateAndProject(project, date));
     }
 
     @Test

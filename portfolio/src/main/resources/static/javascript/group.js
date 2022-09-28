@@ -125,7 +125,7 @@ function isValidHttpUrl(string) {
     return url.protocol === "http:" || url.protocol === "https:"
 }
 
-const GIT_API = "api/v4/"
+const GIT_API = "/api/v4/"
 
 /**
  * Toggles the visibility of the recent actions component
@@ -171,6 +171,11 @@ function connectToRepo(saving = false) {
 
 
                     document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
+                } else {
+                    if (!repo.hasOwnProperty('id')) {
+                        clearRecentActions()
+                        return
+                    }
                 }
 
                 if (repoName !== undefined) {
@@ -220,7 +225,14 @@ async function getRecentActions(repo) {
     });
 
     let events = await response.json();
+
     let recentActions = document.getElementById("recent-action-cards")
+
+    if (events == undefined) {
+        clearRecentActions()
+        return
+    }
+
     updateFilters(events);
     recentActions.innerHTML = ""
     if (filterByUser.length > 0)
@@ -398,7 +410,10 @@ function saveRepoSettings(event) {
 
     let httpRequest = new XMLHttpRequest();
 
-    httpRequest.onreadystatechange = () => processAction(httpRequest)
+    httpRequest.onreadystatechange = () => {
+        processAction(httpRequest)
+        connectToRepo(true)
+    }
 
     httpRequest.open('POST', apiPrefix + `/repo/${groupId}/save`);
 
@@ -406,7 +421,7 @@ function saveRepoSettings(event) {
 
     httpRequest.send(formData);
 
-    connectToRepo(true)
+
 
 }
 
@@ -484,10 +499,11 @@ function updateFilters(events) {
  * Event listener for change in the userFilter
  */
 document.getElementById('userFilter').addEventListener('change', function () {
-    if (this.value === 'Clear Filter')
+    if (this.value === 'Clear Filter') {
         filterByUser = ""
-    else
+    } else {
         filterByUser = this.value
+    }
 
     getRecentActions(jsonRepo)
 
@@ -496,13 +512,91 @@ document.getElementById('userFilter').addEventListener('change', function () {
  * Event listener for change in the actionTypeFilter
  */
 document.getElementById('actionType').addEventListener('change', function () {
-    if (this.value === 'Clear Filter')
+    if (this.value === 'Clear Filter') {
         filterByActionType = ""
-    else
+    } else{
         filterByActionType = this.value
+    }
 
     getRecentActions(jsonRepo)
 
 })
 
 
+/**
+ * Connects to the websocket server
+ */
+ function connect() {
+    let websocketProtocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://'
+    let stompClient = new StompJs.Client({
+        brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
+        debug: function (str) {
+            // console.log(str);
+        },
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+    });
+
+    stompClient.onConnect = function () {
+        console.log('Active updating enabled');
+        subscribe(stompClient)
+        document.getElementById("websocket-status").value = "connected"
+    };
+
+    stompClient.onStompError = function () {
+        console.log('Websocket communication error')
+    }
+
+    stompClient.activate();
+}
+
+/**
+ * Subscribes to the required websocket notification channels
+ */
+function subscribe(stompClient) {
+    stompClient.subscribe(`/element/group/${groupId}`, updateGroup);
+}
+
+/**
+ * Replaces the group's title information
+ * @param message Message with sprint and edit type
+ */
+ function updateGroup(message) {
+    let array = message.body.split(' ')
+    let component = array[0]
+    let action = array[1]
+
+    if (component == "details" || action === "edited") {
+        updateTitle()
+    } else if (component == "details") {
+        updateMembers()
+    } else {
+        console.log("Unknown command: " + action)
+    }
+}
+
+function updateTitle() {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                document.getElementById("title").outerHTML = httpRequest.responseText;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            }
+        }
+    }
+
+    httpRequest.open('GET', apiPrefix + `/group/${groupId}/title`);
+    httpRequest.send();
+}
+
+/**
+ * Runs the connect function when the document is loaded
+ */
+ document.addEventListener('DOMContentLoaded', function () {
+    connect();
+})

@@ -12,9 +12,7 @@ import javax.persistence.PersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
@@ -65,6 +63,7 @@ class DeadlineServiceTest {
 
         sprint = new Sprint.Builder()
                 .sprintId(1)
+                .sprintName("Test Sprint")
                 .startDate(new java.sql.Date(2020, 1, 1))
                 .endDate(new java.sql.Date(2020, 5, 1))
                 .build();
@@ -126,7 +125,7 @@ class DeadlineServiceTest {
      */
     @Test
     void givenDeadlineAndSprintExist_whenDeadlineBySprintRequested_thenAListOfDeadlinesIsReturned() {
-        Assertions.assertEquals(List.of(deadline2), deadlineService.getDeadlineBySprint(1));
+        Assertions.assertEquals(List.of(deadline2), deadlineService.getDeadlinesBySprintId(1));
     }
 
     /**
@@ -312,4 +311,31 @@ class DeadlineServiceTest {
             deadlineService.saveDeadline(deadline));
         Assertions.assertEquals("Failed to save the deadline", exception.getMessage());
     }
+
+    /**
+     * Tests that the correct sprint name is mapped the corresponding id of the deadline.
+     */
+    @Test
+    void givenDeadlinesExist_whenGetSprintOccurringOnDeadlinesCalled_thenAppropriateDataReturned() {
+        List<Deadline> deadlines = new ArrayList<Deadline>();
+        deadlines.add(deadline);
+        when(sprintRepository.findByDateAndProject(deadline.getProject(),
+                 new java.sql.Date(deadline.getDate().getTime()))).thenReturn(sprint);
+        Map<Integer, String> testData = deadlineService.getSprintOccurringOnDeadlines(deadlines);
+        assertEquals("(Test Sprint)", testData.get(deadline.getDeadlineId()));
+    }
+
+    /**
+     * Tests that if no sprint occurs on a deadline then this is mapped to the deadline.
+     */
+    @Test
+    void givenNoSprintExistsForDeadline_whenGetSprintOccurringOnDeadlinesCalled_thenNoSprintIsMappedToDeadline() {
+        List<Deadline> deadlines = new ArrayList<Deadline>();
+        deadlines.add(deadline2);
+        when(sprintRepository.findByDateAndProject(deadline2.getProject(),
+                new java.sql.Date(deadline2.getDate().getTime()))).thenReturn(null);
+        Map<Integer, String> testData = deadlineService.getSprintOccurringOnDeadlines(deadlines);
+        assertEquals("(No Sprint)", testData.get(deadline2.getDeadlineId()));
+    }
+
 }

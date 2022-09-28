@@ -7,6 +7,7 @@ import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+import nz.ac.canterbury.seng302.shared.identityprovider.UserRole;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -22,10 +23,10 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.*;
 
+import static nz.ac.canterbury.seng302.portfolio.controller.AccountController.formatRoleName;
+import static nz.ac.canterbury.seng302.shared.identityprovider.UserRole.STUDENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -225,5 +226,61 @@ class AccountControllerTest {
         RedirectAttributes ra = Mockito.mock(RedirectAttributes.class);
         assertEquals( "redirect:account", accountController.editUser(principal, testFile,testString,
                 testString, testString, testString, testString, testString, false, mockModel, ra ));
+    }
+
+    /**
+     * Tests that the role fragment returned from the controller contains the right values.
+     * @throws Exception An exception can occur.
+     */
+    @Test
+    void GivenUserExists_WhenRolesRequested_ThenRoleFragmentReturned() throws Exception {
+        UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
+        Calendar cal = new GregorianCalendar();
+        cal.add(Calendar.MONTH, -3);
+        cal.add(Calendar.YEAR, -2);
+
+        List<UserRole> rolesList = new ArrayList<UserRole>();
+
+        StringBuilder roles = new StringBuilder();
+
+
+
+        rolesList.add(STUDENT);
+
+        User user = new User.Builder()
+                .userId(0)
+                .username("TimeTester")
+                .firstName("Time")
+                .lastName("Tester")
+                .nickname("Testy")
+                .email("Test@tester.nz")
+                .bio("Testsss")
+                .pronouns("Tester")
+                .roles(rolesList)
+                .creationDate(cal.getTime())
+                .build();
+
+        user.getRoles().forEach(role -> roles.append(formatRoleName(role.toString() + ", ")));
+
+
+        UserResponse.Builder reply = UserResponse.newBuilder();
+        reply.setUsername(user.getUsername());
+        reply.setFirstName(user.getFirstName());
+        reply.setLastName(user.getLastName());
+        reply.setEmail(user.getEmail());
+        reply.setNickname(user.getNickname());
+        reply.setPersonalPronouns(user.getPronouns());
+        reply.setId(user.getUserId());
+        reply.setCreated(Timestamp.newBuilder()
+                .setSeconds(user.getDateCreated().getTime())
+                .build());
+        reply.addRoles(STUDENT);
+
+        when(userAccountClientService.getUser(any())).thenReturn(reply.build());
+
+        this.mockMvc.perform(get("/account/roles"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("roles", roles.substring(0, roles.length() - 2)));
+
     }
 }

@@ -19,6 +19,30 @@ Given("I navigate directly to {string}", (location) => {
     cy.visit(location)
 });
 
+Given("I select group {string}", (group) => {
+    cy.intercept({
+        method: 'GET',
+        url: '/groups/*',
+    }).as('groupCheck')
+
+    cy.get('.project-card a').contains(group).click()
+    cy.wait('@groupCheck')
+});
+
+Given("I navigate to group {string}", (group) => {
+    cy.intercept({
+        method: 'GET',
+        url: '/groups/*',
+    }).as('groupCheck')
+
+    cy.get('.project-card a').contains(group).click()
+    cy.wait('@groupCheck')
+
+    cy.get("#group-settings-icon").click()
+    cy.contains("Navigate To Group").click()
+
+})
+
 When("I select the {word} project", (project) => {
     cy.contains(project).click()
     waitForWebSocket()
