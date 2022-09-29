@@ -53,6 +53,7 @@ function updateEvidencePage(message) {
     let evidenceId = parseInt(array[1])
     let action = array[2]
     
+    const selectedEvidenceElement = document.getElementById('selectedEvidence')
     const selectedEvidenceIdElement = document.getElementById('selectedEvidenceId')
     const selectedEvidenceId = selectedEvidenceIdElement === null ? 0 : parseInt(selectedEvidenceIdElement.value)
 
@@ -64,11 +65,14 @@ function updateEvidencePage(message) {
         } else if (allEvidence.length > 1) {
             getSelectedEvidence(allEvidence.item(1).value)
         } else {
-            document.getElementById('selectedEvidence').hidden = true
+            selectedEvidenceElement.hidden = true
         }
     } else if (action === "deleted") {
         getEvidenceList()
     } else if (action === 'edited' && selectedEvidenceId === evidenceId || selectedEvidenceId == 0) {
+        getSelectedEvidence(evidenceId)
+        getEvidenceList()
+    } else if (action === 'edited' && selectedEvidenceElement.hidden == true) {
         getSelectedEvidence(evidenceId)
         getEvidenceList()
     } else if (action === 'edited') {
@@ -132,6 +136,7 @@ function updateElement(httpRequest, element) {
  * Makes a call to the server and replaces the current evidence with the new one
  */
 function getSelectedEvidence(selectedEvidenceId) {
+    document.getElementById('evidence-display').hidden = false
     document.getElementById("selectedEvidence").hidden = false
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange =  () =>  updateElement(httpRequest, document.getElementById("selectedEvidence"));

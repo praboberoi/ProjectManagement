@@ -348,5 +348,20 @@ public class GroupControllerTest {
             .andExpect(status().is3xxRedirection())
             .andExpect(flash().attribute("messageDanger", "Group 1 does not exist."));
     }
+
+    /**
+     * Checks that the group title is returned correctly
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void whenGroupsTitleRequested_thenTitleElementReturned() throws Exception{
+        Groups group = new Groups("test", "Test longName", 1, List.of());
+        when(groupService.getGroupById(1)).thenReturn(group);
+
+        mockMvc
+            .perform(get("/group/1/title"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("group", group));
+    }
 }
 
