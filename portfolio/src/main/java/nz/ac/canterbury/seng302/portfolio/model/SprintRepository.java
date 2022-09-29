@@ -66,7 +66,6 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      */
     List<Sprint> findByProject(Project project);
 
-
     /**
      * Finds a sprint occurring within a project on a certain date
      * @param project The project the sprint is from
