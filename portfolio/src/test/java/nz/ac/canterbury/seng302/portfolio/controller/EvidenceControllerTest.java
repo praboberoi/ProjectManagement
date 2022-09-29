@@ -414,6 +414,32 @@ public class EvidenceControllerTest {
     }
 
     /**
+     * Tests that the user is removed to the list of editing users when they finish editing
+     */
+    @Test
+    void givenUserDecidesToStopEditAnEvidence_whenEvidenceListIsRequested_thenNotificationIsNotPresent() throws Exception {
+        evidence.setEvidenceId(1);
+        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        when(userAccountClientService.getUser(any())).thenReturn(user);
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+
+        EvidenceNotification evidenceNotificationStart = new EvidenceNotification(evidence.getEvidenceId(), 99, user.getUsername(), true, "testing");
+        EvidenceNotification evidenceNotificationEnd = new EvidenceNotification(evidence.getEvidenceId(), 99, user.getUsername(), false, "testing");
+
+        HashMap<Integer, EvidenceNotification> expectedNotifications = new HashMap<>();
+
+        when(mockedWebSocketPrincipal.getName()).thenReturn("tes2");
+
+        evidenceController.editing(evidenceNotificationStart, mockedWebSocketPrincipal, "testing");
+        evidenceController.editing(evidenceNotificationEnd, mockedWebSocketPrincipal, "testing");
+
+        this.mockMvc
+                .perform(get("/user/99/evidence/getEvidenceList"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("notifications", expectedNotifications));
+    }
+
+    /**
      * Check that the user is removed from the list of editing users when they are disconnected
      */
     @Test
