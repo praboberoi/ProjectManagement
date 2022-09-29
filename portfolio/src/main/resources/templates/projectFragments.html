@@ -213,10 +213,7 @@
         <!-- If a user is a STUDENT do not show the 'create' sprint button !-->
         <div th:if="${adminOrTeacher}">
             <button class="btn btn-outline-primary" id="sprint-btn"
-               data-bs-toggle="modal" data-bs-target="#sprintFormModal" th:data-id="${sprint.sprintId}"
-                    th:data-name="${sprint.sprintName}" th:data-startDate="${sprint.startDate}"
-                    th:data-endDate="${sprint.endDate}" th:data-description="${sprint.description}"
-                    th:onclick="populateSprintModal(false, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'), this.getAttribute('data-description'))">
+               data-bs-toggle="modal" data-bs-target="#sprintFormModal" th:data-id="${sprint.sprintId}" th:data-label="${sprint.sprintLabel}" th:data-name="${sprint.sprintName}" th:data-startDate="${sprint.startDate}" th:data-endDate="${sprint.endDate}" th:data-description="${sprint.description}" th:onclick="populateSprintModal(false, this.getAttribute('data-id'), this.getAttribute('data-label'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'), this.getAttribute('data-description'))">
                 <img class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /></button>
         </div>
@@ -263,11 +260,12 @@
                             <td>
                                 <!--               If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
                                 <div th:if="${adminOrTeacher}">
-                                    <a type="button" class="btn btn-outline-primary mr-2" id="sprint-edit-btn"
-                                        th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/editSprint/' + ${sprint.sprintId}}">
+                                    <button class="btn btn-outline-primary" id="sprint-edit-btn"
+                                            data-bs-toggle="modal" data-bs-target="#sprintFormModal" th:data-id="${sprint.sprintId}" th:data-label="${sprint.sprintLabel}" th:data-name="${sprint.sprintName}" th:data-startDate="${sprint.startDate}" th:data-endDate="${sprint.endDate}" th:data-description="${sprint.description}" th:onclick="populateSprintModal(true, this.getAttribute('data-id'), this.getAttribute('data-label'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'), this.getAttribute('data-description'))">
                                         <img class="icon img-color-primary"
-                                            th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
-                                        <span class="d-none d-md-inline-block">Edit</span></a>
+                                             th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
+                                        <span class="d-none d-md-inline-block">Edit</span>
+                                    </button>
                                     <button type="button" class="btn btn-outline-secondary" id="sprint-del-btn"
                                         data-bs-toggle="modal" data-bs-target="#conformationModalSprint"
                                         th:data-projectId="${project.projectId}" th:data-prefix="${apiPrefix}"

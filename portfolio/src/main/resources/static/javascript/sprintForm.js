@@ -5,7 +5,7 @@
 // Regular expression for Sprint Name field. No leading white spaces or empty field.
 const sprintNameRegex = /^\S/;
 const emojiRegx = /\p{Extended_Pictographic}/u;
-const projectId = document.getElementById("projectId").value;
+// const projectId = document.getElementById("projectId").value;
 const sprintStartDateElement = document.getElementById("sprint-start-date");
 const sprintEndDateElement = document.getElementById("sprint-end-date");
 const labelElement = document.getElementById('sprint-label');
@@ -180,7 +180,25 @@ function saveSprint() {
  * Populate sprint creation or editing modal with proper values
  * @param isEdit Bool for if create or edit selected
  */
-function populateSprintModal(isEdit, sprintId, sprintName, startDate, endDate, description) {
+function populateSprintModal(isEdit, sprintId, sprintLabel, sprintName, startDate, endDate, description) {
     currentSprintId  = sprintId;
-    projectStartDate  = new Date(document.getElementById("projectStartDate").value);
+    let sprintSubmitButtonInnerHTML = document.getElementById("sprintFormSubmitButton").innerText
+    if (isEdit) {
+        document.getElementById('sprintFormTitle').innerText =  'Edit Sprint: ' + sprintName;
+        document.getElementById('sprintFormSubmitLabel').innerText = 'Save';
+        document.getElementById('sprintFormSubmitImg').src = `${apiPrefix}/icons/save-icon.svg`;
+        document.getElementById('sprint-start-date').value = startDate;
+        document.getElementById('sprint-end-date').value =  endDate;
+        document.getElementById('sprint-description').value = description ;
+    } else {
+        document.getElementById('sprintFormTitle').innerText =  'Create New Sprint';
+        document.getElementById('sprintFormSubmitLabel').innerText = 'Create'
+        document.getElementById('sprintFormSubmitImg').src = `${apiPrefix}/icons/create-icon.svg`;
+        document.getElementById('sprint-start-date').value =  startDate;
+        document.getElementById('sprint-end-date').value =  endDate;
+        document.getElementById('sprint-description').value = '' ;
+    }
+    document.getElementById('sprint-label').value =  sprintLabel;
+    document.getElementById('sprintId').value =  sprintId;
+    document.getElementById('sprint-name').value =  sprintName;
 }
