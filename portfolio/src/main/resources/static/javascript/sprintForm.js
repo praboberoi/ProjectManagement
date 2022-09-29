@@ -187,18 +187,15 @@ function populateSprintModal(isEdit, sprintId, sprintLabel, sprintName, startDat
         document.getElementById('sprintFormTitle').innerText =  'Edit Sprint: ' + sprintName;
         document.getElementById('sprintFormSubmitLabel').innerText = 'Save';
         document.getElementById('sprintFormSubmitImg').src = `${apiPrefix}/icons/save-icon.svg`;
-        document.getElementById('sprint-start-date').value = startDate;
-        document.getElementById('sprint-end-date').value =  endDate;
-        document.getElementById('sprint-description').value = description ;
     } else {
         document.getElementById('sprintFormTitle').innerText =  'Create New Sprint';
         document.getElementById('sprintFormSubmitLabel').innerText = 'Create'
         document.getElementById('sprintFormSubmitImg').src = `${apiPrefix}/icons/create-icon.svg`;
-        document.getElementById('sprint-start-date').value =  startDate;
-        document.getElementById('sprint-end-date').value =  endDate;
-        document.getElementById('sprint-description').value = '' ;
     }
     document.getElementById('sprint-label').value =  sprintLabel;
     document.getElementById('sprintId').value =  sprintId;
     document.getElementById('sprint-name').value =  sprintName;
+    document.getElementById('sprint-start-date').value =  startDate;
+    document.getElementById('sprint-end-date').value =  endDate;
+    document.getElementById('sprint-description').value = description ;
 }
