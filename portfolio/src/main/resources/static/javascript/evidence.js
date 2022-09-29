@@ -108,7 +108,7 @@ function updateEvidencePage(message) {
 function getEvidenceList() {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange = () => updateElement(httpRequest,document.getElementById('evidence-list'));
-    httpRequest.open('GET', apiPrefix + `/evidence/${userId}/getEvidenceList`);
+    httpRequest.open('GET', apiPrefix + `/user/${userId}/evidence/getEvidenceList`);
     httpRequest.send();
 }
 

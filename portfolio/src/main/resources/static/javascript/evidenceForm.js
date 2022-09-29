@@ -16,7 +16,7 @@ function saveEvidence() {
 
     httpRequest.onreadystatechange = () => processAction(httpRequest)
 
-    httpRequest.open('POST', apiPrefix + `/evidence/${userId}/saveEvidence`);
+    httpRequest.open('POST', apiPrefix + `/evidence`);
 
     let formData = new FormData(document.forms.createEvidenceForm)
 
@@ -73,7 +73,7 @@ function updateEvidenceModalForm(httpRequest, evidenceProjectId, modalTitle) {
  */
 function createNewEvidence() {
     let httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', `${window.location.pathname}/getNewEvidence`)
+    httpRequest.open('GET', `/evidence/getNewEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, 0, "Create New Evidence");
     httpRequest.send();
 }

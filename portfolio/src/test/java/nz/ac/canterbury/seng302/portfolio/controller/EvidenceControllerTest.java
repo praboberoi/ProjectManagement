@@ -139,7 +139,7 @@ public class EvidenceControllerTest {
         when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence)))
+                .perform(post("/evidence/").flashAttr("evidenceDTO", toDTO(evidence)))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(flash().attribute("messageDanger", nullValue()))
                 .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getTitle()));

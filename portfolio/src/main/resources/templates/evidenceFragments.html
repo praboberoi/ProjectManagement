@@ -94,7 +94,7 @@ div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-
 
             <!--                    Show evidence form-->
             <div class="evidenceForm">
-                <form id="createEvidenceForm" name="evidenceForm"  onsubmit="return true" th:action="@{${apiPrefix} + '/evidence/' + ${evidence.ownerId} + '/saveEvidence'}" method="post" th:object="${evidence}">
+                <form id="createEvidenceForm" name="evidenceForm"  onsubmit="return true" th:action="@{${apiPrefix} + '/evidence}" method="post" th:object="${evidence}">
                     <input type="hidden" id="userId" th:field="*{ownerId}"/>
                     <input type="hidden" id="evidenceId" th:field="*{evidenceId}"/>
                     <div class="mb-3">

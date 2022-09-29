@@ -148,7 +148,7 @@
                     <!--                    Show evidence form-->
                     <div id="evidenceForm" th:fragment="evidenceForm">
                         <form id="createEvidenceForm" name="evidenceForm" onsubmit="return true"
-                            th:action="@{${apiPrefix} + '/evidence/' + ${evidence.ownerId} + '/saveEvidence'}"
+                            th:action="@{${apiPrefix} + '/evidence}"
                             method="post" th:object="${evidence}">
                             <input type="hidden" id="userId" th:field="*{ownerId}" />
                             <input type="hidden" id="evidenceId" th:field="*{evidenceId}" />
@@ -179,7 +179,7 @@
                             <div class="mb-3">
                                 <label for="evidence-date" class="col-form-label required">Date</label>
                                 <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                    aria-label="The date of evidence creation." title="The date of evidence creation.">
+                                    aria-label="The date the evidence occurred." title="The date the evidence occurred.">
                                     <img class="icon img-color-primary"
                                         th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
                                 </span>
