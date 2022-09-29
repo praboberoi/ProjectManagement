@@ -188,6 +188,7 @@ public class EvidenceControllerTest {
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getNewEvidence(99)).thenReturn(evidence);
         when(userAccountClientService.getUser(99)).thenReturn(user);
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
                 .perform(get("/evidence/99"))
@@ -209,6 +210,7 @@ public class EvidenceControllerTest {
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
         when(evidenceService.getEvidence(33)).thenReturn(evidence);
 
         this.mockMvc
