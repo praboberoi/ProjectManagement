@@ -4,13 +4,12 @@
 
 // Regular expression for Sprint Name field. No leading white spaces or empty field.
 // const sprintNameRegex = /^\S/;
-const startDateElement = document.getElementById("sprint-start-date");
-const endDateElement = document.getElementById("sprint-end-date");
+const sprintStartDateElement = document.getElementById("sprint-start-date");
+const sprintEndDateElement = document.getElementById("sprint-end-date");
 const labelElement = document.getElementById('sprint-label');
 let currentSprintId;
 const sprintStartDateError = document.getElementById('startDateError');
 const sprintEndDateError = document.getElementById('endDateError');
-const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
 const sprintNameElement = document.getElementById('sprint-name');
 const sprintDescriptionElement = document.getElementById('sprint-description');
 
@@ -40,10 +39,10 @@ function checkSprintName() {
  * Checks that the start and end dates of the sprint are valid
  */
 function checkSprintDates() {
-    const startDate = startDateElement.value;
-    const endDate = endDateElement.value;
-    startDateElement.setCustomValidity("");
-    endDateElement.setCustomValidity("");
+    const startDate = sprintStartDateElement.value;
+    const endDate = sprintEndDateElement.value;
+    sprintStartDateElement.setCustomValidity("");
+    sprintEndDateElement.setCustomValidity("");
 
     checkStartDate();
     checkEndDate();
@@ -51,8 +50,8 @@ function checkSprintDates() {
     if (startDate > endDate ) {
         sprintStartDateError.innerText = "Start date must be before the end date.";
         sprintEndDateError.innerText = "End date must be after the start date";
-        startDateElement.classList.add("formError");
-        endDateElement.classList.add("formError");
+        sprintStartDateElement.classList.add("formError");
+        sprintEndDateElement.classList.add("formError");
         return;
     }
 
@@ -67,40 +66,40 @@ function checkSprintDates() {
  * Checks that the start date of the sprint is within the project
  */
 function checkStartDate() {
-    const startDate = new Date(startDateElement.value);
+    const startDate = new Date(sprintStartDateElement.value);
 
     if (startDate < projectStartDate) {
         sprintStartDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
-        startDateElement.classList.add("formError");
+        sprintStartDateElement.classList.add("formError");
         return;
     } else if (startDate > projectEndDate) {
         startDateErrorsprintStartDateError.innerText = "Sprint must start before the project ends";
-        startDateElement.classList.add("formError");
+        sprintStartDateElement.classList.add("formError");
         return;
     }
 
     sprintStartDateError.innerText = "";
-    startDateElement.classList.remove("formError")
+    sprintStartDateElement.classList.remove("formError")
 }
 
 /**
  * Checks that the end date of the sprint is within the project
  */
 function checkEndDate() {
-    const endDate = new Date(endDateElement.value);
+    const endDate = new Date(sprintEndDateElement.value);
 
     if (endDate < projectStartDate) {
         sprintEndDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
-        endDateElement.classList.add("formError");
+        sprintEndDateElement.classList.add("formError");
         return;
     } else if (endDate > projectEndDate) {
         sprintEndDateError.innerText = "Sprint must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
-        endDateElement.classList.add("formError");
+        sprintEndDateElement.classList.add("formError");
         return;
     }
 
     sprintEndDateError.innerText = "";
-    endDateElement.classList.remove("formError")
+    sprintEndDateElement.classList.remove("formError")
 }
 
 /**
@@ -136,8 +135,8 @@ function verifyOverlap(startDate, endDate) {
             if (httpRequest.status === 200) {
                 if (httpRequest.response != "") {
                     sprintStartDateError.innerText = httpRequest.response;
-                    startDateElement.classList.add("formError");
-                    endDateElement.classList.add("formError");
+                    sprintStartDateElement.classList.add("formError");
+                    sprintEndDateElement.classList.add("formError");
                 }
             }
         }
