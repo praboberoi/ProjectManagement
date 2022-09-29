@@ -44,8 +44,6 @@ function checkEvidenceTitle() {
         evidenceTitleError.innerText = ""
     }
     checkCreateButton();
-    updateSubmissionButton()
-
 }
 
 /**
@@ -62,7 +60,6 @@ function checkEvidenceDate() {
         evidenceDateErrorElement.innerText = ""
     }
     checkCreateButton();
-    updateSubmissionButton()
 }
 
     /**
@@ -127,7 +124,6 @@ function checkEvidenceDescription() {
         evidenceDescriptionError.innerText = ""
     }
     checkCreateButton();
-    updateSubmissionButton()
 }
 /**
  * Disables or enables the create button
@@ -213,20 +209,3 @@ function updateDeleteDetails(evidenceId, evidenceTitle) {
 
 }
 
-/**
- * Updates the status of submission button based on the input values entered
- */
-function updateSubmissionButton() {
-    const date = document.getElementById('evidence-date').value;
-    const description = document.getElementById('evidence-description').value.trim();
-    const title = document.getElementById('evidence-title').value.trim();
-    const projectId = document.getElementById('evidence-project').value;
-
-    if ((date.length === 0 || description.length === 0 || title.length === 0) ||
-        (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing))
-
-        document.getElementById('evidenceFormSubmitButton').disabled = true
-
-    else
-        document.getElementById('evidenceFormSubmitButton').disabled = false
-}
