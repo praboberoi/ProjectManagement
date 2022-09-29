@@ -44,7 +44,7 @@ public class RepoController {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
         }
 
-        if (group.getGroupId() == 0) {
+        if (group == null || group.getGroupId() == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
 
