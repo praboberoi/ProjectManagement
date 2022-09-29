@@ -56,9 +56,17 @@ function updateEvidencePage(message) {
     const selectedEvidenceIdElement = document.getElementById('selectedEvidenceId')
     const selectedEvidenceId = selectedEvidenceIdElement === null ? 0 : parseInt(selectedEvidenceIdElement.value)
 
-    
     if (action === "deleted" && selectedEvidenceId === evidenceId) {
-        getSelectedEvidence(-1)
+        getEvidenceList()
+        let allEvidence = document.getElementById('evidence-list').getElementsByClassName("evidenceId")
+        if (allEvidence.length > 1 && allEvidence.item(0).value != evidenceId) {
+            getSelectedEvidence(allEvidence.item(0).value)
+        } else if (allEvidence.length > 1) {
+            getSelectedEvidence(allEvidence.item(1).value)
+        } else {
+            document.getElementById('selectedEvidence').hidden = true
+        }
+    } else if (action === "deleted") {
         getEvidenceList()
     } else if (action === 'edited' && selectedEvidenceId === evidenceId) {
         getSelectedEvidence(evidenceId)
@@ -127,5 +135,13 @@ function getSelectedEvidence(selectedEvidenceId) {
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange =  () =>  updateElement(httpRequest, document.getElementById("selectedEvidence"));
     httpRequest.open('GET', apiPrefix + `/evidence/${selectedEvidenceId}`);
+    httpRequest.send();
+}
+
+function deleteEvidence(evidenceId) {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = () => processAction(httpRequest)
+
+    httpRequest.open('DELETE', apiPrefix + `/evidence/${evidenceId}`);
     httpRequest.send();
 }

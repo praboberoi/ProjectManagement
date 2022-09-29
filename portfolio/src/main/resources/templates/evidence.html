@@ -45,9 +45,8 @@
             <div class="row mt-3">
                 <div id="evidence-list" class="col-4" th:fragment="evidenceList">
                     <th:block th:each="evidence : ${listEvidence}">
-                        <div class="card project-card mb-3" th:id="'evidence' + ${evidence.evidenceId} + 'Card'"
-                            th:ondrop="'dropUsers(event, ' + ${evidence.evidenceId} + ')'"
-                            ondragover="allowDrop(event)">
+                        <div class="card project-card mb-3" th:id="'evidence' + ${evidence.evidenceId} + 'Card'">
+                            <input type="hidden" class="evidenceId" th:value="${evidence.evidenceId}">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="card-body">
@@ -227,17 +226,15 @@
                     <p id="deleteMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <form id="deleteEvidenceForm" method="post">
-                        <button type="submit" id="evidenceModalDeleteBtn" class="btn btn-outline-primary" data-bs-dismiss="modal">
-                            <img class="icon img-color-primary"
-                                 th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
-                            <span>Delete</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                            <img class="icon img-color-secondary"
-                                 th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
-                            <span>Close</span></button>
-                    </form>
+                    <button type="submit" id="evidenceModalDeleteBtn" class="btn btn-outline-primary" data-bs-dismiss="modal">
+                        <img class="icon img-color-primary"
+                                th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span>Delete</span>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <img class="icon img-color-secondary"
+                                th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
+                        <span>Close</span></button>
                 </div>
             </div>
         </div>

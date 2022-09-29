@@ -196,7 +196,7 @@ public class EvidenceController {
      * @param ra redirect attribute of for displaying the message
      * @return the link to the HTML page
      */
-    @DeleteMapping(path="/evidence")
+    @DeleteMapping(path="/evidence/{evidenceId}")
     public ResponseEntity<String> deleteEvidence(
             @PathVariable int evidenceId,
             @AuthenticationPrincipal AuthState principal,

@@ -126,7 +126,10 @@ function updateEditMessage() {
  */
 function updateDeleteDetails(evidenceId, evidenceTitle) {
     document.getElementById('deleteMessage').innerText = `Are you sure you want to delete ${evidenceTitle}?`
-    document.getElementById('deleteEvidenceForm').action = `${window.location.pathname}/${evidenceId}/deleteEvidence`
+
+    document.getElementById('evidenceModalDeleteBtn').onclick = function () {
+        deleteEvidence(evidenceId);
+    }
 
 }
 
