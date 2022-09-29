@@ -27,7 +27,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.*;
@@ -57,7 +56,7 @@ public class EvidenceController {
 
     private final Logger logger = LoggerFactory.getLogger(EvidenceController.class);
 
-    private static Set<EvidenceNotification> editing = new HashSet<>();
+    private final HashMap<Integer, EvidenceNotification> editing = new HashMap<>();
 
     private static final String EVIDENCE = "evidence";
 
@@ -68,8 +67,6 @@ public class EvidenceController {
     private static final String NOTIFICATIONS = "notifications";
 
     private static final String MESSAGE_DANGER = "messageDanger";
-
-    private static final String MESSAGE_SUCCESS = "messageSuccess";
 
     private static final String IS_CURRENT_USER = "isCurrentUserEvidence";
 
@@ -130,10 +127,9 @@ public class EvidenceController {
      * @param ra Redirect Attribute frontend message object
      * @return link of html page to display
      */
-    @PostMapping(path="/evidence/")
-    public String saveEvidence(
+    @PostMapping(path="/evidence")
+    public ResponseEntity<String> saveEvidence(
             @ModelAttribute EvidenceDTO evidenceDTO,
-            RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal,
             @Header("simpSessionId") String sessionId) {
         Evidence evidence = new Evidence(evidenceDTO);
@@ -141,14 +137,14 @@ public class EvidenceController {
             if (PrincipalUtils.getUserId(principal) != evidence.getOwnerId()) {
                 throw new IncorrectDetailsException("You may only create evidence on your own evidence page");
             }
+
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
             notifyEvidence(evidence.getOwnerId(), evidence.getEvidenceId(), "edited");
-            ra.addFlashAttribute(MESSAGE_SUCCESS, message);
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch(IncorrectDetailsException e) {
-            ra.addFlashAttribute(MESSAGE_DANGER, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return "redirect:/evidence/{userId}";
     }
 
     /**
@@ -159,7 +155,7 @@ public class EvidenceController {
     @GetMapping(path="/evidence/{evidenceId}/editEvidence")
     public ModelAndView editEvidence(
             @PathVariable int evidenceId) {
-        ModelAndView mv = new ModelAndView("evidence::evidenceForm");
+        ModelAndView mv = new ModelAndView("evidenceFragments::evidenceForm");
         try {
             Evidence evidence = evidenceService.getEvidence(evidenceId);
             List<Project> listProjects = projectService.getAllProjects();
@@ -183,10 +179,10 @@ public class EvidenceController {
      */
     @GetMapping(path="/evidence/getNewEvidence")
     public ModelAndView createEvidence(@AuthenticationPrincipal AuthState principal) {
-        ModelAndView mv = new ModelAndView("evidence::evidenceForm");
+        ModelAndView mv = new ModelAndView("evidenceFragments::evidenceForm");
         Evidence evidence = evidenceService.getNewEvidence(PrincipalUtils.getUserId(principal));
         List<Project> listProjects = projectService.getAllProjects();
-        
+
         mv.addObject(EVIDENCE, evidence);
         mv.addObject(LIST_PROJECTS, listProjects);
         mv.addObject("submissionImg", apiPrefix+"/icons/create-icon.svg");
@@ -233,6 +229,7 @@ public class EvidenceController {
             @AuthenticationPrincipal AuthState principal) {
         ModelAndView mv = new ModelAndView("evidence::evidenceList");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+
         mv.addObject(LIST_EVIDENCE, listEvidence);
         mv.addObject(IS_CURRENT_USER, PrincipalUtils.getUserId(principal)==userId);
         mv.addObject(NOTIFICATIONS, editing);
@@ -251,11 +248,11 @@ public class EvidenceController {
         notification.setUsername(principal.getName());
         notification.setSessionId(sessionId);
         if (notification.isActive()) {
-            notifyEvidence(notification.getUserId(), notification.getEvidenceId(), "editing");
-            editing.add(notification);
+            notifyEvidence(notification.getUserId(), notification.getEvidenceId(), "editing", notification.getUsername());
+            editing.put(notification.getEvidenceId(), notification);
         } else {
             notifyEvidence(notification.getUserId(), notification.getEvidenceId(), "finished");
-            editing.remove(notification);
+            editing.remove(notification.getEvidenceId());
         }
     }
 
@@ -266,7 +263,17 @@ public class EvidenceController {
      * @param action
      */
     private void notifyEvidence(int userId, int evidenceId, String action) {
-        template.convertAndSend("/element/evidence/" + userId, ("evidence" + evidenceId + " " + action));
+        template.convertAndSend("/element/evidence/" + userId, ("evidence " + evidenceId + " " + action));
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param projectId
+     * @param eventId
+     * @param action
+     */
+    private void notifyEvidence(int userId, int evidenceId, String action, String username) {
+        template.convertAndSend("/element/evidence/" + userId, ("evidence " + evidenceId + " " + action + " " + username));
     }
 
     /**
@@ -275,10 +282,12 @@ public class EvidenceController {
      */
     @EventListener
     public void onApplicationEvent(SessionDisconnectEvent event) {
-        editing.stream().filter(notification->notification.getSessionId().equals(event.getSessionId()))
-        .forEach(notification->template.convertAndSend("/element/evidence/" + notification.getEvidenceId(), ("evidence" + notification.getEvidenceId() + " finished")));
-        editing.removeIf(notification->notification.getSessionId().equals(event.getSessionId()));
+        for (Map.Entry<Integer, EvidenceNotification> current : editing.entrySet()) {
+            EvidenceNotification notification = current.getValue();
+            if (notification.getSessionId().equals(event.getSessionId())) {
+                notifyEvidence(notification.getUserId(), notification.getEvidenceId(), "finished", notification.getUsername());
+                editing.remove(current.getKey());
+            }
+        }
     }
-
-
 }

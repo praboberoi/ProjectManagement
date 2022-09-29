@@ -185,6 +185,7 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
                 reply.setMessage(String.format("An error occurred while updating group %s", group.getShortName()));
             }
         }
+        logger.info("Group {} has been updated", group.getGroupId());
         responseObserver.onNext(reply.build());
         responseObserver.onCompleted();
     }

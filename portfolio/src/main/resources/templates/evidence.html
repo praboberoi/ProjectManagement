@@ -64,11 +64,7 @@
                                                                 th:data-title="${evidence.title}"
                                                                 th:data-date="${evidence.dateOccurred}"
                                                                 th:data-description="${evidence.description}"
-                                                                th:onclick="editEvidence(this.getAttribute('data-id'),
-                                                                                          this.getAttribute('data-projectid'),
-                                                                                          this.getAttribute('data-title'),
-                                                                                          this.getAttribute('data-date'),
-                                                                                          this.getAttribute('data-description'))">
+                                                                th:onclick="'editEvidence(' + ${evidence.evidenceId} + ')'">
                                                             <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
                                                             Edit
                                                         </button>
@@ -107,7 +103,7 @@
                                                         </button>
                                                     </div>
                                                     <div th:if="${isCurrentUserEvidence || adminOrTeacher}" th:id="'evidence-' + ${evidence.evidenceId} + '-message-div'">
-                                                        <p class="h6 text-align-start font-italic text-black-50" th:text="${notifications.get(evidence.evidenceId).userUpdating} + ' is currently editing'"></p>
+                                                        <p class="h6 text-align-start font-italic text-black-50" th:text="${notifications.get(evidence.evidenceId).username} + ' is currently editing'"></p>
                                                     </div>
                                                 </th:block>
                                             </div>
@@ -144,9 +140,9 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
+                    <div class="alert alert-danger text-center" id="evidenceFormModalError"></div>
                     <!--                    Show evidence form-->
-                    <div id="evidenceForm" th:fragment="evidenceForm">
+                    <div id="evidenceForm">
                         <form id="createEvidenceForm" name="evidenceForm" onsubmit="return true"
                             th:action="@{${apiPrefix} + '/evidence}"
                             method="post" th:object="${evidence}">

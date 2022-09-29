@@ -38,11 +38,7 @@
                                            th:data-title="${selectedEvidence.title}"
                                            th:data-date="${selectedEvidence.dateOccurred}"
                                            th:data-description="${selectedEvidence.description}"
-                                           th:onclick="editEvidence(this.getAttribute('data-id'),
-                                                                                          this.getAttribute('data-projectid'),
-                                                                                          this.getAttribute('data-title'),
-                                                                                          this.getAttribute('data-date'),
-                                                                                          this.getAttribute('data-description'))">
+                                           th:onclick="'editEvidence(' + ${selectedEvidence.evidenceId} + ')'">
                                             <img class="icon img-color-secondary"
                                                  th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
                                             Edit</a>
@@ -81,7 +77,7 @@
     </div>
 </div>
 
-div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+<div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered modal-lg">
     <div class="modal-content">
         <div class="modal-header">
@@ -93,9 +89,9 @@ div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-
         <div class="modal-body">
 
             <!--                    Show evidence form-->
-            <div class="evidenceForm">
-                <form id="createEvidenceForm" name="evidenceForm"  onsubmit="return true" th:action="@{${apiPrefix} + '/evidence}" method="post" th:object="${evidence}">
-                    <input type="hidden" id="userId" th:field="*{ownerId}"/>
+            <div id="evidenceForm"  th:fragment="evidenceForm">
+                <form id="createEvidenceForm" name="evidenceForm" onsubmit="saveEvidence(); return false" th:object="${evidence}">
+                    <input type="hidden" name="ownerId" id="userId" th:field="*{ownerId}"/>
                     <input type="hidden" id="evidenceId" th:field="*{evidenceId}"/>
                     <div class="mb-3">
                         <label for="evidence-title" class="col-form-label required">Evidence Title</label>
@@ -138,8 +134,8 @@ div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-
                     <br>
                     <div class="modal-footer">
                         <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" >
-                            <img class="icon img-color-secondary" id="evidenceFromSubmitImg" th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}"/>
-                            <span id="evidenceFormSubmitLabel">Create</span></button>
+                            <img class="icon img-color-secondary" id="evidenceFromSubmitImg" th:src="${submissionImg}"/>
+                            <span id="evidenceFormSubmitLabel" th:text="${submissionName}">Create</span></button>
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                             <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}"/> Close</button>
                     </div>
