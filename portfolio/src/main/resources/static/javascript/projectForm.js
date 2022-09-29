@@ -182,34 +182,9 @@ function checkProjectDescription() {
     } else {
         projectName.classList.remove("formError");
         projectNameError.innerText = null;
+        return true
     }
-}
-
-/**
- * Updates the characters remaining in the description.
- */
-function checkProjectDescription () {
-    let descriptionElement = document.getElementById("projectDescription");
-    let descErrorElement = document.getElementById("descriptionError");
-
-    let charMessage = document.getElementById("charCount");
-    let charCount = descriptionElement.value.length;
-    charMessage.innerText = charCount + ' '
-
-    if (descriptionElement.value.length > 250)
-    {
-        descErrorElement.classList.add("formError");
-        descErrorElement.innerText = "Description must be less than 250 characters."
-
-    } else if ( emojiRegx.test(descriptionElement.value)) {
-        descErrorElement.classList.add("formError");
-        descErrorElement.innerText = "Project description must not contain an emoji";
-
-    } else {
-        descErrorElement.classList.remove("formError");
-        descErrorElement.innerText = null;
-    }
-
+    return false
 }
 
 
@@ -221,7 +196,7 @@ function verifyOverlap(startDate, endDate) {
     const endDateElement = document.querySelector('#projectFormEndDate');
     const startDateError = document.getElementById('startDateError');
     const endDateError = document.getElementById('endDateError');
-    const projectId = document.getElementById('projectId').value;
+    const projectId = document.getElementById('projectFormProjectId').value;
 
     let httpRequest = new XMLHttpRequest();
 
@@ -229,21 +204,26 @@ function verifyOverlap(startDate, endDate) {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 if (httpRequest.response != "") {
-                    if (httpRequest.response.includes("ends")) {
+                    if (!httpRequest.response.includes("year") && !httpRequest.response.includes("sprint")) {
+                        return
+                    } else if (httpRequest.response.includes("ends")) {
                         endDateError.innerText = httpRequest.response;
+                        startDateElement.classList.add("formError");
+                        endDateElement.classList.add("formError");
                     } else {
                         startDateError.innerText = httpRequest.response;
+                        startDateElement.classList.add("formError");
+                        endDateElement.classList.add("formError");
                     }
-                    startDateElement.classList.add("formError");
-                    endDateElement.classList.add("formError");
                 }
             }
         }
     }
 
     httpRequest.open('POST', '/verifyProject/' + projectId, true);
-    httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+    let formData = new FormData(document.forms.createProjectForm)
+
+    httpRequest.send(formData);
 }
 
 /**

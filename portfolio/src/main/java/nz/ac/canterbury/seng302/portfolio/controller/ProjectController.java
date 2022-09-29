@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -157,21 +156,12 @@ public class ProjectController {
     @PostMapping("/verifyProject/{projectId}")
     public ResponseEntity<String> verifyProject(
             @PathVariable int projectId,
-            String startDate,
-            String endDate,
-            String projectName,
-            String projectDescription,
+            ProjectDTO projectDTO,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
             return null;
         try {
-            Project project = new Project.Builder()
-                    .projectId(projectId)
-                    .projectName(projectName)
-                    .description(projectDescription)
-                    .startDate(Date.valueOf(startDate))
-                    .endDate(Date.valueOf(endDate))
-                    .build();
+            Project project = new Project(projectDTO);
             projectService.verifyProject(project);
             return ResponseEntity.status(HttpStatus.OK).body(null);
         } catch (IncorrectDetailsException e) {

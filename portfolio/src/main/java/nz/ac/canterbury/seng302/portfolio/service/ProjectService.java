@@ -112,9 +112,6 @@ public class ProjectService {
         List<Sprint> sprints = sprintService.getSprintsByProject(project.getProjectId());
         Project projectName = projectRepository.findByProjectName(project.getProjectName());
 
-        if (projectName != null && projectName.getProjectId() != project.getProjectId()) {
-            throw new IncorrectDetailsException("A project already exists with that name.");
-        }
         if (sprints.stream().anyMatch(sprint -> sprint.getStartDate().before(project.getStartDate()))) {
             throw new IncorrectDetailsException("You are trying to start the project after you have started a sprint.");
         }
@@ -127,8 +124,12 @@ public class ProjectService {
         if ( project.getEndDate().after(Date.valueOf(LocalDate.now().plusYears(10))) ) {
             throw new IncorrectDetailsException("A project cannot end more than ten years from now.");
         }
+        
         if (project.getDescription().length() > 250) {
             throw new IncorrectDetailsException("Project description cannot exceed 250 characters");
+        }
+        if (projectName != null && projectName.getProjectId() != project.getProjectId()) {
+            throw new IncorrectDetailsException("A project already exists with that name.");
         }
         if (ValidationUtilities.hasEmoji(project.getProjectName())) {
             throw new IncorrectDetailsException("Project name must not contain an emoji");
