@@ -1,6 +1,8 @@
 package nz.ac.canterbury.seng302.portfolio.model.object;
 
 import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +71,7 @@ class ProjectTest {
     }
 
     @Test
-    void givenProjectExists_SetProjectName() {
+    void givenProjectExists_SetProjectName() throws IncorrectDetailsException{
         project1.setProjectName("Project 2025");
         assertEquals("Project 2025", project1.getProjectName());
         assertNotEquals("Project 2020", project1.getProjectName());

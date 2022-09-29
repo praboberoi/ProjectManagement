@@ -14,6 +14,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -23,11 +24,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 /**
- * Unit tests for methods in the sprintService class
+ * Unit tests for methods in the projectService class
  */
 @SpringBootTest
 @ActiveProfiles("test")
-class DashboardServiceTest {
+class ProjectServiceTest {
     
     @SpyBean
     private SprintRepository sprintRepository;
@@ -38,7 +39,7 @@ class DashboardServiceTest {
     private ProjectRepository projectRepository;
 
     @Autowired
-    private DashboardService dashboardService;
+    private ProjectService projectService;
 
     private Project.Builder projectBuilder;
 
@@ -68,23 +69,23 @@ class DashboardServiceTest {
     void givenValidProject_whenProjectValidated_thenSucceedsValidation() {
         Project project = projectBuilder.build();
         assertDoesNotThrow(() -> {
-            dashboardService.verifyProject(project);
+            projectService.verifyProject(project);
         });
     }
 
     /**
-     * Tests that a sprint with too long a description will not be valid
+     * Tests that a project with too long a description will not be valid
      */
     @Test
-    void givenInvalidSprintDescription_whenSprintValidated_thenFailsValidation() {
+    void givenInvalidProjectDescription_whenProjectValidated_thenFailsValidation() {
         Project project = projectBuilder
             .description("0123456789".repeat(26)) //260 characters
             .build();
-            assertThrows(Exception.class, () -> {dashboardService.verifyProject(project);});
+            assertThrows(Exception.class, () -> {projectService.verifyProject(project);});
     }
 
     /**
-     * Tests that a sprint with too long a description will not be valid
+     * Tests that a project with too long a description will not be valid
      */
     @Test
     void givenDuplicateName_whenProjectValidated_thenFailsValidation() {
@@ -93,19 +94,51 @@ class DashboardServiceTest {
             .projectName("Test") //260 characters
             .build();
         when(projectRepository.findByProjectName("Test")).thenReturn(new Project());
-        assertThrows(Exception.class, () -> {dashboardService.verifyProject(project);});
+        assertThrows(Exception.class, () -> {projectService.verifyProject(project);});
     }
 
     /**
-     * Tests that a sprint with the maximum character count will be valid
+     * Tests that a project with the maximum character count will be valid
      */
     @Test
-    void givenValidLargeSprintDescription_whenSprintValidated_thenFailsValidation() {
+    void givenValidLargeProjectDescription_whenProjectValidated_thenSucceedsValidation() {
         Project project = projectBuilder
             .description("0123456789".repeat(25)) //250 characters
             .build();
             assertDoesNotThrow(() -> {
-                dashboardService.verifyProject(project);
+                projectService.verifyProject(project);
+            });
+    }
+    
+    /**
+     * Tests that a project with a start date 5 years ago will be valid
+     */
+    @Test
+    void givenInvalidStartDate_whenProjectValidated_thenFailsValidation() {
+        Calendar startDate = Calendar.getInstance();
+        startDate.add(Calendar.YEAR, -5);
+
+        Project project = projectBuilder
+            .startDate(new Date(startDate.getTimeInMillis()))
+            .build();
+            assertThrows(IncorrectDetailsException.class, () -> {
+                projectService.verifyProject(project);
+            });
+    }
+
+    /**
+     * Tests that a project with an end date 10 years in the future will be valid
+     */
+    @Test
+    void givenInvalidEndDate_whenProjectValidated_thenFailsValidation() {
+        Calendar endDate = Calendar.getInstance();
+        endDate.add(Calendar.YEAR, 10);
+
+        Project project = projectBuilder
+            .endDate(new Date(endDate.getTimeInMillis()))
+            .build();
+            assertThrows(IncorrectDetailsException.class, () -> {
+                projectService.verifyProject(project);
             });
     }
 
@@ -118,7 +151,7 @@ class DashboardServiceTest {
         list.add(defaultProject);
         Iterable<Project> iterable = list;
         when(projectRepository.findAll()).thenReturn(iterable);
-        List<Project> returnList = dashboardService.getAllProjects();
+        List<Project> returnList = projectService.getAllProjects();
         assertEquals(1, returnList.size());
     }
 
@@ -130,7 +163,7 @@ class DashboardServiceTest {
     void givenNewProject_whenSaveProject_thenProjectSaved() throws IncorrectDetailsException {
         Project testProject = projectBuilder.build();
         when(projectRepository.save(any())).thenReturn(testProject);
-        String returnMessage = dashboardService.saveProject(testProject);
+        String returnMessage = projectService.saveProject(testProject);
         assertEquals("Successfully Created " + testProject.getProjectName(), returnMessage);
     }
 
@@ -142,7 +175,20 @@ class DashboardServiceTest {
     void givenEditedProject_whenSaveProject_thenProjectSaved() throws IncorrectDetailsException {
         Project testProject = projectBuilder.projectId(1).build();
         when(projectRepository.save(any())).thenReturn(testProject);
-        String returnMessage = dashboardService.saveProject(testProject);
+        String returnMessage = projectService.saveProject(testProject);
         assertEquals("Successfully Updated " + testProject.getProjectName(), returnMessage);
+    }
+
+    /**
+     * Checks that when a new project is requested it is initilized correctly
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void whenNewProject_thenProjectCreated() throws IncorrectDetailsException {
+        LocalDate now = LocalDate.now();
+        Project testProject = new Project(1, "Project " + now.getYear(), "", Date.valueOf(now), Date.valueOf(now.plusMonths(8)));
+        Project project = projectService.getNewProject();
+
+        assertEquals(testProject, project);
     }
 }
