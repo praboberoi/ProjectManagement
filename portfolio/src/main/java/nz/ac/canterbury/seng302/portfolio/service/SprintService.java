@@ -239,7 +239,7 @@ public class SprintService {
         }
 
 
-        if(sprints.stream().filter(sp -> !Objects.equals(sp.getSprintLabel(), sprint.getSprintLabel()))
+        if(sprints.stream().filter(sp -> sp.getSprintId() != sprint.getSprintId())
                             .anyMatch(sp -> (betweenDateRange(sp, sprint)))){
             throw new IncorrectDetailsException("Sprint dates can not overlap with another sprint");
 
