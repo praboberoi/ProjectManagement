@@ -144,6 +144,7 @@ public class UserController {
      */
     private void notifyRoleChange(int userId) {
         template.convertAndSend("/element/user/" + userId + "/roles", "");
+        template.convertAndSend("/element/user/", userId);
     }
 
     /**
