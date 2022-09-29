@@ -101,7 +101,7 @@ class RegistrationServiceTests {
                 .setNickname("New❤️")
                 .setUsername("pra😀");
         List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
-        assertEquals(4, result.size());
+        assertEquals(5, result.size());
     }
 
     /**
