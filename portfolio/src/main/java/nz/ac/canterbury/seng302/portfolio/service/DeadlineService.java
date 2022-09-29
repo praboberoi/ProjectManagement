@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,10 +39,8 @@ public class DeadlineService {
         this.sprintRepository = sprintRepository;
         this.projectRepository = projectRepository;
     }
-
     /**
      * Creates a new deadline
-     * 
      * @param project Project of the deadline
      * @return of type Deadline
      */
@@ -58,7 +57,7 @@ public class DeadlineService {
     /**
      * Creates a mapping between a deadline and the name of the sprint that occurs
      * on the deadline
-     * 
+     *
      * @param deadlineList A list of deadlines to create mappings for
      * @return A mapping between the deadline id and the name of the sprint
      *         occurring on the deadline
@@ -81,7 +80,7 @@ public class DeadlineService {
 
     /**
      * Gets deadline object from the database
-     * 
+     *
      * @param deadlineId of type int
      * @return of type Deadline
      * @throws IncorrectDetailsException if given Deadline ID does not exist
@@ -96,7 +95,6 @@ public class DeadlineService {
 
     /**
      * Returns a list of deadlines that are related to the given project ID
-     * 
      * @param projectId of type int
      * @return a list of deadlines from a project specified by its Id.
      */
@@ -113,7 +111,7 @@ public class DeadlineService {
     /**
      * Returns a list of deadlines that occur within the given sprint related to the
      * sprint ID.
-     * 
+     *
      * @param sprintId The id of the sprint (int).
      * @return A list of deadlines from a sprint specified by its id.
      */
@@ -125,7 +123,7 @@ public class DeadlineService {
 
     /**
      * Deletes deadline object from the database
-     * 
+     *
      * @param deadlineId of type int
      * @return Message of type String
      * @throws IncorrectDetailsException if unable to delete the deadline
@@ -147,7 +145,7 @@ public class DeadlineService {
 
     /**
      * Saves a deadline object to the database
-     * 
+     *
      * @param deadline of type Deadline
      * @return message based on whether it is a new deadline or existing deadline
      *         being updated
@@ -170,11 +168,11 @@ public class DeadlineService {
 
     /**
      * Verifies the current deadline name and date
-     * 
      * @param deadline The deadline object to verify
      * @throws IncorrectDetailsException raised if deadline values are invalid
      */
     public void verifyDeadline(Deadline deadline) throws IncorrectDetailsException {
+
         if (deadline == null) {
             throw new IncorrectDetailsException("No deadline");
         } else if (deadline.getName() == null || deadline.getDate() == null || deadline.getProject() == null) {
@@ -187,34 +185,19 @@ public class DeadlineService {
             throw new IncorrectDetailsException("Deadline date cannot be after project end date");
         } else if (deadline.getDate().before(deadline.getProject().getStartDate())) {
             throw new IncorrectDetailsException("Deadline date cannot be before project start date");
+        } else if (ValidationUtilities.hasEmoji(deadline.getName())) {
+            throw new IncorrectDetailsException("Deadline name must not contain an emoji");
         }
+
     }
 
     /**
      * Updates the colours for the given deadline
-     * 
      * @param deadline of type deadline
      */
     public void updateDeadlineColors(Deadline deadline) {
-        deadline.clearColorList();
-        List<Sprint> sprintList = sprintRepository.findSprintsByDeadline(deadline)
-                .stream().sorted(Comparator.comparingInt(Sprint::getSprintId))
-                .toList();
-
-        AtomicInteger counter = new AtomicInteger(0);
-
-        sprintList.forEach(sprint -> {
-            if (!deadline.getColors().contains(sprint.getColor()))
-                deadline.addColor(sprint.getColor(), counter.getAndIncrement());
-        });
-
-        if (!sprintList.isEmpty()) {
-            if (sprintList.get(0).getStartDate().after(deadline.getDate()))
-                deadline.addColor(SprintColor.WHITE, 0);
-
-            if (sprintList.get(sprintList.size() - 1).getEndDate().before(deadline.getDate()))
-                deadline.addColor(SprintColor.WHITE, deadline.getColors().size());
-        }
+        Optional<Sprint> sprint = sprintRepository.findSprintsByDeadline(deadline);
+        sprint.ifPresent(value -> deadline.setColor(value.getColor()));
     }
 
 

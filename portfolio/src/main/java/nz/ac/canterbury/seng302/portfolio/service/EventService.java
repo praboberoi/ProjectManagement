@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,7 +40,7 @@ public class EventService {
     /**
      * Returns an event object from the database. If the event is not present then
      * it throws an exception.
-     * 
+     *
      * @param eventId The unique id (integer) of the requested event.
      * @return Event The event requested with the associated id.
      * @throws IncorrectDetailsException If null value is returned by
@@ -57,7 +58,7 @@ public class EventService {
 
     /**
      * Creates a new event with a name
-     * 
+     *
      * @return of type Event
      */
     public Event getNewEvent(Project project) {
@@ -75,7 +76,7 @@ public class EventService {
     /**
      * This method maps the id's of events to the names of sprints that occur at the
      * start and end of the event
-     * 
+     *
      * @param eventList The list of events to have sprints mapped to them
      * @return Hashtable containing a mapping between the id of an event to a List
      *         containing the sprint occurring at
@@ -107,7 +108,7 @@ public class EventService {
 
     /**
      * Returns a list of events that are related to the given project ID
-     * 
+     *
      * @param projectId of type int
      * @return a list of events from a project specified by its Id.
      */
@@ -123,7 +124,7 @@ public class EventService {
 
     /**
      * Verifies the event date and time
-     * 
+     *
      * @param event The event object to verify
      * @throws IncorrectDetailsException Message explaining the error
      */
@@ -132,39 +133,38 @@ public class EventService {
         if (event == null)
             throw new IncorrectDetailsException("No Event");
 
-        else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null
-                || event.getStartDate() == null)
+        else if (event.getEventName() == null || event.getProject() == null || event.getEndDate() == null || event.getStartDate() == null)
             throw new IncorrectDetailsException("Event values are null");
+
 
         // Removes leading and trailing white spaces from the name
         event.setEventName(event.getEventName().strip());
 
-        if (event.getEventName().length() < 1)
+        if (ValidationUtilities.hasEmoji(event.getEventName()))
+            throw new IncorrectDetailsException("Event name must not contain an emoji");
+
+        else if (event.getEventName().length() < 1)
             throw new IncorrectDetailsException("Event name must not be empty");
 
         else if (event.getEventName().length() > 50)
             throw new IncorrectDetailsException("Event name cannot be more than 50 characters");
 
         else if (event.getEndDate().before(event.getStartDate()))
-            throw new IncorrectDetailsException(
-                    "The event end date and time cannot be before the event start date and time");
+            throw new IncorrectDetailsException("The event end date and time cannot be before the event start date and time");
 
         else if (event.getEndDate().equals(event.getStartDate()))
-            throw new IncorrectDetailsException(
-                    "The event end date and time cannot be the same as event start date and time");
+            throw new IncorrectDetailsException("The event end date and time cannot be the same as event start date and time");
 
         else if (event.getStartDate().before(event.getProject().getStartDate()))
             throw new IncorrectDetailsException("The event cannot start before the project");
 
-        else if (event.getStartDate().after(event.getProject().getEndDate())
-                || event.getEndDate().after(event.getProject().getEndDate()))
+        else if (event.getStartDate().after(event.getProject().getEndDate()) || event.getEndDate().after(event.getProject().getEndDate()))
             throw new IncorrectDetailsException("The event cannot start or end after the project");
-
     }
 
     /**
      * Updates the colours for the given event
-     * 
+     *
      * @param event of type Event
      */
     public void updateEventColors(Event event) {
@@ -190,7 +190,7 @@ public class EventService {
 
     /**
      * Saves event into the database
-     * 
+     *
      * @param event The event object to be saved
      * @return Message based on saving edit or creating event
      */
@@ -213,7 +213,7 @@ public class EventService {
     /**
      * Returns a list of deadlines that occur within the given sprint related to the
      * sprint ID.
-     * 
+     *
      * @param sprintId The id of the sprint (int).
      * @return A list of deadlines from a sprint specified by its id.
      */
@@ -225,7 +225,7 @@ public class EventService {
 
     /**
      * Deletes event object from the database
-     * 
+     *
      * @param eventId of type int
      * @return Message of type String
      * @throws IncorrectDetailsException if unable to delete the event

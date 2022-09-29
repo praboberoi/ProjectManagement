@@ -7,6 +7,7 @@ let evidenceTitleEditing = null;
 let evidenceDateEditing = null;
 let evidenceDescriptionEditing = null;
 let evidenceProjectIdEditing = null;
+const emojiRegx = /\p{Extended_Pictographic}/u;
 
 /**
  * Calls the server to save the evidence
@@ -152,7 +153,7 @@ function updateSubmissionButton() {
     const title = document.getElementById('evidence-title').value.trim();
     const projectId = document.getElementById('evidence-project').value;
 
-    if ((date.length === 0 || description.length === 0 || title.length === 0) ||
+    if (date.length === 0 || description.length === 0 || title.length === 0 || emojiRegx.test(title)  || emojiRegx.test(description) ||
         (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing)) {
 
         document.getElementById('evidenceFormSubmitButton').disabled = true

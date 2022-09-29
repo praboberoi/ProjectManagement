@@ -9,3 +9,4 @@ Feature: U13. Modifying pieces of evidence
     And "Save" and "Close" buttons are present on the evidence modal
     And "Save" button is disabled on the the evidence modal
     And "Save" button is visible when title is changed to "Cypress Testing Edit"
+    And "Save" button is disabled when an emoji is added to the title

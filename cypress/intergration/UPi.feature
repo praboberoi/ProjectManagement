@@ -20,6 +20,11 @@ Feature: UPi Project Details
     And I click on Create button
     Then A new Project with CypressTest is created
 
+    Given I login as an admin
+    When I select Create Project
+    And I enter a emojis for the project name and description
+    Then Error message is displayed for using emojis for both project name and description
+
   Scenario: AC6: As a teacher, I can create a sprint easily (e.g., a “+” button to add another).
     Given I login as an admin
     When I select the CypressProject project
@@ -38,6 +43,14 @@ Feature: UPi Project Details
     When I select the CypressProject project
     And I create a sprint "Cypress Sprint 1"
     Then Sprint "Cypress Sprint 1" has label "Sprint 1"
+
+  Scenario: AC 8: As a teacher, I can edit any of the details except for sprint labels.  All changes are persistent.
+    Given I login as an admin
+    And I select the CypressProject project
+    And I select the create sprint button
+    When I enter an emoji for sprint name
+    And I enter an emoji for sprint description
+    Then I get error use of emoji errors for both sprint name and description
 
   Scenario: AC 8: As a teacher, I can edit any of the details except for sprint labels.  All changes are persistent.
     Given I login as an admin

@@ -91,6 +91,20 @@ class RegistrationServiceTests {
     }
 
     /**
+     * Test to assert users can not have emojis in first name, last name, bio, and nickname.
+     */
+    @Test
+    void givenInvalidRequestWithEmojiUsed_whenUserValidation_thenMultipleErrorsFound() {
+        requestBuilder.setFirstName("Testing😀")
+                .setLastName("Testing😊")
+                .setBio("This is a test 👍")
+                .setNickname("New❤️")
+                .setUsername("pra😀");
+        List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
+        assertEquals(5, result.size());
+    }
+
+    /**
      * Tests user validation with a multiple long entries
      */
     @Test
