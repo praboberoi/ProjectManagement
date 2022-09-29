@@ -74,6 +74,11 @@ function updateEvidenceModalForm(httpRequest, modalTitle) {
  * Server call to create a new evidence
  */
 function createNewEvidence() {
+    evidenceTitleEditing = null;
+    evidenceDateEditing = null;
+    evidenceDescriptionEditing = null;
+    evidenceProjectIdEditing = null;
+
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `/evidence/getNewEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, "Create New Evidence");
@@ -89,6 +94,11 @@ function createNewEvidence() {
  * @param evidenceDescription description of the selected evidence
  */
 function editEvidence(evidenceId) {
+    evidenceTitleEditing = document.getElementById('evidence-title').value
+    evidenceDateEditing = document.getElementById('evidence-date').value;
+    evidenceDescriptionEditing = document.getElementById('evidence-description').value;
+    evidenceProjectIdEditing = document.getElementById('evidence-project').value;
+
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `/evidence/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, "Update Evidence");
@@ -112,7 +122,7 @@ function openEvidenceModal() {
 
 function updateEditMessage() {
     const evidenceId = document.getElementById('evidenceId').value
-    if(document.getElementById(`evidence-${evidenceId}-message-div`) !== null) {
+    if (document.getElementById(`evidence-${evidenceId}-message-div`) !== null) {
         document.getElementById(`evidence-${evidenceId}-message-div`).hidden = true
         document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = false
     }
@@ -143,19 +153,19 @@ function updateSubmissionButton() {
     const projectId = document.getElementById('evidence-project').value;
 
     if ((date.length === 0 || description.length === 0 || title.length === 0) ||
-        (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing))
+        (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing)) {
 
         document.getElementById('evidenceFormSubmitButton').disabled = true
-
-    else
+    } else {
         document.getElementById('evidenceFormSubmitButton').disabled = false
+    }
 }
 
 /**
  * Replaces the old messages with the new one contained in the request
  * @param httpRequest Request containing a model view element
  */
- function processAction(httpRequest) {
+function processAction(httpRequest) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
             messageSuccess.hidden = false
@@ -179,7 +189,7 @@ function updateSubmissionButton() {
  * @param modal Which modal is being edited
  * @param modalError Error message div that displays an error
  */
- function updateModal(httpRequest, modal, modalError) {
+function updateModal(httpRequest, modal, modalError) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
             modalError.innerText = ""

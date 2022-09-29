@@ -1,5 +1,5 @@
-<div class="card project-card" id="selectedEvidence" th:fragment="selectedEvidence" th:if="${selectedEvidence}">
-    <div class="container-fluid">
+<div class="card project-card" id="selectedEvidence" th:fragment="selectedEvidence">
+    <div class="container-fluid" th:if="${selectedEvidence}">
         <div class="row">
             <div class="card-body">
                 <div class="container mb-2">
@@ -95,7 +95,7 @@
                     <input type="hidden" id="evidenceId" th:field="*{evidenceId}"/>
                     <div class="mb-3">
                         <label for="evidence-title" class="col-form-label required">Evidence Title</label>
-                        <input type="text" class="form-control required" id="evidence-title" name="title" th:field="*{title}" maxlength="50" onkeyup="checkEvidenceTitle()" required>
+                        <input type="text" class="form-control required" id="evidence-title" name="title" th:field="*{title}" maxlength="50" oninput="checkEvidenceTitle()" required>
                         <div>
                             <span id="evidenceCharCount" th:value="${charCount}">[[*{title.length}]] </span> / 50 characters used.
                         </div>
@@ -104,7 +104,7 @@
 
                     <div class="mb-3">
                         <label for="evidence-project" class="col-form-label required">Select Project</label>
-                        <select type="text" class="form-select required" id="evidence-project" th:field="*{project}"    required>
+                        <select type="text" class="form-select required" id="evidence-project" th:field="*{project}" required oninput="updateSubmissionButton()">
                             <th:block th:each="project : ${listProjects}">
                                 <option  id="selectedProject" th:value ="${project.projectId}">[[${project.projectName}]]</option>
                             </th:block>
@@ -118,13 +118,13 @@
                         <span data-bs-toggle="tooltip" data-bs-placement="top" aria-label="The date of evidence creation." title="The date of evidence creation.">
                                 <img class="icon img-color-primary" src="/icons/question-circle.svg">
                             </span>
-                        <input  type="date" class="form-control required" id="evidence-date" th:field="*{dateOccurred}" required>
+                        <input  type="date" class="form-control required" id="evidence-date" th:field="*{dateOccurred}" required oninput="updateSubmissionButton()">
                         <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
                     </div>
 
                     <div class="mb-3">
                         <label for="evidence-description" class="col-form-label required">Description</label>
-                        <textarea type="evidence-description"  class="form-control required" id="evidence-description" th:field="*{description}" required></textarea>
+                        <textarea type="evidence-description"  class="form-control required" id="evidence-description" th:field="*{description}" required oninput="updateSubmissionButton()"></textarea>
                         <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}" class="error-msg"></p>
                     </div>
 
@@ -133,7 +133,7 @@
                     </div>
                     <br>
                     <div class="modal-footer">
-                        <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" >
+                        <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" disabled>
                             <img class="icon img-color-secondary" id="evidenceFromSubmitImg" th:src="${submissionImg}"/>
                             <span id="evidenceFormSubmitLabel" th:text="${submissionName}">Create</span></button>
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">

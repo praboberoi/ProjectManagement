@@ -68,7 +68,7 @@ function updateEvidencePage(message) {
         }
     } else if (action === "deleted") {
         getEvidenceList()
-    } else if (action === 'edited' && selectedEvidenceId === evidenceId) {
+    } else if (action === 'edited' && selectedEvidenceId === evidenceId || selectedEvidenceId == 0) {
         getSelectedEvidence(evidenceId)
         getEvidenceList()
     } else if (action === 'edited') {
@@ -132,6 +132,7 @@ function updateElement(httpRequest, element) {
  * Makes a call to the server and replaces the current evidence with the new one
  */
 function getSelectedEvidence(selectedEvidenceId) {
+    document.getElementById("selectedEvidence").hidden = false
     let httpRequest = new XMLHttpRequest();
     httpRequest.onreadystatechange =  () =>  updateElement(httpRequest, document.getElementById("selectedEvidence"));
     httpRequest.open('GET', apiPrefix + `/evidence/${selectedEvidenceId}`);

@@ -35,8 +35,7 @@
 
 
         <div th:if="${isCurrentUserEvidence}" class="createBtn">
-            <button class="btn btn-outline-primary ms-0 mb-1" id="create-evidence-btn" data-bs-toggle="modal"
-                data-bs-target="#evidenceFormModal" onclick="createNewEvidence()">
+            <button class="btn btn-outline-primary ms-0 mb-1" id="create-evidence-btn" onclick="createNewEvidence()">
                 <img class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /> Create Evidence</button>
         </div>
@@ -121,7 +120,7 @@
                     </th:block>
                 </div>
 
-            <div id="evidence-display" class="col-sm-12 col-md-8" th:insert="evidenceFragments::selectedEvidence">
+            <div id="evidence-display" class="col-sm-12 col-md-8" th:insert="evidenceFragments::selectedEvidence" th:hidden="${selectedEvidence == null}">
 
             </div>
         </div>
@@ -229,12 +228,12 @@
                     <button type="submit" id="evidenceModalDeleteBtn" class="btn btn-outline-primary" data-bs-dismiss="modal">
                         <img class="icon img-color-primary"
                                 th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
-                        <span>Delete</span>
+                        Delete
                     </button>
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
                         <img class="icon img-color-secondary"
                                 th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
-                        <span>Close</span></button>
+                        Close</button>
                 </div>
             </div>
         </div>

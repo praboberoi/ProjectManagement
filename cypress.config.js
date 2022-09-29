@@ -52,7 +52,7 @@ module.exports = defineConfig({
     setupNodeEvents,
     retries: {
       runMode: 2,
-      // openMode: 1
+      openMode: 1
     }
   },
 });
