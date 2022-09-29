@@ -106,6 +106,6 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      * @param milestone Milestone object to find the sprint for
      * @return a list of Sprint
      */
-    @Query(value = "SELECT sprint from Sprint sprint where :#{#milestone.date} <= sprint.endDate and :#{#milestone.date} >= sprint.startDate")
+    @Query(value = "SELECT sprint from Sprint sprint where :#{#milestone.date} <= sprint.endDate and :#{#milestone.date} >= sprint.startDate and :#{#milestone.project.projectId} = sprint.project.projectId")
     Optional<Sprint> findSprintByMilestone(@Param("milestone") Milestone milestone);
 }
