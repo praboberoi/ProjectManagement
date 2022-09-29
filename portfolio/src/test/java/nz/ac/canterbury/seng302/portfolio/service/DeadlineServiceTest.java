@@ -390,5 +390,6 @@ class DeadlineServiceTest {
         deadlineService.updateDeadlineColors(deadline);
 
         assertEquals(SprintColor.BLUE, deadline.getColors());
+
     }
 }

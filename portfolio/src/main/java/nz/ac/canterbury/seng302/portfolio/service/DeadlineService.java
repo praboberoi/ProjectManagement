@@ -193,7 +193,6 @@ public class DeadlineService {
 
     /**
      * Updates the colours for the given deadline
-     *
      * @param deadline of type deadline
      */
     public void updateDeadlineColors(Deadline deadline) {
