@@ -84,6 +84,7 @@ public class EvidenceController {
         List<Project> listProjects = projectService.getAllProjects();
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         Evidence newEvidence = evidenceService.getNewEvidence(userId);
+        
         model.addAttribute(EVIDENCE, newEvidence);
         model.addAttribute(LIST_EVIDENCE, listEvidence);
         model.addAttribute(LIST_PROJECTS, listProjects);

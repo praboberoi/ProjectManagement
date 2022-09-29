@@ -83,6 +83,73 @@ public class SprintControllerTest {
     }
 
     /**
+     * Test get new sprint page and check that it returns the correct response.
+     * 
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetNewSprint_ThenNewSprintPageReturnedSuccessfully() throws Exception {
+        Project project = new Project(1, "projectName", "description", new Date(5), new Date(10));
+        Sprint sprint = new Sprint(1, project, "sprintLabel", "sprintName", "description", new Date(5), new Date(10), SprintColor.BLUE);
+
+        when(projectService.getProjectById(1)).thenReturn(project);
+        when(sprintService.getNewSprint(any())).thenReturn(sprint);
+        when(sprintService.getSprintDateRange(any(), any())).thenReturn(List.of("123", "123"));
+
+        this.mockMvc
+                .perform(get("/project/1/newSprint"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("submissionName", "Create"));
+    }
+
+    /**
+     * Test get new sprint page as a student and check that it returns the correct response.
+     * 
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenStudent_WhenGetNewSprint_ThenRedirectedToDashboard() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+
+        this.mockMvc
+                .perform(get("/project/1/newSprint"))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    /**
+     * Test get edit sprint page and check that it returns the correct response.
+     * 
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenGetEditSprint_ThenEditSprintPageReturnedSuccessfully() throws Exception {
+        Project project = new Project(1, "projectName", "description", new Date(5), new Date(10));
+        Sprint sprint = new Sprint(1, project, "sprintLabel", "sprintName", "description", new Date(5), new Date(10), SprintColor.BLUE);
+
+        when(projectService.getProjectById(1)).thenReturn(project);
+        when(sprintService.getSprint(anyInt())).thenReturn(sprint);
+
+        this.mockMvc
+                .perform(get("/project/1/editSprint/1"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("submissionName", "Save"));
+    }
+
+    /**
+     * Test get new sprint page as a student and check that it returns the correct response.
+     * 
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenStudent_WhenGetNewSprint_ThenRedirectsToDashboard() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+
+        this.mockMvc
+                .perform(get("/project/1/newSprint"))
+                .andExpect(status().is3xxRedirection());
+    }
+
+    /**
      * Test get sprints and check that it returns the correct response.
      * 
      * @throws Exception Thrown during mockmvc run time

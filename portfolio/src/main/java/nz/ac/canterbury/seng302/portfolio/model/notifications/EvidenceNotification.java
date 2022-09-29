@@ -5,24 +5,16 @@ import java.util.Objects;
 /**
  * Notification class for Evidence. Encapsulates the required data for exchanging data between front and back end
  */
-public class EvidenceNotification {
+public class EvidenceNotification extends Notification{
 
     private int evidenceId;
 
     private int userId;
 
-    private String username;
-    
-    private boolean active;
-
-    private String sessionId;
-
     public EvidenceNotification(int evidenceId, int userId, String username, boolean active, String sessionId) {
+        super(username, active, sessionId);
         this.evidenceId = evidenceId;
         this.userId = userId;
-        this.username = username;
-        this.active = active;
-        this.sessionId = sessionId;
     }
 
     public int getEvidenceId() {
@@ -41,30 +33,6 @@ public class EvidenceNotification {
         this.userId = userId;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean active) {
-        this.active = active;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -76,15 +44,5 @@ public class EvidenceNotification {
     @Override
     public int hashCode() {
         return Objects.hash(getEvidenceId(), getUsername(), getSessionId());
-    }
-
-    @Override
-    public String toString() {
-        return "EvidenceNotification{" +
-                "evidenceId=" + evidenceId +
-                ", username='" + username + '\'' +
-                ", active=" + active +
-                ", sessionId='" + sessionId + '\'' +
-                '}';
     }
 }

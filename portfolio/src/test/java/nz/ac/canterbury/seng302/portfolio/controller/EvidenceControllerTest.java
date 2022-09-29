@@ -173,6 +173,32 @@ public class EvidenceControllerTest {
 
     }
 
+    /**
+     * Tests that when an evidence is called then the list of evidence is correctly added to the ModelAndView return object
+     * @throws Exception when userId doesn't exist
+     */
+    @Test
+    void givenEvidenceObject_whenEvidenceCalled_thenCorrectModelViewObjectReturned() throws Exception {
+        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        
+        ArrayList<Project> projectList = new ArrayList<>();
+        ArrayList<Evidence> evidenceList = new ArrayList<>();
+        evidenceList.add(evidence);
+        evidenceList.add(evidence1);
+        
+        when(userAccountClientService.getUser(any())).thenReturn(user);
+        when(projectService.getAllProjects()).thenReturn(projectList);
+        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        when(evidenceService.getNewEvidence(99)).thenReturn(evidence);
+        when(userAccountClientService.getUser(99)).thenReturn(user);
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
+
+        this.mockMvc
+                .perform(get("/user/99/evidence/"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("listEvidence", evidenceList));
+
+    }
 
     /**
      * Tests that when EvidenceList is called then the list of evidence is correctly added to the ModelAndView return object
