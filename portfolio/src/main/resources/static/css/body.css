@@ -191,7 +191,7 @@ a.project-name {
 }
 
 #detailsCard, #calendarOb {
-    height: 320px;
+    height: 340px;
 }
 
 td.hiddenRow {
@@ -200,7 +200,7 @@ td.hiddenRow {
 
 
 #e-container, #d-container, #m-container {
-    height: 200px;
+    height: 240px;
     margin-top: 10px;
     overflow-y: auto;
 }
