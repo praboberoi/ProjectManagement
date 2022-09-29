@@ -243,9 +243,12 @@ async function getRecentActions(repo) {
     if (filterByActionType.length > 0)
         events = events.filter(event => event.action_name === filterByActionType)
 
+    if(currentPage > 0 && currentPage * 5 > events.length)
+        currentPage = 0
+
     updatePages(events);
 
-    events = events.slice(currentPage * 5, (currentPage * 5) + 5)
+    events = events.slice(currentPage * 4, (currentPage * 4) + 4)
 
 
     events.forEach( (event) => {
@@ -616,7 +619,7 @@ function updateTitle() {
  * @param events
  */
 function updatePages(events) {
-     totalPages = Math.ceil(events.length / 5)
+     totalPages = Math.ceil(events.length / 4)
 
      const paginationDiv = document.getElementById('actionPagination');
      paginationDiv.innerHTML =
@@ -634,12 +637,12 @@ function updatePages(events) {
                         <span class="sr-only">Previous</span>
                     </a>
                 </li>
-                ${totalPages  > 0  && `<li class="page-item active" id="page-${currentPage + 1}">
+                <li class="page-item active" id="page-${currentPage + 1}">
                      <a class="page-link" onclick="updateCurrentPage(${currentPage})">${currentPage + 1}</a></li>
-                <li class="page-item" id="page-${currentPage + 2}">`}
+                <li class="page-item" id="page-${currentPage + 2}">
                 
                 <li class="page-item ${(totalPages ===  1 || currentPage + 1 === totalPages) ? 'disabled' : ''}" id="nextPage">
-                    <a class="page-link" aria-label="Next" onclick="updateCurrentPage(${currentPage + 1})">
+                    <a class="page-link" aria-label="Next">
                         <span aria-hidden="true">&rsaquo;</span>
                         <span class="sr-only">Next</span>
                     </a>
