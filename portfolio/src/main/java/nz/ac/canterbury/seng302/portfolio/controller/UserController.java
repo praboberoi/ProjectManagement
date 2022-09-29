@@ -143,6 +143,7 @@ public class UserController {
      * @param userId Id of user that has been updated
      */
     private void notifyRoleChange(int userId) {
+        template.convertAndSend("/element/user/", userId);
         template.convertAndSend("/element/user/" + userId + "/roles", "");
     }
 
