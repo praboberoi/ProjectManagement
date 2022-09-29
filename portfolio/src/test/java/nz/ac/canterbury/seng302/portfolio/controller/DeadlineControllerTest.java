@@ -209,7 +209,7 @@ class DeadlineControllerTest {
                 .thenReturn("Successfully deleted " + deadline.getName());
 
         result = this.mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/1/deleteDeadline/1")
+                        .delete("/project/1/deadline/1/delete")
                         .flashAttr("deadlineId", 1))
                     .andExpect(status().isOk())
                     .andReturn();
@@ -226,7 +226,7 @@ class DeadlineControllerTest {
                 .thenThrow(new IncorrectDetailsException("Failure deleting Deadline"));
 
         result = this.mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/1/deleteDeadline/3")
+                        .delete("/project/1/deadline/3/delete")
                         .flashAttr("deadlineId", 3))
                 .andExpect(status().isBadRequest())
                 .andReturn();

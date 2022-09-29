@@ -70,6 +70,28 @@ public class MilestoneService {
     }
 
     /**
+     * Deletes milestone object from the database
+     *
+     * @param milestoneId of type int
+     * @return Message of type String
+     * @throws IncorrectDetailsException if unable to delete the deadline
+     */
+    public String deleteMilestone(int milestoneId) throws IncorrectDetailsException {
+        try {
+            Optional<Milestone> milestone = milestoneRepository.findById(milestoneId);
+            if (milestone.isPresent()) {
+                milestoneRepository.deleteById(milestoneId);
+                return "Successfully deleted " + milestone.get().getName();
+            } else {
+                throw new IncorrectDetailsException("Could not find given Milestone");
+            }
+        } catch (PersistenceException e) {
+            logger.error("Failure deleting Milestone", e);
+            throw new IncorrectDetailsException("Failure deleting Milestone");
+        }
+    }
+
+    /**
      * Updates the colors for the given milestone
      * @param milestone Milestone to set the colors for
      */
