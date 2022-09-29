@@ -11,6 +11,7 @@ public class AccountUtilities {
 
     private static final String FIRST_NAME_ERROR = "firstNameError";
     private static final String LAST_NAME_ERROR = "lastNameError";
+    private static final String emojiRex = "[^\\p{L}\\p{M}\\p{N}\\p{P}\\p{Z}\\p{Cf}\\p{Cs}\\p{Punct}]";
 
     private AccountUtilities(){}
 
@@ -25,6 +26,10 @@ public class AccountUtilities {
         if (username.length() < 3 || username.length() > 16 || ValidationUtilities.isUsername(username))  {
             errorBuilder.setFieldName("usernameError");
             errorBuilder.setErrorText("Username must be between 3 and 16 characters with no space or special characters.");
+            result.add(errorBuilder.build());
+        } else if (! username.equals(String.join("", List.of(username.strip().split(emojiRex))))) {
+            errorBuilder.setFieldName("usernameError");
+            errorBuilder.setErrorText("Username must not contain an emoji.");
             result.add(errorBuilder.build());
         }
     }
@@ -50,6 +55,10 @@ public class AccountUtilities {
             errorBuilder.setFieldName(FIRST_NAME_ERROR);
             errorBuilder.setErrorText("First name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
+        } else if (! firstName.equals(String.join("", List.of(firstName.strip().split(emojiRex))))) {
+            errorBuilder.setFieldName(FIRST_NAME_ERROR);
+            errorBuilder.setErrorText("First name cannot contain an emoji.");
+            result.add(errorBuilder.build());
         }
     }
 
@@ -74,6 +83,10 @@ public class AccountUtilities {
             errorBuilder.setFieldName(LAST_NAME_ERROR);
             errorBuilder.setErrorText("Last name cannot contain special characters or digits.");
             result.add(errorBuilder.build());
+        } else if (! lastName.equals(String.join("", List.of(lastName.strip().split(emojiRex))))) {
+            errorBuilder.setFieldName(LAST_NAME_ERROR);
+            errorBuilder.setErrorText("Last name cannot contain an emoji.");
+            result.add(errorBuilder.build());
         }
     }
 
@@ -88,6 +101,10 @@ public class AccountUtilities {
         if (nickname.length() > 32 || ValidationUtilities.isUsername(nickname)) {
             errorBuilder.setFieldName("nicknameError");
             errorBuilder.setErrorText("Nickname cannot be more than 32 characters.");
+            result.add(errorBuilder.build());
+        } else if (! nickname.equals(String.join("", List.of(nickname.strip().split(emojiRex))))) {
+            errorBuilder.setFieldName("nicknameError");
+            errorBuilder.setErrorText("Nickname cannot contain an emoji.");
             result.add(errorBuilder.build());
         }
     }
@@ -123,6 +140,10 @@ public class AccountUtilities {
             errorBuilder.setFieldName("bioError");
             errorBuilder.setErrorText("Your bio is too long");
             result.add(errorBuilder.build());
+        } else if (! bio.equals(String.join("", List.of(bio.strip().split(emojiRex))))) {
+            errorBuilder.setFieldName("bioError");
+            errorBuilder.setErrorText("Bio must not contain an emoji.");
+            result.add(errorBuilder.build());
         }
     }
 
@@ -138,7 +159,7 @@ public class AccountUtilities {
             errorBuilder.setFieldName("personalPronounsError");
             errorBuilder.setErrorText("Personal pronouns must be less than 32 characters.");
             result.add(errorBuilder.build());
-        }else if (ValidationUtilities.hasPronounSpecial(personalPronouns) || ValidationUtilities.hasDigit(personalPronouns)) {
+        } else if (ValidationUtilities.hasPronounSpecial(personalPronouns) || ValidationUtilities.hasDigit(personalPronouns)) {
             errorBuilder.setFieldName("personalPronounsError");
             errorBuilder.setErrorText("Personal pronouns can only contain special character / and no digits.");
             result.add(errorBuilder.build());
