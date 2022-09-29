@@ -16,6 +16,13 @@ Feature: U2. Deadlines on the project details page
     When I enter a deadline name with an emoji
     Then An error messages is displayed for using an emoji
 
+    Given I login as an admin
+    And I select the CypressProject project
+    And I select the deadlines tab
+    And I select Create Deadline
+    When I clear the deadline name
+    Then An appropriate name error is displayed for the empty name field
+
   Scenario: AC1 I should be able to edit a deadline from the project details page.
     Given I login as an admin
     And I select the CypressProject project

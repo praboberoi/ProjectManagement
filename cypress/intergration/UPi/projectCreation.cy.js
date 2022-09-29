@@ -5,11 +5,7 @@ When("I select Create Project", () => {
 })
 
 When("I enter {word} as a Project Name", (word) => {
-    cy.get('#project-name').should('have.value', `Project ${new Date().getFullYear()}`)
-    cy.get('#project-name').clear()
-    cy.get('#projectNameError').should('have.text','Project Name must not be empty or greater than 32 characters')
-    cy.get('#project-name').type(word)
-    cy.get('#projectNameError').should('have.text',"")
+    cy.get('#project-name').clear().type(word)
 
 })
 

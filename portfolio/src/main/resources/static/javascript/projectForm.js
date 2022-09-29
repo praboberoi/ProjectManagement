@@ -243,5 +243,145 @@ function verifyOverlap(startDate, endDate) {
 
     httpRequest.open('POST', '/verifyProject/' + projectId, true);
     httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate +  "&projectName=" + projectName + "&projectDescription=" + description);
+    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+}
+
+/**
+ * Initilises the delete modal for deleting a project
+ * @param {int} projectId
+ */
+ function projectDeleteModalInit(projectId) {
+    let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].innerText
+    document.getElementById('messageProject').innerText =  `Are you sure you want to delete ${projectName}`;
+    document.getElementById('confirmProjectDeleteBtn').setAttribute('onclick', `deleteProject(${projectId})`);
+}
+
+/**
+ * Initilises the project modal for editing the selected project
+ * @param {int} projectId
+ */
+function editProjectModalInit(projectId) {
+    let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].innerText
+
+    document.getElementById('projectFormModalError').innerText = ""
+    document.getElementById('projectFormTitle').innerText = "Edit " + projectName
+
+    document.getElementById('projectFormProjectId').value = projectId
+
+    document.getElementById('project-name').value = projectName;
+
+
+    let projectStartDate = new Date(document.getElementById(`project${projectId}-startDate`).value)
+    document.getElementById('projectFormStartDate').value = new Date(projectStartDate).toLocaleDateString("en-CA");
+
+
+    let projectEndDate = new Date(document.getElementById(`project${projectId}-endDate`).value)
+    document.getElementById('projectFormEndDate').value = projectEndDate.toLocaleDateString("en-CA");
+
+
+    let minStartDate = new Date();
+    minStartDate.setFullYear(minStartDate.getFullYear() - 1);
+
+    let maxEndDate = new Date();
+    maxEndDate.setFullYear(maxEndDate.getFullYear() + 10);
+
+
+    document.getElementById('projectFormStartDate').setAttribute("min", new Date(Math.min(minStartDate, projectStartDate)).toLocaleDateString("en-CA"));
+    document.getElementById('projectFormStartDate').setAttribute("max", new Date(Math.max(maxEndDate, projectEndDate)).toLocaleDateString("en-CA"));
+
+    document.getElementById('projectFormEndDate').setAttribute("min", new Date(Math.min(minStartDate, projectStartDate)).toLocaleDateString("en-CA"));
+    document.getElementById('projectFormEndDate').setAttribute("max", new Date(Math.max(maxEndDate, projectEndDate)).toLocaleDateString("en-CA"));
+
+
+    let projectDescription = document.getElementById(`project${projectId}-description`).innerText
+    document.getElementById('projectFormDescription').value = projectDescription;
+    updateFormButton()
+
+    document.getElementById('projectFormCreateBtn').hidden = true
+    document.getElementById('projectFormEditBtn').hidden = false
+}
+
+/**
+ * Initilises the project modal for editing the selected project
+ */
+function createProjectModalInit() {
+    document.getElementById('projectFormModalError').innerText = ""
+    document.getElementById('projectFormTitle').innerText = "Create New Project"
+
+    document.getElementById('projectFormProjectId').value = 0
+
+    document.getElementById('project-name').value = "Project " + new Date().getFullYear();
+
+    let minStartDate = new Date();
+    minStartDate.setFullYear(minStartDate.getFullYear() - 1);
+    let maxEndDate = new Date();
+    maxEndDate.setFullYear(maxEndDate.getFullYear() + 10);
+
+    document.getElementById('projectFormStartDate').value = new Date().toLocaleDateString("en-CA");
+    document.getElementById('projectFormStartDate').setAttribute("min", minStartDate.toLocaleDateString("en-CA"));
+    document.getElementById('projectFormStartDate').setAttribute("max", maxEndDate.toLocaleDateString("en-CA"));
+
+    let endDate = new Date();
+    endDate.setMonth(endDate.getMonth() + 8);
+
+
+    document.getElementById('projectFormEndDate').value = endDate.toLocaleDateString("en-CA");
+
+    document.getElementById('projectFormEndDate').setAttribute("min", minStartDate.toLocaleDateString("en-CA"));
+    document.getElementById('projectFormEndDate').setAttribute("max", maxEndDate.toLocaleDateString("en-CA"));
+
+    document.getElementById('projectFormDescription').value = "";
+
+    document.getElementById('projectFormCreateBtn').hidden = false
+    document.getElementById('projectFormEditBtn').hidden = true
+    updateFormButton()
+}
+
+/**
+ * Determines if the save button should be disabled
+ */
+function updateFormButton() {
+    let formButton = document.getElementById('projectFormSubmitButton')
+    projectFormUpdate = true
+    if (checkProjectName() && checkProjectDates() && checkProjectDescription()) {
+        formButton.disabled = false
+    } else {
+        formButton.disabled = true
+    }
+    projectFormUpdate = false
+}
+
+/**
+ * Send a request to the server to save the newly created project
+ */
+function saveProject() {
+    let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('projectFormModal'))
+    let modalError = document.getElementById('projectFormModalError')
+    if (validateForm()) {
+        let httpRequest = new XMLHttpRequest();
+
+        httpRequest.onreadystatechange = () => updateModal(httpRequest, modal, modalError)
+
+        httpRequest.open('POST', apiPrefix + `/project`);
+
+        let formData = new FormData(document.forms.createProjectForm)
+
+        httpRequest.send(formData);
+    }
+}
+
+/**
+ * Sends a delete request to the server and updates the delete modal
+ * @param {int} projectId
+ */
+ function deleteProject(projectId) {
+    let httpRequest = new XMLHttpRequest();
+
+    let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('conformationModal'))
+    let modalError = document.getElementById('projectDeleteModalError')
+
+    httpRequest.onreadystatechange = updateModal(httpRequest, modal, modalError)
+
+    httpRequest.open('DELETE', apiPrefix + `/project/${projectId}`);
+    httpRequest.send();
 }

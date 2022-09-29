@@ -3,7 +3,6 @@ const eventEndDateElement = document.getElementById('eventEndDate');
 const startDateError = document.getElementById('eventStartDateError');
 const endDateError = document.getElementById('eventEndDateError');
 let currentEventId;
-const emojiRegx = /\p{Extended_Pictographic}/u;
 /**
  * Function for error validation of Event Name field.
  * Display error message if input is invalid.
