@@ -54,8 +54,6 @@ public class UserControllerTest {
     @Mock
     User user;
 
-    @MockBean
-    private SimpMessagingTemplate template;
 
     private static MockedStatic<PrincipalUtils> mockedUtil;
 

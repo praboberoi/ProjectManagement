@@ -38,17 +38,17 @@ import java.util.List;
 @Controller
 public class AccountController {
 
-    private final UserAccountClientService userAccountClientService;
+    private UserAccountClientService userAccountClientService;
     @Value("${apiPrefix}") private String apiPrefix;
 
-    @Autowired
     private SimpMessagingTemplate template;
 
     private static final String EDIT_ACCOUNT_PAGE = "editAccount";
     private static final String ACCOUNT_PAGE = "account";
 
-    public AccountController (UserAccountClientService userAccountClientService) {
+    public AccountController (UserAccountClientService userAccountClientService, SimpMessagingTemplate template) {
         this.userAccountClientService = userAccountClientService;
+        this.template = template;
     }
 
     /**
