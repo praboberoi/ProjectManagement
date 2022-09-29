@@ -6,6 +6,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -201,6 +202,13 @@ public class SprintService {
      * @return
      */
     public boolean verifySprint(Sprint sprint) throws IncorrectDetailsException {
+
+        if (ValidationUtilities.hasEmoji(sprint.getSprintName()))
+            throw new IncorrectDetailsException("Sprint name must not contain an emoji");
+
+        if (ValidationUtilities.hasEmoji(sprint.getDescription()))
+            throw new IncorrectDetailsException("Sprint description must not contain an emoji");
+
         if (sprint.getSprintName().length() > 50)
             throw new IncorrectDetailsException("Sprint name must be less than 50 characters");
 

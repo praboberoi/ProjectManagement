@@ -36,8 +36,8 @@ public class Deadline {
     private Date date;
 
     @Column
-    @ElementCollection
-    private final List<SprintColor> colors = new ArrayList<>();
+    @Enumerated(value = EnumType.STRING)
+    private SprintColor color;
 
     /**
      * No args Constructor for the Deadline.
@@ -111,16 +111,12 @@ public class Deadline {
         return formatter.format(date);
     }
 
-    public List<SprintColor> getColors() {
-        return this.colors;
+    public SprintColor getColors() {
+        return this.color;
     }
 
-    public void addColor(SprintColor color, int index) {
-        this.colors.add(index, color);
-    }
-
-    public void clearColorList() {
-        colors.clear();
+    public void setColor(SprintColor color) {
+        this.color = color;
     }
 
     @Override
@@ -130,7 +126,7 @@ public class Deadline {
                 ", project=" + project +
                 ", name='" + name + '\'' +
                 ", date=" + date +
-                ", colors= " + colors +
+                ", colors= " + color +
                 '}';
     }
 
