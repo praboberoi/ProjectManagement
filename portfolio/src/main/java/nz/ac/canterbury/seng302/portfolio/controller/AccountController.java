@@ -146,6 +146,7 @@ public class AccountController {
      */
     private void notifyUserInfoChange(int userId) {
         template.convertAndSend("/element/user/", userId);
+        template.convertAndSend("/element/user/nameOnly", userId);
     }
 
 

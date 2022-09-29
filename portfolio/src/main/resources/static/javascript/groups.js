@@ -412,7 +412,7 @@ function connect() {
  */
 function subscribe(stompClient) {
     stompClient.subscribe('/element/groups/', updateGroup);
-    stompClient.subscribe(`/element/user/`, updateUser);
+    stompClient.subscribe(`/element/user/nameOnly`, updateUser);
 }
 
 /**
