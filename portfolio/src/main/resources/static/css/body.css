@@ -191,8 +191,7 @@ a.project-name {
 }
 
 #detailsCard, #calendarOb {
-    /*overflow-y: scroll;*/
-    height: 300px;
+    height: 320px;
 }
 
 td.hiddenRow {
@@ -200,15 +199,11 @@ td.hiddenRow {
 }
 
 
-/*#myTabContent{*/
-/*    overflow-y: scroll;*/
-/*}*/
 
-.container {
+#e-container, #d-container, #m-container {
     height: 200px;
     margin-top: 10px;
     overflow-y: auto;
-    padding: 0;
 }
 
 #eventCard, #deadlineCard, #milestoneCard {
@@ -226,7 +221,6 @@ td.hiddenRow {
     line-height: 1;
     font-size: 12px;
 }
-
 
 /* styling for display under sprints */
 
@@ -306,11 +300,6 @@ div.upcomingEvents  {
     margin-left: 20px;
     margin-top: 7px;
     margin-bottom: 7px;
-    /*position: absolute;*/
-}
-
-#event-list {
-    /*padding-top: 50px;*/
 }
 
 /* Sort button styles from https://codepen.io/xaprio/pen/NWPXwOj */
@@ -348,7 +337,20 @@ a.desc.sort:after {
     border: unset;
 }
 
-#groupDropdown {
+.dropdown-toggle {
+    align-content: center;
+    padding-top: 5px;
+}
+
+#group-dropdown {
+    display: none;
+}
+
+#evidence-dropdown {
+    display: none;
+}
+
+#evidence-options {
     display: none;
 }
 
@@ -370,11 +372,11 @@ a.desc.sort:after {
 
 
 @media only screen and (max-width: 768px) {
-    #groupDropdown {
+    #group-dropdown {
         display: initial;
     }
 
-    #groupName {
+    #group-name {
         display: none;
     }
 
@@ -382,6 +384,21 @@ a.desc.sort:after {
         display: none;
     }
 
+    #evidence-dropdown {
+        display: initial;
+    }
+
+    #evidence-name {
+        display: none;
+    }
+
+    #evidence-list {
+        display: none;
+    }
+
+    #evidence-options {
+        display: initial;
+    }
 }
 
 #userListDataTable .dropdown-toggle::after {

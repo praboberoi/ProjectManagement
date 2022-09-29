@@ -7,6 +7,7 @@ let special = /[`!@#$%^*()_\=\[\]{};':"\\|.<>\/?~]/;
 let dash = /^[^-]+(-[^-]+)*$/;
 let space = /^[^ ]+( [^ ]+)*$/;
 let pronoun = /[`!@#$%^*()_+\-&,\=\[\]{};':"\\|.<>\?~]/;
+const emojiRegx = /\p{Extended_Pictographic}/u;
 
 
 /**
@@ -21,6 +22,10 @@ function checkUsername() {
     {
         usernameElement.classList.add("formError")
         usernameErrorElement.innerText = "Username must be between 3 and 16 characters with no space or special characters."
+        usernameElement.setCustomValidity("Invalid field.");
+    } else if (emojiRegx.test(usernameElement.value)) {
+        usernameElement.classList.add("formError")
+        usernameErrorElement.innerText = "Username must not contain an emoji."
         usernameElement.setCustomValidity("Invalid field.");
     } else {
         usernameElement.classList.remove("formError");
@@ -45,6 +50,10 @@ function checkFirstName() {
         firstNameElement.classList.add("formError")
         firstNameErrorElement.innerText = "First name must be between 2 and 32 characters with no special characters or digits."
         firstNameElement.setCustomValidity("Invalid field.");
+    } else if (emojiRegx.test(firstNameElement.value)) {
+        firstNameElement.classList.add("formError")
+        firstNameErrorElement.innerText = "First name must not contain an emoji."
+        firstNameElement.setCustomValidity("Invalid field.");
     } else {
         firstNameElement.classList.remove("formError");
         firstNameErrorElement.innerText = null;
@@ -68,6 +77,10 @@ function checkLastName() {
         lastNameElement.classList.add("formError")
         lastNameErrorElement.innerText = "Last name must be between 2 and 32 characters with no special characters or digits."
         lastNameElement.setCustomValidity("Invalid field.");
+    } else if (emojiRegx.test(lastNameElement.value)) {
+        lastNameElement.classList.add("formError")
+        lastNameErrorElement.innerText = "Last name must not contain an emoji."
+        lastNameElement.setCustomValidity("Invalid field.");
     } else {
         lastNameElement.classList.remove("formError");
         lastNameErrorElement.innerText = null;
@@ -86,7 +99,11 @@ function checkNickname() {
     {
         nicknameElement.classList.add("formError")
         nicknameErrorElement.innerText = "Nickname must be less than 32 characters with no space or special characters."
-            nicknameElement.setCustomValidity("Invalid field.");
+        nicknameElement.setCustomValidity("Invalid field.");
+    } else if (emojiRegx.test(nicknameElement.value)) {
+        nicknameElement.classList.add("formError")
+        nicknameErrorElement.innerText = "Nickname must not contain an emoji."
+        nicknameElement.setCustomValidity("Invalid field.");
     } else {
         nicknameElement.classList.remove("formError");
         nicknameErrorElement.innerText = null;
@@ -188,6 +205,10 @@ function checkBio() {
     {
         bioErrorElement.classList.add("formError");
         bioErrorElement.innerText = "Bio must be less than 250 characters."
+        bioElement.setCustomValidity("Invalid field.");
+    } else if (emojiRegx.test(bioElement.value)) {
+        bioErrorElement.classList.add("formError");
+        bioErrorElement.innerText = "Bio must not contain an emoji."
         bioElement.setCustomValidity("Invalid field.");
     } else {
         bioErrorElement.classList.remove("formError");

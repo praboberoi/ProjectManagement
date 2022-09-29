@@ -22,6 +22,10 @@ function checkEventName() {
         eventName.classList.add("eventFormError");
         eventNameError.innerText = "Event Name cannot exceed 50 characters";
         document.getElementById("eventFormSubmitButton").disabled = true;
+    } else if (emojiRegx.test(eventName.value)) {
+        eventName.classList.add("formError");
+        eventNameError.innerText = "Event name must not contain an emoji";
+        document.getElementById("eventFormSubmitButton").disabled = true;
     } else {
         eventName.classList.remove("eventFormError");
         eventNameError.innerText = null;

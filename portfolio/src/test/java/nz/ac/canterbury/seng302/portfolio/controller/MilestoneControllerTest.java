@@ -26,6 +26,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.messaging.support.GenericMessage;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
@@ -86,6 +87,8 @@ class MilestoneControllerTest {
 	private User user;
 
 	private UserResponse.Builder userResponse;
+
+	private MvcResult result;
 
 	@BeforeAll
 	private static void initialise() {
@@ -220,6 +223,39 @@ class MilestoneControllerTest {
 				.flashAttr("milestoneDTO", toDTO(invalidMilestone)))
 				.andExpect(status().isBadRequest())
 				.andExpect(content().string("Milestone name must be at least 3 characters"));
+	}
+
+	/**
+	 * Tests to make sure successfully deleted message is displayed when a post request is made to delete the given milestone
+	 */
+	@Test
+	void givenMilestoneExists_whenDeleteMilestoneIsRequested_thenSuccessfullyDeletedMessageIsDisplayed() throws Exception {
+		when(milestoneService.deleteMilestone(1))
+				.thenReturn("Successfully deleted " + milestone.getName());
+
+		result = this.mockMvc.perform(MockMvcRequestBuilders
+						.delete("/project/1/milestone/1/delete")
+						.flashAttr("milestoneId", 1))
+				.andExpect(status().isOk())
+				.andReturn();
+
+		Assertions.assertEquals("Successfully deleted Milestone 1", result.getResponse().getContentAsString());
+	}
+
+	/**
+	 * Tests to make sure failure deleting message is displayed when a post request is made to delete the given milestone
+	 */
+	@Test
+	void givenMilestoneExists_whenDeleteMilestoneIsRequested_thenFailureDeletingMessageIsDisplayed() throws Exception {
+		when(milestoneService.deleteMilestone(3))
+				.thenThrow(new IncorrectDetailsException("Failure deleting Milestone"));
+
+		result = this.mockMvc.perform(MockMvcRequestBuilders
+						.delete("/project/1/milestone/3/delete")
+						.flashAttr("milestoneId", 3))
+				.andExpect(status().isBadRequest())
+				.andReturn();
+		Assertions.assertEquals("Failure deleting Milestone", result.getResponse().getContentAsString());
 	}
 
 	/**

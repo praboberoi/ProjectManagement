@@ -35,9 +35,9 @@
                 <div class="container mb-2">
                     <div class="row">
                         <div class="col-auto me-auto">
-                            <h3 id="groupName" class="card-title" th:text="${group.shortName}" />
+                            <h3 id="group-name" class="card-title" th:text="${group.shortName}" />
 
-                            <div id="groupDropdown" class="dropdown">
+                            <div id="group-dropdown" class="dropdown">
                                 <button class="btn btn-secondary" href="javascript:void(0);" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                     <h5 class="dropdown-toggle" th:text="${group.shortName}" role="button"></h5>
@@ -269,9 +269,9 @@
 
 <div th:fragment="groupFormSharedContent(formGroup)">
 
-    <div class="mb-3">
-        <label class="col-form-label required">Group Short Name</label>
-        <input type="text" class="form-control required" name="shortName" oninput="checkShortName(event)"
+    <div class="mb-3" >
+        <label  class="col-form-label required">Group Short Name</label>
+        <input th:readonly="${!adminOrTeacher}" type="text" class="form-control required" name="shortName" oninput="checkShortName(event)"
             th:value="${formGroup!=null?formGroup.shortName:''}" id="shortName" maxlength="50"
             placeholder="Short Group Name" required>
         <span id="charCount" th:value="${charCount}"

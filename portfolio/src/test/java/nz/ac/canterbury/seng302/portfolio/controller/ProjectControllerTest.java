@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import com.google.protobuf.Timestamp;
 import nz.ac.canterbury.seng302.portfolio.model.*;
+import nz.ac.canterbury.seng302.portfolio.model.dto.ProjectDTO;
 import nz.ac.canterbury.seng302.portfolio.service.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.LocalDate;
@@ -29,6 +31,7 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = ProjectController.class)
@@ -54,14 +57,16 @@ public class ProjectControllerTest {
     private MilestoneService milestoneService;
 
     @MockBean
-    private DashboardService dashboardService;
+    private UserAccountClientService userAccountClientService;
 
     @MockBean
-    private UserAccountClientService userAccountClientService;
+    private SimpMessagingTemplate template;
 
     private List<Sprint> testSprintList;
 
     private Project project;
+
+    private Project invalidProject;
 
     private User user;
 
@@ -82,13 +87,14 @@ public class ProjectControllerTest {
 
     @BeforeEach
     public void beforeEachInit() {
-
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         testList = new ArrayList<String>();
         testSprintList = new ArrayList<Sprint>();
         testList.add("testRole");
         when(PrincipalUtils.getUserRole(any())).thenReturn(testList);
         LocalDate now = LocalDate.now();
         project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
+        invalidProject = new Project(1, "", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
         user = new User.Builder()
                 .userId(0)
                 .username("TimeTester")
@@ -123,6 +129,15 @@ public class ProjectControllerTest {
         utilities.close();
     }
 
+    public ProjectDTO toDTO(Project project) {
+		return new ProjectDTO(
+				project.getProjectId(),
+				project.getProjectName(),
+				project.getDescription(),
+				project.getStartDate(),
+                project.getEndDate());
+	}
+
     /**
      * Tests that the project page is returned with correct information when called.
      * @throws Exception Thrown during mockmvc run time
@@ -132,9 +147,8 @@ public class ProjectControllerTest {
         Deadline newDeadline = new Deadline.Builder().project(project).name("Test").build();
         Milestone newMilestone = new Milestone.Builder().project(project).name("Test").build();
         Event newEvent = new Event.Builder().eventName("Test").build();
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(testSprintList);
         when(projectService.getProjectById(anyInt())).thenReturn(project);
-        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
         when(eventService.getNewEvent(any())).thenReturn(newEvent);
         when(deadlineService.getNewDeadline(any())).thenReturn(newDeadline);
         when(milestoneService.getNewMilestone(any())).thenReturn(newMilestone);
@@ -149,10 +163,6 @@ public class ProjectControllerTest {
                 .andExpect(model().attribute("milestone", newMilestone))
                 .andExpect(model().attribute("project", project))
                 .andExpect(model().attribute("event", newEvent))
-                .andExpect(model().attribute("roles", testList))
-                .andExpect(model().attribute("user", new User(userResponse.build())))
-                .andExpect(model().attribute("projectDateMin", project.getStartDate()))
-                .andExpect(model().attribute("projectDateMax", project.getEndDate()))
                 .andExpect(view().name("project"));
     }
 
@@ -167,6 +177,19 @@ public class ProjectControllerTest {
                 .perform(get("/project/9999"))
                 .andExpect(flash().attribute("messageDanger", "Project not found"))
                 .andExpect(view().name("redirect:/dashboard"));
+    }
+
+    /**
+     * Tests that the user is redirected to the dashboard if trying to view a non-existing project
+     * @throws Exception Thrown during mockmvc runtime
+     */
+    @Test
+    void whenProjectCalled_thenListOfProjectReturned() throws Exception {
+        when(projectService.getAllProjects()).thenReturn(List.of());
+        this.mockMvc
+                .perform(get("/projects/"))
+                .andExpect(view().name("dashboard::projectList"))
+                .andExpect(model().attribute("listProjects", List.of()));
     }
 
     /**
@@ -187,21 +210,97 @@ public class ProjectControllerTest {
      */
     @Test
     void givenServer_WhenGetAllSprints_ThenSprintsReturnedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(testSprintList);
         this.mockMvc
                 .perform(get("/project/1/getAllSprints"))
                 .andExpect(status().isOk());
     }
 
     /**
-     * Test get sprints and check that it returns the correct response.
+     * Test project can be saved correctly.
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
-    void givenServer_WhenGetSprints_ThenSprintsReturnedSuccessfully() throws Exception{
-        when(sprintService.getSprintByProject(anyInt())).thenReturn(testSprintList);
+    void givenServer_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(projectService.saveProject(any())).thenReturn("Project created successfully");
+
         this.mockMvc
-                .perform(get("/project/1/sprints"))
-                .andExpect(status().isOk());
+                .perform(post("/project/").flashAttr("projectDTO", toDTO(project)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Project created successfully"));
+    }
+
+    /**
+     * Test project can be saved correctly.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenInvalidProject_WhenSaveValidProject_ThenProjectSavedSuccessfully() throws Exception{
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(projectService.saveProject(any())).thenReturn("Project created successfully");
+
+        this.mockMvc
+                .perform(post("/project/").flashAttr("projectDTO", toDTO(invalidProject)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Project Name must not be empty or greater than 50 characters."));
+    }
+
+    /**
+     * Test project can not be saved by a student.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenStudent_WhenSaveProject_ThenErrorThrown() throws Exception{
+        when(sprintService.getSprintsByProject(anyInt())).thenReturn(new ArrayList<Sprint>());
+        when(projectService.saveProject(any())).thenReturn("Project created successfully");
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+
+        this.mockMvc
+                .perform(post("/project/").flashAttr("projectDTO", toDTO(new Project())))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Insufficient Permissions"));
+    }
+
+    /**
+     * Test project is deleted when delete project called.
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenServer_WhenDeleteProject_ThenProjectDeleted() throws Exception {
+        when(projectService.getProject(anyInt())).thenReturn(new Project());
+        when(userAccountClientService.getUser(any())).thenReturn(userResponse.build());
+        this.mockMvc
+                .perform(delete("/project/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Successfully Deleted " + null));
+    }
+
+    /**
+     * Tests that students are unable to delete a project
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenStudent_WhenDeleteProject_ThenErrorThrown() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+
+        this.mockMvc
+                .perform(delete("/project/1"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Insufficient Permissions"));
+    }
+
+    /**
+     * Tests that students are unable to delete a project
+     * @throws Exception Thrown during mockmvc run time
+     */
+    @Test
+    void givenNoProject_WhenDeleteProject_ThenErrorThrown() throws Exception {
+        when(projectService.getProject(anyInt())).thenThrow(new IncorrectDetailsException("Project not found"));
+
+        this.mockMvc
+                .perform(delete("/project/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Project not found"));
     }
 }

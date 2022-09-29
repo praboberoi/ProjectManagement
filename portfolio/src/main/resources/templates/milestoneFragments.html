@@ -47,6 +47,7 @@
             <div class="col" th:style="'background-color: ' + ${milestone.getColor()}"></div>
         </div>
     </div>
+
     <div class="modal fade" id="conformationModalMilestone" tabindex="-1" role="dialog"
         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
@@ -75,3 +76,19 @@
         </div>
     </div>
 </th:block>
+
+<div class="outer-box" id="milestone-display" th:fragment="accordionComponent">
+    <div class="inner-box">
+        <div class="heading-size">
+          <img th:src="@{{apiPrefix}/icons/trophy.svg(apiPrefix=${apiPrefix})}" alt="Events"
+            height=16 width=16 class="calendarIcons">
+          Milestones
+        </div><br>
+        <th:block th:each="milestone : ${listMilestones}">
+          <div th:if="${(milestone.date >= sprint.startDate and milestone.date <= sprint.endDate)}">
+            <b>[[${milestone.name}]]</b>
+            <br><b>Date:</b> [[${#dates.format(milestone.date, 'dd MMM yyyy')}]]
+          </div>
+        </th:block>
+      </div>
+</div>
