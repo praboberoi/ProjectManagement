@@ -98,7 +98,7 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      * @param deadline of type Deadline
      * @return a list of Sprint
      */
-    @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#deadline.date} between sprint.startDate and sprint.endDate and :#{#deadline.project.projectId} = sprint.project.projectId")
+    @Query(value = "SELECT sprint from Sprint sprint where :#{#deadline.date} between sprint.startDate and sprint.endDate and :#{#deadline.project.projectId} = sprint.project.projectId")
     Optional<Sprint> findSprintsByDeadline(@Param("deadline") Deadline deadline);
 
     /**

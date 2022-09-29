@@ -199,7 +199,7 @@ public class ProjectControllerTest {
     @Test
     void givenServer_WhenVerifyProject_ThenProjectVerifiedSuccessfully() throws Exception{
         this.mockMvc
-                .perform(post("/verifyProject/1?" + "startDate=" + project.getStartDate() + "&endDate=" + project.getEndDate()))
+                .perform(post("/verifyProject/1").flashAttr("projectDTO", toDTO(project)))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
     }
