@@ -169,7 +169,7 @@
                 </div>
 
                 <!--          Shows each individual event-->
-                <div id="event-list"></div>
+                <div id="event-list" th:insert="eventFragments::projectList"></div>
             </div>
             <div class="tab-pane fade" id="deadline" role="tabpanel" aria-labelledby="deadline-tab">
                 <div th:if="${adminOrTeacher}">

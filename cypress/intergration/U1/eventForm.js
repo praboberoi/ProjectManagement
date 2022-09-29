@@ -48,7 +48,7 @@ When("The event start date is outside the project date", () => {
 })
 
 Then("An error message is shown with the valid event dates", ()=> {
-    cy.get('#eventStartDateError').should('have.text', 'Event must start on or after the 15 Jul 2022')
+    cy.get('#eventStartDateError').should('have.text', 'Event must start on or after the 15 Jun 2022')
 })
 
 When("I enter the valid date and times for the event", () => {
