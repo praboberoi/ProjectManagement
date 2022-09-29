@@ -232,7 +232,7 @@
             <tbody>
                 <div id="sprint-list">
                     <th:block th:each="sprint : ${listSprints}" th:fragment="sprints">
-                        <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'"
+                        <tr th:id="'sprint' + ${sprint.sprintId} + 'Row'" class="sprint-row"
                             th:style="'border-bottom: 5px solid ' + ${sprint.color.getColor()}">
                             <td th:id="'sprint' + ${sprint.sprintId} + 'Label'">
                                 <button class="accordion-button collapsed" type="button" id="toggle-display"

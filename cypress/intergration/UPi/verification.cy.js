@@ -11,7 +11,7 @@ When("I start to create a sprint", () => {
 });
 
 When("I edit the sprint {string}", (sprint) => {
-    cy.contains(sprint).parent('tr').find('#sprint-edit-btn').find('img').click()
+    cy.get(".sprint-row").contains(sprint).parent('tr').find('#sprint-edit-btn').find('img').click()
 });
 
 When("I change the sprint's {word} to {string}", (field, value) => {
@@ -23,7 +23,7 @@ When("I save the sprint", () => {
 })
 
 When("I delete the sprint {string}", (sprint) => {
-    cy.contains(sprint).parent('tr').find('#sprint-del-btn').click()
+    cy.get(".sprint-row").contains(sprint).parent('tr').find('#sprint-del-btn').click()
     cy.get('#deleteSprint').find('button').click()
 })
 

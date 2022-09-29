@@ -39,7 +39,9 @@ function subscribe() {
  * Runs the connect function when the document is loaded
  */
 document.addEventListener('DOMContentLoaded', function() {
-    connect();
+    if (document.getElementById("websocket-status").value !== "connected") {
+        connect();
+    }
 })
 
 /**

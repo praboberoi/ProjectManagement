@@ -31,7 +31,7 @@ Feature: UPi Project Details
     And I start to create a sprint
     Then The default sprint name is the sprint label
     And The sprint start date is '2022-07-15'
-    And The sprint end date is '2022-08-05'
+    And The sprint end date is '2022-08-04'
 
   Scenario: AC6: As a teacher, I can create a sprint easily.
     Given I login as an admin

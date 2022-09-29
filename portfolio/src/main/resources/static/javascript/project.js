@@ -252,7 +252,6 @@ document.getElementById('planner-tab').addEventListener('shown.bs.tab', loadCale
  */
 function updateElement(httpRequest, element, errorMessage = messageDanger) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
-        errorMessage.innerText = ""
         if (httpRequest.status === 200) {
             element.innerHTML = httpRequest.responseText;
         } else if (httpRequest.status === 400) {
