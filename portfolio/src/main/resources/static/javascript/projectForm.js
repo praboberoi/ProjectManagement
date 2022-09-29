@@ -192,7 +192,7 @@ function verifyOverlap(startDate, endDate) {
     const endDateElement = document.querySelector('#projectFormEndDate');
     const startDateError = document.getElementById('startDateError');
     const endDateError = document.getElementById('endDateError');
-    const projectId = document.getElementById('projectId').value;
+    const projectId = document.getElementById('projectFormProjectId').value;
 
     let httpRequest = new XMLHttpRequest();
 
