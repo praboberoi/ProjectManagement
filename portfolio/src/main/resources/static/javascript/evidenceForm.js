@@ -91,7 +91,7 @@ function editEvidence(evidenceId, evidenceProjectId, evidenceTitle, evidenceDate
     evidenceTitleEditing = evidenceTitle;
     evidenceDateEditing = evidenceDate.substring(0, 10);
     evidenceDescriptionEditing = evidenceDescription;
-    evidenceProjectIdEditing = document.getElementById('evidence-project').value;
+    evidenceProjectIdEditing = evidenceProjectId;
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `${window.location.pathname}/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, evidenceProjectId, "Update Evidence");
@@ -152,3 +152,4 @@ function updateSubmissionButton() {
     else
         document.getElementById('evidenceFormSubmitButton').disabled = false
 }
+
