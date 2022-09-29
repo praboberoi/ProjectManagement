@@ -197,17 +197,8 @@ public class DeadlineService {
      * @param deadline of type deadline
      */
     public void updateDeadlineColors(Deadline deadline) {
-        deadline.clearColorList();
-        List<Sprint> sprintList = sprintRepository.findSprintsByDeadline(deadline)
-                .stream().sorted(Comparator.comparingInt(Sprint::getSprintId))
-                .toList();
-
-        AtomicInteger counter = new AtomicInteger(0);
-
-        sprintList.forEach(sprint -> {
-            if (!deadline.getColors().contains(sprint.getColor()))
-                deadline.addColor(sprint.getColor(), counter.getAndIncrement());
-        });
+        Optional<Sprint> sprint = sprintRepository.findSprintsByDeadline(deadline);
+        sprint.ifPresent(value -> deadline.setColor(value.getColor()));
     }
 
 

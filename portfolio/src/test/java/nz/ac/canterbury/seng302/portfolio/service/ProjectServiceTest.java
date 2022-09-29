@@ -209,7 +209,7 @@ class ProjectServiceTest {
                 .build();
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
-                dashboardService.verifyProject(project));
+                projectService.verifyProject(project));
         assertEquals("Project name must not contain an emoji", exception.getMessage());
     }
 
@@ -229,7 +229,7 @@ class ProjectServiceTest {
                 .build();
 
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
-                dashboardService.verifyProject(project));
+                projectService.verifyProject(project));
         assertEquals("Project description must not contain an emoji", exception.getMessage());
     }
 }

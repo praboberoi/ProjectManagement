@@ -379,17 +379,16 @@ class DeadlineServiceTest {
      * Asserts that the colours for the given deadline is updated based on the given list of sprint
      */
     @Test
-    void givenEventExists_whenUpdateEventColorsIsRequested_thenEventColorsListIsUpdatedWithSprintList() {
+    void givenDeadlineExists_whenUpdateDeadlineColorsIsRequested_thenDeadlineColorsIsUpdatedWithSprint() {
 
         Sprint sprint1 = new Sprint.Builder().sprintName("Sprint 1").sprintId(1)
                 .startDate(new java.sql.Date(2020 - 1900, 11, 1))
                 .endDate(new java.sql.Date(2020 - 1900, 11, 2))
                 .color(SprintColor.BLUE).build();
 
-        List<Sprint> sprintList = List.of(sprint1);
-        when(sprintRepository.findSprintsByDeadline(deadline)).thenReturn(sprintList);
+        when(sprintRepository.findSprintsByDeadline(deadline)).thenReturn(Optional.ofNullable(sprint1));
         deadlineService.updateDeadlineColors(deadline);
 
-        assertArrayEquals(List.of(SprintColor.BLUE).toArray(), deadline.getColors().toArray());
+        assertEquals(SprintColor.BLUE, deadline.getColors());
     }
 }
