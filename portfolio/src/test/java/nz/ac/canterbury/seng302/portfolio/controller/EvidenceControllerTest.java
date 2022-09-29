@@ -310,6 +310,52 @@ public class EvidenceControllerTest {
     }
 
     /**
+     * Asserts that students are unable to delete evidence
+     */
+    @Test
+    void givenStudent_whenDeleteEvidenceCalled_thenEvidenceDeletedSuccessfully() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        when(evidenceService.deleteEvidence(99)).thenReturn("Successfully Deleted Test Evidence");
+        when(evidenceService.getEvidence(99)).thenReturn(evidence);
+
+        this.mockMvc
+                .perform(delete("/evidence/99"))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Insufficient Permissions"));
+    }
+
+    /**
+     * Asserts that the evidence owner is able to delete a piece of evidence
+     */
+    @Test
+    void givenEvidenceOwner_whenDeleteEvidenceCalled_thenEvidenceDeletedSuccessfully() throws Exception {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        when(evidenceService.deleteEvidence(1)).thenReturn("Successfully Deleted Test Evidence");
+        when(evidenceService.getEvidence(1)).thenReturn(evidence);
+        when(PrincipalUtils.getUserId(any())).thenReturn(1);
+
+        this.mockMvc
+                .perform(delete("/evidence/1"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Successfully Deleted Test Evidence"));
+    }
+
+    /**
+     * Asserts that the you can't delete a non-existent piece of evidence
+     */
+    @Test
+    void givenNoEvidence_whenDeleteEvidenceCalled_thenEvidenceDeletedSuccessfully() throws Exception {
+        when(evidenceService.deleteEvidence(1)).thenReturn("Successfully Deleted Test Evidence");
+        when(evidenceService.getEvidence(1)).thenThrow(new IncorrectDetailsException("Evidence doesn't exist"));
+        when(PrincipalUtils.getUserId(any())).thenReturn(1);
+
+        this.mockMvc
+                .perform(delete("/evidence/1"))
+                .andExpect(status().isNotFound())
+                .andExpect(content().string("Evidence doesn't exist"));
+    }
+
+    /**
      * Asserts that given an evidence ID when deleteEvidence called then user is redirected to the evidence page with
      * correct message
      */

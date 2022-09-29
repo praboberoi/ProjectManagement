@@ -137,6 +137,20 @@ public class GroupControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
+    void whenGroupsListRequested_thenAllGroupsReturned() throws Exception{
+        when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, List.of()));
+        when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, List.of()));
+        mockMvc
+            .perform(get("/groups/list"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("listGroups", Matchers.<Collection<Groups>> allOf(hasSize(2))));
+    }
+
+    /**
+     * Checks that all the groups are returned when group page is requested
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
     void whenGroupsPageRequested_thenAllGroupsReturned() throws Exception{
         when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, List.of()));
         when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, List.of()));
