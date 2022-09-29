@@ -98,7 +98,8 @@ class RegistrationServiceTests {
         requestBuilder.setFirstName("Testing😀")
                 .setLastName("Testing😊")
                 .setBio("This is a test 👍")
-                .setNickname("New  ❤️");
+                .setNickname("New❤️")
+                .setUsername("pra😀");
         List<ValidationError> result = controller.validateUserDetails(requestBuilder.build());
         assertEquals(4, result.size());
     }
