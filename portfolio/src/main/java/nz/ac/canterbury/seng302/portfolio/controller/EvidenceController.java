@@ -252,6 +252,9 @@ public class EvidenceController {
             editing.put(notification.getEvidenceId(), notification);
         } else {
             notifyEvidence(notification.getUserId(), notification.getEvidenceId(), "finished");
+            if (editing.get(notification.getEvidenceId()) != notification) {
+                logger.info("The is a duplicate edit on evidence {}", notification.getEvidenceId());
+            }
             editing.remove(notification.getEvidenceId());
         }
     }
