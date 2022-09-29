@@ -1,14 +1,12 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
-import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.ControllerAdvisor;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
-
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
@@ -22,20 +20,16 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.mockStatic;
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
-
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.mockStatic;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(controllers = GroupController.class)
 @AutoConfigureMockMvc(addFilters = false)
@@ -97,7 +91,7 @@ public class GroupControllerTest {
     }
 
     /**
-     * Checks that the group create functionality will be called correctly for non teacher/admin users
+     * Checks that the group create functionality will be called correctly for teacher/admin users
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
@@ -106,8 +100,8 @@ public class GroupControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
                 .perform(post("/groups?shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageSuccess", "success"));
+                .andExpect(status().isOk())
+                .andExpect(content().string( "success"));
     }
 
     /**
@@ -120,8 +114,8 @@ public class GroupControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
         mockMvc
                 .perform(post("/groups?shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "unsuccessful"));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string( "unsuccessful"));
     }
 
 
@@ -134,8 +128,8 @@ public class GroupControllerTest {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         mockMvc
                 .perform(post("/groups?shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to create group."));
+                .andExpect(status().isForbidden())
+                .andExpect(content().string( "Insufficient permissions to save group."));
     }
 
     /**
@@ -277,10 +271,11 @@ public class GroupControllerTest {
     void givenStudentUser_whenModifyGroupCalled_thenRedirectToGroupsPage() throws Exception{
         when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
+        when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Insufficient permissions to create group."));
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("Insufficient permissions to save group."));
     }
 
     /**
@@ -291,10 +286,11 @@ public class GroupControllerTest {
     void givenTeacherUser_whenModifyGroupCalled_thenSuccess() throws Exception{
         when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(true).setMessage("success").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageSuccess", "success"));
+                .andExpect(status().isOk())
+                .andExpect(content().string("success"));
     }
 
     /**
@@ -305,10 +301,11 @@ public class GroupControllerTest {
     void givenTeacherUser_whenModifyGroupCalledWithInvalidData_thenFail() throws Exception{
         when(groupService.modifyGroup(anyInt(), anyString(), anyString())).thenReturn(ModifyGroupDetailsResponse.newBuilder().setIsSuccess(false).setMessage("Fail").build());
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+        when(groupService.getGroupById(anyInt())).thenReturn(new Groups("test", "Test longName", 1, List.of()));
         mockMvc
                 .perform(post("/groups?groupId=1&shortName=&longName="))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Fail"));
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Fail"));
     }
 
     /**
@@ -336,25 +333,6 @@ public class GroupControllerTest {
             .perform(get("/group/1"))
             .andExpect(status().is3xxRedirection())
             .andExpect(flash().attribute("messageDanger", "Group 1 does not exist."));
-    }
-
-    /**
-     * This test checks that when a list of users from a specific group are requested they are returned correctly in a fragment
-     */
-    @Test
-    void givenSelectedGroup_whenMembersRequested_thenGroupMembersReturned() throws Exception {
-        Groups group = new Groups();
-        User user1 = new User.Builder().userId(1).build();
-        User user2 = new User.Builder().userId(2).build();
-        List<User> userList = new ArrayList<User>();
-        userList.add(user1);
-        userList.add(user2);
-        group.setMembers(userList);
-        when(groupService.getGroupById(1)).thenReturn(group);
-        mockMvc.perform(get("/group/1/members"))
-                .andExpect(status().isOk())
-                .andExpect(model().attribute("group", group));
-
     }
 }
 

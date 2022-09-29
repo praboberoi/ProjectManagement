@@ -42,9 +42,9 @@ function checkLongName(event) {
 /**
  * Makes a call to the server and replaces the current group list with the new one
  */
- function updateGroupList() {
+function updateGroupList() {
     let httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function (){
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 document.getElementById("group-list").outerHTML = httpRequest.responseText;
@@ -61,11 +61,73 @@ function checkLongName(event) {
 }
 
 /**
+ * Sends a request to the server to create the group
+ * @param event Form submit request
+ */
+function createGroup() {
+    let httpRequest = new XMLHttpRequest();
+
+    let createModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('createModal'))
+    let modalError = document.getElementById('createModalError')
+    httpRequest.onreadystatechange = () => updateModal(httpRequest, createModal, modalError)
+
+    httpRequest.open('POST', apiPrefix + `/groups`);
+
+    let formData = new FormData(document.forms.createGroupForm)
+
+    httpRequest.send(formData);
+}
+
+/**
+ * Sends a request to the server to save the group
+ * @param event Form submit request
+ */
+function saveGroup() {
+    let httpRequest = new XMLHttpRequest();
+
+    let editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
+    let modalError = document.getElementById('editModalError')
+
+    httpRequest.onreadystatechange = () => updateModal(httpRequest, editModal, modalError)
+
+    httpRequest.open('POST', apiPrefix + `/groups`);
+
+    let formData = new FormData(document.forms.editGroupForm)
+
+    httpRequest.send(formData);
+}
+
+/**
+ * Updates the error message and removes the modal if there is no issues
+ * @param httpRequest Request made to the server
+ * @param modal Which modal is being edited
+ * @param modalError Error message div that displays an error
+ */
+function updateModal(httpRequest, modal, modalError) {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            modalError.innerText = ""
+            messageSuccess.innerText = httpRequest.responseText;
+            modal.hide()
+        } else if (httpRequest.status === 500) {
+            messageSuccess.innerText = ""
+            modalError.innerText = "An error occurred on the server, please try again later";
+        } else if (httpRequest.status == 400) {
+            messageSuccess.innerText = ""
+            modalError.innerText = httpRequest.responseText;
+        } else {
+            messageSuccess.innerText = ""
+            modalError.innerText = "Something went wrong.";
+        }
+    }
+}
+
+/**
  * Makes a call to the server and replaces the current group with the new one
  */
 function getGroup(groupId) {
     let httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function (){
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 document.getElementById("group").outerHTML = httpRequest.responseText;
@@ -91,7 +153,7 @@ function getGroup(groupId) {
  */
 function deleteGroup(groupId) {
     let httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function (){
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 messageSuccess.hidden = false
@@ -128,7 +190,7 @@ function selectUser(event) {
 
         let index_target = table_elements.indexOf(event.target.closest('tr'))
         let index_selected = table_elements.indexOf(selected)
-        
+
         table_elements.splice(Math.min(index_target, index_selected), Math.abs(index_target - index_selected) + 1).forEach(element => {
             element.classList.add('table-info');
             element.classList.add('selected')
@@ -149,7 +211,7 @@ function selectUser(event) {
             element.classList.add('table-info');
             element.classList.add('selected')
         });
-        
+
 
     } else if (event.ctrlKey || event.metaKey) {
         document.querySelectorAll('.currently-selected').forEach(row => {
@@ -171,7 +233,7 @@ function selectUser(event) {
             row.classList.remove('selected');
             row.classList.remove('currently-selected');
         })
-        
+
         event.target.closest('tr').classList.add('currently-selected');
         event.target.closest('tr').classList.add('selected');
         event.target.closest('tr').classList.add('table-info');
@@ -186,7 +248,7 @@ function removeUsers(groupId) {
     let httpRequest = new XMLHttpRequest();
     let userIds = []
     let errorCodes = [400, 403]
-    httpRequest.onreadystatechange = function (){
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 messageDanger.hidden = true;
@@ -214,7 +276,7 @@ function removeUsers(groupId) {
             updateGroupList()
         }
     }
-    
+
     httpRequest.open('POST', apiPrefix + `/groups/${groupId}/removeMembers`);
     let params = new FormData();
     document.querySelectorAll('.selected').forEach(row => {
@@ -243,10 +305,8 @@ function dropUsers(event, groupId) {
         }
     }
     let data = event.dataTransfer.getData("origin");
-    console.log(data)
     if (data == "Members without a group") {
         addUsers(groupId, "unassigned")
-        console.log("test")
     } else {
         addUsers(groupId, null)
     }
@@ -275,11 +335,11 @@ function allowDrop(event) {
  * Makes a call to the server and adds the selected members to the group
  * @param groupId Id of the selected group
  */
- function addUsers(groupId, originGroupId) {
+function addUsers(groupId, originGroupId) {
     let httpRequest = new XMLHttpRequest();
     let userIds = []
     let errorCodes = [400, 403]
-    httpRequest.onreadystatechange = function (){
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 messageDanger.hidden = true;
@@ -308,7 +368,7 @@ function allowDrop(event) {
             updateGroupList()
         }
     }
-    
+
     httpRequest.open('POST', apiPrefix + `/groups/${groupId}/addMembers`);
     let params = new FormData();
     document.querySelectorAll('.selected').forEach(row => {
@@ -319,26 +379,24 @@ function allowDrop(event) {
     httpRequest.send(params);
 }
 
-let stompClient = null;
-
 /**
  * Connects to the websocket server
  */
 function connect() {
-    let websocketProtocol = window.location.protocol === 'http:'?'ws://':'wss://'
-    stompClient = new StompJs.Client({
+    let websocketProtocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://'
+    let stompClient = new StompJs.Client({
         brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
-        debug: function(str) {
+        debug: function (str) {
             // console.log(str);
         },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
     });
-    
+
     stompClient.onConnect = function () {
         console.log('Active updating enabled');
-        subscribe()
+        subscribe(stompClient)
         document.getElementById("websocket-status").value = "connected"
     };
 
@@ -352,7 +410,7 @@ function connect() {
 /**
  * Subscribes to the required websocket notification channels
  */
-function subscribe() {
+function subscribe(stompClient) {
     stompClient.subscribe('/element/groups/', updateGroup);
 }
 
@@ -360,7 +418,7 @@ function subscribe() {
  * Replaces the relevant component of the sprint table
  * @param message Message with sprint and edit type
  */
- function updateGroup(message) {
+function updateGroup(message) {
     let array = message.body.split(' ')
     let group = array[1]
     let component = array[2]
@@ -388,6 +446,6 @@ function subscribe() {
 /**
  * Runs the connect function when the document is loaded
  */
- document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     connect();
 })

@@ -28,7 +28,7 @@
         <h2>[[${pageTitle}]]</h2>
     </div>
     <div class="projectForm">
-        <form id="createSprintForm" onsubmit="return validateForm()" action="#" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
+        <form id="createSprintForm" onsubmit="return validateForm()" action="#" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/sprint'}" th:object="${sprint}" method="post">
             <input type="hidden" id="projectId" th:field="${project.projectId}"/>
             <input type="hidden" id="sprintId" th:field="*{sprintId}" />
             <input type="hidden" id="sprintColor" th:field="*{color}" />
@@ -42,7 +42,7 @@
             </div>
             <div class="mb-3">
                 <label for="sprint-name" class="col-form-label required">Sprint Name</label>
-                <input type="text" class="form-control" id="sprint-name" th:field="*{sprintName}" onkeyup="checkSprintName()" required>
+                <input type="text" class="form-control" id="sprint-name" th:field="*{sprintName}" oninput="checkSprintName()" required>
                 <p id="sprintNameError" th:text="${sprintNameError}" class="error-msg"/>
             </div>
 
@@ -56,11 +56,11 @@
             </div>
             <div class="row">
                 <div class="col-md-6 ms-auto">
-                    <input style="font-size:15px;" type="date" class="form-control" id="sprint-start-date" th:field="*{startDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkSprintDates()" required>
+                    <input style="font-size:15px;" type="date" class="form-control" id="sprint-start-date" th:field="*{startDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" oninput="checkSprintDates()" required>
                     <p id="startDateError" th:text="${startDateError}" class="error-msg"></p>
                 </div>
                 <div class="col-md-6 ms-auto">
-                    <input style="font-size:15px;" type="date" class="form-control" id="sprint-end-date" th:field="*{endDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" onchange="checkSprintDates()" required>
+                    <input style="font-size:15px;" type="date" class="form-control" id="sprint-end-date" th:field="*{endDate}" th:min="${sprintDateMin}" th:max="${sprintDateMax}" oninput="checkSprintDates()" required>
                     <p id="endDateError" th:text="${endDateError}" class="error-msg"></p>
                 </div>
             </div>

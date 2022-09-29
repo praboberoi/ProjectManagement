@@ -1,7 +1,8 @@
 -- Delete any cypress test users
 DELETE FROM user_roles WHERE user_user_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%');
-DELETE FROM users_groups WHERE group_id IN (SELECT group_id FROM groups WHERE long_name LIKE '%Cypress%') OR group_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%');
-DELETE FROM groups WHERE long_name LIKE '%Cypress%';
+DELETE FROM users_groups WHERE group_id IN (SELECT group_id FROM groups WHERE long_name LIKE '%Cypress%' OR short_name LIKE '%Cypress%') OR group_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%');
+DELETE FROM users_groups WHERE user_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%') OR group_id IN (SELECT user_id FROM user WHERE username LIKE '%Cypress%');
+DELETE FROM groups WHERE long_name LIKE '%Cypress%' OR short_name LIKE '%Cypress%';
 DELETE FROM user WHERE username LIKE '%Cypress%';
 
 -- Create admin user, large user id to reduce change of overlap
@@ -39,4 +40,5 @@ INSERT IGNORE INTO user_roles (user_user_id,roles,order_column) VALUES (1285324,
 -- Create group and add member into it
 INSERT IGNORE INTO groups (group_id, short_name, long_name) VALUES (1285322, 'Cypress1', 'Cypress test group 1');
 INSERT IGNORE INTO groups (group_id, short_name, long_name) VALUES (1285323, 'Cypress2', 'Cypress test group 2');
+INSERT IGNORE INTO groups (group_id, short_name, long_name) VALUES (1000, 'Cypress title update', 'Cypress test group 3');
 INSERT IGNORE INTO users_groups (user_id, group_id) VALUES (1285323, 1285322);

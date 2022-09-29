@@ -1,11 +1,18 @@
 package nz.ac.canterbury.seng302.portfolio.model.repository;
 
+import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
+import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -38,6 +45,7 @@ class SprintRepositoryTest {
     @BeforeEach
     public void setUp() {
         project = new Project.Builder()
+                .projectId(0)
                 .projectName("Project 2020")
                 .description("First Attempt")
                 .startDate(new Date(2020, 3, 12))
@@ -51,7 +59,7 @@ class SprintRepositoryTest {
                 .project(project)
                 .startDate(new Date(2021,1,1))
                 .endDate(new Date(2021, 3, 1))
-                .color(SprintColor.GREEN)
+                .color(SprintColor.BLUE)
                 .build();
 
         sprint2 = new Sprint.Builder()
@@ -61,7 +69,7 @@ class SprintRepositoryTest {
                 .project(project)
                 .startDate(new Date(2021,3,1))
                 .endDate(new Date(2021, 6, 1))
-                .color(SprintColor.PURPLE)
+                .color(SprintColor.SYYBLUE)
                 .build();
         projectRepository.save(project);
         sprintRepository.save(sprint1);
@@ -83,6 +91,24 @@ class SprintRepositoryTest {
         List<Sprint> emptyList = Collections.<Sprint>emptyList();
         assertArrayEquals(emptyList.toArray(), sprintRepository.findBySprintName("No").toArray());
 
+    }
+
+    /**
+     * Given a date and project this test asserts that the repository can find the corresponding sprint.
+     */
+    @Test
+    void givenSprintExists_FindByProjectAndDate() {
+        Date date = new Date(2021, 1, 2);
+        assertEquals(sprint1, sprintRepository.findByDateAndProject(project, date));
+    }
+
+    /**
+     * Given a date not relating to a sprint, this test asserts that the repository returns null.
+     */
+    @Test
+    void givenSprintDoesntExist_FindByProjectAndDateReturnsNull() {
+        Date date = new Date(1999, 1, 2);
+        assertEquals(null, sprintRepository.findByDateAndProject(project, date));
     }
 
     @Test
@@ -161,5 +187,30 @@ class SprintRepositoryTest {
         assertNotEquals(2, sprintRepository.countByProject(project2));
 
         projectRepository.delete(project2);
+    }
+
+    @Test
+    void givenEventExists_whenFindByEventRequested_thenAnAppropriateListOfEventsIsReturned() {
+       Sprint sprint3 = new Sprint.Builder()
+                .sprintLabel("Sprint 3")
+                .sprintName("Sprint 3")
+                .description("Attempt 3")
+                .project(project)
+                .startDate(new Date(2022,3,1))
+                .endDate(new Date(2022, 6, 1))
+                .color(SprintColor.GREEN)
+                .build();
+        sprintRepository.save(sprint3);
+
+        Event event = new Event.Builder().eventName("This is a test")
+                .eventId(1)
+                .startDate(new Date(2021, 1,1))
+                .endDate(new Date(2021, 3, 6))
+                .project(project)
+                .build();
+
+        List<Sprint> sprintList = sprintRepository.findSprintsByEvent(event);
+        assertArrayEquals(List.of(sprint1, sprint2).toArray(), sprintList.toArray());
+
     }
 }

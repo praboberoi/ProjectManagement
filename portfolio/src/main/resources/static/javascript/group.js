@@ -1,4 +1,3 @@
-const GIT_API = "api/v4/"
 let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
 let filterByUser = ""
 let filterByActionType = ""
@@ -7,7 +6,109 @@ let jsonRepo;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
-let stompClient = null;
+
+/**
+ * Count down the characters remaining in the Group Short name, and check the length is between 3 and 50 characters.
+ */
+function checkShortName(event) {
+    let groupShortNameElement = event.target;
+    let groupShortNameErrorElement = groupShortNameElement.parentNode.querySelector('#shortNameError')
+    let charMessage = groupShortNameElement.parentNode.querySelector("#charCount");
+    let charCount = groupShortNameElement.value.length;
+    charMessage.innerText = charCount + ' '
+    if (charCount < 3 || charCount > 50) {
+        groupShortNameElement.classList.add('formError');
+        groupShortNameErrorElement.innerText = "Group short name must be between 3 and 50 characters."
+        groupShortNameElement.setCustomValidity("Invalid Field")
+    } else {
+        groupShortNameElement.classList.remove("formError");
+        groupShortNameErrorElement.innerText = null;
+        groupShortNameElement.setCustomValidity("");
+    }
+}
+
+/**
+ * Count down the characters remaining in the Group Long name, and check the length is between 3 and 100 characters.
+ */
+function checkLongName(event) {
+    let groupLongNameElement = event.target;
+    let groupLongNameErrorElement = groupLongNameElement.parentNode.querySelector("#longNameError")
+    let charMessage = groupLongNameElement.parentNode.querySelector("#charCountLong");
+    let charCount = groupLongNameElement.value.length;
+    if (charCount < 3 || charCount > 100) {
+        groupLongNameElement.classList.add('formError');
+        groupLongNameErrorElement.innerText = "Group long name must be between 3 and 100 characters."
+        groupLongNameElement.setCustomValidity("Invalid Field")
+    } else {
+        groupLongNameElement.classList.remove("formError");
+        groupLongNameErrorElement.innerText = null;
+        groupLongNameElement.setCustomValidity("");
+    }
+    charMessage.innerText = charCount + ' '
+
+}
+
+/**
+ * Sends a request to the server to save the group
+ * @param event Form submit request
+ */
+function saveGroup() {
+    let httpRequest = new XMLHttpRequest();
+
+    let editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
+    let modalError = document.getElementById('editModalError')
+
+    httpRequest.onreadystatechange = () => updateModal(httpRequest, editModal, modalError)
+
+    httpRequest.open('POST', apiPrefix + `/groups`);
+
+    let formData = new FormData(document.forms.editGroupForm)
+
+    httpRequest.send(formData);
+}
+
+/**
+ * Updates the error message and removes the modal if there is no issues
+ * @param httpRequest Request made to the server
+ * @param modal Which modal is being edited
+ * @param modalError Error message div that displays an error
+ */
+ function updateModal(httpRequest, modal, modalError) {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            modalError.innerText = ""
+            messageSuccess.innerText = httpRequest.responseText;
+            modal.hide()
+        } else if (httpRequest.status === 500) {
+            messageSuccess.innerText = ""
+            modalError.innerText = "An error occurred on the server, please try again later";
+        } else if (httpRequest.status == 400) {
+            messageSuccess.innerText = ""
+            modalError.innerText = httpRequest.responseText;
+        } else {
+            messageSuccess.innerText = ""
+            modalError.innerText = "Something went wrong.";
+        }
+    }
+}
+
+function updateTitle() {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                document.getElementById("title").outerHTML = httpRequest.responseText;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            }
+        }
+    }
+
+    httpRequest.open('GET', apiPrefix + `/group/${groupId}/title`);
+    httpRequest.send();
+}
 
 /**
  * Checks to see if a string is a valid url
@@ -24,6 +125,7 @@ function isValidHttpUrl(string) {
     return url.protocol === "http:" || url.protocol === "https:"
 }
 
+const GIT_API = "/api/v4/"
 
 /**
  * Toggles the visibility of the recent actions component
@@ -38,7 +140,7 @@ function toggleRecentActions() {
  * Attempts to connect to the git repository using the details provided
  * @param saving
  */
-function connectToRepo(saving=false) {
+function connectToRepo(saving = false) {
     let httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = function () {
@@ -59,7 +161,7 @@ function connectToRepo(saving=false) {
                     'Content-Type': 'application/json',
                 },
             }).then(async (response) => {
-                const repo = await  response.json();
+                const repo = await response.json();
                 if (saving) {
                     if (!repo.hasOwnProperty('id')) {
                         document.getElementById("messageDanger").innerText = "Repo not found"
@@ -69,6 +171,11 @@ function connectToRepo(saving=false) {
 
 
                     document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
+                } else {
+                    if (!repo.hasOwnProperty('id')) {
+                        clearRecentActions()
+                        return
+                    }
                 }
 
                 if (repoName !== undefined) {
@@ -77,7 +184,7 @@ function connectToRepo(saving=false) {
 
                 getRecentActions(jsonRepo)
             }).catch((error) => {
-                if (repoName != undefined) {
+                if (repoName !== undefined) {
                     repoName.value = ""
                 }
                 if (saving) {
@@ -118,13 +225,20 @@ async function getRecentActions(repo) {
     });
 
     let events = await response.json();
+
     let recentActions = document.getElementById("recent-action-cards")
+
+    if (events == undefined) {
+        clearRecentActions()
+        return
+    }
+
     updateFilters(events);
     recentActions.innerHTML = ""
-    if(filterByUser.length > 0)
+    if (filterByUser.length > 0)
         events = events.filter(event => event.author_username === filterByUser)
 
-    if(filterByActionType.length > 0)
+    if (filterByActionType.length > 0)
         events = events.filter(event => event.action_name === filterByActionType)
 
     events.forEach(event => {
@@ -271,7 +385,7 @@ function validateProjectID() {
 function addDate(element, event) {
     let timeContainer = document.createElement('div');
     element.appendChild(timeContainer)
-    timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' })
+    timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 /**
@@ -296,7 +410,10 @@ function saveRepoSettings(event) {
 
     let httpRequest = new XMLHttpRequest();
 
-    httpRequest.onreadystatechange = () => processAction(httpRequest)
+    httpRequest.onreadystatechange = () => {
+        processAction(httpRequest)
+        connectToRepo(true)
+    }
 
     httpRequest.open('POST', apiPrefix + `/repo/${groupId}/save`);
 
@@ -304,14 +421,15 @@ function saveRepoSettings(event) {
 
     httpRequest.send(formData);
 
-    connectToRepo(true)
+
+
 }
 
 /**
  * Replaces the old messages with the new one contained in the request
  * @param httpRequest Request containing a model view element
  */
- function processAction(httpRequest){
+function processAction(httpRequest) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
             messageSuccess.hidden = false
@@ -332,21 +450,89 @@ function saveRepoSettings(event) {
 /**
  * Runs when the page is loaded
  */
- document.addEventListener('DOMContentLoaded', function() {
-    connectToRepo();
-    connect();
+document.addEventListener('DOMContentLoaded', function () {
+    connectToRepo()
 });
+
+/**
+ * Updates the list of all the filters available for selection based on the events list passed
+ */
+function updateFilters(events) {
+    let userFilter = document.getElementById('userFilter')
+    let actionType = document.getElementById('actionType')
+
+    const userSet = new Set();
+    const actionTypeSet = new Set();
+
+    userFilter.innerText = "";
+    actionType.innerText = "";
+
+    events.forEach(event => {
+        userSet.add(event.author_username);
+        actionTypeSet.add(event.action_name);
+    })
+
+    if (filterByUser.length === 0) {
+        userFilter.innerHTML = `<option selected>Filter By User</option>`
+        userSet.forEach(user => userFilter.innerHTML += `<option>${user}</option>`)
+
+    } else {
+        userFilter.innerHTML += `<option>Clear Filter</option>`
+        userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>` : `<option>${user}</option>`)
+    }
+
+    if (filterByActionType.length === 0) {
+        actionType.innerHTML = `<option selected>Filter By Action Type</option>`
+        actionTypeSet.forEach(action => actionType.innerHTML += `<option>${action}</option>`)
+
+    } else {
+        actionType.innerHTML += `<option>Clear Filter</option>`
+        actionTypeSet.forEach(action => actionType.innerHTML +=
+            action === filterByActionType ? `<option selected>${action}</option>` : `<option>${action}</option>`)
+
+
+    }
+
+}
+
+/**
+ * Event listener for change in the userFilter
+ */
+document.getElementById('userFilter').addEventListener('change', function () {
+    if (this.value === 'Clear Filter') {
+        filterByUser = ""
+    } else {
+        filterByUser = this.value
+    }
+
+    getRecentActions(jsonRepo)
+
+})
+/**
+ * Event listener for change in the actionTypeFilter
+ */
+document.getElementById('actionType').addEventListener('change', function () {
+    if (this.value === 'Clear Filter') {
+        filterByActionType = ""
+    } else{
+        filterByActionType = this.value
+    }
+
+    getRecentActions(jsonRepo)
+
+})
+
 
 /**
  * Connects to the websocket server
  */
-function connect() {
-    let websocketProtocol = window.location.protocol === 'http:'?'ws://':'wss://'
-    stompClient = new StompJs.Client({
+ function connect() {
+    let websocketProtocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://'
+    let stompClient = new StompJs.Client({
         brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
-        // debug: function(str) {
-        //     console.log(str);
-        // },
+        debug: function (str) {
+            // console.log(str);
+        },
         reconnectDelay: 5000,
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
@@ -354,7 +540,7 @@ function connect() {
 
     stompClient.onConnect = function () {
         console.log('Active updating enabled');
-        subscribe()
+        subscribe(stompClient)
         document.getElementById("websocket-status").value = "connected"
     };
 
@@ -366,154 +552,51 @@ function connect() {
 }
 
 /**
- * Attempts to connect to the git repository using the details provided
- * @param event Form submit event
- */
-function connectTest(event) {
-    event.preventDefault()
-
-    let message = document.getElementById("connection-message")
-
-    let projectId = document.getElementById("git-project-id").value
-    let accessToken = document.getElementById("git-access-token").value
-    let hostAddress = document.getElementById("git-host-address").value
-
-    fetch(hostAddress + "/api/v4/projects/" + projectId, {
-        method: 'GET',
-        headers: {
-            'PRIVATE-TOKEN': accessToken, //'sVMvHmHxhJeqdZBBchDB' <-- This is a project token for an empty gitlab repo (id = 13964) that I have created for testing purposes
-            'Content-Type': 'application/json',
-        },
-    }).then(async (response) => {
-        const repo = await  response.json();
-        if (!repo.hasOwnProperty('id')) {
-            message.innerText = "Repo not found"
-            return
-        }
-        document.getElementById("git-project-name").value = repo.name
-        message.innerText = "Connected to repo: " + repo.name
-    }).catch((error) => {
-        document.getElementById("git-project-name").value = ""
-        message.innerText = "Error connecting to repository"
-    });
-
-
-}
-
-/**
  * Subscribes to the required websocket notification channels
  */
-function subscribe() {
-    stompClient.subscribe('/element/account/', updateUser);
+function subscribe(stompClient) {
+    stompClient.subscribe(`/element/group/${groupId}`, updateGroup);
 }
 
-
 /**
- * Replaces the relevant component of the user table
- * @param message Message with user id
+ * Replaces the group's title information
+ * @param message Message with sprint and edit type
  */
-function updateUser(message) {
+ function updateGroup(message) {
     let array = message.body.split(' ')
-    let userId = array[1]
-    let httpRequest = new XMLHttpRequest();
+    let component = array[0]
+    let action = array[1]
 
-    const xpath = `//td[text()='` + userId + `']`
-    let groupListElement = document.getElementById("userListDataTable")
-    const changedUserId = document.evaluate(xpath, groupListElement, null, XPathResult.FIRST_ORDERED_NODE_TYPE).singleNodeValue.textContent
-
-    if (changedUserId === userId) {
-        httpRequest.open('GET', window.location.pathname + `/members`);
-        httpRequest.onreadystatechange = () => updateElement(httpRequest, groupListElement)
-        httpRequest.send();
+    if (component == "details" || action === "edited") {
+        updateTitle()
+    } else if (component == "details") {
+        updateMembers()
+    } else {
+        console.log("Unknown command: " + action)
     }
 }
 
-/**
- * Replaces the old http component with the new one contained in the request
- * @param httpRequest Request containing a model view element
- * @param element The element to replace
- */
-function updateElement(httpRequest, element){
-    if (httpRequest.readyState === XMLHttpRequest.DONE) {
-        if (httpRequest.status === 200) {
-            element.innerHTML = httpRequest.responseText;
-        } else if (httpRequest.status === 400) {
-            messageDanger.hidden = false;
-            messageSuccess.hidden = true;
-            messageDanger.innerText = "Bad Request";
-        } else {
-            messageDanger.hidden = false;
-            messageSuccess.hidden = true;
-            messageDanger.innerText = "Something went wrong.";
+function updateTitle() {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                document.getElementById("title").outerHTML = httpRequest.responseText;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            }
         }
     }
+
+    httpRequest.open('GET', apiPrefix + `/group/${groupId}/title`);
+    httpRequest.send();
 }
 
-
 /**
- * Updates the list of all the filters available for selection based on the events list passed
+ * Runs the connect function when the document is loaded
  */
- function updateFilters(events) {
-     let userFilter = document.getElementById('userFilter')
-     let actionType = document.getElementById('actionType')
-
-     const userSet = new Set();
-     const actionTypeSet = new Set();
-
-     userFilter.innerText = "";
-     actionType.innerText = "";
-
-     events.forEach(event => {
-         userSet.add(event.author_username);
-         actionTypeSet.add(event.action_name);
-     })
-
-     if (filterByUser.length === 0) {
-         userFilter.innerHTML = `<option selected>Filter By User</option>`
-         userSet.forEach(user => userFilter.innerHTML += `<option>${user}</option>`)
-
-     } else {
-         userFilter.innerHTML += `<option>Clear Filter</option>`
-         userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>`: `<option>${user}</option>`)
-     }
-
-     if (filterByActionType.length === 0) {
-         actionType.innerHTML = `<option selected>Filter By Action Type</option>`
-         actionTypeSet.forEach(action => actionType.innerHTML += `<option>${action}</option>`)
-
-     } else {
-         actionType.innerHTML += `<option>Clear Filter</option>`
-         actionTypeSet.forEach(action => actionType.innerHTML +=
-             action === filterByActionType ? `<option selected>${action}</option>` :`<option>${action}</option>`)
-
-
-     }
-
- }
-
-/**
- * Event listener for change in the userFilter
- */
- document.getElementById('userFilter').addEventListener('change', function () {
-     if (this.value === 'Clear Filter')
-         filterByUser = ""
-     else
-         filterByUser = this.value
-
-     getRecentActions(jsonRepo)
-
- } )
-/**
- * Event listener for change in the actionTypeFilter
- */
-document.getElementById('actionType').addEventListener('change', function () {
-     if (this.value === 'Clear Filter')
-         filterByActionType = ""
-     else
-         filterByActionType = this.value
-
-     getRecentActions(jsonRepo)
-
- } )
-
-
+ document.addEventListener('DOMContentLoaded', function () {
+    connect();
+})

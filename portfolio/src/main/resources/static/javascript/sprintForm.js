@@ -15,6 +15,8 @@ const endDateError = document.getElementById('endDateError');
 const projectStartDate = new Date(document.getElementById("projectStartDate").value);
 const projectEndDate = new Date(document.getElementById("projectEndDate").value);
 const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
+const sprintNameElement = document.getElementById('sprint-name');
+const sprintDescriptionElement = document.getElementById('sprint-description');
 
 /**
  * Function for error validation of Sprint Name field.
@@ -146,6 +148,7 @@ function verifyOverlap(startDate, endDate) {
     }
 
     httpRequest.open('POST', '/project/' + projectId + '/verifySprint', true);
-    httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate + "&label=" + labelElement.value + "&id=" + sprintId);
+    httpRequest.setRequestHeader('Content-type', 'application/json');
+    httpRequest.send(JSON.stringify({'sprintId': sprintId, 'sprintLabel': labelElement.value,
+        'sprintName': sprintNameElement.value, 'startDate': startDate, 'endDate': endDate, 'description': sprintDescriptionElement.value}));
 }

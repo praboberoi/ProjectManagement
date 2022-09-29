@@ -10,7 +10,7 @@ When("I remove users from group", () => {
     cy.wait("@deleteCheck")
 });
 
-When("I drag user {word} to group {word}", (user, group) => {
+When("I drag user {word} to group {string}", (user, group) => {
     cy.intercept({
         method: 'POST',
         url: '/groups/*/addMembers',
@@ -30,18 +30,47 @@ When("I drag user {word} to group {word}", (user, group) => {
 });
 
 When("I delete the group", () => {
+    cy.intercept({
+        method: 'GET',
+        url: '/groups/*',
+    }).as('update')
+
     cy.get('#group-settings-icon').click()
     cy.get('#delete-group-btn').click()
     cy.get('#deleteModal button').contains("Delete").should('be.visible').click()
     cy.get('#messageSuccess').should('contain', 'Group deleted successfully')
+    
+    cy.wait('@update')
 })
 
-When("I change the group name to {word}", (newName) => {
+When("I create the group {string}, {string}", (groupName, groupLongName) => {
+    cy.intercept({
+        method: 'GET',
+        url: '/groups/*',
+    }).as('update')
+
+    cy.get('#create-btn').click()
+    cy.get('#shortName').clear().type(groupName, { delay: 0 })
+    cy.get('#longName').clear().type(groupLongName, { delay: 0 })
+    cy.get('#save-submit-button').contains("Create").should('be.visible').click()
+    cy.get('#messageSuccess').should('contain', `Group created successfully`)
+
+    cy.wait('@update')
+})
+
+When("I change the group name to {string}", (newName) => {
+    cy.intercept({
+        method: 'GET',
+        url: '/groups/*',
+    }).as('update')
+
     cy.get('#group-settings-icon').click()
     cy.get('#edit-group-btn').click()
-    cy.get('#editGroupForm #shortName').clear().type(newName, {"delay":0})
+    cy.get('#editGroupForm #shortName').clear().type(newName, { "delay": 0 })
     cy.get('#editGroupForm #shortName').should('have.value', newName)
     cy.get('#editModal button').contains("Save").should('be.visible').click()
+
+    cy.wait('@update')
 })
 
 Then("User {word} is not in group", (user) => {

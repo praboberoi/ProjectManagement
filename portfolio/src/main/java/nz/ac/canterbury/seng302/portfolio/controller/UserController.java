@@ -140,10 +140,10 @@ public class UserController {
 
     /**
      * Sends an update message to all clients connected to the websocket
-     * @param userId Id of the user account updated
+     * @param userId Id of user that has been updated
      */
-    private void notifyUser(int userId) {
-        template.convertAndSend("/element/account/", ("account " + userId));
+    private void notifyRoleChange(int userId) {
+        template.convertAndSend("/element/user/" + userId + "/roles", "");
     }
 
     /**
@@ -187,7 +187,7 @@ public class UserController {
             return new ResponseEntity<>("Internal Server Error", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        notifyUser(Integer.parseInt(userId));
+        notifyRoleChange(Integer.parseInt(userId));
         return new ResponseEntity<>("Role deleted successfully", HttpStatus.OK);
     }
 
@@ -222,8 +222,7 @@ public class UserController {
             }
         }
 
-        notifyUser(userId);
-
+        notifyRoleChange(userId);
         return new ResponseEntity<>("Successfully added " + newRole, HttpStatus.OK);
     }
 }

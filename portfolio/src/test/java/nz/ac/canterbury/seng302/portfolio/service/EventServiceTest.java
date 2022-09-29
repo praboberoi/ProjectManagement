@@ -2,6 +2,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,10 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -32,9 +30,11 @@ class EventServiceTest {
     @MockBean
     private EvidenceRepository evidenceRepository;
 
-
     @MockBean
     private ProjectRepository projectRepository;
+
+    @MockBean
+    private SprintRepository sprintRepository;
 
     private EventService eventService;
     private Event.Builder eventBuilder;
@@ -47,7 +47,7 @@ class EventServiceTest {
     public void init(){
 
         eventBuilder = new Event.Builder();
-        eventService = new EventService(projectRepository, eventRepository);
+        eventService = new EventService(projectRepository, eventRepository, sprintRepository);
     }
 
     /**
@@ -483,5 +483,158 @@ class EventServiceTest {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 eventService.deleteEvent(99));
         assertEquals("Could not find an existing event", exception.getMessage() );
+    }
+
+    /**
+     * Asserts that the colours for the given event are updated based on the given list of sprints
+     */
+    @Test
+    void givenEventExists_whenUpdateEventColorsIsRequested_thenEventColorsListIsUpdatedWithSprintList() {
+        Event event = new Event.Builder().eventName("This is a test")
+                                        .eventId(1)
+                                        .startDate(new Date(2020 - 1900, 11,1))
+                                        .endDate(new Date(2020 - 1900, 11, 5))
+                                        .build();
+
+        Sprint sprint1 = new Sprint.Builder().sprintName("Sprint 1").sprintId(1)
+                .startDate(new Date(2020 - 1900, 11, 1))
+                .endDate(new Date(2020 - 1900, 11, 2))
+                .color(SprintColor.BLUE).build();
+        Sprint sprint2 = new Sprint.Builder().sprintName("Sprint 2").sprintId(2)
+                            .startDate(new Date(2020 - 1900, 11, 2))
+                            .endDate(new Date(2020 - 1900, 11, 3))
+                            .color(SprintColor.GREEN).build();
+        Sprint sprint3 = new Sprint.Builder().sprintName("Sprint 3")
+                .startDate(new Date(2020 - 1900, 11, 4))
+                .endDate(new Date(2020 - 1900, 11, 5))
+                .sprintId(3).color(SprintColor.NAVY).build();
+
+        List<Sprint> sprintList = List.of(sprint1, sprint2, sprint3);
+        when(sprintRepository.findSprintsByEvent(event)).thenReturn(sprintList);
+        eventService.updateEventColors(event);
+
+        assertArrayEquals(List.of(SprintColor.BLUE, SprintColor.GREEN, SprintColor.NAVY).toArray(), event.getColors().toArray());
+    }
+
+    /**
+     * Asserts that the colours for the given event are updated based on the given list of sprints and also adds the
+     * White color at the beginning of the list
+     */
+    @Test
+    void givenEventStartsBeforeTheFirstSprint_whenUpdateEventColorIsRequested_thenWhiteColourIsAddedAtTheStartOfTheList() {
+        Event event = new Event.Builder().eventName("This is a test")
+                .eventId(1)
+                .startDate(new Date(2020 - 1900, 11,1))
+                .endDate(new Date(2020 - 1900, 11, 7))
+                .build();
+
+        Sprint sprint1 = new Sprint.Builder().sprintName("Sprint 1").sprintId(1)
+                .startDate(new Date(2020 - 1900, 11, 2))
+                .endDate(new Date(2020 - 1900, 11, 3))
+                .color(SprintColor.BLUE).build();
+        Sprint sprint2 = new Sprint.Builder().sprintName("Sprint 2").sprintId(2)
+                .startDate(new Date(2020 - 1900, 11, 4))
+                .endDate(new Date(2020 - 1900, 11, 5))
+                .color(SprintColor.GREEN).build();
+        Sprint sprint3 = new Sprint.Builder().sprintName("Sprint 3")
+                .startDate(new Date(2020 - 1900, 11, 6))
+                .endDate(new Date(2020 - 1900, 11, 7))
+                .sprintId(3).color(SprintColor.NAVY).build();
+
+        List<Sprint> sprintList = List.of(sprint1, sprint2, sprint3);
+        when(sprintRepository.findSprintsByEvent(event)).thenReturn(sprintList);
+
+        eventService.updateEventColors(event);
+
+        assertArrayEquals(List.of(SprintColor.WHITE, SprintColor.BLUE, SprintColor.GREEN, SprintColor.NAVY).toArray(), event.getColors().toArray());
+    }
+
+
+    /**
+     * Asserts that the colours for the given event are updated based on the given list of sprints and also adds the
+     * White color at the end of the list
+     */
+    @Test
+    void givenEventEndsAfterTheLastSprint_whenUpdateEventColorIsRequested_thenWhiteColourIsAddedAtTheStartOfTheList() {
+        Event event = new Event.Builder().eventName("This is a test")
+                .eventId(1)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2020 - 1900, 11, 8))
+                .build();
+
+        Sprint sprint1 = new Sprint.Builder().sprintName("Sprint 1").sprintId(1)
+                .startDate(new Date(2020 - 1900, 11, 2))
+                .endDate(new Date(2020 - 1900, 11, 3))
+                .color(SprintColor.BLUE).build();
+        Sprint sprint2 = new Sprint.Builder().sprintName("Sprint 2").sprintId(2)
+                .startDate(new Date(2020 - 1900, 11, 4))
+                .endDate(new Date(2020 - 1900, 11, 5))
+                .color(SprintColor.GREEN).build();
+        Sprint sprint3 = new Sprint.Builder().sprintName("Sprint 3")
+                .startDate(new Date(2020 - 1900, 11, 6))
+                .endDate(new Date(2020 - 1900, 11, 7))
+                .sprintId(3).color(SprintColor.NAVY).build();
+
+        List<Sprint> sprintList = List.of(sprint1, sprint2, sprint3);
+        when(sprintRepository.findSprintsByEvent(event)).thenReturn(sprintList);
+        eventService.updateEventColors(event);
+
+        assertArrayEquals(List.of(SprintColor.BLUE, SprintColor.GREEN, SprintColor.NAVY, SprintColor.WHITE).toArray(), event.getColors().toArray());
+    }
+
+    /**
+     * Tests that the correct sprint name for start and end date is mapped the corresponding id of the event.
+     */
+    @Test
+    void givenEventsExist_whenGetSprintLabelsForStartAndEndDatesCalled_thenAppropriateDataReturned() {
+        List<Event> events = new ArrayList<Event>();
+        Project project = new Project.Builder().projectId(1)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2023 - 1900, 11,2))
+                .build();
+        Event event = new Event.Builder().eventName("Test Event")
+                .eventId(1)
+                .project(project)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2020 - 1900, 11,3))
+                .build();
+        Sprint sprint1 = new Sprint.Builder().sprintName("TestSprint 1")
+                .build();
+        Sprint sprint2 = new Sprint.Builder().sprintName("TestSprint 2")
+                .build();
+        events.add(event);
+        when(sprintRepository.findByDateAndProject(event.getProject(),
+                new Date(event.getStartDate().getTime()))).thenReturn(sprint1);
+        when(sprintRepository.findByDateAndProject(event.getProject(),
+                new Date(event.getEndDate().getTime()))).thenReturn(sprint2);
+        Map<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
+        assertEquals("(TestSprint 1)", testData.get(event.getEventId()).get(0));
+        assertEquals("(TestSprint 2)", testData.get(event.getEventId()).get(1));
+    }
+
+    /**
+     * Tests that when no sprints occur on the end and start dates of an event, the correct mappings are returned.
+     */
+    @Test
+    void givenEventsExistButNoSprintsOccur_whenGetSprintLabelsForStartAndEndDatesCalled_thenAppropriateDataReturned() {
+        List<Event> events = new ArrayList<Event>();
+        Project project = new Project.Builder().projectId(1)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2023 - 1900, 11,2))
+                .build();
+        Event event = new Event.Builder().eventName("Test Event")
+                .eventId(1)
+                .project(project)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2020 - 1900, 11,3))
+                .build();
+        events.add(event);
+        when(sprintRepository.findByDateAndProject(event.getProject(),
+                new Date(event.getStartDate().getTime()))).thenReturn(null);
+        when(sprintRepository.findByDateAndProject(event.getProject(),
+                new Date(event.getEndDate().getTime()))).thenReturn(null);
+        Map<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
+        assertEquals("(No Sprint)", testData.get(event.getEventId()).get(0));
+        assertEquals("(No Sprint)", testData.get(event.getEventId()).get(1));
     }
 }

@@ -3,17 +3,14 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 import nz.ac.canterbury.seng302.portfolio.model.Event;
 import nz.ac.canterbury.seng302.portfolio.model.dto.EventDTO;
 import nz.ac.canterbury.seng302.portfolio.model.notifications.EventNotification;
-import nz.ac.canterbury.seng302.portfolio.service.*;
+import nz.ac.canterbury.seng302.portfolio.service.EventService;
+import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.portfolio.utils.WebSocketPrincipal;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 
-import java.sql.Date;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +55,9 @@ public class EventController {
       @GetMapping(path="/project/{projectId}/events")
       public ModelAndView events(@PathVariable("projectId") int projectId) {
           List<Event> listEvents = eventService.getEventByProjectId(projectId);
-          Hashtable<Integer, List<String>> eventDateMappingDictionary = eventService.getStartAndEndDates(listEvents);
+          listEvents.forEach(eventService::updateEventColors);
+          Map<Integer, List<String>> eventDateMappingDictionary =
+                  eventService.getSprintLabelsForStartAndEndDates(listEvents);
           ModelAndView mv = new ModelAndView("eventFragments::projectList");
           mv.addObject("listEvents", listEvents);
           mv.addObject("editNotifications", editing);

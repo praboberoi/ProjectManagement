@@ -1,4 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
+
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.dto.DeadlineDTO;
@@ -24,14 +25,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Controller for the deadlines
@@ -66,7 +62,8 @@ public class DeadlineController {
     @GetMapping(path="/project/{projectId}/deadlines")
     public ModelAndView deadlines(@PathVariable("projectId") int projectId) {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
-        Hashtable<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
+        listDeadlines.forEach(deadlineService::updateDeadlineColors);
+        Map<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("deadlineFragments::deadlineTab");
@@ -109,6 +106,7 @@ public class DeadlineController {
         try {
             deadline.setProject(projectService.getProjectById(projectId));
             deadlineService.verifyDeadline(deadline);
+            deadlineService.updateDeadlineColors(deadline);
             message = deadlineService.saveDeadline(deadline);
             logger.info("Deadline {} has been edited", deadline.getDeadlineId());
             notifyDeadline(projectId, deadline.getDeadlineId(), "edited");

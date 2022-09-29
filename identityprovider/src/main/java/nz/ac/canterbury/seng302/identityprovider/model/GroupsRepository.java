@@ -13,20 +13,23 @@ import java.util.List;
 public interface GroupsRepository extends PagingAndSortingRepository<Groups, Integer> {
     /**
      * Selects all users that are not in a group
+     * 
      * @return List of groupless users
      */
-    @Query(value = "SELECT DISTINCT user FROM User user LEFT JOIN user.groups groups WHERE groups IS NULL AND 1 NOT MEMBER OF user.roles")
+    @Query(value = "SELECT DISTINCT user FROM User user LEFT JOIN user.groups groups WHERE groups IS NULL AND 1 NOT MEMBER OF user.roles ORDER BY (LOWER(user.username))")
     List<User> findUsersNotInGroup();
-    
+
     /**
      * Selects all users that have the role Teacher
+     * 
      * @return List of Teacher users
      */
-    @Query(value = "SELECT DISTINCT user FROM User user WHERE 1 MEMBER OF user.roles")
+    @Query(value = "SELECT DISTINCT user FROM User user WHERE 1 MEMBER OF user.roles ORDER BY (LOWER(user.username))")
     List<User> findTeacherGroup();
 
     /**
      * Delete the selected group from the database
+     * 
      * @param groupId Group to delete
      * @return number of groups deleted (1=success, 0=failed)
      */
@@ -34,6 +37,7 @@ public interface GroupsRepository extends PagingAndSortingRepository<Groups, Int
 
     /**
      * Get the group that has the short name selected.
+     * 
      * @param groupShortName group to get
      * @return
      */
@@ -41,6 +45,7 @@ public interface GroupsRepository extends PagingAndSortingRepository<Groups, Int
 
     /**
      * Get the group that has the long name selected.
+     * 
      * @param groupLongName group to get
      * @return
      */

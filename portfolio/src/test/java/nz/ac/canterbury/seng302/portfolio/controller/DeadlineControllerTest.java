@@ -34,7 +34,8 @@ import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -191,12 +192,12 @@ class DeadlineControllerTest {
      */
     @Test
     void givenBadDeadlineRequest_whenSubmitted_thenAppropriateMessageIsDisplayed() throws Exception {
-        when(deadlineService.saveDeadline(any())).thenThrow(new IncorrectDetailsException("Failure to save the deadline"));
+        when(deadlineService.saveDeadline(any())).thenThrow(new IncorrectDetailsException("Failed to save the deadline"));
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/project/1/saveDeadline")
                         .flashAttr("deadlineDTO", toDTO(deadline3)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Failure to save the deadline"));
+                .andExpect(content().string("Failed to save the deadline"));
     }
 
     /**
@@ -294,6 +295,25 @@ class DeadlineControllerTest {
                 .perform(get("/project/1/deadlines"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("editDeadlineNotifications", expectedNotifications));
+    }
+
+    /**
+     * Test that date mappings are included and correct when a get call is made.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenServer_WhenGetRequestMade_ThenDateMappingPresent() throws Exception {
+        HashMap<Integer, String> testData = new HashMap<Integer, String>();
+        String testName = "TestName 1";
+        testData.put(deadline.getDeadlineId(), testName);
+        when(deadlineService.getSprintOccurringOnDeadlines(any())).thenReturn(testData);
+
+
+        this.mockMvc
+                .perform(get("/project/1/deadlines"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("deadlineDateMapping", testData));
+
     }
 
     @AfterAll

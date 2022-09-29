@@ -1,11 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.model.repository;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
-import java.sql.Date;
-
-import javax.transaction.Transactional;
-
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +7,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
+
+import javax.transaction.Transactional;
+import java.sql.Date;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * Test class for the event class and event repository. This handles CRUD operations.

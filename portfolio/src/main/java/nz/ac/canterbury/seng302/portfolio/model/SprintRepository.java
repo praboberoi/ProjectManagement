@@ -2,10 +2,12 @@ package nz.ac.canterbury.seng302.portfolio.model;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.sql.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository class that extends Crud repository and provides methods for making query calls to the database;
@@ -65,7 +67,7 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
     List<Sprint> findByProject(Project project);
 
     /**
-     * Finds a sprint occuring within a project on a certain date
+     * Finds a sprint occurring within a project on a certain date
      * @param project The project the sprint is from
      * @param date The date the sprint must occur during
      * @return The sprint
@@ -81,4 +83,29 @@ public interface SprintRepository extends CrudRepository<Sprint, Integer> {
      */
     int countByProject(Project project);
 
+    /**
+     * Obtains a list of sprint that fall under the given Event
+     * @param event of type Event
+     * @return a list of Sprint
+     */
+    @Query(value = "SELECT DISTINCT sprint from Sprint sprint " +
+            "where :#{#event.startDate} <= sprint.endDate and :#{#event.endDate} >= sprint.startDate " +
+            "and sprint.project.projectId = :#{#event.project.projectId}")
+    List<Sprint> findSprintsByEvent(@Param("event") Event event);
+
+    /**
+     * Obtains a list of sprint that fall under the given Deadline
+     * @param deadline of type Deadline
+     * @return a list of Sprint
+     */
+    @Query(value = "SELECT DISTINCT sprint from Sprint sprint where :#{#deadline.date} <= sprint.endDate and :#{#deadline.date} >= sprint.startDate and :#{#deadline.project.projectId} = sprint.project.projectId")
+    List<Sprint> findSprintsByDeadline(@Param("deadline") Deadline deadline);
+
+    /**
+     * Obtains the sprint that falls under the given milestone
+     * @param milestone Milestone object to find the sprint for
+     * @return a list of Sprint
+     */
+    @Query(value = "SELECT sprint from Sprint sprint where :#{#milestone.date} <= sprint.endDate and :#{#milestone.date} >= sprint.startDate")
+    Optional<Sprint> findSprintByMilestone(@Param("milestone") Milestone milestone);
 }

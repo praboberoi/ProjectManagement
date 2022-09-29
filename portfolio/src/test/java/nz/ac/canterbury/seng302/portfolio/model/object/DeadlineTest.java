@@ -2,8 +2,8 @@ package nz.ac.canterbury.seng302.portfolio.model.object;
 
 import nz.ac.canterbury.seng302.portfolio.model.Deadline;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.sql.Date;
 import java.text.SimpleDateFormat;
@@ -189,9 +189,10 @@ import static org.junit.jupiter.api.Assertions.*;
      void givenDeadlineExists_whenToStringOfDeadlineIsRetested_thenStringRepresentationOfDeadlineIsReturned() {
         String expectedString ="Deadline{" +
                 "deadlineId=" + deadline1.getDeadlineId() +
-                ", projectId=" + project.getProjectId() +
+                ", project=" + project +
                 ", name='" + deadline1.getName() +  "'" +
                 ", date=" + deadline1.getDate() +
+                ", colors= " + deadline1.getColors() +
                 '}';
 
         assertEquals(expectedString, deadline1.toString());
