@@ -37,12 +37,15 @@ public class EvidenceNotification extends Notification{
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof EvidenceNotification)) return false;
+        if (! super.equals(o)) return false;
         EvidenceNotification project = (EvidenceNotification) o;
-        return getEvidenceId() == project.getEvidenceId() && Objects.equals(getUsername(), project.getUsername()) && Objects.equals(getSessionId(), project.getSessionId());
+        return (getEvidenceId() == project.getEvidenceId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getEvidenceId(), getUsername(), getSessionId());
+        int hash = super.hashCode();
+        hash = 89 * hash + Objects.hashCode(evidenceId);
+        return hash;
     }
 }
