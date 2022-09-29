@@ -451,7 +451,9 @@ function processAction(httpRequest) {
  * Runs when the page is loaded
  */
 document.addEventListener('DOMContentLoaded', function () {
-    connectToRepo()
+    if (document.getElementById('recent-actions-container') != undefined) {
+        connectToRepo()
+    }
 });
 
 /**
@@ -495,32 +497,35 @@ function updateFilters(events) {
 
 }
 
-/**
- * Event listener for change in the userFilter
- */
-document.getElementById('userFilter').addEventListener('change', function () {
-    if (this.value === 'Clear Filter') {
-        filterByUser = ""
-    } else {
-        filterByUser = this.value
-    }
+if (document.getElementById('recent-actions-container') != undefined) {
+    /**
+     * Event listener for change in the userFilter
+     */
+    document.getElementById('userFilter').addEventListener('change', function () {
+        if (this.value === 'Clear Filter') {
+            filterByUser = ""
+        } else {
+            filterByUser = this.value
+        }
 
-    getRecentActions(jsonRepo)
+        getRecentActions(jsonRepo)
 
-})
-/**
- * Event listener for change in the actionTypeFilter
- */
-document.getElementById('actionType').addEventListener('change', function () {
-    if (this.value === 'Clear Filter') {
-        filterByActionType = ""
-    } else{
-        filterByActionType = this.value
-    }
+    })
+    /**
+     * Event listener for change in the actionTypeFilter
+     */
+    document.getElementById('actionType').addEventListener('change', function () {
+        if (this.value === 'Clear Filter') {
+            filterByActionType = ""
+        } else{
+            filterByActionType = this.value
+        }
 
-    getRecentActions(jsonRepo)
+        getRecentActions(jsonRepo)
 
-})
+    })
+}
+
 
 
 /**
