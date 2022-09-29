@@ -133,11 +133,10 @@ public class EvidenceController {
             @AuthenticationPrincipal AuthState principal,
             @Header("simpSessionId") String sessionId) {
         Evidence evidence = new Evidence(evidenceDTO);
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal) && PrincipalUtils.getUserId(principal) != evidence.getOwnerId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You may only create evidence on your own evidence page");
+        }
         try {
-            if (PrincipalUtils.getUserId(principal) != evidence.getOwnerId()) {
-                throw new IncorrectDetailsException("You may only create evidence on your own evidence page");
-            }
-
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
             notifyEvidence(evidence.getOwnerId(), evidence.getEvidenceId(), "edited");

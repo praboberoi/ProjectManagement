@@ -32,12 +32,10 @@ import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 import java.time.LocalDate;
 import java.util.*;
 
-import static org.hamcrest.Matchers.nullValue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.flash;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -139,10 +137,9 @@ public class EvidenceControllerTest {
         when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
-                .perform(post("/evidence/").flashAttr("evidenceDTO", toDTO(evidence)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", nullValue()))
-                .andExpect(flash().attribute("messageSuccess", "Successfully Created " + evidence.getTitle()));
+                .perform(post("/evidence").flashAttr("evidenceDTO", toDTO(evidence)))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Successfully Created " + evidence.getTitle()));
     }
 
     /**
@@ -153,10 +150,9 @@ public class EvidenceControllerTest {
         when(evidenceService.saveEvidence(any())).thenThrow(new IncorrectDetailsException("Failure Saving Evidence"));
         when(PrincipalUtils.getUserId(any())).thenReturn(99);
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence1)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger", "Failure Saving Evidence"))
-                .andExpect(flash().attribute("messageSuccess", nullValue()));
+                .perform(post("/evidence").flashAttr("evidenceDTO", toDTO(evidence1)))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("Failure Saving Evidence"));
 
     }
 
@@ -167,10 +163,11 @@ public class EvidenceControllerTest {
     @Test
     void givenEvidenceObjectAndIncorrectUser_whenSaveEvidenceCalled_thenEvidenceSavedCorrectly() throws Exception {
         when(PrincipalUtils.getUserId(any())).thenReturn(53);
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
         this.mockMvc
-                .perform(post("/evidence/99/saveEvidence").flashAttr("evidenceDTO", toDTO(evidence)))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageDanger","You may only create evidence on your own evidence page" ));
+                .perform(post("/evidence").flashAttr("evidenceDTO", toDTO(evidence)))
+                .andExpect(status().isForbidden())
+                .andExpect(content().string("You may only create evidence on your own evidence page" ));
 
     }
 
@@ -183,21 +180,17 @@ public class EvidenceControllerTest {
     void givenEvidenceObject_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
-        ArrayList<Project> projectList = new ArrayList<>();
-        when(projectService.getAllProjects()).thenReturn(projectList);
+        ArrayList<Evidence> evidenceList = new ArrayList<>();
+        evidenceList.add(evidence);
+        evidenceList.add(evidence1);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
-        when(evidenceService.getNewEvidence(99)).thenReturn(evidence);
         when(userAccountClientService.getUser(99)).thenReturn(user);
         when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
-                .perform(get("/evidence/99"))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(model().attribute("evidence", evidence))
-                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
-                .andExpect(model().attribute("listProjects", projectList))
-                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99))
-                .andExpect(model().attribute("userFirstName", user.getFirstName()));
+                .perform(get("/user/99/evidence/getEvidenceList"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("listEvidence", evidenceList));
 
     }
 
@@ -207,18 +200,17 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenCorrectEvidenceAndUserIds_whenSelectedEvidenceCalled_thenReturnSelectedEvidence() throws Exception {
-        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        UserResponse user = createTestUserResponse(1).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
-        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
-        when(PrincipalUtils.getUserId(any())).thenReturn(99);
+        when(evidenceService.getEvidenceByUserId(1)).thenReturn(List.of(evidence, evidence1));
+        when(PrincipalUtils.getUserId(any())).thenReturn(1);
         when(evidenceService.getEvidence(33)).thenReturn(evidence);
 
         this.mockMvc
-                .perform(get("/evidence/99/33"))
-                .andExpect(status().is2xxSuccessful())
-                .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
+                .perform(get("/evidence/33"))
+                .andExpect(status().isOk())
                 .andExpect(model().attribute("selectedEvidence", evidence))
-                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99));
+                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==1));
     }
 
     /**
@@ -233,10 +225,9 @@ public class EvidenceControllerTest {
         when(evidenceService.getEvidence(33)).thenThrow(new IncorrectDetailsException("Failed to locate the piece of evidence with ID: 33"));
 
         this.mockMvc
-                .perform(get("/evidence/99/33"))
+                .perform(get("/evidence/33"))
                 .andExpect(status().isNotFound())
-                .andExpect(model().attribute("messageDanger", "Failed to locate the piece of evidence with ID: 33"))
-                .andExpect(model().attributeDoesNotExist("selectedEvidence"));
+                .andExpect(model().attribute("messageDanger", "Failed to locate the piece of evidence with ID: 33"));
     }
 
     /**
@@ -250,7 +241,7 @@ public class EvidenceControllerTest {
 
 
         this.mockMvc
-                .perform(get("/evidence/99/getNewEvidence"))
+                .perform(get("/evidence/getNewEvidence"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("evidence", evidence))
                 .andExpect(model().attribute("submissionImg", "/icons/create-icon.svg"))
@@ -268,7 +259,7 @@ public class EvidenceControllerTest {
         when(evidenceService.getEvidence(99)).thenReturn(evidence);
 
         this.mockMvc
-                .perform(get("/evidence/1/99/editEvidence"))
+                .perform(get("/evidence/99/editEvidence"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("evidence", evidence))
                 .andExpect(model().attribute("submissionImg", "/icons/save-icon.svg"))
@@ -284,7 +275,7 @@ public class EvidenceControllerTest {
         when(evidenceService.getEvidence(99)).thenThrow(new IncorrectDetailsException("Failed to locate the piece of evidence with ID: 99"));
 
         this.mockMvc
-                .perform(get("/evidence/1/99/editEvidence"))
+                .perform(get("/evidence/99/editEvidence"))
                 .andExpect(status().isNotFound())
                 .andExpect(model().attribute("messageDanger", "Failed to locate the piece of evidence with ID: 99"))
                 .andExpect(view().name("evidence::serverMessages"));
@@ -297,11 +288,12 @@ public class EvidenceControllerTest {
     @Test
     void givenCorrectEvidenceID_whenDeleteEvidenceCalled_thenEvidenceDeletedSuccessfully() throws Exception {
         when(evidenceService.deleteEvidence(99)).thenReturn("Successfully Deleted Test Evidence");
+        when(evidenceService.getEvidence(99)).thenReturn(evidence);
+
         this.mockMvc
-                .perform(post("/evidence/1/99/deleteEvidence"))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(flash().attribute("messageSuccess", "Successfully Deleted Test Evidence"))
-                .andExpect(view().name("redirect:/evidence/{userId}"));
+                .perform(delete("/evidence/99"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Successfully Deleted Test Evidence"));
     }
 
     /**
@@ -309,15 +301,16 @@ public class EvidenceControllerTest {
      */
     @Test
     void givenAUserExists_whenEvidenceListIsRequested_thenCorrectModelViewObjectReturned() throws Exception {
-        UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
+        UserResponse user = createTestUserResponse(1).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
-        when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
+        when(evidenceService.getEvidenceByUserId(1)).thenReturn(List.of(evidence, evidence1));
+        when(PrincipalUtils.getUserId(any())).thenReturn(1);
 
         this.mockMvc
-                .perform(get("/evidence/99/getEvidenceList"))
+                .perform(get("/user/1/evidence/getEvidenceList"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("listEvidence", List.of(evidence, evidence1)))
-                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==99));
+                .andExpect(model().attribute("isCurrentUserEvidence", user.getId()==1));
     }
 
     /**
@@ -330,8 +323,7 @@ public class EvidenceControllerTest {
         when(userAccountClientService.getUser(any())).thenReturn(user);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
 
-        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), "editing",
-                1, "tes2", 99, "testing");
+        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), 99, user.getUsername(), true, "testing");
 
         HashMap<Integer, EvidenceNotification> expectedNotifications = new HashMap<>();
 
@@ -342,7 +334,7 @@ public class EvidenceControllerTest {
         evidenceController.editing(evidenceNotification, mockedWebSocketPrincipal, "testing");
 
         this.mockMvc
-                .perform(get("/evidence/99/getEvidenceList"))
+                .perform(get("/user/99/evidence/getEvidenceList"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("notifications", expectedNotifications));
     }
@@ -356,8 +348,7 @@ public class EvidenceControllerTest {
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
 
-        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), "editing",
-                1, "tes2", 99, "0");
+        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), 99, user.getUsername(), false, "testing");
 
         HashMap<Integer, EvidenceNotification> expectedNotifications = new HashMap<>();
 
@@ -373,7 +364,7 @@ public class EvidenceControllerTest {
         evidenceController.onApplicationEvent(disconnectEvent);
 
         this.mockMvc
-                .perform(get("/evidence/99/getEvidenceList"))
+                .perform(get("/user/99/evidence/getEvidenceList"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("notifications", expectedNotifications));
     }
