@@ -204,10 +204,11 @@ td.hiddenRow {
 /*    overflow-y: scroll;*/
 /*}*/
 
-#staticButton {
+.container {
     height: 200px;
-    margin-top: 50px;
+    margin-top: 10px;
     overflow-y: auto;
+    padding: 0;
 }
 
 #eventCard, #deadlineCard, #milestoneCard {
@@ -305,7 +306,7 @@ div.upcomingEvents  {
     margin-left: 20px;
     margin-top: 7px;
     margin-bottom: 7px;
-    position: absolute;
+    /*position: absolute;*/
 }
 
 #event-list {
