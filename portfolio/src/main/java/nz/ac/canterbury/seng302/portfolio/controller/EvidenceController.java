@@ -184,7 +184,7 @@ public class EvidenceController {
 
         mv.addObject(EVIDENCE, evidence);
         mv.addObject(LIST_PROJECTS, listProjects);
-        mv.addObject("submissionImg", apiPrefix+"/icons/create-icon.svg");
+        mv.addObject("submissionImg", apiPrefix + "/icons/create-icon.svg");
         mv.addObject("submissionName", "Create");
         return mv;
     }

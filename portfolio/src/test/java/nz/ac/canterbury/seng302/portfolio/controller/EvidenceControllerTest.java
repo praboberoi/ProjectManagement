@@ -97,6 +97,8 @@ public class EvidenceControllerTest {
 
     @BeforeEach
     public void setup() {
+        when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+
         LocalDate now = LocalDate.now();
         project = new Project(1, "Test Project", "test", java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(50)));
 
@@ -238,7 +240,7 @@ public class EvidenceControllerTest {
     void givenCurrentUserId_whenCreateEvidenceCalled_thenCorrectModelViewObjectReturned() throws Exception{
         when(projectService.getAllProjects()).thenReturn(List.of(project));
         when(evidenceService.getNewEvidence(99)).thenReturn(evidence);
-
+        when(PrincipalUtils.getUserId(any())).thenReturn(99);
 
         this.mockMvc
                 .perform(get("/evidence/getNewEvidence"))
