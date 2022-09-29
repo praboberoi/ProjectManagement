@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.PersistenceException;
 import java.text.ParseException;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for methods on DeadlineService class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class DeadlineServiceTest {
 
     @MockBean

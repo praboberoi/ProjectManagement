@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.PersistenceException;
 import java.sql.Date;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
  */
 
 @SpringBootTest
+@ActiveProfiles("test")
 class EventServiceTest {
 
     @MockBean

@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
@@ -22,6 +23,7 @@ import static org.mockito.Mockito.when;
  * Test class for the functionality in the evidence service class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class EvidenceServiceTest {
     @MockBean
     private EvidenceRepository evidenceRepository;
