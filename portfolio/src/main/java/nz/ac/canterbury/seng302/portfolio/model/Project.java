@@ -1,6 +1,10 @@
 package nz.ac.canterbury.seng302.portfolio.model;
 
 import javax.persistence.*;
+
+import nz.ac.canterbury.seng302.portfolio.model.dto.ProjectDTO;
+import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+
 import java.sql.Date;
 import java.util.List;
 import java.util.Objects;
@@ -79,6 +83,14 @@ public class Project {
         this.endDate = endDate;
     }
 
+    public Project(ProjectDTO projectDTO) throws IncorrectDetailsException{
+        setProjectId(projectDTO.getProjectId());
+        setProjectName(projectDTO.getProjectName());
+        setDescription(projectDTO.getDescription());
+        setStartDate(projectDTO.getStartDate());
+        setEndDate(projectDTO.getEndDate());
+    }
+
     /**
      * Obtains the id of the project
      * @return project Id of type int
@@ -139,7 +151,10 @@ public class Project {
      * Sets the name of the Project
      * @param projectName of type String
      */
-    public void setProjectName(String projectName) {
+    public void setProjectName(String projectName) throws IncorrectDetailsException {
+        if (projectName.length() < 1 || projectName.length() > 50) {
+            throw new IncorrectDetailsException("Project Name must not be empty or greater than 50 characters.");
+        }
         this.projectName = projectName;
     }
 

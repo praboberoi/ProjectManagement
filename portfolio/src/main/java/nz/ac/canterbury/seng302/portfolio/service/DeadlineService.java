@@ -63,14 +63,14 @@ public class DeadlineService {
      * @return A mapping between the deadline id and the name of the sprint
      *         occurring on the deadline
      */
-    public Hashtable<Integer, String> getSprintOccurringOnDeadlines(List<Deadline> deadlineList) {
-        Hashtable<Integer, String> deadlineDateMapping = new Hashtable<Integer, String>();
+    public Map<Integer, String> getSprintOccurringOnDeadlines(List<Deadline> deadlineList) {
+        HashMap<Integer, String> deadlineDateMapping = new HashMap<>();
         for (Deadline deadline : deadlineList) {
             List<String> sprintNames = new ArrayList<String>();
             java.sql.Date date = new Date(deadline.getDate().getTime());
             Sprint sprint = sprintRepository.findByDateAndProject(deadline.getProject(), date);
             if (sprint == null) {
-                sprintNames.add("");
+                sprintNames.add("(No Sprint)");
             } else {
                 sprintNames.add("(" + sprint.getSprintName() + ")");
             }
@@ -216,5 +216,7 @@ public class DeadlineService {
                 deadline.addColor(SprintColor.WHITE, deadline.getColors().size());
         }
     }
+
+
 
 }

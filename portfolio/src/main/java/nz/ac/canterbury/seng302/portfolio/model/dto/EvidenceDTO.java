@@ -27,25 +27,15 @@ public class EvidenceDTO {
     private int ownerId;
 
 
-    public int getEvidenceId() {
-        return this.evidenceId;
-    }
+    public int getEvidenceId() {return evidenceId;}
 
-    public Date getDateOccurred() {
-        return this.dateOccurred;
-    }
+    public Date getDateOccurred() {return this.dateOccurred;}
 
-    public int getOwnerId() {
-        return this.ownerId;
-    }
+    public int getOwnerId() {return this.ownerId;}
 
-    public String getDescription() {
-        return this.description;
-    }
+    public String getDescription() {return this.description;}
 
-    public String getTitle() {
-        return this.title;
-    }
+    public String getTitle() {return this.title;}
 
     public Project getProject() {return project;}
 

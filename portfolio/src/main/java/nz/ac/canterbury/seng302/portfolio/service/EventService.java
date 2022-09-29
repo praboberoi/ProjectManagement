@@ -82,8 +82,8 @@ public class EventService {
      *         the start of the event and then the sprint that occurs at the end of
      *         an event.
      */
-    public Hashtable<Integer, List<String>> getStartAndEndDates(List<Event> eventList) {
-        Hashtable<Integer, List<String>> eventDateMappingDictionary = new Hashtable<Integer, List<String>>();
+    public Map<Integer, List<String>> getSprintLabelsForStartAndEndDates(List<Event> eventList) {
+        HashMap<Integer, List<String>> eventDateMappingDictionary = new HashMap<>();
         for (Event event : eventList) {
             List<String> sprintNames = new ArrayList<String>();
             Date startDate = new Date(event.getStartDate().getTime());
@@ -91,12 +91,12 @@ public class EventService {
             Sprint start = sprintRepository.findByDateAndProject(event.getProject(), startDate);
             Sprint end = sprintRepository.findByDateAndProject(event.getProject(), endDate);
             if (start == null) {
-                sprintNames.add("");
+                sprintNames.add("(No Sprint)");
             } else {
                 sprintNames.add("(" + start.getSprintName() + ")");
             }
             if (end == null) {
-                sprintNames.add("");
+                sprintNames.add("(No Sprint)");
             } else {
                 sprintNames.add("(" + end.getSprintName() + ")");
             }
