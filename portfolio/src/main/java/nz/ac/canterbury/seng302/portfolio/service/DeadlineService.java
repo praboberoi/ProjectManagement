@@ -134,9 +134,9 @@ public class DeadlineService {
             if (deadline.isPresent()) {
                 deadlineRepository.deleteById(deadlineId);
                 return "Successfully deleted " + deadline.get().getName();
-            } else
+            } else {
                 throw new IncorrectDetailsException("Could not find given Deadline");
-
+            }
         } catch (PersistenceException e) {
             logger.error("Failure deleting Deadline", e);
             throw new IncorrectDetailsException("Failure deleting Deadline");

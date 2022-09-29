@@ -169,7 +169,9 @@
                 </div>
 
                 <!--          Shows each individual event-->
-                <div id="event-list" th:insert="eventFragments::projectList"></div>
+                <div id="e-container">
+                    <div id="event-list" th:insert="eventFragments::projectList"></div>
+                </div>
             </div>
             <div class="tab-pane fade" id="deadline" role="tabpanel" aria-labelledby="deadline-tab">
                 <div th:if="${adminOrTeacher}">
@@ -182,7 +184,9 @@
                             Create Deadline</button>
                     </div>
                 </div>
-                <div id="deadline-list"></div>
+                <div id="d-container">
+                    <div id="deadline-list"></div>
+                </div>
             </div>
             <div class="tab-pane fade" id="milestone" role="tabpanel" aria-labelledby="milestone-tab">
                 <div th:if="${adminOrTeacher}">
@@ -195,7 +199,9 @@
                             Create Milestone</button>
                     </div>
                 </div>
-                <div id="milestone-list" th:insert="milestoneFragments::milestoneTab"></div>
+                <div id="m-container">
+                    <div id="milestone-list" th:insert="milestoneFragments::milestoneTab"></div>
+                </div>
             </div>
         </div>
     </div>

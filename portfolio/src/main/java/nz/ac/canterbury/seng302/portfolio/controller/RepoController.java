@@ -30,7 +30,6 @@ public class RepoController {
     @Autowired
     private RepoService repoService;
 
-
     /**
      * Gets the group's repo.
      *

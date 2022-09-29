@@ -146,4 +146,29 @@ class MilestoneServiceTest {
 
         assertEquals(milestone2, milestones.get(0));
     }
+
+    /**
+     * Test to make sure that no exception is thrown when a milestone is deleted and an appropriate message is received
+     */
+    @Test
+    void givenMilestoneExists_whenDeleteMilestoneByIdRequested_thenAMessageIsReturned(){
+        assertDoesNotThrow(() -> {
+            Assertions.assertEquals("Successfully deleted " + milestone.getName(), milestoneService.deleteMilestone(1));
+        });
+    }
+
+    /**
+     * Test to ensure an exception is thrown when a milestone that does not exist is requested.
+     */
+    @Test
+    void givenMilestoneDoesNotExist_whenDeleteMilestoneByIdRequested_thenAnExceptionIsThrown() {
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.deleteMilestone(2));
+        Assertions.assertEquals("Could not find given Milestone" , exception.getMessage());
+
+        when(milestoneRepository.findById(1)).thenThrow(PersistenceException.class);
+        IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.deleteMilestone(1));
+        Assertions.assertEquals("Failure deleting Milestone" , exception1.getMessage());
+    }
 }
