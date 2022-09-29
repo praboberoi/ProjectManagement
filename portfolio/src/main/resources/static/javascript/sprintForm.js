@@ -3,17 +3,13 @@
  */
 
 // Regular expression for Sprint Name field. No leading white spaces or empty field.
-const sprintNameRegex = /^\S/;
-const projectId = document.getElementById("projectId").value;
+// const sprintNameRegex = /^\S/;
 const startDateElement = document.getElementById("sprint-start-date");
 const endDateElement = document.getElementById("sprint-end-date");
 const labelElement = document.getElementById('sprint-label');
-const sprintId = document.getElementById('sprintId').value;
-const dateError = document.getElementById('dateError');
-const startDateError = document.getElementById('startDateError');
-const endDateError = document.getElementById('endDateError');
-const projectStartDate = new Date(document.getElementById("projectStartDate").value);
-const projectEndDate = new Date(document.getElementById("projectEndDate").value);
+let currentSprintId;
+const sprintStartDateError = document.getElementById('startDateError');
+const sprintEndDateError = document.getElementById('endDateError');
 const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
 const sprintNameElement = document.getElementById('sprint-name');
 const sprintDescriptionElement = document.getElementById('sprint-description');
@@ -53,16 +49,16 @@ function checkSprintDates() {
     checkEndDate();
 
     if (startDate > endDate ) {
-        startDateError.innerText = "Start date must be before the end date.";
-        endDateError.innerText = "End date must be after the start date";
+        sprintStartDateError.innerText = "Start date must be before the end date.";
+        sprintEndDateError.innerText = "End date must be after the start date";
         startDateElement.classList.add("formError");
         endDateElement.classList.add("formError");
         return;
     }
 
     if (
-    startDateError.innerText == "" &&
-    endDateError.innerText == "" ) {
+    sprintStartDateError.innerText == "" &&
+    sprintEndDateError.innerText == "" ) {
         verifyOverlap(startDate, endDate);
     }
 }
@@ -74,16 +70,16 @@ function checkStartDate() {
     const startDate = new Date(startDateElement.value);
 
     if (startDate < projectStartDate) {
-        startDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+        sprintStartDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
         startDateElement.classList.add("formError");
         return;
     } else if (startDate > projectEndDate) {
-        startDateError.innerText = "Sprint must start before the project ends";
+        startDateErrorsprintStartDateError.innerText = "Sprint must start before the project ends";
         startDateElement.classList.add("formError");
         return;
     }
 
-    startDateError.innerText = "";
+    sprintStartDateError.innerText = "";
     startDateElement.classList.remove("formError")
 }
 
@@ -94,16 +90,16 @@ function checkEndDate() {
     const endDate = new Date(endDateElement.value);
 
     if (endDate < projectStartDate) {
-        endDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+        sprintEndDateError.innerText = "Sprint must start after " + projectStartDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
         endDateElement.classList.add("formError");
         return;
     } else if (endDate > projectEndDate) {
-        endDateError.innerText = "Sprint must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
+        sprintEndDateError.innerText = "Sprint must end before " + projectEndDate.toLocaleDateString('en-NZ', DATE_OPTIONS);
         endDateElement.classList.add("formError");
         return;
     }
 
-    endDateError.innerText = "";
+    sprintEndDateError.innerText = "";
     endDateElement.classList.remove("formError")
 }
 
@@ -139,7 +135,7 @@ function verifyOverlap(startDate, endDate) {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 if (httpRequest.response != "") {
-                    startDateError.innerText = httpRequest.response;
+                    sprintStartDateError.innerText = httpRequest.response;
                     startDateElement.classList.add("formError");
                     endDateElement.classList.add("formError");
                 }
@@ -151,4 +147,32 @@ function verifyOverlap(startDate, endDate) {
     httpRequest.setRequestHeader('Content-type', 'application/json');
     httpRequest.send(JSON.stringify({'sprintId': sprintId, 'sprintLabel': labelElement.value,
         'sprintName': sprintNameElement.value, 'startDate': startDate, 'endDate': endDate, 'description': sprintDescriptionElement.value}));
+}
+
+/**
+ * Send a request to the server to save the newly created sprint
+ */
+function saveSprint() {
+    let modal = bootstrap.Modal.getOrCreateInstance(document.getElementById('sprintFormModal'))
+    let modalError = document.getElementById('sprintFormModalError')
+    if (validateForm()) {
+        let httpRequest = new XMLHttpRequest();
+
+        httpRequest.onreadystatechange = () => updateModal(httpRequest, modal, modalError)
+
+        httpRequest.open('POST', apiPrefix + `/project/${projectId}/sprint`);
+
+        let formData = new FormData(document.forms.createSprintForm)
+
+        httpRequest.send(formData);
+    }
+}
+
+/**
+ * Populate sprint creation or editing modal with proper values
+ * @param isEdit Bool for if create or edit selected
+ */
+function populateSprintModal(isEdit, sprintId, sprintName, startDate, endDate, description) {
+    currentSprintId  = sprintId;
+    projectStartDate  = new Date(document.getElementById("projectStartDate").value);
 }

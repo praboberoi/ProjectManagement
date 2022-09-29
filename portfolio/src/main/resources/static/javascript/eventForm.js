@@ -114,6 +114,7 @@ function populateEventModal(isEdit, eventId, eventName, startDate, endDate) {
     let submitButtonInnerHtml =  document.getElementById('eventFormSubmitButton').innerText
     if (isEdit) {
         document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
+        document.getElementById('eventFormTitle').innerText =  'Edit Event: ' + eventName;
         document.getElementById('eventFormSubmitLabel').innerText = 'Save';
         document.getElementById('eventFromSubmitImg').src = `${apiPrefix}/icons/save-icon.svg`;
         document.getElementById('eventStartDate').value = startDate.replace(" ", "T");

@@ -12,6 +12,8 @@ import nz.ac.canterbury.seng302.portfolio.service.SprintService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
@@ -44,6 +46,8 @@ public class SprintController {
     private DeadlineService deadlineService;
     @Value("${apiPrefix}")
     private String apiPrefix;
+
+    private Logger logger = LoggerFactory.getLogger(DeadlineController.class);
 
     private static final String PROJECT_OBJECT = "project";
     private static final String SPRINT_OBJECT = "sprint";
@@ -160,7 +164,7 @@ public class SprintController {
      * 
      * @param projectId ID of the project to check
      * @param principal Current user
-     * @param sprint    Current sprint
+     * @param sprintDTO Current sprint
      * @return ResponseEntity containing a string message
      */
     @PostMapping("/project/{projectId}/verifySprint")
@@ -187,48 +191,36 @@ public class SprintController {
 
     /**
      * Saves a sprint and redirects to project page
-     * 
+     *
      * @param projectId ID of the project
-     * @param sprint    Sprint object to be saved
+     * @param sprintDTO SprintDTO object to be saved
      * @param principal Current user
-     * @param model     of type {@link Model}
-     * @param ra        Redirect Attribute frontend message object
      * @return Project page of corrosponding projectId
      */
     @PostMapping(path = "/project/{projectId}/sprint")
-    public String saveSprint(
-            @PathVariable int projectId,
+    public ResponseEntity<String> saveSprint(
+            @PathVariable ("projectId") int projectId,
             @ModelAttribute SprintDTO sprintDTO,
-            @AuthenticationPrincipal AuthState principal,
-            Model model,
-            RedirectAttributes ra) {
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
-            return redirectDashboard;
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
-
         Sprint sprint = new Sprint(sprintDTO);
+        String message = "";
         try {
             sprint.setProject(projectService.getProjectById(projectId));
             sprintService.verifySprint(sprint);
-
-            String message = sprintService.saveSprint(sprint);
+            message = sprintService.saveSprint(sprint);
+            logger.info("Sprint {} has been edited", sprint.getSprintId());
             notifySprint(projectId, sprint.getSprintId(), "edited");
-
             List<Event> listEvents = eventService.getEventByProjectId(projectId);
             listEvents.forEach(eventService::updateEventColors);
-
             List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
             listDeadlines.forEach(deadlineService::updateDeadlineColors);
-
-            ra.addFlashAttribute(LIST_EVENTS_OBJECT, listEvents);
-            ra.addFlashAttribute(LIST_DEADLINES_OBJECT, listDeadlines);
-            ra.addFlashAttribute("messageSuccess", message);
-            return PROJECT_REDIRECT + projectId;
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute(DANGER_MESSAGE, e.getMessage());
-            return PROJECT_REDIRECT + projectId;
-        } catch (PersistenceException e) {
-            return ERROR;
+            logger.info("Sprint {} could not be edited", sprint.getSprintId());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 

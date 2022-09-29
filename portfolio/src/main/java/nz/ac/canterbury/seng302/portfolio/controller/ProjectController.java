@@ -120,6 +120,7 @@ public class ProjectController {
             Event newEvent = eventService.getNewEvent(project);
             Deadline newDeadline = deadlineService.getNewDeadline(project);
             Milestone newMilestone = milestoneService.getNewMilestone(project);
+            Sprint newSprint = sprintService.getNewSprint(project);
 
             model.addAttribute("listEvents", listEvents);
             model.addAttribute("listDeadlines", listDeadlines);
@@ -132,6 +133,7 @@ public class ProjectController {
             model.addAttribute("deadlineDateMapping", deadlineDateMapping);
             model.addAttribute("milestone", newMilestone);
             model.addAttribute("eventDateMappingDictionary", eventDateMappingDictionary);
+            model.addAttribute("sprint", newSprint);
 
 
             model.addAttribute("projectDateMin", project.getStartDate());

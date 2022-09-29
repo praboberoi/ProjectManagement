@@ -204,14 +204,18 @@
 <div id="sprintLabel" class="my-3" th:fragment="sprintLabel">
     <div class="container-fluid d-flex p-0">
         <h3 class="pe-3">Sprints</h3>
-        <!-- If a user is a STUDENT do not show the 'create', 'edit', 'delete' sprint buttons !-->
+        <!-- If a user is a STUDENT do not show the 'create' sprint button !-->
         <div th:if="${adminOrTeacher}">
-            <a class="btn btn-outline-primary" id="sprint-btn"
-                th:href="@{${apiPrefix} + '/project/' + ${projectId} + '/newSprint'}">
+            <button class="btn btn-outline-primary" id="sprint-btn"
+               data-bs-toggle="modal" data-bs-target="#sprintFormModal" th:data-id="${sprint.sprintId}"
+                    th:data-name="${sprint.sprintName}" th:data-startDate="${sprint.startDate}"
+                    th:data-endDate="${sprint.endDate}" th:data-description="${sprint.description}"
+                    th:onclick="populateSprintModal(false, this.getAttribute('data-id'), this.getAttribute('data-name'), this.getAttribute('data-startDate'), this.getAttribute('data-endDate'), this.getAttribute('data-description'))">
                 <img class="icon img-color-primary"
-                    th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /></a>
+                    th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /></button>
         </div>
     </div>
+    <script th:src="@{{apiPrefix}/javascript/sprintForm.js(apiPrefix=${apiPrefix})}"></script>
 </div>
 
 
