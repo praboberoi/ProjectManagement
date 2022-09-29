@@ -422,7 +422,7 @@ public class EvidenceControllerTest {
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
 
-        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), 99, user.getUsername(), false, "testing");
+        EvidenceNotification evidenceNotification = new EvidenceNotification(evidence.getEvidenceId(), 99, user.getUsername(), true, "testing");
 
         HashMap<Integer, EvidenceNotification> expectedNotifications = new HashMap<>();
 

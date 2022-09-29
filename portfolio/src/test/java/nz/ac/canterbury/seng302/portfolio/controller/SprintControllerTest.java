@@ -136,18 +136,19 @@ public class SprintControllerTest {
     }
 
     /**
-     * Test get new sprint page as a student and check that it returns the correct response.
+     * Test get edit sprint page as a student and check that it returns the correct response.
      * 
      * @throws Exception Thrown during mockmvc run time
      */
     @Test
-    void givenStudent_WhenGetNewSprint_ThenRedirectsToDashboard() throws Exception {
+    void givenStudent_WhenGetEditSprint_ThenRedirectsToDashboard() throws Exception {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
 
         this.mockMvc
-                .perform(get("/project/1/newSprint"))
+                .perform(get("/project/1/editSprint/1"))
                 .andExpect(status().is3xxRedirection());
     }
+
 
     /**
      * Test get sprints and check that it returns the correct response.
