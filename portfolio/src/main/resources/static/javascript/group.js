@@ -3,6 +3,8 @@ let filterByUser = ""
 let filterByActionType = ""
 let projectIdValidate = /^\d+$/;
 let jsonRepo;
+let currentPage = 0;
+let totalPages = 0;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
@@ -241,7 +243,13 @@ async function getRecentActions(repo) {
     if (filterByActionType.length > 0)
         events = events.filter(event => event.action_name === filterByActionType)
 
-    events.forEach(event => {
+    updatePages(events);
+
+    events = events.slice(currentPage * 5, (currentPage * 5) + 5)
+
+
+    events.forEach( (event) => {
+
         // Card
         let eventCard = document.createElement('div');
         recentActions.appendChild(eventCard);
@@ -600,3 +608,59 @@ function updateTitle() {
  document.addEventListener('DOMContentLoaded', function () {
     connect();
 })
+
+
+
+/**
+ * Creates pagination based on the total number of pages
+ * @param events
+ */
+function updatePages(events) {
+     totalPages = Math.ceil(events.length / 5)
+
+     const paginationDiv = document.getElementById('actionPagination');
+     paginationDiv.innerHTML =
+        `<nav aria-label="Page navigation">
+            <ul class="pagination">
+            <li class="page-item ${(totalPages ===  1 || currentPage === 0) ? 'disabled' : ''}">
+                    <a class="page-link" aria-label="Last" onclick="updateCurrentPage(${0})">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">First</span>
+                  </a>
+                </li>
+                <li class="page-item ${currentPage === 0 ? 'disabled' : ''}" id="previousPage">
+                    <a class="page-link" aria-label="Previous" onclick="updateCurrentPage(${currentPage - 1})">
+                        <span aria-hidden="true">&lsaquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                ${totalPages  > 0  && `<li class="page-item active" id="page-${currentPage + 1}">
+                     <a class="page-link" onclick="updateCurrentPage(${currentPage})">${currentPage + 1}</a></li>
+                <li class="page-item" id="page-${currentPage + 2}">`}
+                
+                <li class="page-item ${(totalPages ===  1 || currentPage + 1 === totalPages) ? 'disabled' : ''}" id="nextPage">
+                    <a class="page-link" aria-label="Next" onclick="updateCurrentPage(${currentPage + 1})">
+                        <span aria-hidden="true">&rsaquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                <li class="page-item ${(totalPages ===  1 || currentPage + 1 === totalPages) ? 'disabled' : ''}">
+                    <a class="page-link" aria-label="Last" onclick="updateCurrentPage(${totalPages - 1})">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Last</span>
+                  </a>
+                </li>
+            </ul>
+        </nav>`
+ }
+
+/**
+ * updates the current page with the give page number if it is in the range of
+ * @param newPage the page to be updated to
+ */
+function updateCurrentPage(newPage) {
+     if (newPage >= 0 && newPage <= totalPages) {
+         currentPage = newPage
+         getRecentActions(jsonRepo).then()
+     }
+ }
