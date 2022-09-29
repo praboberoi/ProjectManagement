@@ -182,7 +182,7 @@
                                      th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
                             </span>
                             <input type="date" class="form-control required" id="evidence-date"
-                                   th:field="*{dateOccurred}" th:min="${projectStartDate}" th:max="${projectEndDate}" oninput="checkEvidenceDate()" required>
+                                   th:field="*{dateOccurred}" oninput="checkEvidenceDate()" required>
                             <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
                         </div>
 

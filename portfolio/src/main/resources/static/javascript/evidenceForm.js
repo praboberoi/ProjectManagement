@@ -5,7 +5,6 @@ let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
 let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
 
 evidenceCreateBtn.disabled = true;
-evidenceProjectChange();
 let evidenceTitleEditing = null;
 let evidenceDateEditing = null;
 let evidenceDescriptionEditing = null;
@@ -95,6 +94,7 @@ function updateEvidenceModalForm(httpRequest, evidenceProjectId, modalTitle) {
         }
     }
 }
+
 /**
  * Changes the dates min and max value when the project changes
  */
@@ -104,6 +104,8 @@ function evidenceProjectChange() {
     let value = evidence_project.options[evidence_project.selectedIndex]
     evidenceDateElement.min = value.dataset.startdate;
     evidenceDateElement.max = value.dataset.enddate;
+    console.log("Min: " + evidenceDateElement.min)
+    console.log("Max: " + evidenceDateElement.max)
     checkEvidenceDate();
 }
 /**
@@ -180,6 +182,7 @@ function editEvidence(evidenceId, evidenceProjectId, evidenceTitle, evidenceDate
  * Opens the modal
  */
 function openEvidenceModal() {
+    evidenceProjectChange();
     const modalElement = document.getElementById('evidenceFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
         keyword: false,
