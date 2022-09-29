@@ -20,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -338,7 +339,7 @@ public class GroupController {
 
         model.addAttribute(GROUP, group);
         model.addAttribute("repo", repo);
-        return GROUP;
+        return "groupSetting";
     }
 
     /**
@@ -366,6 +367,7 @@ public class GroupController {
         template.convertAndSend("/element/group/" + groupId, (component + " " + action));
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
+
 
     /**
      * Sends an update message to all clients connected to the websocket

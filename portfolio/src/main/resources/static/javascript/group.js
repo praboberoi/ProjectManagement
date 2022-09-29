@@ -556,6 +556,7 @@ document.getElementById('actionType').addEventListener('change', function () {
  */
 function subscribe(stompClient) {
     stompClient.subscribe(`/element/group/${groupId}`, updateGroup);
+    stompClient.subscribe(`/element/user/`, updateUser);
 }
 
 /**
@@ -569,10 +570,35 @@ function subscribe(stompClient) {
 
     if (component == "details" || action === "edited") {
         updateTitle()
-    } else if (component == "details") {
-        updateMembers()
     } else {
         console.log("Unknown command: " + action)
+    }
+}
+
+/**
+ * Updates a user's information if it has changed
+ * @param message Message userId of changed user
+ */
+function updateUser(message) {
+    let array = message.body.split(' ')
+    let id = array[0]
+    let userElement = document.getElementById(`user` + id + `Row`);
+    if (userElement) {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                if (httpRequest.status === 200) {
+                    userElement.innerHTML = httpRequest.responseText;
+                } else if (httpRequest.status === 400) {
+                    messageDanger.hidden = false;
+                    messageSuccess.hidden = true;
+                    messageDanger.innerText = "Bad Request";
+                }
+            }
+        }
+
+        httpRequest.open('GET', apiPrefix + `/group/user/${id}`);
+        httpRequest.send();
     }
 }
 

@@ -225,4 +225,13 @@ public class UserController {
         notifyRoleChange(userId);
         return new ResponseEntity<>("Successfully added " + newRole, HttpStatus.OK);
     }
+
+    @GetMapping(path="/group/user/{userId}")
+    public ModelAndView groupUser(@PathVariable int userId) {
+        ModelAndView mv = new ModelAndView("groupFragments::userFragment");
+        UserResponse response = userAccountClientService.getUser(userId);
+        User user = new User(response);
+        mv.addObject("user", user);
+        return mv;
+    }
 }

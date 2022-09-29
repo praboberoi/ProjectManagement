@@ -142,11 +142,12 @@ public class AccountController {
 
     /**
      * Sends an update message to all clients connected to the websocket
-     * @param userId Id of the user account updated
+     * @param userId ID of the changed user
      */
-    private void notifyUser(int userId) {
-        template.convertAndSend("/element/account/", ("account " + userId));
+    private void notifyUserInfoChange(int userId) {
+        template.convertAndSend("/element/user/", userId);
     }
+
 
     /**
      * The mapping for a Post request relating to editing a user
@@ -205,7 +206,7 @@ public class AccountController {
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
-            notifyUser(userId);
+            notifyUserInfoChange(userId);
             msgString = "Successfully updated details";
             ra.addFlashAttribute("messageSuccess", msgString);
             return "redirect:" + ACCOUNT_PAGE;
