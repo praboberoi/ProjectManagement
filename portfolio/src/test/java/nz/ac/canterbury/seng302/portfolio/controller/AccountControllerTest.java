@@ -54,7 +54,7 @@ class AccountControllerTest {
     @InjectMocks
     private ControllerAdvisor controllerAdvisor;
 
-    @Mock
+    @MockBean
     private SimpMessagingTemplate template;
 
     User user;
