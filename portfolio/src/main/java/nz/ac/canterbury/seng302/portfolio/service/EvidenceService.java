@@ -105,7 +105,7 @@ public class EvidenceService {
         else if (!matcherText.matches())
             throw new IncorrectDetailsException("Evidence title must contain some letters");
 
-        if (evidence.getDescription().length() <= 2)
+        if (evidence.getDescription().length() < 2)
             throw new IncorrectDetailsException("Evidence description must be at least 2 characters");
 
         else if (evidence.getDescription().length() > 200)

@@ -131,6 +131,7 @@ function checkEvidenceDescription() {
  * Disables or enables the create button
  */
 function checkCreateButton() {
+    let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
     let evidenceTitleError = document.getElementById('evidenceTitleError')
     let evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
     let evidenceDescription = document.getElementById('evidence-description');
@@ -139,10 +140,15 @@ function checkCreateButton() {
     evidenceCreateBtn.disabled = false;
 
     if (evidenceTitleError.innerText !== "") {
+        console.log("1")
         evidenceCreateBtn.disabled = true;
     } else if (evidenceDescriptionError.innerText !== "" || evidenceDescriptionStrip.length < 2) {
+        console.log("2")
+
         evidenceCreateBtn.disabled = true;
     } else if (evidenceDateErrorElement.innerText !== "") {
+        console.log("3")
+
         evidenceCreateBtn.disabled = true;
     }
 
