@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 @ActiveProfiles("test")
-public class DeadlineRepositoryTest {
+class DeadlineRepositoryTest {
 
     @Autowired
     private DeadlineRepository deadlineRepository;
@@ -26,7 +26,6 @@ public class DeadlineRepositoryTest {
     private ProjectRepository projectRepository;
     private Deadline deadline1;
     private Deadline deadline2;
-    private Deadline deadline3;
     private Project project;
 
     /**

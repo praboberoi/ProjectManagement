@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +39,7 @@ public class GroupController {
     private SimpMessagingTemplate template;
 
     private static final String GROUP = "group";
+    private static final String LIST_GROUPS = "listGroups";
     private static final String GROUP_FRAGMENT = "groupsFragments::group";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
     private static final String WARNING_MESSAGE = "messageDanger";
@@ -65,7 +65,7 @@ public class GroupController {
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(),
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        model.addAttribute("listGroups", groups);
+        model.addAttribute(LIST_GROUPS, groups);
         model.addAttribute(GROUP, groupService.getMembersWithoutAGroup());
         return "groups";
     }
@@ -81,7 +81,7 @@ public class GroupController {
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView("groups::groupList");
-        mv.addObject("listGroups", groups);
+        mv.addObject(LIST_GROUPS, groups);
         return mv;
     }
 
@@ -122,7 +122,7 @@ public class GroupController {
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
-        mv.addObject("listGroups", groups);
+        mv.addObject(LIST_GROUPS, groups);
         mv.addObject(GROUP, group);
         return mv;
     }
@@ -139,7 +139,7 @@ public class GroupController {
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
-        mv.addObject("listGroups", groups);
+        mv.addObject(LIST_GROUPS, groups);
         mv.addObject(GROUP, group);
         return mv;
     }
@@ -156,7 +156,7 @@ public class GroupController {
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
-        mv.addObject("listGroups", groups);
+        mv.addObject(LIST_GROUPS, groups);
         mv.addObject(GROUP, group);
         return mv;
     }
@@ -351,7 +351,7 @@ public class GroupController {
     public ModelAndView groupPageTitle(@PathVariable int groupId) {
         Groups group = groupService.getGroupById(groupId);
         ModelAndView mv = new ModelAndView("group::groupTitle");
-        mv.addObject("group", group);
+        mv.addObject(GROUP, group);
         return mv;
     }
 

@@ -57,7 +57,7 @@ public class SprintController {
     @Autowired
     private SimpMessagingTemplate template;
 
-    private final String redirectDashboard = "redirect:/dashboard";
+    private static final String REDIRECT_DASHBOARD = "redirect:/dashboard";
 
     /**
      * Return the html component which contains the specified project's sprints
@@ -132,7 +132,7 @@ public class SprintController {
             Model model,
             RedirectAttributes ra) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
-            return redirectDashboard;
+            return REDIRECT_DASHBOARD;
         try {
             Project currentProject = projectService.getProjectById(projectId);
             Sprint newSprint = sprintService.getNewSprint(currentProject);
@@ -203,7 +203,7 @@ public class SprintController {
             Model model,
             RedirectAttributes ra) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
-            return redirectDashboard;
+            return REDIRECT_DASHBOARD;
         }
 
         Sprint sprint = new Sprint(sprintDTO);
@@ -280,7 +280,7 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
-            return redirectDashboard;
+            return REDIRECT_DASHBOARD;
         }
 
         try {
@@ -330,7 +330,7 @@ public class SprintController {
             @AuthenticationPrincipal AuthState principal,
             RedirectAttributes ra) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
-            return redirectDashboard;
+            return REDIRECT_DASHBOARD;
         }
         try {
 

@@ -49,7 +49,8 @@ public class EvidenceController {
     @Autowired
     private ProjectService projectService;
 
-    @Autowired private UserAccountClientService userAccountClientService;
+    @Autowired 
+    private UserAccountClientService userAccountClientService;
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -70,16 +71,10 @@ public class EvidenceController {
 
     private static final String MESSAGE_SUCCESS = "messageSuccess";
 
+    private static final String IS_CURRENT_USER = "isCurrentUserEvidence";
+
     public EvidenceController(EvidenceService evidenceService) {
         this.evidenceService = evidenceService;
-    }
-
-    /**
-     * Adds common model elements used by all controller methods.
-     */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
     }
 
     /**
@@ -92,26 +87,23 @@ public class EvidenceController {
             @AuthenticationPrincipal AuthState principal,
             @PathVariable("userId") int userId,
             Model model) {
-        User user = new User(userAccountClientService.getUser(principal));
-        User userName = new User(userAccountClientService.getUser(userId));
+        User user = new User(userAccountClientService.getUser(userId));
         List<Project> listProjects = projectService.getAllProjects();
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         Evidence newEvidence = evidenceService.getNewEvidence(userId);
         model.addAttribute(EVIDENCE, newEvidence);
         model.addAttribute(LIST_EVIDENCE, listEvidence);
         model.addAttribute(LIST_PROJECTS, listProjects);
-        model.addAttribute("evidence", newEvidence);
-        model.addAttribute("listEvidence", listEvidence);
-        model.addAttribute("listProjects", listProjects);
-        model.addAttribute("isCurrentUserEvidence", user.getUserId()==userId);
-        model.addAttribute("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
-        model.addAttribute("userName", PrincipalUtils.getUserName(principal));
+        model.addAttribute(EVIDENCE, newEvidence);
+        model.addAttribute(LIST_EVIDENCE, listEvidence);
+        model.addAttribute(LIST_PROJECTS, listProjects);
+        model.addAttribute(IS_CURRENT_USER, PrincipalUtils.getUserId(principal)==userId);
         model.addAttribute(NOTIFICATIONS, editing);
-        model.addAttribute("userFirstName", userName.getFirstName());
+        model.addAttribute("userFirstName", user.getFirstName());
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }
-        return "evidence";
+        return EVIDENCE;
     }
 
 
@@ -130,11 +122,9 @@ public class EvidenceController {
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject(LIST_EVIDENCE, listEvidence);
         try {
-            User user = new User(userAccountClientService.getUser(principal));
             Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
             mv.addObject("selectedEvidence", selectedEvidence);
-            mv.addObject("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
-            mv.addObject("isCurrentUserEvidence", user.getUserId()==userId);
+            mv.addObject(IS_CURRENT_USER, PrincipalUtils.getUserId(principal)==userId);
             mv.addObject(NOTIFICATIONS, editing);
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
@@ -157,8 +147,7 @@ public class EvidenceController {
             @Header("simpSessionId") String sessionId) {
         Evidence evidence = new Evidence(evidenceDTO);
         try {
-            int editingUser = PrincipalUtils.getUserId(principal);
-            if (editingUser != userId) {
+            if (PrincipalUtils.getUserId(principal) != userId) {
                 throw new IncorrectDetailsException("You may only create evidence on your own evidence page");
             }
             evidence.setOwnerId(userId);
@@ -254,13 +243,10 @@ public class EvidenceController {
     public ModelAndView getEvidenceList(
             @PathVariable int userId,
             @AuthenticationPrincipal AuthState principal) {
-        User user = new User(userAccountClientService.getUser(principal));
         ModelAndView mv = new ModelAndView("evidence::evidenceList");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         mv.addObject(LIST_EVIDENCE, listEvidence);
-        mv.addObject("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
-        mv.addObject("isCurrentUserEvidence", user.getUserId()==userId);
-        mv.addObject("userName", PrincipalUtils.getUserName(principal));
+        mv.addObject(IS_CURRENT_USER, PrincipalUtils.getUserId(principal)==userId);
         mv.addObject(NOTIFICATIONS, editing);
         return mv;
     }

@@ -85,7 +85,7 @@ public class EventService {
     public Map<Integer, List<String>> getSprintLabelsForStartAndEndDates(List<Event> eventList) {
         HashMap<Integer, List<String>> eventDateMappingDictionary = new HashMap<>();
         for (Event event : eventList) {
-            List<String> sprintNames = new ArrayList<String>();
+            List<String> sprintNames = new ArrayList<>();
             Date startDate = new Date(event.getStartDate().getTime());
             Date endDate = new Date(event.getEndDate().getTime());
             Sprint start = sprintRepository.findByDateAndProject(event.getProject(), startDate);
