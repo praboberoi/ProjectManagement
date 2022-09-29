@@ -7,12 +7,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.PersistenceException;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.*;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
@@ -22,6 +24,7 @@ import static org.mockito.Mockito.when;
  */
 
 @SpringBootTest
+@ActiveProfiles("test")
 class EventServiceTest {
 
     @MockBean
@@ -636,5 +639,31 @@ class EventServiceTest {
         Map<Integer, List<String>> testData = eventService.getSprintLabelsForStartAndEndDates(events);
         assertEquals("(No Sprint)", testData.get(event.getEventId()).get(0));
         assertEquals("(No Sprint)", testData.get(event.getEventId()).get(1));
+    }
+
+    /**
+     * Test to check when an invalid deadline with an emoji is passed for verification an inappropriate errror
+     * thrown
+     */
+    @Test
+    void givenInvalidEventWithAnEmojiInName_whenVerifyEventRequested_thenAnAppropriateExceptionIsThrown() {
+        Project project = new Project.Builder()
+                .description("This is a test project")
+                .startDate(new java.sql.Date(2020 - 1900, 11, 12))
+                .endDate(new java.sql.Date(2023 - 1900, 1, 10))
+                .projectName("Project 2020")
+                .projectId(1)
+                .build();
+
+        Event event = new Event.Builder().eventName("Test 😀")
+                .eventId(1)
+                .startDate(new Date(2020 - 1900, 11,2))
+                .endDate(new Date(2020 - 1900, 11, 8))
+                .project(project)
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                eventService.verifyEvent(event));
+        assertEquals("Event name must not contain an emoji", exception.getMessage());
     }
 }

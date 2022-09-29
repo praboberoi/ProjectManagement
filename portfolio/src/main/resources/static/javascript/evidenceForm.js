@@ -9,6 +9,7 @@ let evidenceTitleEditing = null;
 let evidenceDateEditing = null;
 let evidenceDescriptionEditing = null;
 let evidenceProjectIdEditing = null;
+const emojiRegx = /\p{Extended_Pictographic}/u;
 
 /**
  * Calls the server to save the evidence
@@ -61,7 +62,7 @@ function checkEvidenceDate() {
     checkCreateButton();
 }
 
-    /**
+/**
  * Updates the modal form based on the data received from the server
  * @param httpRequest the current http request to the server
  * @param evidenceProjectId the project ID of the evidence
@@ -205,6 +206,9 @@ function updateEditMessage() {
         document.getElementById(`evidence-${evidenceId}-btns-div`).hidden = false
         stompClient.publish({destination: "/app/evidence/edit", body: JSON.stringify({'evidenceId': evidenceId, 'action': "finished", 'firstEvidenceId': 0, 'userUpdating': null, 'userId':userId})})
     }
+
+
+
 }
 
 /**

@@ -9,7 +9,6 @@ import nz.ac.canterbury.seng302.portfolio.service.EventService;
 import nz.ac.canterbury.seng302.portfolio.service.DeadlineService;
 import nz.ac.canterbury.seng302.portfolio.service.ProjectService;
 import nz.ac.canterbury.seng302.portfolio.service.SprintService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
@@ -71,7 +70,7 @@ public class SprintController {
         List<Sprint> listSprints = sprintService.getSprintsByProject(projectId);
         Project project = new Project();
         project.setProjectId(projectId);
-        ModelAndView mv = new ModelAndView("project::sprints");
+        ModelAndView mv = new ModelAndView("projectFragments::sprints");
         mv.addObject(PROJECT_OBJECT, project);
         mv.addObject("listSprints", listSprints);
         return mv;
@@ -104,9 +103,9 @@ public class SprintController {
         List<Deadline> listDeadlines = deadlineService.getDeadlinesBySprintId(sprintId);
         listDeadlines.forEach(deadlineService::updateDeadlineColors);
         Map<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
-        
 
-        mv = new ModelAndView("project::sprintAccordion");
+
+        mv = new ModelAndView("projectFragments::sprintAccordion");
         mv.addObject(SPRINT_OBJECT, sprint);
         mv.addObject(LIST_EVENTS_OBJECT, listEvents);
         mv.addObject(LIST_DEADLINES_OBJECT, listDeadlines);
@@ -263,7 +262,6 @@ public class SprintController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }
-
     /**
      * Deletes a sprint and redirects back to project page
      * 
@@ -315,7 +313,7 @@ public class SprintController {
 
     /**
      * Directs to page for editing a sprint
-     * 
+     *
      * @param sprintId  ID for sprint being edited
      * @param projectId ID of the project
      * @param model
@@ -354,7 +352,7 @@ public class SprintController {
 
     /**
      * Sends an update message to all clients connected to the websocket
-     * 
+     *
      * @param projectId Id of the sprint's project updated
      * @param sprintId  Id of the sprint edited
      * @param action    The action taken (delete, created, edited)

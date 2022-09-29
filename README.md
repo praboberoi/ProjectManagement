@@ -24,7 +24,6 @@ Endpoints implemented <br />
 
 
 - "/project/{projectId}" GET – Returns the project page with the projects information.
-- "/project/{projectId}/newSprint" GET - Returns a page with a form used to create a new sprint under the specified project.
 - "/project/{projectId}/sprint" POST - Saves or creates a new sprint with the provided details.
 - "/project/{projectId}/editSprint/{sprintId}" GET – Returns a form to modify a sprints information.
 - "/project/{projectId}/deleteSprint/{sprintId}" GET - Deletes the sprint with the specified id from the database.

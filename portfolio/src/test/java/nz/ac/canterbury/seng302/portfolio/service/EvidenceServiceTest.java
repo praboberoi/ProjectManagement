@@ -1,22 +1,20 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.Evidence;
-import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -25,6 +23,7 @@ import static org.mockito.Mockito.when;
  * Test class for the functionality in the evidence service class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class EvidenceServiceTest {
     @MockBean
     private EvidenceRepository evidenceRepository;
@@ -305,6 +304,30 @@ class EvidenceServiceTest {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.deleteEvidence(evidenceId));
         assertEquals("Could not find an existing piece of evidence", exception.getMessage() );
+    }
+
+    /**
+     * Test to check when an invalid evidence with title containing an emoji is verified an appropriate Exception is thrown
+     */
+    @Test
+    void givenInvalidEvidenceWithEmojiInTitle_whenVerifyRequested_thenAppropriateExceptionIsThrown() {
+        evidence1.setTitle("Test 😀");
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+        assertEquals("Evidence title must not contain an emoji", exception.getMessage());
+    }
+
+    /**
+     * Test to check when an invalid evidecen with description containing an emoji is verified an appropriate Exception is thrown
+     */
+    @Test
+    void givenInvalidEvidenceWithEmojiInDescription_whenVerifyRequested_thenAppropriateExceptionIsThrown() {
+        evidence1.setDescription("Test 😀");
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+        assertEquals("Evidence description must not contain an emoji", exception.getMessage());
     }
 
 }

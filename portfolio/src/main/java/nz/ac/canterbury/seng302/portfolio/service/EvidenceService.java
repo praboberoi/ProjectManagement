@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,6 @@ public class EvidenceService {
      * @throws IncorrectDetailsException Message explaining any incorrect values
      */
     public void verifyEvidence(Evidence evidence) throws IncorrectDetailsException {
-
         if (evidence == null)
             throw new IncorrectDetailsException("No evidence to verify");
 
@@ -99,13 +99,22 @@ public class EvidenceService {
         if (evidence.getTitle().length() < 2)
             throw new IncorrectDetailsException("Evidence title must be at least 2 characters");
 
+        else if (ValidationUtilities.hasEmoji(evidence.getTitle()))
+            throw new IncorrectDetailsException("Evidence title must not contain an emoji");
+
+        else if (ValidationUtilities.hasEmoji(evidence.getDescription()))
+            throw new IncorrectDetailsException("Evidence description must not contain an emoji");
+
+        else if (evidence.getTitle().length() < 1)
+            throw new IncorrectDetailsException("Evidence title must not be empty");
+
         else if (evidence.getTitle().length() > 50)
             throw new IncorrectDetailsException("Evidence title cannot be more than 50 characters");
 
         else if (!matcherText.matches())
             throw new IncorrectDetailsException("Evidence title must contain some letters");
 
-        if (evidence.getDescription().length() < 2)
+        else if (evidence.getDescription().length() < 2)
             throw new IncorrectDetailsException("Evidence description must be at least 2 characters");
 
         else if (evidence.getDescription().length() > 200)

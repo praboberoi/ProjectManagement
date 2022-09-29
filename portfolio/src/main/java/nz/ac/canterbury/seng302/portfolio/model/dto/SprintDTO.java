@@ -18,14 +18,11 @@ public class SprintDTO {
 
     private String sprintName;
 
-
     private String description;
-
 
     private Date startDate;
 
     private Date endDate;
-
 
     private SprintColor color = SprintColor.WHITE;
 
@@ -51,43 +48,20 @@ public class SprintDTO {
         this.color = color;
     }
 
+    public int getSprintId() {return sprintId;}
 
-    public int getSprintId() {
-        return sprintId;
-    }
+    public Project getProject() {return project;}
 
-    public Project getProject() {
-        return project;
-    }
+    public String getSprintLabel() {return sprintLabel;}
 
+    public String getSprintName() {return sprintName;}
 
-    public String getSprintLabel() {
-        return sprintLabel;
-    }
+    public String getDescription() {return description;}
 
+    public Date getStartDate() {return startDate;}
 
-    public String getSprintName() {
-        return sprintName;
-    }
+    public Date getEndDate() {return endDate;}
 
-
-    public String getDescription() {
-        return description;
-    }
-
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-
-    public SprintColor getColor() {
-        return color;
-    }
+    public SprintColor getColor() {return color;}
 
 }
