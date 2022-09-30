@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +19,6 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -351,7 +349,7 @@ public class GroupController {
     @GetMapping(path = "/group/{groupId}/title")
     public ModelAndView groupPageTitle(@PathVariable int groupId) {
         Groups group = groupService.getGroupById(groupId);
-        ModelAndView mv = new ModelAndView("group::groupTitle");
+        ModelAndView mv = new ModelAndView("groupSetting::groupTitle");
         mv.addObject("group", group);
         return mv;
     }
