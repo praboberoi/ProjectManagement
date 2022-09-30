@@ -30,6 +30,9 @@ import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.*;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -67,7 +70,6 @@ public class EvidenceControllerTest {
     private static MockedStatic<PrincipalUtils> utilities;
 
     private static WebSocketPrincipal mockedWebSocketPrincipal;
-
 
     /**
      * Helper function which creates a new user for testing with

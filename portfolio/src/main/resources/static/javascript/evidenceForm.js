@@ -28,14 +28,39 @@ function saveEvidence() {
 }
 
 /**
- * Updates the submission button and current char count displayed to the user.
+ * Validation for the evidence title
  */
 function checkEvidenceTitle() {
-    const evidenceTitle = document.getElementById('evidence-title');
-    let charMessage = document.getElementById("evidenceCharCount");
-    let charCount = evidenceTitle.value.length;
+    let evidenceTitleError = document.getElementById('evidenceTitleError')
+    let evidenceTitle = document.getElementById('evidence-title');
+    let evidenceTitleStrip = evidenceTitle.value.trim()
+    let charMessage = document.getElementById("evidenceTitleCharCount");
+    let charCount = evidenceTitleStrip.length;
     charMessage.innerText = charCount + ' ';
-    updateSubmissionButton()
+    if (evidenceTitleStrip.length <= 1) {
+        evidenceTitleError.innerText = "Evidence title must be at least 2 characters"
+    } else if (!/[a-zA-Z]/.test(evidenceTitleStrip)) {
+        evidenceTitleError.innerText = "Evidence title must contain some letters"
+    } else {
+        evidenceTitleError.innerText = ""
+    }
+    checkCreateButton();
+}
+
+/**
+ * Validation for the evidence date
+ */
+function checkEvidenceDate() {
+    let evidence_project = document.getElementById("evidence-project");
+    let evidenceDateElement = document.getElementById("evidence-date");
+    let evidenceDateErrorElement = document.getElementById("evidenceDateError");
+    let value = evidence_project.options[evidence_project.selectedIndex]
+    if (evidenceDateElement.value > value.dataset.enddate || evidenceDateElement.value < value.dataset.startdate) {
+        evidenceDateErrorElement.innerText = "The evidence date must be within the selected project range"
+    } else {
+        evidenceDateErrorElement.innerText = ""
+    }
+    checkCreateButton();
 }
 
 /**
@@ -69,6 +94,65 @@ function updateEvidenceModalForm(httpRequest, modalTitle) {
             messageDanger.innerText = "Something went wrong.";
         }
     }
+}
+
+/**
+ * Changes the dates min and max value when the project changes
+ */
+function evidenceProjectChange() {
+    let evidenceDateElement = document.getElementById("evidence-date");
+    let evidence_project = document.getElementById("evidence-project");
+    let value = evidence_project.options[evidence_project.selectedIndex]
+    evidenceDateElement.min = value.dataset.startdate;
+    evidenceDateElement.max = value.dataset.enddate;
+    console.log("Min: " + evidenceDateElement.min)
+    console.log("Max: " + evidenceDateElement.max)
+    checkEvidenceDate();
+}
+/**
+ * Validation for the evidence description
+ */
+function checkEvidenceDescription() {
+    let evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
+    let evidenceDescription = document.getElementById('evidence-description');
+    let evidenceDescriptionStrip = evidenceDescription.value.trim()
+    let charMessage = document.getElementById("evidenceDescriptionCharCount");
+    let charCount = evidenceDescriptionStrip.length;
+    charMessage.innerText = charCount + ' ';
+    if (evidenceDescriptionStrip.length < 2) {
+        evidenceDescriptionError.innerText = "Evidence description must be at least 2 characters"
+    } else if (evidenceDescriptionStrip.length > 200) {
+        evidenceDescriptionError.innerText = "Evidence description must be equal or less that 200 characters"
+    } else {
+        evidenceDescriptionError.innerText = ""
+    }
+    checkCreateButton();
+}
+/**
+ * Disables or enables the create button
+ */
+function checkCreateButton() {
+    let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
+    let evidenceTitleError = document.getElementById('evidenceTitleError')
+    let evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
+    let evidenceDescription = document.getElementById('evidence-description');
+    let evidenceDateErrorElement = document.getElementById("evidenceDateError");
+    let evidenceDescriptionStrip = evidenceDescription.value.trim()
+    evidenceCreateBtn.disabled = false;
+
+    if (evidenceTitleError.innerText !== "") {
+        console.log("1")
+        evidenceCreateBtn.disabled = true;
+    } else if (evidenceDescriptionError.innerText !== "" || evidenceDescriptionStrip.length < 2) {
+        console.log("2")
+
+        evidenceCreateBtn.disabled = true;
+    } else if (evidenceDateErrorElement.innerText !== "") {
+        console.log("3")
+
+        evidenceCreateBtn.disabled = true;
+    }
+
 }
 
 /**
@@ -113,6 +197,7 @@ function editEvidence(evidenceId) {
  * Opens the modal
  */
 function openEvidenceModal() {
+    evidenceProjectChange();
     const modalElement = document.getElementById('evidenceFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
         keyword: false,
