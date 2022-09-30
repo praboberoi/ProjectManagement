@@ -82,7 +82,7 @@
           </li>
 
           <li class="nav-item"  >
-            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains('user/{user.userId}/evidence') ? 'active':''}" th:href="@{{apiPrefix}/user/{userId}/evidence(apiPrefix=${apiPrefix}, userId=${user.userId})}">
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains('user/' + {user.userId} + '/evidence') ? 'active':''}" th:href="@{{apiPrefix}/user/{userId}/evidence(apiPrefix=${apiPrefix}, userId=${user.userId})}">
               My Evidence
             </a>
           </li>
