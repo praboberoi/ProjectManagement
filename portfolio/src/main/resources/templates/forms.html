@@ -134,15 +134,14 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="milestoneFormTitle">Create New Milestone</h5>
-                    <button type="button" class="close" aria-label="Close" data-bs-dismiss="modal">
+                    <button type="button" class="close" aria-label="Close" th:onclick="closeMilestoneModal()">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <div class="alert alert-danger text-center" id="milestoneFormModalError"></div>
                     <div class="projectForm">
-                        <form id="createMilestoneForm" name="createMilestoneForm" onsubmit="saveMilestone(); return false"
-                            th:object="${milestone}">
+                        <form id="createMilestoneForm" name="createMilestoneForm" onsubmit="saveMilestone(); return false" th:object="${milestone}">
                             <input type="hidden" id="milestoneId" th:field="*{milestoneId}">
                             <div class="mb-3">
                                 <label for="milestone-name" class="col-form-label required">Milestone Name</label>
@@ -167,12 +166,12 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="submit" name="submit" id="milestoneFormSubmitButton"
-                                    class="btn btn-outline-primary">
+                                    class="btn btn-outline-primary" th:onclick="closeMilestoneModal()">
                                     <img class="icon img-color-primary" id="milestoneFromSubmitImg"
                                         th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}" />
                                     <span id="milestoneFormSubmitLabel">Create</span></button>
                                 <button type="button" class="btn btn-outline-secondary"
-                                    data-bs-dismiss="modal">
+                                        th:onclick="closeMilestoneModal()">
                                     <img class="icon img-color-secondary"
                                         th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
                                     Close</button>

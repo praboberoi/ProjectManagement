@@ -1,3 +1,5 @@
+
+
 /**
  * Updates the conformation message to delete the sprint with appropriate sprint name
  */
@@ -51,7 +53,20 @@ function deleteDeadline(deadlineId, deadlineName) {
     document.getElementById('deleteDeadlineModalBtn').onclick = function () {
         let httpRequest = new XMLHttpRequest();
         httpRequest.onreadystatechange = () => processAction(httpRequest)
-        httpRequest.open('DELETE', apiPrefix + `/${projectId}/deleteDeadline/${deadlineId}`);
+        httpRequest.open('DELETE', apiPrefix + `/project/${projectId}/deadline/${deadlineId}/delete`);
+        httpRequest.send();
+    }
+}
+
+/**
+ * Updates the conformation message and action of the form to delete the milestone
+ */
+function deleteMilestone(milestoneId, milestoneName) {
+    document.getElementById('messageMilestone').innerText = `Are you sure you want to delete ${milestoneName}`;
+    document.getElementById('deleteMilestoneModalBtn').onclick = function() {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = () => processAction(httpRequest)
+        httpRequest.open('DELETE', apiPrefix + `/project/${projectId}/milestone/${milestoneId}/delete`);
         httpRequest.send();
     }
 }
@@ -134,7 +149,7 @@ function handleDeadlineNotification(message) {
     let action = array[1]
 
     let deadlineCard = document.getElementById(deadline + "-card");
-    
+
     if (action === "edited") {
         loadDeadlineCards()
         updateSprintAccordions()
@@ -181,7 +196,7 @@ function handleMilestoneNotification(message) {
     let action = array[1]
 
     let milestoneCard = document.getElementById(milestone + "-card");
-    
+
     if (action === "edited") {
         loadMilestoneCards()
         updateSprintAccordions()
@@ -213,7 +228,7 @@ function handleEventNotification(message) {
     let action = array[1]
 
     let eventCard = document.getElementById(event + "-card");
-    
+
     if (action === "edited") {
         loadEventCards()
         updateSprintAccordions()

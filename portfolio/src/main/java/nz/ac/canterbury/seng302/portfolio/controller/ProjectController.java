@@ -9,6 +9,7 @@ import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -51,6 +52,8 @@ public class ProjectController {
     private static final String PROJECT_PAGE = "project";
     private static final String PROJECT_OBJECT = "project";
 
+    @Value("${apiPrefix}") private String apiPrefix;
+
     private static final String DASHBOARD_REDIRECT = "redirect:/dashboard";
     private static final String NOTIFICATION_DESTINATION = "/element/project";
 
@@ -69,8 +72,7 @@ public class ProjectController {
 
     /**
      * Return the html component which contains the specified project's events
-     * 
-     * @param projectId Project containing the desired events
+     *
      * @return Page fragment containing events
      */
     @GetMapping(path = "/projects")
@@ -131,6 +133,7 @@ public class ProjectController {
             model.addAttribute("deadline", newDeadline);
             model.addAttribute("deadlineDateMapping", deadlineDateMapping);
             model.addAttribute("milestone", newMilestone);
+            model.addAttribute("apiPrefix", apiPrefix);
             model.addAttribute("eventDateMappingDictionary", eventDateMappingDictionary);
 
 
@@ -159,12 +162,16 @@ public class ProjectController {
             @PathVariable int projectId,
             String startDate,
             String endDate,
+            String projectName,
+            String projectDescription,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
             return null;
         try {
             Project project = new Project.Builder()
                     .projectId(projectId)
+                    .projectName(projectName)
+                    .description(projectDescription)
                     .startDate(Date.valueOf(startDate))
                     .endDate(Date.valueOf(endDate))
                     .build();

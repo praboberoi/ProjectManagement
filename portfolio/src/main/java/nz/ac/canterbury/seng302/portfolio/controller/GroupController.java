@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -338,7 +337,7 @@ public class GroupController {
 
         model.addAttribute(GROUP, group);
         model.addAttribute("repo", repo);
-        return GROUP;
+        return "groupSetting";
     }
 
     /**
@@ -350,7 +349,7 @@ public class GroupController {
     @GetMapping(path = "/group/{groupId}/title")
     public ModelAndView groupPageTitle(@PathVariable int groupId) {
         Groups group = groupService.getGroupById(groupId);
-        ModelAndView mv = new ModelAndView("group::groupTitle");
+        ModelAndView mv = new ModelAndView("groupSetting::groupTitle");
         mv.addObject("group", group);
         return mv;
     }
@@ -366,6 +365,7 @@ public class GroupController {
         template.convertAndSend("/element/group/" + groupId, (component + " " + action));
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
+
 
     /**
      * Sends an update message to all clients connected to the websocket

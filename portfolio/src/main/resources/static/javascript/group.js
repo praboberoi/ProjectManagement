@@ -462,7 +462,9 @@ function processAction(httpRequest) {
  * Runs when the page is loaded
  */
 document.addEventListener('DOMContentLoaded', function () {
-    connectToRepo()
+    if (document.getElementById('recent-actions-container') != undefined) {
+        connectToRepo()
+    }
 });
 
 /**
@@ -506,32 +508,35 @@ function updateFilters(events) {
 
 }
 
-/**
- * Event listener for change in the userFilter
- */
-document.getElementById('userFilter').addEventListener('change', function () {
-    if (this.value === 'Clear Filter') {
-        filterByUser = ""
-    } else {
-        filterByUser = this.value
-    }
+if (document.getElementById('recent-actions-container') != undefined) {
+    /**
+     * Event listener for change in the userFilter
+     */
+    document.getElementById('userFilter').addEventListener('change', function () {
+        if (this.value === 'Clear Filter') {
+            filterByUser = ""
+        } else {
+            filterByUser = this.value
+        }
 
-    getRecentActions(jsonRepo)
+        getRecentActions(jsonRepo)
 
-})
-/**
- * Event listener for change in the actionTypeFilter
- */
-document.getElementById('actionType').addEventListener('change', function () {
-    if (this.value === 'Clear Filter') {
-        filterByActionType = ""
-    } else{
-        filterByActionType = this.value
-    }
+    })
+    /**
+     * Event listener for change in the actionTypeFilter
+     */
+    document.getElementById('actionType').addEventListener('change', function () {
+        if (this.value === 'Clear Filter') {
+            filterByActionType = ""
+        } else{
+            filterByActionType = this.value
+        }
 
-    getRecentActions(jsonRepo)
+        getRecentActions(jsonRepo)
 
-})
+    })
+}
+
 
 
 /**
@@ -567,6 +572,7 @@ document.getElementById('actionType').addEventListener('change', function () {
  */
 function subscribe(stompClient) {
     stompClient.subscribe(`/element/group/${groupId}`, updateGroup);
+    stompClient.subscribe(`/element/user/`, updateUser);
 }
 
 /**
@@ -580,10 +586,35 @@ function subscribe(stompClient) {
 
     if (component == "details" || action === "edited") {
         updateTitle()
-    } else if (component == "details") {
-        updateMembers()
     } else {
         console.log("Unknown command: " + action)
+    }
+}
+
+/**
+ * Updates a user's information if it has changed
+ * @param message Message userId of changed user
+ */
+function updateUser(message) {
+    let array = message.body.split(' ')
+    let id = array[0]
+    let userElement = document.getElementById(`user` + id + `Row`);
+    if (userElement) {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                if (httpRequest.status === 200) {
+                    userElement.innerHTML = httpRequest.responseText;
+                } else if (httpRequest.status === 400) {
+                    messageDanger.hidden = false;
+                    messageSuccess.hidden = true;
+                    messageDanger.innerText = "Bad Request";
+                }
+            }
+        }
+
+        httpRequest.open('GET', apiPrefix + `/group/user/${id}`);
+        httpRequest.send();
     }
 }
 

@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -109,7 +110,7 @@ class ProjectServiceTest {
                 projectService.verifyProject(project);
             });
     }
-    
+
     /**
      * Tests that a project with a start date 5 years ago will be valid
      */
@@ -190,5 +191,45 @@ class ProjectServiceTest {
         Project project = projectService.getNewProject();
 
         assertEquals(testProject, project);
+    }
+
+    /**
+     * Checks that for an invalid project with an emoji in the name throws an appropriate exception
+     */
+    @Test
+    void givenInvalidProjectWithEmojiInName_whenVerifyProjectRequested_thenAppropriateExceptionIsThrown() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 1);
+
+        Project project = projectBuilder
+                .projectName("Project 😀")
+                .description("First Attempt")
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(c.getTimeInMillis()))
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                projectService.verifyProject(project));
+        assertEquals("Project name must not contain an emoji", exception.getMessage());
+    }
+
+    /**
+     * Checks that for an invalid project with an emoji in the description throws an appropriate exception
+     */
+    @Test
+    void givenInvalidProjectWithEmojiInDescription_whenVerifyProjectRequested_thenAppropriateExceptionIsThrown() {
+        Calendar c = Calendar.getInstance();
+        c.add(Calendar.DATE, 1);
+
+        Project project = projectBuilder
+                .projectName("Project 1")
+                .description("First Attempt 😀")
+                .startDate(new Date(Calendar.getInstance().getTimeInMillis()))
+                .endDate(new Date(c.getTimeInMillis()))
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                projectService.verifyProject(project));
+        assertEquals("Project description must not contain an emoji", exception.getMessage());
     }
 }

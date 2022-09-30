@@ -12,7 +12,9 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.ui.Model;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
@@ -35,6 +37,10 @@ public class checkFileTypeTest {
     private final ArrayList<String> acceptedFileTypes = new ArrayList<>(Arrays.asList("jpg", "jpeg", "png"));
     UserResponse.Builder reply = UserResponse.newBuilder();
     User user;
+
+    @Mock
+    private SimpMessagingTemplate template;
+
 
     @Before
     public void startUp() {
@@ -72,7 +78,7 @@ public class checkFileTypeTest {
     @Then("Image is uploaded successfully")
     public void image_is_uploaded_successfully() {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
-        AccountController controller = new AccountController(mockUserAccountClientService);
+        AccountController controller = new AccountController(mockUserAccountClientService, template);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
@@ -86,6 +92,7 @@ public class checkFileTypeTest {
         }
     }
 
+
     @When("The file is not an accepted type")
     public void the_file_is_not_an_accepted_type() {
         String extension = testFile.getName().substring(testFile.getName().lastIndexOf(".") + 1);
@@ -94,7 +101,7 @@ public class checkFileTypeTest {
     @Then("Image is not uploaded successfully")
     public void image_is_not_uploaded_successfully() {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
-        AccountController controller = new AccountController(mockUserAccountClientService);
+        AccountController controller = new AccountController(mockUserAccountClientService, template);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
         when(mockUserAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());

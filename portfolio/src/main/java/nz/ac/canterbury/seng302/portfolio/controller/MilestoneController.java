@@ -23,7 +23,6 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.HashSet;
@@ -88,15 +87,13 @@ public class MilestoneController {
      * @param milestoneDTO MilestoneDTO object
      * @param principal    Current user
      * @param projectId    ID of the project
-     * @param ra           Redirect Attribute frontend message object
      * @return the project page
      */
     @PostMapping(path = "/project/{projectId}/milestone")
     public ResponseEntity<String> saveMilestone(
             @ModelAttribute MilestoneDTO milestoneDTO,
             @AuthenticationPrincipal AuthState principal,
-            @PathVariable("projectId") int projectId,
-            RedirectAttributes ra) {
+            @PathVariable("projectId") int projectId) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
@@ -129,6 +126,32 @@ public class MilestoneController {
     private void notifyMilestone(int projectId, int milestoneId, String action) {
         template.convertAndSend(String.format(NOTIFICATION_DESTINATION, projectId),
                 String.format(NOTIFICATION_WITHOUT_USERNAME, milestoneId, action));
+    }
+
+    /**
+     * Deletes the milestone and redirects back to project page
+     * @param projectId Of type int
+     * @param milestoneId Of type int
+     * @param principal Of type {@link AuthState}
+     * @return response entity of request outcome
+     */
+    @DeleteMapping(path="/project/{projectId}/milestone/{milestoneId}/delete")
+    public ResponseEntity<String> deleteMilestone(
+            @PathVariable("milestoneId") int milestoneId,
+            @PathVariable int projectId,
+            @AuthenticationPrincipal AuthState principal) {
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+
+        try {
+            String message = milestoneService.deleteMilestone(milestoneId);
+            logger.info("Milestone {} has been deleted.", milestoneId);
+            notifyMilestone(projectId, milestoneId, "deleted");
+            return ResponseEntity.status(HttpStatus.OK).body(message);
+        } catch (IncorrectDetailsException e) {
+            logger.info("Milestone {} could not be deleted.", milestoneId);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
     /**

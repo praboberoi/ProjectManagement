@@ -7,6 +7,7 @@ let evidenceTitleEditing = null;
 let evidenceDateEditing = null;
 let evidenceDescriptionEditing = null;
 let evidenceProjectIdEditing = null;
+const emojiRegx = /\p{Extended_Pictographic}/u;
 
 /**
  * Calls the server to save the evidence
@@ -24,14 +25,41 @@ function saveEvidence() {
 }
 
 /**
- * Updates the submission button and current char count displayed to the user.
+ * Validation for the evidence title
  */
 function checkEvidenceTitle() {
-    const evidenceTitle = document.getElementById('evidence-title');
-    let charMessage = document.getElementById("evidenceCharCount");
-    let charCount = evidenceTitle.value.length;
+    let evidenceTitleError = document.getElementById('evidenceTitleError')
+    let evidenceTitle = document.getElementById('evidence-title');
+    let evidenceTitleStrip = evidenceTitle.value.trim()
+    let charMessage = document.getElementById("evidenceTitleCharCount");
+    let charCount = evidenceTitleStrip.length;
     charMessage.innerText = charCount + ' ';
+    if (evidenceTitleStrip.length <= 1) {
+        evidenceTitleError.innerText = "Evidence title must be at least 2 characters"
+    } else if (!/[a-zA-Z]/.test(evidenceTitleStrip)) {
+        evidenceTitleError.innerText = "Evidence title must contain some letters"
+    } else if (emojiRegx.test(evidenceTitleStrip)){
+        evidenceTitleError.innerText = "Evidence title must contain an emoji"
+    } else {
+        evidenceTitleError.innerText = ""
+    }
     updateSubmissionButton()
+}
+
+/**
+ * Validation for the evidence date
+ */
+function checkEvidenceDate() {
+    let evidence_project = document.getElementById("evidence-project");
+    let evidenceDateElement = document.getElementById("evidence-date");
+    let evidenceDateErrorElement = document.getElementById("evidenceDateError");
+    let value = evidence_project.options[evidence_project.selectedIndex]
+    if (evidenceDateElement.value > value.dataset.enddate || evidenceDateElement.value < value.dataset.startdate) {
+        evidenceDateErrorElement.innerText = "The evidence date must be within the selected project range"
+    } else {
+        evidenceDateErrorElement.innerText = ""
+    }
+    updateSubmissionButton();
 }
 
 /**
@@ -69,6 +97,41 @@ function updateEvidenceModalForm(httpRequest, evidenceProjectId, modalTitle) {
 }
 
 /**
+ * Changes the dates min and max value when the project changes
+ */
+function evidenceProjectChange() {
+    let evidenceDateElement = document.getElementById("evidence-date");
+    let evidence_project = document.getElementById("evidence-project");
+    let value = evidence_project.options[evidence_project.selectedIndex]
+    evidenceDateElement.min = value.dataset.startdate;
+    evidenceDateElement.max = value.dataset.enddate;
+    console.log("Min: " + evidenceDateElement.min)
+    console.log("Max: " + evidenceDateElement.max)
+    checkEvidenceDate();
+}
+/**
+ * Validation for the evidence description
+ */
+function checkEvidenceDescription() {
+    let evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
+    let evidenceDescription = document.getElementById('evidence-description');
+    let evidenceDescriptionStrip = evidenceDescription.value.trim()
+    let charMessage = document.getElementById("evidenceDescriptionCharCount");
+    let charCount = evidenceDescriptionStrip.length;
+    charMessage.innerText = charCount + ' ';
+    if (evidenceDescriptionStrip.length < 2) {
+        evidenceDescriptionError.innerText = "Evidence description must be at least 2 characters"
+    } else if (evidenceDescriptionStrip.length > 200) {
+        evidenceDescriptionError.innerText = "Evidence description must be equal or less that 200 characters"
+    } else if (emojiRegx.test(evidenceDescriptionStrip)){
+        evidenceDescriptionError.innerText = "Evidence description must contain an emoji"
+    } else {
+        evidenceDescriptionError.innerText = ""
+    }
+    updateSubmissionButton();
+}
+
+/**
  * Server call to create a new evidence
  */
 function createNewEvidence() {
@@ -90,7 +153,7 @@ function editEvidence(evidenceId, evidenceProjectId, evidenceTitle, evidenceDate
     evidenceTitleEditing = evidenceTitle;
     evidenceDateEditing = evidenceDate.substring(0, 10);
     evidenceDescriptionEditing = evidenceDescription;
-    evidenceProjectIdEditing = document.getElementById('evidence-project').value;
+    evidenceProjectIdEditing = evidenceProjectId;
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `${window.location.pathname}/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, evidenceProjectId, "Update Evidence");
@@ -102,6 +165,7 @@ function editEvidence(evidenceId, evidenceProjectId, evidenceTitle, evidenceDate
  * Opens the modal
  */
 function openEvidenceModal() {
+    evidenceProjectChange();
     const modalElement = document.getElementById('evidenceFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
         keyword: false,
@@ -143,7 +207,7 @@ function updateSubmissionButton() {
     const title = document.getElementById('evidence-title').value.trim();
     const projectId = document.getElementById('evidence-project').value;
 
-    if ((date.length === 0 || description.length === 0 || title.length === 0) ||
+    if (date.length === 0 || description.length === 0 || title.length === 0 || emojiRegx.test(title)  || emojiRegx.test(description) ||
         (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing))
 
         document.getElementById('evidenceFormSubmitButton').disabled = true
