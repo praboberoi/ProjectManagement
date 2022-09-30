@@ -53,7 +53,7 @@
                                     <div class="card-body">
                                         <h5 class="card-title">
                                             <div class="d-flex justify-content-between">
-                                                <a role="button" class="project-name" href="javascript:void(0);"
+                                                <a role="button" class="project-name overflow-auto" href="javascript:void(0);"
                                                     th:onclick="'getSelectedEvidence(' + ${evidence.evidenceId} + ')'"
                                                     th:text="${evidence.title}"></a>
                                                 <th:block th:if="${notifications.get(evidence.evidenceId) == null}">

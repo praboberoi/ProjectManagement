@@ -369,6 +369,11 @@ a.desc.sort:after {
     display: none;
 }
 
+.scale-font-size {
+    font-size: 10px;
+    font-size: 2vw;
+}
+
 
 @media only screen and (max-width: 768px) {
     #group-dropdown {
