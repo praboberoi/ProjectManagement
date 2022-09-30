@@ -137,6 +137,20 @@ public class GroupControllerTest {
      * @throws Exception Exception thrown during mockmvc runtime
      */
     @Test
+    void whenGroupsListRequested_thenAllGroupsReturned() throws Exception{
+        when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, List.of()));
+        when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, List.of()));
+        mockMvc
+            .perform(get("/groups/list"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("listGroups", Matchers.<Collection<Groups>> allOf(hasSize(2))));
+    }
+
+    /**
+     * Checks that all the groups are returned when group page is requested
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
     void whenGroupsPageRequested_thenAllGroupsReturned() throws Exception{
         when(groupService.getMembersWithoutAGroup()).thenReturn(new Groups("Members without a group", null, 0, List.of()));
         when(groupService.getTeachingStaffGroup()).thenReturn(new Groups("Teaching Staff", null, 0, List.of()));
@@ -333,6 +347,21 @@ public class GroupControllerTest {
             .perform(get("/group/1"))
             .andExpect(status().is3xxRedirection())
             .andExpect(flash().attribute("messageDanger", "Group 1 does not exist."));
+    }
+
+    /**
+     * Checks that the group title is returned correctly
+     * @throws Exception Exception thrown during mockmvc runtime
+     */
+    @Test
+    void whenGroupsTitleRequested_thenTitleElementReturned() throws Exception{
+        Groups group = new Groups("test", "Test longName", 1, List.of());
+        when(groupService.getGroupById(1)).thenReturn(group);
+
+        mockMvc
+            .perform(get("/group/1/title"))
+            .andExpect(status().isOk())
+            .andExpect(model().attribute("group", group));
     }
 }
 

@@ -92,9 +92,8 @@ public class EvidenceService {
 
         evidence.setTitle(evidence.getTitle().strip()); // Removes leading and trailing white spaces from the title
 
-        String regex = ".*[a-zA-Z].*"; // regex to check if string contains any letters
         // find match between given string and pattern
-        Matcher matcherText = Pattern.compile(regex).matcher(evidence.getTitle());
+        Matcher matcherText = Pattern.compile(".*[a-zA-Z].*").matcher(evidence.getTitle());
 
         if (evidence.getTitle().length() < 2)
             throw new IncorrectDetailsException("Evidence title must be at least 2 characters");
@@ -111,6 +110,9 @@ public class EvidenceService {
         else if (evidence.getTitle().length() > 50)
             throw new IncorrectDetailsException("Evidence title cannot be more than 50 characters");
 
+        else if (!matcherText.matches())
+            throw new IncorrectDetailsException("Evidence title must contain some letters");
+
         else if (evidence.getDescription().length() < 2)
             throw new IncorrectDetailsException("Evidence description must be at least 2 characters");
 
@@ -123,8 +125,6 @@ public class EvidenceService {
         else if (evidence.getDateOccurred().after(evidence.getProject().getEndDate()))
             throw new IncorrectDetailsException("The evidence cannot exist after the project date");
 
-        else if (!matcherText.matches())
-            throw new IncorrectDetailsException("Evidence title must contain some letters");
     }
 
     /**
@@ -132,13 +132,12 @@ public class EvidenceService {
      * 
      * @param evidence The evidence object to be saved
      * @throws IncorrectDetailsException If the evidence has incorrect
-     * @return message based on whether it is a new or an existing evidence being
-     *         saved
+     * @return message based on whether it is a new or an existing evidence being saved
      */
     public String saveEvidence(Evidence evidence) throws IncorrectDetailsException {
         try {
             String message = "";
-            if (evidence.getEvidenceId() == 0)
+            if (evidence.getEvidenceId() == 0 )
                 message = "Successfully Created " + evidence.getTitle();
             else
                 message = "Successfully Updated " + evidence.getTitle();

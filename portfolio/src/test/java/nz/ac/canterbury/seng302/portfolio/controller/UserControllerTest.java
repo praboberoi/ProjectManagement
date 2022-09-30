@@ -349,4 +349,24 @@ public class UserControllerTest {
                 .andExpect(model().attribute("user", user));
     }
 
+
+    /**
+     * Tests that if a user exists the correct information is returned when requested.
+     * @throws Exception An exception that can be thrown during mockMvc run.
+     */
+   @Test
+    void givenUserExists_whenInfoRequested_thenCorrectInfoReturned() throws Exception {
+       UserResponse userResponse =
+               createTestUserResponse(1).addRoles(UserRole.STUDENT).setUsername("Test").setFirstName("Test").setLastName("Test").setNickname("Test").build();
+       when(userAccountClientService.getUser(1)).thenReturn(userResponse);
+       User user = new User(userResponse);
+       List<UserRole> roleList = Arrays.asList(UserRole.STUDENT);
+       when(userAccountClientService.getUser(null)).thenReturn(userResponse);
+      this.mockMvc
+              .perform(get("/users/1/info"))
+              .andExpect(status().isOk())
+              .andExpect(model().attribute("roleList", roleList))
+              .andExpect(model().attribute("user", user))
+              .andExpect(model().attribute("currentUser", userResponse));
+   }
 }

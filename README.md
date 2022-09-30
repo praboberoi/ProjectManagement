@@ -1,87 +1,28 @@
-# Team300 Bolt Development's README
-Endpoints implemented <br />
+# LENSfolio - by Bolt Development
 
-- "/login" GET - Returns the login page.
-- "/login" POST – Authenticates the provided username and password of the user. If this is correct, a token is provided as a cookie and the user is sent to their dashboard. <br/>
+LENSfolio is an application to manage 
+LENSfolio manages projects, events, deadlines and documentation in one place. It is a compact web application compatible on all devices, ideal for  students and teachers to manage projects in a learning environment. 
 
+**Key Features:**
+- Teachers and Course Administrators have the ability to set up projects, add events, deadlines and milestones.
+- Customised groups can be created with members added. 
+- Groups can connect their GitLab repository to follow its activity within LENSfolio. 
+- Students can add evidence linked to a project. 
+- A list of users can be viewed, as well as other users evidence pages.
 
-- "/account" GET – Returns an account page with the user’s information.
-- "/editAccount" GET - Populates the edit page with a user's details. 
-- "/editAccount" POST – Modifies the user’s information to match those provided.<br/>
+## Contributors
 
+- SENG302 teaching team
+- Saskia van der Peet
+- Jack McCorkindale
+- Prableen Oberoi
+- Sonia Ra
+- Yaoce Yang
+- James Claridge
+- Rory Holmes
 
-- "/dashboard" GET – Returns the dashboard page with the projects the user is enrolled in.
-- "/dashboard/newProject" GET – Returns a page with a form used to create a new project.
-- "dashboard/saveProject" POST – Saves or creates a new project with the provided details.<br/>
-
-
-- "dashboard/editProject/{projectId}" GET – Returns a form to modify a projects information.
-- "dashboard/deleteProject/{projectId}" POST - Deletes the project with the specified id from the database.<br/>
-
-
-- "/register" GET – Returns the registration page.
-- "/register" POST – Creates a new user with the provided information. <br/>
-
-
-- "/project/{projectId}" GET – Returns the project page with the projects information.
-- "/project/{projectId}/sprint" POST - Saves or creates a new sprint with the provided details.
-- "/project/{projectId}/editSprint/{sprintId}" GET – Returns a form to modify a sprints information.
-- "/project/{projectId}/deleteSprint/{sprintId}" GET - Deletes the sprint with the specified id from the database.
-- "/project/{projectId}/getAllSprints" GET - Retrieves all the sprints for a specific project.
-- "/project/{projectId}/verifySprint" POST - Verifies the sprint details from user input.
-
-
-- "/sprint/{sprintId}/editSprint" 
-- "/verifyProject/{projectId}" POST - Validates the projects details from user input.
-- "/error" GET - Returns the Error page.
-
-
-- "/users" GET - Get the list of users page.
-- "/usersList" GET - Get the current table page of users. 
-- "/usersList/removeRole" DELETE - Remove the selected role from a user.
-- "/user/{userId}/addRole" POST - Add the selected role to a user.
-- "/groups" GET - Get the groups page.
-- "/groups/list" GET - Get the list of groups.
-- "/groups/{groupId}" DELETE - Delete the selected group but not the members within the group.
-- "/groups/{groupId}" GET - Get the details of the selected group.
-- "/groups/unassigned" GET - Get the members and details of the group of users with no assigned group.
-- "/groups/teachers" GET - Get the members and details of the group of users with a Teacher role.
-- "/groups" POST - Create a new group.
-- "/groups/{groupId}/removeMembers" POST - Remove selected members from a group but not as users of LENSFolio.
-- "/groups/{groupId}/addMembers" POST - Add selected members to a group.
-- "/groups/{groupId}/addMembers" POST - Add selected members to a group.
-
-- "/project/{projectId}/deadlines" GET - Get all the deadlines related to the specified project.
-- "/project/{projectId}/saveDeadline" POST - Save the deadline's new or updated details.
-- "/{projectId}/deleteDeadline/{deadlineId}" DELETE - Delete te specified deadline.
-
-- "/project/{projectId}/events" GET - Get all the events related to the specified project.
-- "/project/{projectId}/saveEvent" POST - Save the event's new or updated details.
-- "project/{projectId}/event/{eventId}/delete" DELETE - Delete the specified deadline.
-
-
-- "evidence/{userId}" GET- Get all the evidence for a specific user.
-- "/evidence/{userId}/{evidenceId}" GET - Get a user's specific piece of evidence.
-- "/evidence/{userId}/saveEvidence" POST - Save the updated/new details of a pieve of evidence.
-
-- "/repo/{groupId}" GET - Get the repository for the specified group.
-- "/repo/{groupId}/settings" GET - Get the setting components of a group's repository.
-- "/repo/{groupId}/save" POST - Save the group's repository with the provided information.
-- 
-
-- "deadline/edit" Message Mapping - Websocket End Point for editing Deadline.
-- "event/edit" Message Mapping - Websocket End Point for editing Event.
-
-
-Basic project template using `gradle`, `Spring Boot`, `Thymeleaf` and `Gitlab CI`.
-
-## Basic Project Structure
-
-- `systemd/` - This folder includes the systemd service files that will be present on the VM, these can be safely ignored.
-- `runner/` - These are the bash scripts used by the VM to execute the application.
-- `shared/` - Contains (initially) some `.proto` contracts that are used to generate Java classes and stubs that the following modules will import and build on.
-- `identityprovider/` - The Identity Provider (IdP) is built with Spring Boot, and uses gRPC to communicate with other modules. The IdP is where we will store user information (such as usernames, passwords, names, ids, etc.).
-- `portfolio/` - The Portfolio module is another fully fledged Java application running Spring Boot. It also uses gRPC to communicate with other modules.
+## License
+Apache 2.0
 
 ## How to run
 
@@ -168,19 +109,168 @@ By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 |Team 700|Cows Cows Cows|
 |Team 800|The Spartans|
 
-## Contributors
 
-- SENG302 teaching team
-- Saskia van der Peet
-- Jack McCorkindale
-- Prableen Oberoi
-- Sonia Ra
-- Yaoce Yang
-- James Claridge
-- Rory Holmes
+Basic project template using `gradle`, `Spring Boot`, `Thymeleaf` and `Gitlab CI`.
 
-## License
-Apache 2.0
+## Basic Project Structure
+
+- `systemd/` - This folder includes the systemd service files that will be present on the VM, these can be safely ignored.
+- `runner/` - These are the bash scripts used by the VM to execute the application.
+- `shared/` - Contains (initially) some `.proto` contracts that are used to generate Java classes and stubs that the following modules will import and build on.
+- `identityprovider/` - The Identity Provider (IdP) is built with Spring Boot, and uses gRPC to communicate with other modules. The IdP is where we will store user information (such as usernames, passwords, names, ids, etc.).
+- `portfolio/` - The Portfolio module is another fully fledged Java application running Spring Boot. It also uses gRPC to communicate with other modules.
+
+
+## Testing
+The application comes with 2 types of testing. Unit testing using junit and acceptance testing using cypress.
+
+### Unit Testing
+Running the unit tests is very similar to running the application itself. Starting from the project root run the following commands for IDP:
+
+On Linux:
+```
+cd identityprovider
+./gradlew test
+```
+
+On Windows:
+```
+cd identityprovider
+gradlew test
+```
+
+And on the Portfolio module:
+
+On Linux:
+```
+cd portfolio
+./gradlew test
+```
+
+On Windows:
+```
+cd portfolio
+gradlew test
+```
+
+### Acceptance Testing
+We are using Cypress for our acceptance testing. Please find the steps for installing and running this software below. All commands should be run in the parent project directory. These require the application to be running.
+
+```
+npm install
+```
+This will install Cypress and its dependencies
+
+To run the feature files one at a time run:
+```
+npx cypress open
+```
+Click E2E Testing
+
+Select your browser
+Click on the feature file that you are testing to run all the relevant tests
+
+Alternativly, to run all the tests at once:
+```
+npx cypress run
+```
+
+Note: Between tests you will need to rerun the application to reset the database. You can also run the contents of the cypress-data.sql file on your selected database.
+
+## Endpoints implemented <br />
+
+### Login
+- "/login" GET - Returns the login page.
+- "/login" POST – Authenticates the provided username and password of the user. If this is correct, a token is provided as a cookie and the user is sent to their dashboard. <br/>
+
+### Register
+- "/register" GET – Returns the registration page.
+- "/register" POST – Creates a new user with the provided information. <br/>
+
+
+### Account
+- "/account" GET – Returns an account page with the user’s information.
+- "/account/roles" GET - Returns a list of roles the user has.
+- "/editAccount" GET - Populates the edit page with a user's details. 
+- "/editAccount" POST – Modifies the user’s information to match those provided.<br/>
+
+
+### Dashboard
+- "/dashboard" GET – Returns the dashboard page with the projects the user is enrolled in.
+
+
+### Project
+- "/project" GET - Returns the list of projects
+- "/project" POST - Saves project object with the provided details
+- "/verifyProject/{projectId}" POST - Validates the projects details from user input.
+- "/project/{projectId}" GET – Returns the project page with the projects' information.
+- "/project/{projectId}" DELETE - Delete the specified project.
+
+
+### Sprint
+- "/project/{projectId}/sprint" POST - Saves or creates a new sprint with the provided details.
+- "/project/{projectId}/newSprint" GET - Returns new page for creating a sprint.
+- "/sprint/{sprintId}/editSprint" POST - Saves a sprint's start and end date with the provided dates.
+- "/project/{projectId}/editSprint/{sprintId}" GET – Returns a form to modify a sprints' information.
+- "/project/{projectId}/deleteSprint/{sprintId}" GET - Deletes the sprint with the specified id from the database.
+- "/project/{projectId}/getAllSprints" GET - Retrieves all the sprints for a specific project.
+- "/project/{projectId}/verifySprint" POST - Verifies the sprint details from user input.
+- "/project/{projectId}/sprint/{sprintId}/accordion" - GET - Returns the sprint with the specified project Id.
+- "/error" GET - Returns the Error page.
+
+### Users
+- "/users" GET - Get the list of users page.
+- "/usersList" GET - Get the current table page of users. 
+- "/usersList/removeRole" DELETE - Remove the selected role from a user.
+- "/user/{userId}/addRole" POST - Add the selected role to a user.
+- 
+
+### Groups
+- "/groups" GET - Get the groups page.
+- "/groups/list" GET - Get the list of groups.
+- "/groups/{groupId}" DELETE - Delete the selected group but not the members within the group.
+- "/groups/{groupId}" GET - Get the details of the selected group.
+- "/groups/unassigned" GET - Get the members and details of the group of users with no assigned group.
+- "/groups/teachers" GET - Get the members and details of the group of users with a Teacher role.
+- "/groups" POST - Create a new group.
+- "/groups/{groupId}/removeMembers" POST - Remove selected members from a group but not as users of LENSFolio.
+- "/groups/{groupId}/addMembers" POST - Add selected members to a group.
+- "/groups/{groupId}/addMembers" POST - Add selected members to a group.
+- "/group/user/{userId}" GET - Gets the fragment for a user row in the group settings page.
+
+### Events
+- "/project/{projectId}/events" GET - Get all the events related to the specified project.
+- "/project/{projectId}/saveEvent" POST - Save the event's new or updated details.
+- "project/{projectId}/event/{eventId}/delete" DELETE - Delete the specified deadline.
+- "event/edit" Message Mapping - Websocket End Point for editing Event.
+
+### Deadlines
+- "/project/{projectId}/deadlines" GET - Get all the deadlines related to the specified project.
+- "/project/{projectId}/saveDeadline" POST - Save the deadline's new or updated details.
+- "/{projectId}/deleteDeadline/{deadlineId}" DELETE - Delete te specified deadline.
+- "deadline/edit" Message Mapping - Websocket End Point for editing Deadline.
+
+### Milestones
+- "/project/{projectId}/milestones" GET - Get all the milestones related to the specified project.
+- "/project/{projectId}/milestone" POST - Save the milestone's new or updated details.
+- "/project/{projectId}/milestone/{milestoneId}/delete" DELETE - Delete the specified milestone.
+- "/milestone/edit" - Message Mapping - Websocket End Point for editing Milestone
+
+### Evidence
+- "evidence/{userId}" GET- Get all the evidence for a specific user.
+- "/evidence/{userId}/{evidenceId}" GET - Get a user's specific piece of evidence.
+- "/evidence/{userId}/getNewEvidence" GET - Gets a user's newly created evidence.
+- "/evidence/{userId}/saveEvidence" POST - Save the updated/new details of a piece of evidence.
+- "/evidence/{userId}/{evidenceId}/editEvidence" GET - Updates the evidence with the specified details.
+- "/evidence/{userId}/{evidenceId}/deleteEvidence" DELETE - Delete the specified evidence.
+- "/evidence/{userId}/getEvidenceList" GET - Gets the evidence list of the user with the given user ID.
+- "evidence/edit" Message Mapping - Websocket End Point for editing Evidence.
+
+### Repo
+- "/repo/{groupId}" GET - Get the repository for the specified group.
+- "/repo/{groupId}/settings" GET - Get the setting components of a group's repository.
+- "/repo/{groupId}/save" POST - Save the group's repository with the provided information.
+
 
 ## Dependencies
 ### Shared
@@ -208,7 +298,7 @@ Apache 2.0
 - `io.cucumber:cucumber-java:6.10.4`
 - `io.cucumber:cucumber-junit:6.10.4`
 - `junit:junit:4.13.1`
-- `org.springframework', name: 'spring-websocket', version: '5.3.22'`
+- `group: 'org.springframework', name: 'spring-websocket', version: '5.3.22'`
 - `group: 'org.springframework', name: 'spring-messaging', version: '5.3.22'`
 
 ### Identity Provider
@@ -230,209 +320,7 @@ Apache 2.0
 - `io.cucumber:cucumber-java:6.10.4`
 - `io.cucumber:cucumber-junit:6.10.4`
 
-## StompJS License
-
-                                 Apache License
-                           Version 2.0, January 2004
-                        http://www.apache.org/licenses/
-
-   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
-
-   1. Definitions.
-
-      "License" shall mean the terms and conditions for use, reproduction,
-      and distribution as defined by Sections 1 through 9 of this document.
-
-      "Licensor" shall mean the copyright owner or entity authorized by
-      the copyright owner that is granting the License.
-
-      "Legal Entity" shall mean the union of the acting entity and all
-      other entities that control, are controlled by, or are under common
-      control with that entity. For the purposes of this definition,
-      "control" means (i) the power, direct or indirect, to cause the
-      direction or management of such entity, whether by contract or
-      otherwise, or (ii) ownership of fifty percent (50%) or more of the
-      outstanding shares, or (iii) beneficial ownership of such entity.
-
-      "You" (or "Your") shall mean an individual or Legal Entity
-      exercising permissions granted by this License.
-
-      "Source" form shall mean the preferred form for making modifications,
-      including but not limited to software source code, documentation
-      source, and configuration files.
-
-      "Object" form shall mean any form resulting from mechanical
-      transformation or translation of a Source form, including but
-      not limited to compiled object code, generated documentation,
-      and conversions to other media types.
-
-      "Work" shall mean the work of authorship, whether in Source or
-      Object form, made available under the License, as indicated by a
-      copyright notice that is included in or attached to the work
-      (an example is provided in the Appendix below).
-
-      "Derivative Works" shall mean any work, whether in Source or Object
-      form, that is based on (or derived from) the Work and for which the
-      editorial revisions, annotations, elaborations, or other modifications
-      represent, as a whole, an original work of authorship. For the purposes
-      of this License, Derivative Works shall not include works that remain
-      separable from, or merely link (or bind by name) to the interfaces of,
-      the Work and Derivative Works thereof.
-
-      "Contribution" shall mean any work of authorship, including
-      the original version of the Work and any modifications or additions
-      to that Work or Derivative Works thereof, that is intentionally
-      submitted to Licensor for inclusion in the Work by the copyright owner
-      or by an individual or Legal Entity authorized to submit on behalf of
-      the copyright owner. For the purposes of this definition, "submitted"
-      means any form of electronic, verbal, or written communication sent
-      to the Licensor or its representatives, including but not limited to
-      communication on electronic mailing lists, source code control systems,
-      and issue tracking systems that are managed by, or on behalf of, the
-      Licensor for the purpose of discussing and improving the Work, but
-      excluding communication that is conspicuously marked or otherwise
-      designated in writing by the copyright owner as "Not a Contribution."
-
-      "Contributor" shall mean Licensor and any individual or Legal Entity
-      on behalf of whom a Contribution has been received by Licensor and
-      subsequently incorporated within the Work.
-
-   2. Grant of Copyright License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      copyright license to reproduce, prepare Derivative Works of,
-      publicly display, publicly perform, sublicense, and distribute the
-      Work and such Derivative Works in Source or Object form.
-
-   3. Grant of Patent License. Subject to the terms and conditions of
-      this License, each Contributor hereby grants to You a perpetual,
-      worldwide, non-exclusive, no-charge, royalty-free, irrevocable
-      (except as stated in this section) patent license to make, have made,
-      use, offer to sell, sell, import, and otherwise transfer the Work,
-      where such license applies only to those patent claims licensable
-      by such Contributor that are necessarily infringed by their
-      Contribution(s) alone or by combination of their Contribution(s)
-      with the Work to which such Contribution(s) was submitted. If You
-      institute patent litigation against any entity (including a
-      cross-claim or counterclaim in a lawsuit) alleging that the Work
-      or a Contribution incorporated within the Work constitutes direct
-      or contributory patent infringement, then any patent licenses
-      granted to You under this License for that Work shall terminate
-      as of the date such litigation is filed.
-
-   4. Redistribution. You may reproduce and distribute copies of the
-      Work or Derivative Works thereof in any medium, with or without
-      modifications, and in Source or Object form, provided that You
-      meet the following conditions:
-
-      (a) You must give any other recipients of the Work or
-          Derivative Works a copy of this License; and
-
-      (b) You must cause any modified files to carry prominent notices
-          stating that You changed the files; and
-
-      (c) You must retain, in the Source form of any Derivative Works
-          that You distribute, all copyright, patent, trademark, and
-          attribution notices from the Source form of the Work,
-          excluding those notices that do not pertain to any part of
-          the Derivative Works; and
-
-      (d) If the Work includes a "NOTICE" text file as part of its
-          distribution, then any Derivative Works that You distribute must
-          include a readable copy of the attribution notices contained
-          within such NOTICE file, excluding those notices that do not
-          pertain to any part of the Derivative Works, in at least one
-          of the following places: within a NOTICE text file distributed
-          as part of the Derivative Works; within the Source form or
-          documentation, if provided along with the Derivative Works; or,
-          within a display generated by the Derivative Works, if and
-          wherever such third-party notices normally appear. The contents
-          of the NOTICE file are for informational purposes only and
-          do not modify the License. You may add Your own attribution
-          notices within Derivative Works that You distribute, alongside
-          or as an addendum to the NOTICE text from the Work, provided
-          that such additional attribution notices cannot be construed
-          as modifying the License.
-
-      You may add Your own copyright statement to Your modifications and
-      may provide additional or different license terms and conditions
-      for use, reproduction, or distribution of Your modifications, or
-      for any such Derivative Works as a whole, provided Your use,
-      reproduction, and distribution of the Work otherwise complies with
-      the conditions stated in this License.
-
-   5. Submission of Contributions. Unless You explicitly state otherwise,
-      any Contribution intentionally submitted for inclusion in the Work
-      by You to the Licensor shall be under the terms and conditions of
-      this License, without any additional terms or conditions.
-      Notwithstanding the above, nothing herein shall supersede or modify
-      the terms of any separate license agreement you may have executed
-      with Licensor regarding such Contributions.
-
-   6. Trademarks. This License does not grant permission to use the trade
-      names, trademarks, service marks, or product names of the Licensor,
-      except as required for reasonable and customary use in describing the
-      origin of the Work and reproducing the content of the NOTICE file.
-
-   7. Disclaimer of Warranty. Unless required by applicable law or
-      agreed to in writing, Licensor provides the Work (and each
-      Contributor provides its Contributions) on an "AS IS" BASIS,
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or
-      implied, including, without limitation, any warranties or conditions
-      of TITLE, NON-INFRINGEMENT, MERCHANTABILITY, or FITNESS FOR A
-      PARTICULAR PURPOSE. You are solely responsible for determining the
-      appropriateness of using or redistributing the Work and assume any
-      risks associated with Your exercise of permissions under this License.
-
-   8. Limitation of Liability. In no event and under no legal theory,
-      whether in tort (including negligence), contract, or otherwise,
-      unless required by applicable law (such as deliberate and grossly
-      negligent acts) or agreed to in writing, shall any Contributor be
-      liable to You for damages, including any direct, indirect, special,
-      incidental, or consequential damages of any character arising as a
-      result of this License or out of the use or inability to use the
-      Work (including but not limited to damages for loss of goodwill,
-      work stoppage, computer failure or malfunction, or any and all
-      other commercial damages or losses), even if such Contributor
-      has been advised of the possibility of such damages.
-
-   9. Accepting Warranty or Additional Liability. While redistributing
-      the Work or Derivative Works thereof, You may choose to offer,
-      and charge a fee for, acceptance of support, warranty, indemnity,
-      or other liability obligations and/or rights consistent with this
-      License. However, in accepting such obligations, You may act only
-      on Your own behalf and on Your sole responsibility, not on behalf
-      of any other Contributor, and only if You agree to indemnify,
-      defend, and hold each Contributor harmless for any liability
-      incurred by, or claims asserted against, such Contributor by reason
-      of your accepting any such warranty or additional liability.
-
-   END OF TERMS AND CONDITIONS
-
-   APPENDIX: How to apply the Apache License to your work.
-
-      To apply the Apache License to your work, attach the following
-      boilerplate notice, with the fields enclosed by brackets "[]"
-      replaced with your own identifying information. (Don't include
-      the brackets!)  The text should be enclosed in the appropriate
-      comment syntax for the file format. We also recommend that a
-      file or class name and description of purpose be included on the
-      same "printed page" as the copyright notice for easier
-      identification within third-party archives.
-
-   Copyright 2018-2020 Deepak Kumar <deepak@kreatio.com>
-
-   Licensed under the Apache License, Version 2.0 (the "License");
-   you may not use this file except in compliance with the License.
-   You may obtain a copy of the License at
-
-       http://www.apache.org/licenses/LICENSE-2.0
-
-   Unless required by applicable law or agreed to in writing, software
-   distributed under the License is distributed on an "AS IS" BASIS,
-   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-   See the License for the specific language governing permissions and
-   limitations under the License.
+StompJS License: Apache 2.0 License
 
 ## References
 

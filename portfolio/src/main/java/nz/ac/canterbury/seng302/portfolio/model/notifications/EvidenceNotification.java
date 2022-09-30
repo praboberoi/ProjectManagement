@@ -1,31 +1,20 @@
 package nz.ac.canterbury.seng302.portfolio.model.notifications;
 
+import java.util.Objects;
 
 /**
  * Notification class for Evidence. Encapsulates the required data for exchanging data between front and back end
  */
-public class EvidenceNotification {
+public class EvidenceNotification extends Notification{
 
     private int evidenceId;
 
-    private String action;
-
-    private int firstEvidenceId;
-
-    private String userUpdating;
-    
     private int userId;
 
-    private String sessionId;
-
-
-    public EvidenceNotification(int evidenceId, String action, int firstEvidenceId, String userUpdating, int userId, String sessionId) {
+    public EvidenceNotification(int evidenceId, int userId, String username, boolean active, String sessionId) {
+        super(username, active, sessionId);
         this.evidenceId = evidenceId;
-        this.action = action;
-        this.firstEvidenceId = firstEvidenceId;
-        this.userUpdating = userUpdating;
         this.userId = userId;
-        this.sessionId = sessionId;
     }
 
     public int getEvidenceId() {
@@ -36,40 +25,8 @@ public class EvidenceNotification {
         this.evidenceId = evidenceId;
     }
 
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(String action) {
-        this.action = action;
-    }
-
-    public int getFirstEvidenceId() {
-        return firstEvidenceId;
-    }
-
     public int getUserId() {
         return userId;
-    }
-
-    public String getUserUpdating() {
-        return userUpdating;
-    }
-
-    public String getSessionId() {
-        return sessionId;
-    }
-
-    public void setFirstEvidenceId(int firstEvidenceId) {
-        this.firstEvidenceId = firstEvidenceId;
-    }
-
-    public void setSessionId(String sessionId) {
-        this.sessionId = sessionId;
-    }
-
-    public void setUserUpdating(String userUpdating) {
-        this.userUpdating = userUpdating;
     }
 
     public void setUserId(int userId) {
@@ -77,14 +34,18 @@ public class EvidenceNotification {
     }
 
     @Override
-    public String toString() {
-        return "EvidenceNotification{" +
-                "evidenceId=" + evidenceId +
-                ", action='" + action + '\'' +
-                ", firstEvidenceId=" + firstEvidenceId +
-                ", userUpdating='" + userUpdating + '\'' +
-                ", userId=" + userId +
-                ", sessionId='" + sessionId + '\'' +
-                '}';
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof EvidenceNotification)) return false;
+        if (! super.equals(o)) return false;
+        EvidenceNotification project = (EvidenceNotification) o;
+        return (getEvidenceId() == project.getEvidenceId());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = super.hashCode();
+        hash = 89 * hash + Objects.hashCode(evidenceId);
+        return hash;
     }
 }

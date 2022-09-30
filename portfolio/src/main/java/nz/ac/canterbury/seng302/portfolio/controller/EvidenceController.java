@@ -1,6 +1,5 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.User;
@@ -18,6 +17,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.Header;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -26,13 +27,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
 import java.util.*;
 
-import static org.springframework.http.HttpStatus. *;
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * Controller for the evidence page
@@ -49,7 +48,8 @@ public class EvidenceController {
     @Autowired
     private ProjectService projectService;
 
-    @Autowired private UserAccountClientService userAccountClientService;
+    @Autowired 
+    private UserAccountClientService userAccountClientService;
 
     @Autowired
     private SimpMessagingTemplate template;
@@ -68,74 +68,53 @@ public class EvidenceController {
 
     private static final String MESSAGE_DANGER = "messageDanger";
 
-    private static final String MESSAGE_SUCCESS = "messageSuccess";
-
-    public EvidenceController(EvidenceService evidenceService) {
-        this.evidenceService = evidenceService;
-    }
-
-    /**
-     * Adds common model elements used by all controller methods.
-     */
-    @ModelAttribute
-    public void addAttributes(Model model) {
-        model.addAttribute("apiPrefix", apiPrefix);
-    }
+    private static final String IS_CURRENT_USER = "isCurrentUserEvidence";
 
     /**
      * Updates the model with the correct list of evidence
      * @param userId UserId containing the desired evidence
      * @return Page fragment containing events
      */
-    @GetMapping(path="/evidence/{userId}")
+    @GetMapping(path="user/{userId}/evidence")
     public String getEvidencePage(
             @AuthenticationPrincipal AuthState principal,
             @PathVariable("userId") int userId,
             Model model) {
-        User user = new User(userAccountClientService.getUser(principal));
-        User userName = new User(userAccountClientService.getUser(userId));
+        User user = new User(userAccountClientService.getUser(userId));
         List<Project> listProjects = projectService.getAllProjects();
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
         Evidence newEvidence = evidenceService.getNewEvidence(userId);
+        
         model.addAttribute(EVIDENCE, newEvidence);
         model.addAttribute(LIST_EVIDENCE, listEvidence);
         model.addAttribute(LIST_PROJECTS, listProjects);
-        model.addAttribute("evidence", newEvidence);
-        model.addAttribute("listEvidence", listEvidence);
-        model.addAttribute("listProjects", listProjects);
-        model.addAttribute("project", listProjects.get(0));
-        model.addAttribute("isCurrentUserEvidence", user.getUserId()==userId);
-        model.addAttribute("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
-        model.addAttribute("userName", PrincipalUtils.getUserName(principal));
+        model.addAttribute(EVIDENCE, newEvidence);
+        model.addAttribute(LIST_EVIDENCE, listEvidence);
+        model.addAttribute(LIST_PROJECTS, listProjects);
+        model.addAttribute(IS_CURRENT_USER, PrincipalUtils.getUserId(principal)==userId);
         model.addAttribute(NOTIFICATIONS, editing);
-        model.addAttribute("userFirstName", userName.getFirstName());
+        model.addAttribute("userFirstName", user.getFirstName());
         if (!listEvidence.isEmpty()) {
             model.addAttribute("selectedEvidence", listEvidence.get(0));
         }
-        return "evidence";
+        return EVIDENCE;
     }
 
 
     /**
      * Updates the model with the correct list of evidence and a selected evidence
-     * @param userId User ID containing the evidence
      * @param evidenceId ID of the selected evidence object
      * @return The selected evidence fragment
      */
-    @GetMapping(path="/evidence/{userId}/{evidenceId}")
+    @GetMapping(path="/evidence/{evidenceId}")
     public ModelAndView selectedEvidence(
-            @PathVariable int userId,
             @PathVariable int evidenceId,
             @AuthenticationPrincipal AuthState principal) {
         ModelAndView mv = new ModelAndView("evidenceFragments::selectedEvidence");
-        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
-        mv.addObject(LIST_EVIDENCE, listEvidence);
         try {
-            User user = new User(userAccountClientService.getUser(principal));
-            Evidence selectedEvidence = evidenceService.getEvidence(evidenceId);
-            mv.addObject("selectedEvidence", selectedEvidence);
-            mv.addObject("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
-            mv.addObject("isCurrentUserEvidence", user.getUserId()==userId);
+            Evidence evidence = evidenceService.getEvidence(evidenceId);
+            mv.addObject("selectedEvidence", evidence);
+            mv.addObject(IS_CURRENT_USER, PrincipalUtils.getUserId(principal) == evidence.getOwnerId());
             mv.addObject(NOTIFICATIONS, editing);
         } catch (IncorrectDetailsException e) {
             mv = new ModelAndView("evidence::serverMessages", NOT_FOUND);
@@ -149,30 +128,23 @@ public class EvidenceController {
      * @param ra Redirect Attribute frontend message object
      * @return link of html page to display
      */
-    @PostMapping(path="/evidence/{userId}/saveEvidence")
-    public String saveEvidence(
+    @PostMapping(path="/evidence")
+    public ResponseEntity<String> saveEvidence(
             @ModelAttribute EvidenceDTO evidenceDTO,
-            @PathVariable("userId") int userId,
-            RedirectAttributes ra,
             @AuthenticationPrincipal AuthState principal,
             @Header("simpSessionId") String sessionId) {
         Evidence evidence = new Evidence(evidenceDTO);
+        if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal) && PrincipalUtils.getUserId(principal) != evidence.getOwnerId()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You may only create evidence on your own evidence page");
+        }
         try {
-            int editingUser = PrincipalUtils.getUserId(principal);
-            if (editingUser != userId) {
-                throw new IncorrectDetailsException("You may only create evidence on your own evidence page");
-            }
-            evidence.setOwnerId(userId);
             evidenceService.verifyEvidence(evidence);
             String message = evidenceService.saveEvidence(evidence);
-            EvidenceNotification notification = new EvidenceNotification(evidence.getEvidenceId(), "saved",
-                    0, PrincipalUtils.getUserName(principal), userId, sessionId);
-            notifyEvidence(notification);
-            ra.addFlashAttribute(MESSAGE_SUCCESS, message);
+            notifyEvidence(evidence.getOwnerId(), evidence.getEvidenceId(), "edited");
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch(IncorrectDetailsException e) {
-            ra.addFlashAttribute(MESSAGE_DANGER, e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
-        return "redirect:/evidence/{userId}";
     }
 
     /**
@@ -180,11 +152,10 @@ public class EvidenceController {
      * @param evidenceId ID of the selected evidence
      * @return evidence form fragment
      */
-    @GetMapping(path="/evidence/{userId}/{evidenceId}/editEvidence")
+    @GetMapping(path="/evidence/{evidenceId}/editEvidence")
     public ModelAndView editEvidence(
-            @PathVariable int evidenceId,
-            @PathVariable int userId) {
-        ModelAndView mv = new ModelAndView("evidence::evidenceForm");
+            @PathVariable int evidenceId) {
+        ModelAndView mv = new ModelAndView("evidenceFragments::evidenceForm");
         try {
             Evidence evidence = evidenceService.getEvidence(evidenceId);
             List<Project> listProjects = projectService.getAllProjects();
@@ -206,15 +177,15 @@ public class EvidenceController {
      * @param userId of user to create a new Evidence
      * @return evidence form fragment
      */
-    @GetMapping(path="/evidence/{userId}/getNewEvidence")
-    public ModelAndView createEvidence(
-            @PathVariable int userId) {
-        ModelAndView mv = new ModelAndView("evidence::evidenceForm");
-        Evidence evidence = evidenceService.getNewEvidence(userId);
+    @GetMapping(path="/evidence/getNewEvidence")
+    public ModelAndView createEvidence(@AuthenticationPrincipal AuthState principal) {
+        ModelAndView mv = new ModelAndView("evidenceFragments::evidenceForm");
+        Evidence evidence = evidenceService.getNewEvidence(PrincipalUtils.getUserId(principal));
         List<Project> listProjects = projectService.getAllProjects();
+
         mv.addObject(EVIDENCE, evidence);
         mv.addObject(LIST_PROJECTS, listProjects);
-        mv.addObject("submissionImg", apiPrefix+"/icons/create-icon.svg");
+        mv.addObject("submissionImg", apiPrefix + "/icons/create-icon.svg");
         mv.addObject("submissionName", "Create");
         return mv;
     }
@@ -225,25 +196,26 @@ public class EvidenceController {
      * @param ra redirect attribute of for displaying the message
      * @return the link to the HTML page
      */
-    @PostMapping(path="/evidence/{userId}/{evidenceId}/deleteEvidence")
-    public String deleteEvidence(
+    @DeleteMapping(path="/evidence/{evidenceId}")
+    public ResponseEntity<String> deleteEvidence(
             @PathVariable int evidenceId,
-            @PathVariable int userId,
             @AuthenticationPrincipal AuthState principal,
-            @Header("simpSessionId") String sessionId,
-            RedirectAttributes ra) {
+            @Header("simpSessionId") String sessionId) {
         try {
-            String message = evidenceService.deleteEvidence(evidenceId);
-            ra.addFlashAttribute(MESSAGE_SUCCESS, message);
-            EvidenceNotification notification = new EvidenceNotification(evidenceId, "deleted",
-                    0, PrincipalUtils.getUserName(principal), userId, sessionId);
+            Evidence evidence = evidenceService.getEvidence(evidenceId);
+    
+            if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal) || evidence.getOwnerId() == PrincipalUtils.getUserId(principal))) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
+            }   
 
-            notifyEvidence(notification);
+            String message = evidenceService.deleteEvidence(evidenceId);
+
+            notifyEvidence(evidence.getOwnerId(), evidenceId, "deleted");
+            return ResponseEntity.status(HttpStatus.OK).body(message);
         } catch (IncorrectDetailsException e) {
-            ra.addFlashAttribute(MESSAGE_DANGER, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
 
-        return "redirect:/evidence/{userId}";
     }
 
     /**
@@ -251,17 +223,15 @@ public class EvidenceController {
      * @param userId the ID of user whose evidence list is requested
      * @return evidenceList fragment
      */
-    @GetMapping(path="/evidence/{userId}/getEvidenceList")
+    @GetMapping(path="user/{userId}/evidence/getEvidenceList")
     public ModelAndView getEvidenceList(
             @PathVariable int userId,
             @AuthenticationPrincipal AuthState principal) {
-        User user = new User(userAccountClientService.getUser(principal));
         ModelAndView mv = new ModelAndView("evidence::evidenceList");
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(userId);
+
         mv.addObject(LIST_EVIDENCE, listEvidence);
-        mv.addObject("adminOrTeacher", PrincipalUtils.checkUserIsTeacherOrAdmin(principal));
-        mv.addObject("isCurrentUserEvidence", user.getUserId()==userId);
-        mv.addObject("userName", PrincipalUtils.getUserName(principal));
+        mv.addObject(IS_CURRENT_USER, PrincipalUtils.getUserId(principal)==userId);
         mv.addObject(NOTIFICATIONS, editing);
         return mv;
     }
@@ -275,47 +245,52 @@ public class EvidenceController {
      */
     @MessageMapping("/evidence/edit")
     public void editing(EvidenceNotification notification, @AuthenticationPrincipal WebSocketPrincipal principal, @Header("simpSessionId") String sessionId) {
-        notification.setUserUpdating(principal.getName());
+        notification.setUsername(principal.getName());
         notification.setSessionId(sessionId);
-        notifyEvidence(notification);
-        if (notification.getAction().equals("editing"))
+        if (notification.isActive()) {
+            notifyEvidence(notification.getUserId(), notification.getEvidenceId(), "editing", notification.getUsername());
             editing.put(notification.getEvidenceId(), notification);
-        else
+        } else {
+            notifyEvidence(notification.getUserId(), notification.getEvidenceId(), "finished");
+            if (editing.get(notification.getEvidenceId()) != notification) {
+                logger.info("The is a duplicate edit on evidence {}", notification.getEvidenceId());
+            }
             editing.remove(notification.getEvidenceId());
-
-    }
-
-    /**
-     * Sends an update message to all clients connected to the websocket
-     * @param notification encapsulated data to be exchanged between front and back end
-     */
-    private void notifyEvidence(EvidenceNotification notification) {
-        List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(notification.getUserId());
-        int firstEvidenceId = listEvidence.isEmpty() ? 0 : listEvidence.get(0).getEvidenceId();
-        notification.setFirstEvidenceId(firstEvidenceId);
-        try {
-            template.convertAndSend("/element/evidence/" + notification.getUserId(), new ObjectMapper().writeValueAsString(notification));
-        } catch (JsonProcessingException e) {
-            logger.info("Unable to convert and send notification {}", notification);
         }
     }
 
     /**
-     * Detects when a websocket disconnects to remove them from the list of editors
+     * Sends an update message to all clients connected to the websocket
+     * @param projectId
+     * @param eventId
+     * @param action
+     */
+    private void notifyEvidence(int userId, int evidenceId, String action) {
+        template.convertAndSend("/element/evidence/" + userId, ("evidence " + evidenceId + " " + action));
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param projectId
+     * @param eventId
+     * @param action
+     */
+    private void notifyEvidence(int userId, int evidenceId, String action, String username) {
+        template.convertAndSend("/element/evidence/" + userId, ("evidence " + evidenceId + " " + action + " " + username));
+    }
+
+    /**
+     * Detects when a websocket disconnects to send remove them from the list of editors
      * @param event Websocket disconnect event
      */
     @EventListener
     public void onApplicationEvent(SessionDisconnectEvent event) {
         for (Map.Entry<Integer, EvidenceNotification> current : editing.entrySet()) {
-            EvidenceNotification currentNotification = current.getValue();
-            if (currentNotification.getSessionId().equals(event.getSessionId())) {
-                currentNotification.setAction("finished");
-                notifyEvidence(currentNotification);
+            EvidenceNotification notification = current.getValue();
+            if (notification.getSessionId().equals(event.getSessionId())) {
+                notifyEvidence(notification.getUserId(), notification.getEvidenceId(), "finished", notification.getUsername());
                 editing.remove(current.getKey());
             }
         }
-
     }
-
-
 }

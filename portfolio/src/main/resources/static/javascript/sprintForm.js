@@ -15,7 +15,6 @@ const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
 const projectStartDate = new Date(document.getElementById("projectStartDate").value);
 const projectEndDate = new Date(document.getElementById("projectEndDate").value);
-const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
 const sprintNameElement = document.getElementById('sprint-name');
 const sprintDescriptionElement = document.getElementById('sprint-description');
 

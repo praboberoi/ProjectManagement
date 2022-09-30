@@ -86,7 +86,7 @@ public class EventService {
     public Map<Integer, List<String>> getSprintLabelsForStartAndEndDates(List<Event> eventList) {
         HashMap<Integer, List<String>> eventDateMappingDictionary = new HashMap<>();
         for (Event event : eventList) {
-            List<String> sprintNames = new ArrayList<String>();
+            List<String> sprintNames = new ArrayList<>();
             Date startDate = new Date(event.getStartDate().getTime());
             Date endDate = new Date(event.getEndDate().getTime());
             Sprint start = sprintRepository.findByDateAndProject(event.getProject(), startDate);
@@ -94,12 +94,12 @@ public class EventService {
             if (start == null) {
                 sprintNames.add("(No Sprint)");
             } else {
-                sprintNames.add("(" + start.getSprintName() + ")");
+                sprintNames.add("(" + start.getSprintLabel() + ")");
             }
             if (end == null) {
                 sprintNames.add("(No Sprint)");
             } else {
-                sprintNames.add("(" + end.getSprintName() + ")");
+                sprintNames.add("(" + end.getSprintLabel() + ")");
             }
             eventDateMappingDictionary.put(event.getEventId(), sprintNames);
         }

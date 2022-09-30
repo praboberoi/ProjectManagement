@@ -4,23 +4,24 @@ Feature: U12. Deleting pieces of evidence
     Given I login as an admin
     And I navigate to "My Evidence" page
     And I Create a new Evidence with "Cypress Testing" as the title
-    When I select delete evidence
+    When I select delete evidence on "Cypress Testing"
     Then A prompt appears with "Cypress Testing" in the prompt
 
   Scenario: AC3. I can either accept the prompt or cancel it. Accepting it deletes that piece of evidence. (cancel)
     Given I login as an admin
     And I navigate to "My Evidence" page
     And Evidence with "Cypress Testing" as the title exists
-    When I select delete evidence
+    When I select delete evidence on "Cypress Testing"
     And A prompt appears with "Cypress Testing" in the prompt
     Then I select "Close" on the evidence deletion prompt
+    And The evidence delete prompt disappears
     And Evidence with "Cypress Testing" as the title still exists
 
   Scenario: AC3. I can either accept the prompt or cancel it. Accepting it deletes that piece of evidence. (delete)
     Given I login as an admin
     And I navigate to "My Evidence" page
     And Evidence with "Cypress Testing" as the title exists
-    When I select delete evidence
+    When I select delete evidence on "Cypress Testing"
     And A prompt appears with "Cypress Testing" in the prompt
     Then I select "Delete" on the evidence deletion prompt
     And The evidence delete prompt disappears
