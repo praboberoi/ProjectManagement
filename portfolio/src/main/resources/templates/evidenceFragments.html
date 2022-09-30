@@ -102,7 +102,7 @@
                             <input type="text" class="form-control required" id="evidence-title" name="title"
                                 th:field="*{title}" maxlength="50" oninput="checkEvidenceTitle()" required>
                             <div>
-                                <span id="evidenceCharCount" th:value="${charCount}">[[*{title.length}]] </span> / 50
+                                <span id="evidenceTitleCharCount" th:value="${charCount}">[[*{title.length}]] </span> / 50
                                 characters used.
                             </div>
                             <p id="evidenceTitleError" th:text="${evidenceTitleError}" class="error-msg"></p>

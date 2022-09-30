@@ -70,7 +70,6 @@ function checkEvidenceDate() {
  * @param modalTitle modal title based on the selection made
  */
 function updateEvidenceModalForm(httpRequest, modalTitle) {
-
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
             document.getElementById('evidenceForm').outerHTML = httpRequest.responseText;
@@ -105,8 +104,6 @@ function evidenceProjectChange() {
     let value = evidence_project.options[evidence_project.selectedIndex]
     evidenceDateElement.min = value.dataset.startdate;
     evidenceDateElement.max = value.dataset.enddate;
-    console.log("Min: " + evidenceDateElement.min)
-    console.log("Max: " + evidenceDateElement.max)
     checkEvidenceDate();
 }
 /**
@@ -141,18 +138,22 @@ function checkCreateButton() {
     evidenceCreateBtn.disabled = false;
 
     if (evidenceTitleError.innerText !== "") {
-        console.log("1")
         evidenceCreateBtn.disabled = true;
     } else if (evidenceDescriptionError.innerText !== "" || evidenceDescriptionStrip.length < 2) {
-        console.log("2")
-
         evidenceCreateBtn.disabled = true;
     } else if (evidenceDateErrorElement.innerText !== "") {
-        console.log("3")
-
         evidenceCreateBtn.disabled = true;
     }
 
+    const date = document.getElementById('evidence-date').value;
+    const description = document.getElementById('evidence-description').value.trim();
+    const title = document.getElementById('evidence-title').value.trim();
+    const projectId = document.getElementById('evidence-project').value;
+    
+    if (date.length === 0 || description.length === 0 || title.length === 0 || emojiRegx.test(title)  || emojiRegx.test(description) ||
+        (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing)) {
+            evidenceCreateBtn.disabled = true;
+    } 
 }
 
 /**
@@ -179,11 +180,6 @@ function createNewEvidence() {
  * @param evidenceDescription description of the selected evidence
  */
 function editEvidence(evidenceId) {
-    evidenceTitleEditing = document.getElementById('evidence-title').value
-    evidenceDateEditing = document.getElementById('evidence-date').value;
-    evidenceDescriptionEditing = document.getElementById('evidence-description').value;
-    evidenceProjectIdEditing = document.getElementById('evidence-project').value;
-
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `/evidence/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, "Update Evidence");
@@ -197,6 +193,11 @@ function editEvidence(evidenceId) {
  * Opens the modal
  */
 function openEvidenceModal() {
+    evidenceTitleEditing = document.getElementById('evidence-title').value
+    evidenceDateEditing = document.getElementById('evidence-date').value;
+    evidenceDescriptionEditing = document.getElementById('evidence-description').value;
+    evidenceProjectIdEditing = document.getElementById('evidence-project').value;
+    
     evidenceProjectChange();
     const modalElement = document.getElementById('evidenceFormModal');
     const modal = bootstrap.Modal.getOrCreateInstance(modalElement, {
@@ -227,24 +228,6 @@ function updateDeleteDetails(evidenceId, evidenceTitle) {
         deleteEvidence(evidenceId);
     }
 
-}
-
-/**
- * Updates the status of submission button based on the input values entered
- */
-function updateSubmissionButton() {
-    const date = document.getElementById('evidence-date').value;
-    const description = document.getElementById('evidence-description').value.trim();
-    const title = document.getElementById('evidence-title').value.trim();
-    const projectId = document.getElementById('evidence-project').value;
-
-    if (date.length === 0 || description.length === 0 || title.length === 0 || emojiRegx.test(title)  || emojiRegx.test(description) ||
-        (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing)) {
-
-        document.getElementById('evidenceFormSubmitButton').disabled = true
-    } else {
-        document.getElementById('evidenceFormSubmitButton').disabled = false
-    }
 }
 
 /**
