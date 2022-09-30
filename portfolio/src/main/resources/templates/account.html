@@ -16,6 +16,7 @@
 </head>
     <body>
     <header>
+        <input id="websocket-status" hidden>
         <div th:replace="fragments :: header"></div>
     </header>
     <div th:replace="fragments :: sidebar"></div>
@@ -26,9 +27,8 @@
                 <div class="page-title">
                     <h2 id="accountPage-font">Your LENSfolio Account</h2>
                 </div>
-                <div th:if="${messageSuccess}" class="alert alert-success text-center">
-                    [[${messageSuccess}]]
-                </div>
+                <div id="messageSuccess" class="alert alert-success text-center">[[${messageSuccess}]]</div>
+                <div id="messageDanger" class="alert alert-danger text-center">[[${messageDanger}]]</div>
             </div>
         </div>
         <div class="contentContainer">
@@ -41,7 +41,7 @@
                     <div class="container-fluid">
                         <div class="card-body">
                             <!-- badges -->
-                            <h6><span class="badge bg-success" th:text="${roles}"></span> member</h6>
+                            <div id="roleList"><h6><span class="badge bg-success" th:text="${roles}" id="roles"></span> member</h6></div>
                             <h6><span class="badge bg-secondary" th:text="${creationDate}"></span>
                                 <span th:text="${timePassed}"></span> since joined</h6>
                             <br>
@@ -111,5 +111,11 @@
         </div>
     </div>
 </div>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
+    <script th:src="@{{apiPrefix}/javascript/account.js(apiPrefix=${apiPrefix})}"></script>
+    <script th:inline="javascript">
+        const apiPrefix = [[${ apiPrefix }]];
+        const userId = [[${user.userId}]];
+    </script>
 </body>
 </html>

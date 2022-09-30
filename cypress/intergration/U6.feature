@@ -25,7 +25,7 @@ Feature: U6. Group settings and single repository settings
         Given I login as an admin
         And I navigate directly to "group/1285322"
         When I toggle the recent actions component
-        Then The recent actions component is not visible
+        Then The recent actions component is not visible    
 
     Scenario: Misc. The user is able to toggle the recent actions tab.
         Given I login as an admin
@@ -45,6 +45,13 @@ Feature: U6. Group settings and single repository settings
         And I navigate to 'Groups'
         When I call edit group 'Cypress ws' to 'Cypress wse'
         Then "Cypress wse" exists
+
+    Scenario: AC3. Group members can edit (update title) and save the long name; the modification is populated across the application
+        Given I login as an admin
+        And I navigate to 'Groups'
+        And I navigate to group 'Cypress title update'
+        When I call edit current group to 'Cypress title updated'
+        Then "Cypress title updated" exists
 
     Scenario: AC3. Group members can edit (update) and save the long name; the modification is populated across the application
         Given I login as an admin

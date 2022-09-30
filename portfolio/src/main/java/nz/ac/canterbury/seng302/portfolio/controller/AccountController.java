@@ -2,12 +2,14 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.User;
 import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
+import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import nz.ac.canterbury.seng302.shared.util.ValidationError;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -34,14 +37,19 @@ import java.util.List;
 @Controller
 public class AccountController {
 
-    private final UserAccountClientService userAccountClientService;
-    @Value("${apiPrefix}") private String apiPrefix;
+    private UserAccountClientService userAccountClientService;
+
+    @Value("${apiPrefix}")
+    private String apiPrefix;
+
+    private SimpMessagingTemplate template;
 
     private static final String EDIT_ACCOUNT_PAGE = "editAccount";
     private static final String ACCOUNT_PAGE = "account";
 
-    public AccountController (UserAccountClientService userAccountClientService) {
+    public AccountController (UserAccountClientService userAccountClientService, SimpMessagingTemplate template) {
         this.userAccountClientService = userAccountClientService;
+        this.template = template;
     }
 
     /**
@@ -57,6 +65,27 @@ public class AccountController {
     ) {
         this.addAttributesToModel(principal, model);
         return ACCOUNT_PAGE;
+    }
+
+    /**
+     * This method returns a html fragment containing the list of roles a user has
+     * @param principal The authentication information containing user info
+     * @return A html fragment containing the roles
+     */
+    @GetMapping(path="/account/roles")
+    public ModelAndView roles(@AuthenticationPrincipal AuthState principal) {
+        UserResponse idpResponse = userAccountClientService.getUser(principal);
+
+        User user = new User(idpResponse);
+
+        StringBuilder roles = new StringBuilder();
+
+        ModelAndView mv = new ModelAndView("accountFragments::rolesList");
+
+        user.getRoles().forEach(role -> roles.append(formatRoleName(role.toString() + ", ")));
+        mv.addObject("roles",
+                !user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
+        return mv;
     }
 
     /**
@@ -112,6 +141,8 @@ public class AccountController {
         return EDIT_ACCOUNT_PAGE;
     }
 
+
+
     /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
@@ -140,18 +171,13 @@ public class AccountController {
             Model model,
             RedirectAttributes ra
     ) throws IOException {
-        Integer userId = Integer.parseInt(principal.getClaimsList().stream()
-            .filter(claim -> claim.getType().equals("nameid"))
-            .findFirst().map(ClaimDTO::getValue).orElse("-1"));
+        int userId = PrincipalUtils.getUserId(principal);
         EditUserResponse idpResponse = userAccountClientService.edit(userId, firstName, lastName, nickname,
             bio,
             pronouns,
             email);
-//        Start of image upload functionality
         if (!multipartFile.isEmpty()) {
-            // original filename of image user has uploaded
             String extension = multipartFile.getContentType();
-            // check if file is an accepted image type
             ArrayList<String> acceptedFileTypes = new ArrayList<>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
                 if (MediaType.IMAGE_GIF_VALUE.equals(multipartFile.getContentType())) {
@@ -174,6 +200,7 @@ public class AccountController {
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
             String msgString;
+            notifyUserInfoChange(userId);
             msgString = "Successfully updated details";
             ra.addFlashAttribute("messageSuccess", msgString);
             return "redirect:" + ACCOUNT_PAGE;
@@ -182,6 +209,14 @@ public class AccountController {
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
 
         return EDIT_ACCOUNT_PAGE;
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of the changed user
+     */
+    private void notifyUserInfoChange(int userId) {
+        template.convertAndSend("/element/user/", userId);
     }
 
 
@@ -200,7 +235,6 @@ public class AccountController {
         model.addAttribute("roles",
                 !user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
 
-        // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())

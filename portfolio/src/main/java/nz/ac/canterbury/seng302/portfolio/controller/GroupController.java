@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,15 +33,13 @@ public class GroupController {
     private GroupService groupService;
 
     @Autowired
-    private UserAccountClientService userAccountClientService;
-
-    @Autowired
     private RepoRepository repoRepository;
-    
+
     @Autowired
     private SimpMessagingTemplate template;
 
     private static final String GROUP = "group";
+    private static final String LIST_GROUPS = "listGroups";
     private static final String GROUP_FRAGMENT = "groupsFragments::group";
     private static final String GROUPS_REDIRECT = "redirect:/groups";
     private static final String WARNING_MESSAGE = "messageDanger";
@@ -68,7 +65,7 @@ public class GroupController {
         List<Groups> groups = Arrays.asList(groupService.getMembersWithoutAGroup(),
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
-        model.addAttribute("listGroups", groups);
+        model.addAttribute(LIST_GROUPS, groups);
         model.addAttribute(GROUP, groupService.getMembersWithoutAGroup());
         return "groups";
     }
@@ -84,7 +81,7 @@ public class GroupController {
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView("groups::groupList");
-        mv.addObject("listGroups", groups);
+        mv.addObject(LIST_GROUPS, groups);
         return mv;
     }
 
@@ -125,7 +122,7 @@ public class GroupController {
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
-        mv.addObject("listGroups", groups);
+        mv.addObject(LIST_GROUPS, groups);
         mv.addObject(GROUP, group);
         return mv;
     }
@@ -142,7 +139,7 @@ public class GroupController {
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
-        mv.addObject("listGroups", groups);
+        mv.addObject(LIST_GROUPS, groups);
         mv.addObject(GROUP, group);
         return mv;
     }
@@ -159,7 +156,7 @@ public class GroupController {
                 groupService.getTeachingStaffGroup());
         groups = Stream.concat(groups.stream(), groupService.getPaginatedGroups().stream()).toList();
         ModelAndView mv = new ModelAndView(GROUP_FRAGMENT);
-        mv.addObject("listGroups", groups);
+        mv.addObject(LIST_GROUPS, groups);
         mv.addObject(GROUP, group);
         return mv;
     }
@@ -178,8 +175,7 @@ public class GroupController {
             @AuthenticationPrincipal AuthState principal,
             @RequestParam(required = false) Integer groupId,
             @RequestParam String shortName,
-            @RequestParam String longName,
-            Model model) {
+            @RequestParam String longName) {
         Groups group;
         if (groupId == null) {
             group = null;
@@ -213,11 +209,9 @@ public class GroupController {
             }
             status = response.getIsSuccess();
             message = response.getMessage();
-            
+
         }
 
-        model.addAttribute("roles", PrincipalUtils.getUserRole(principal));
-        model.addAttribute("user", userAccountClientService.getUser(principal));
         if (status) {
             if (groupId == null) {
                 notifyGroup(-1, DETAILS, "edited");
@@ -267,6 +261,11 @@ public class GroupController {
 
         RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
         if (response.getIsSuccess() && "".equals(additionalInfo)) {
+            if (groupId == -1) {
+                for (int userId : userIds) {
+                    notifyRoleChange(userId);
+                }
+            }
             notifyGroup(groupId, "members", "removed");
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
@@ -303,6 +302,11 @@ public class GroupController {
         AddGroupMembersResponse response = groupService.addGroupMembers(userIds, groupId);
         if (response.getIsSuccess()) {
             notifyGroup(groupId, "members", "added");
+            if (groupId == -1) {
+                for (int userId : userIds) {
+                    notifyRoleChange(userId);
+                }
+            }
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
@@ -334,34 +338,41 @@ public class GroupController {
 
         model.addAttribute(GROUP, group);
         model.addAttribute("repo", repo);
-        return GROUP;
+        return "groupSetting";
     }
 
     /**
      * Gets the individual group's title.
      * 
      * @param groupId The pages group id for future implementation
-     * @param model   Parameters sent to thymeleaf template to be rendered into HTML
      * @return The group page
      */
     @GetMapping(path = "/group/{groupId}/title")
     public ModelAndView groupPageTitle(@PathVariable int groupId) {
         Groups group = groupService.getGroupById(groupId);
-        ModelAndView mv = new ModelAndView("group::groupTitle");
-        mv.addObject("group", group);
+        ModelAndView mv = new ModelAndView("groupSetting::groupTitle");
+        mv.addObject(GROUP, group);
         return mv;
     }
-    
 
     /**
      * Sends an update message to all clients connected to the websocket
-     * @param groupId Id of the event edited
+     * 
+     * @param groupId   Id of the event edited
      * @param component Component that has been modified (details or members)
-     * @param action The action taken (deleted, created, edited)
+     * @param action    The action taken (deleted, created, edited)
      */
     private void notifyGroup(int groupId, String component, String action) {
+        template.convertAndSend("/element/group/" + groupId, (component + " " + action));
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
+
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of user that has been updated
+     */
+    private void notifyRoleChange(int userId) {
+        template.convertAndSend("/element/user/" + userId + "/roles", "");
+    }
 }
-
-

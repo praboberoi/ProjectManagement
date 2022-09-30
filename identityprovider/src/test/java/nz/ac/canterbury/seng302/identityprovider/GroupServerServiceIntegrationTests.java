@@ -144,6 +144,25 @@ class GroupServerServiceIntegrationTests {
     }
 
     /**
+     * Checks that group users are returned in the correct order
+     */
+    @Test
+    void givenSampleData_whenGroupsAreRetrieved_thenGroupMembersAreOrdered() {
+        GetPaginatedGroupsRequest request = GetPaginatedGroupsRequest.newBuilder().build();
+        StreamRecorder<PaginatedGroupsResponse> responseObserver = StreamRecorder.create();
+        groupServerService.getPaginatedGroups(request, responseObserver);
+
+        assertNull(responseObserver.getError());
+        List<PaginatedGroupsResponse> results = responseObserver.getValues();
+
+        PaginatedGroupsResponse response = results.get(0);
+        GroupDetailsResponse testGroup = response.getGroups(0);
+        System.out.println(testGroup.getMembersList());
+        assertEquals("FurretFive", testGroup.getMembers(0).getUsername());
+        assertEquals("ThinMouse", testGroup.getMembers(testGroup.getMembersCount() - 1).getUsername());
+    }
+
+    /**
      * Tests that all the correct group info is returned to the client.
      */
     @Test

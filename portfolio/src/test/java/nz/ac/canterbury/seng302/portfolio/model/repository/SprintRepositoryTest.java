@@ -1,6 +1,18 @@
-package nz.ac.canterbury.seng302.portfolio.model;
+package nz.ac.canterbury.seng302.portfolio.model.repository;
 
+import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
+import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
+import nz.ac.canterbury.seng302.portfolio.model.Event;
+import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
+import nz.ac.canterbury.seng302.portfolio.model.SprintRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Sprint;
+import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
+import nz.ac.canterbury.seng302.portfolio.model.Project;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -78,6 +90,24 @@ class SprintRepositoryTest {
         List<Sprint> emptyList = Collections.<Sprint>emptyList();
         assertArrayEquals(emptyList.toArray(), sprintRepository.findBySprintName("No").toArray());
 
+    }
+
+    /**
+     * Given a date and project this test asserts that the repository can find the corresponding sprint.
+     */
+    @Test
+    void givenSprintExists_FindByProjectAndDate() {
+        Date date = new Date(2021, 1, 2);
+        assertEquals(sprint1, sprintRepository.findByDateAndProject(project, date));
+    }
+
+    /**
+     * Given a date not relating to a sprint, this test asserts that the repository returns null.
+     */
+    @Test
+    void givenSprintDoesntExist_FindByProjectAndDateReturnsNull() {
+        Date date = new Date(1999, 1, 2);
+        assertEquals(null, sprintRepository.findByDateAndProject(project, date));
     }
 
     @Test

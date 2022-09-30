@@ -10,11 +10,12 @@
         integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <!-- Custom css for body-->
     <link th:href="@{{apiPrefix}/css/body.css(apiPrefix=${apiPrefix})}" rel="stylesheet" type="text/css" />
-    <link th:href="@{https://cdn.jsdelivr.net/npm/fullcalendar@5.11.0/main.min.css}" rel='stylesheet' type="text/css" />
 </head>
 <!--fragments-->
 <header>
+    <input id="websocket-status" hidden>
     <div th:replace="fragments :: header"></div>
+    <input id="websocket-status" hidden>
 </header>
 <div th:replace="fragments :: sidebar"></div>
 
@@ -25,7 +26,7 @@
             <h4 id="longTitle">[[${group.longName}]]</h4>
             <span th:replace="groupFragments::groupOptions"></span>
             <div>
-                <span th:replace="groupFragments::editGroupModal"></span>
+                <span th:replace="groupsFragments::editGroupModal"></span>
             </div>
         </div>
         <div class="alert alert-danger text-center" id="messageDanger">[[${messageDanger}]]</div>
@@ -33,8 +34,8 @@
 
         <div class="" id="settings-container">
             <div class="row mt-3">
-                <div id="main-content" class="col-12 col-lg-8" th:fragment="groupList">
-                    <div class="card project-card mb-3 page-container">
+                <div id="main-content" class="col-12" th:classappend="${adminOrTeacher || group.members.contains(user)} ? col-lg-8" th:fragment="groupList">
+                    <div class="card project-card mb-3">
                         <div class="container-fluid">
                             <div class="row">
                                 <div class="card-head navbar">
@@ -53,14 +54,15 @@
                                         </li>
                                     </ul>
 
-                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab2" role="tablist">
+                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab2" role="tablist"
+                                        th:if="${adminOrTeacher || group.members.contains(user)}">
                                         <li class="nav-item" role="presentation">
-                                            <button class="nav-link active" id="actions-toggle-tab" type="button" role="tab"
-                                                onclick="toggleRecentActions()">Recent Actions</button>
+                                            <button class="nav-link active" id="actions-toggle-tab" type="button"
+                                                role="tab" onclick="toggleRecentActions()">Recent Actions</button>
                                         </li>
                                     </ul>
                                 </div>
-                                <div class="card-body">
+                                <div class="card-body page-container">
                                     <div class="tab-content" id="myTabContent">
                                         <div class="tab-pane fade show active" id="members-tab-pane" role="tabpanel"
                                             aria-labelledby="members-tab" th:insert="groupFragments::groupUserList">
@@ -74,32 +76,35 @@
                         </div>
                     </div>
                 </div>
-                <div id="recent-actions-container" class="col-12 col-lg-4" th:fragment="groupList">
-                    <div class="card project-card mb-3 page-container">
+                <div id="recent-actions-container" class="col-12 col-lg-4" th:fragment="groupList" th:if="${adminOrTeacher || group.members.contains(user)}">
+                    <div class="card project-card mb-3">
                         <div class="container-fluid">
                             <div class="row">
                                 <div id="recent-actions-header">
                                     <h5 class="text-center">Recent actions</h5>
-                                    <button type="button" class="close position-absolute top-0 end-0 d-none d-lg-block mr-2"
+                                    <button type="button"
+                                        class="close position-absolute top-0 end-0 d-none d-lg-block mr-2"
                                         onclick="toggleRecentActions()">
                                         <span aria-hidden="true">×</span>
                                     </button>
-                                </div>
-                                <div class="card-body">
                                     <div class="container-fluid row pr-0">
-                                        <div class="col pl-2 pr-1">
+                                        <div class="col pl-3 pr-1">
                                             <select class="form-select" id="userFilter" aria-label="userFilter">
                                             </select>
                                         </div>
-                                        <div class="col pl-3 pr-0">
+                                        <div class="col pl-2 pr-0">
                                             <select class="form-select" id="actionType" aria-label="actionType">
                                             </select>
                                         </div>
                                     </div>
+                                </div>
+                                <div class="card-body page-container">
                                     <div id="recent-action-cards">
                                     </div>
                                 </div>
                             </div>
+                        </div>
+                        <div id="actionPagination" class="d-flex justify-content-center">
                         </div>
                     </div>
                 </div>
@@ -113,9 +118,7 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-A3rJD856KowSb7dwlZdYEkO39Gagi7vIsF0jrRAoQmDKKtQBHUuLZ9AsSv4jD4Xa"
         crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
     <script th:src="@{{apiPrefix}/javascript/group.js(apiPrefix=${apiPrefix})}"></script>
 </body>
-
-
-
 </html>

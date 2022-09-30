@@ -1,22 +1,20 @@
 package nz.ac.canterbury.seng302.portfolio.service;
 
-import nz.ac.canterbury.seng302.portfolio.model.Evidence;
-import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
-import nz.ac.canterbury.seng302.portfolio.model.Project;
-import nz.ac.canterbury.seng302.portfolio.model.User;
+import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
+import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
@@ -25,6 +23,7 @@ import static org.mockito.Mockito.when;
  * Test class for the functionality in the evidence service class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class EvidenceServiceTest {
     @MockBean
     private EvidenceRepository evidenceRepository;
@@ -63,7 +62,7 @@ class EvidenceServiceTest {
      * Asserts that the correct exception is thrown when verify evidence is called when given a null value
      */
     @Test
-    void givenEvidenceIsNull_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceIsNull_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(null));
 
@@ -71,10 +70,37 @@ class EvidenceServiceTest {
     }
 
     /**
+     * Asserts that the correct exception is thrown when verify evidence is called when the evidence
+     * title doesn't contain any letters
+     */
+    @Test
+    void givenEvidenceWithNoLettersInTitle_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
+        evidence1.setTitle("123123");
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+
+        assertEquals("Evidence title must contain some letters", exception.getMessage());
+    }
+
+    /**
+     * Asserts that the correct exception is thrown when verify evidence called with a description too small
+     */
+    @Test
+    void givenEvidenceDescriptionTooSmall_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
+        evidence1.setDescription("");
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+
+        assertEquals("Evidence description must be at least 2 characters", exception.getMessage());
+    }
+
+    /**
      * Asserts that the correct exception is thrown when verify evidence is called when given an object with null attributes
      */
     @Test
-    void givenEvidenceContainsNull_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceContainsNull_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         Evidence incorrectEvidence = evidenceBuilder
                 .evidenceId(99)
                 .title(null)
@@ -93,19 +119,19 @@ class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with an empty title
      */
     @Test
-    void givenEvidenceTitleIsEmpty_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceTitleIsEmpty_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         evidence1.setTitle("");
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
 
-        assertEquals("Evidence title must not be empty", exception.getMessage());
+        assertEquals("Evidence title must be at least 2 characters", exception.getMessage());
     }
 
     /**
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a too long title
      */
     @Test
-    void givenEvidenceTitleIsTooLong_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceTitleIsTooLong_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         evidence1.setTitle("This is a too long title for a piece of evidence, This is a too long title for a piece of evidence");
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -114,10 +140,23 @@ class EvidenceServiceTest {
     }
 
     /**
+     * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a too long description
+     */
+    @Test
+    void givenEvidenceDescriptionIsTooLong_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
+        evidence1.setDescription("This is a too long description for a piece of evidence This is a too long description for a piece of evidenceThis is a too long description " +
+                "for a piece of evidence This is a too long description for asasd");
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+
+        assertEquals("Evidence description must be equal or less that 200 characters", exception.getMessage());
+    }
+
+    /**
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a date too early
      */
     @Test
-    void givenEvidenceDateTooEarly_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceDateTooEarly_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         evidence1.setDateOccurred(new Date(0));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -129,7 +168,7 @@ class EvidenceServiceTest {
      * Asserts that the correct exception is thrown by verifyEvidence when given evidence with a date too late
      */
     @Test
-    void givenEvidenceDateTooLate_whenVerifyEvent_thenCorrectExceptionIsThrown() {
+    void givenEvidenceDateTooLate_whenVerifyEvidence_thenCorrectExceptionIsThrown() {
         evidence1.setDateOccurred(new Date(3025, Calendar.MARCH, 2));
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.verifyEvidence(evidence1));
@@ -141,7 +180,7 @@ class EvidenceServiceTest {
      * Asserts that the no exception is thrown by verifyEvidence when given evidence is a valid object
      */
     @Test
-    void givenCorrectEvidence_whenVerifyEvent_thenNoExceptionIsThrown() throws IncorrectDetailsException {
+    void givenCorrectEvidence_whenVerifyEvidence_thenNoExceptionIsThrown() throws IncorrectDetailsException {
         evidenceService.verifyEvidence(evidence1);
     }
 
@@ -191,7 +230,7 @@ class EvidenceServiceTest {
     @Test
     void givenEvidenceWithUser_whenGetEvidenceByUserIdCalled_thenCorrectEvidenceReturned() {
         List<Evidence> expectedEvidence = List.of(evidence1);
-        when(evidenceRepository.getAllByOwnerIdEquals(999)).thenReturn(expectedEvidence);
+        when(evidenceRepository.getAllByOwnerIdEqualsOrderByDateOccurredDesc(999)).thenReturn(expectedEvidence);
         List<Evidence> listEvidence = evidenceService.getEvidenceByUserId(999);
         assertArrayEquals(listEvidence.toArray(), expectedEvidence.toArray());
     }
@@ -209,13 +248,33 @@ class EvidenceServiceTest {
     }
 
     /**
-     * Asserts that success string is returned when saveEvidence is called with a correct evidence object
+     * Asserts that successfully updated string is returned when saveEvidence is called with a correct evidence object
      * @throws IncorrectDetailsException If there is an error saving the evidence
      */
     @Test
-    void givenCorrectEvidence_whenSaveEvidenceCalled_thenStringReturned() throws IncorrectDetailsException {
+    void givenCorrectEvidence_whenSaveEvidenceCalled_thenUpdatedStringReturned() throws IncorrectDetailsException {
         String success = evidenceService.saveEvidence(evidence1);
-        assertEquals("Successfully Created " + evidence1.getTitle(), success);
+        assertEquals("Successfully Updated " + evidence1.getTitle(), success);
+
+    }
+
+    /**
+     * Asserts that successfully created string is returned when saveEvidence is called with a correct evidence object
+     * @throws IncorrectDetailsException If there is an error saving the evidence
+     */
+    @Test
+    void givenCorrectEvidence_whenSaveEvidenceCalled_thenCreatedStringReturned() throws IncorrectDetailsException {
+        Evidence evidence = new Evidence.Builder()
+                                .evidenceId(0)
+                                .title("New evidence 1")
+                                .description("This is a new piece of evidence")
+                                .dateOccurred(new Date())
+                                .project(project)
+                                .ownerId(999)
+                                .build();
+
+        String success = evidenceService.saveEvidence(evidence);
+        assertEquals("Successfully Created " + evidence.getTitle(), success);
 
     }
 
@@ -225,9 +284,14 @@ class EvidenceServiceTest {
      */
     @Test
     void givenAPieceOfEvidence_whenDeleteEvidenceIsCalled_thenEvidenceNoLongerExists() {
-        when(evidenceRepository.findById(evidence1.getEvidenceId())).thenReturn(Optional.ofNullable(evidence1));
-        String messageResponse = evidenceService.deleteEvidence(evidence1.getEvidenceId());
-        assertEquals("Successfully Deleted " + evidence1.getEvidenceId(), messageResponse);
+        when(evidenceRepository.getEvidenceByEvidenceId(evidence1.getEvidenceId())).thenReturn(evidence1);
+        String messageResponse = null;
+        try {
+            messageResponse = evidenceService.deleteEvidence(evidence1.getEvidenceId());
+        } catch (IncorrectDetailsException e) {
+            e.printStackTrace();
+        }
+        assertEquals("Successfully Deleted " + evidence1.getTitle(), messageResponse);
     }
 
     /**
@@ -237,9 +301,33 @@ class EvidenceServiceTest {
     void givenNoEvidence_whenDeleteEvidenceIsCalled_thenAnExceptionIsThrown(){
         int evidenceId = evidence1.getEvidenceId();
         doThrow(new IllegalArgumentException()).when(evidenceRepository).deleteById(evidenceId);
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () ->
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 evidenceService.deleteEvidence(evidenceId));
         assertEquals("Could not find an existing piece of evidence", exception.getMessage() );
+    }
+
+    /**
+     * Test to check when an invalid evidence with title containing an emoji is verified an appropriate Exception is thrown
+     */
+    @Test
+    void givenInvalidEvidenceWithEmojiInTitle_whenVerifyRequested_thenAppropriateExceptionIsThrown() {
+        evidence1.setTitle("Test 😀");
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+        assertEquals("Evidence title must not contain an emoji", exception.getMessage());
+    }
+
+    /**
+     * Test to check when an invalid evidecen with description containing an emoji is verified an appropriate Exception is thrown
+     */
+    @Test
+    void givenInvalidEvidenceWithEmojiInDescription_whenVerifyRequested_thenAppropriateExceptionIsThrown() {
+        evidence1.setDescription("Test 😀");
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                evidenceService.verifyEvidence(evidence1));
+        assertEquals("Evidence description must not contain an emoji", exception.getMessage());
     }
 
 }

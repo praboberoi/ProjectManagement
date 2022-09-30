@@ -3,14 +3,16 @@ let filterByUser = ""
 let filterByActionType = ""
 let projectIdValidate = /^\d+$/;
 let jsonRepo;
+let currentPage = 0;
+let totalPages = 0;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
-  return new bootstrap.Tooltip(tooltipTriggerEl)
+    return new bootstrap.Tooltip(tooltipTriggerEl)
 })
 
 /**
  * Count down the characters remaining in the Group Short name, and check the length is between 3 and 50 characters.
  */
- function checkShortName(event) {
+function checkShortName(event) {
     let groupShortNameElement = event.target;
     let groupShortNameErrorElement = groupShortNameElement.parentNode.querySelector('#shortNameError')
     let charMessage = groupShortNameElement.parentNode.querySelector("#charCount");
@@ -55,27 +57,46 @@ function checkLongName(event) {
 function saveGroup() {
     let httpRequest = new XMLHttpRequest();
 
-    httpRequest.onreadystatechange = () => {
-        processAction(httpRequest)
-        updateTitle()
-    }
+    let editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
+    let modalError = document.getElementById('editModalError')
+
+    httpRequest.onreadystatechange = () => updateModal(httpRequest, editModal, modalError)
 
     httpRequest.open('POST', apiPrefix + `/groups`);
 
     let formData = new FormData(document.forms.editGroupForm)
 
-    document.getElementById("editModalClose").click()
-
     httpRequest.send(formData);
 }
 
-function closeGroupModal() {
-    
+/**
+ * Updates the error message and removes the modal if there is no issues
+ * @param httpRequest Request made to the server
+ * @param modal Which modal is being edited
+ * @param modalError Error message div that displays an error
+ */
+ function updateModal(httpRequest, modal, modalError) {
+    if (httpRequest.readyState === XMLHttpRequest.DONE) {
+        if (httpRequest.status === 200) {
+            modalError.innerText = ""
+            messageSuccess.innerText = httpRequest.responseText;
+            modal.hide()
+        } else if (httpRequest.status === 500) {
+            messageSuccess.innerText = ""
+            modalError.innerText = "An error occurred on the server, please try again later";
+        } else if (httpRequest.status == 400) {
+            messageSuccess.innerText = ""
+            modalError.innerText = httpRequest.responseText;
+        } else {
+            messageSuccess.innerText = ""
+            modalError.innerText = "Something went wrong.";
+        }
+    }
 }
 
 function updateTitle() {
     let httpRequest = new XMLHttpRequest();
-    httpRequest.onreadystatechange = function (){
+    httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState === XMLHttpRequest.DONE) {
             if (httpRequest.status === 200) {
                 document.getElementById("title").outerHTML = httpRequest.responseText;
@@ -106,7 +127,7 @@ function isValidHttpUrl(string) {
     return url.protocol === "http:" || url.protocol === "https:"
 }
 
-const GIT_API = "api/v4/"
+const GIT_API = "/api/v4/"
 
 /**
  * Toggles the visibility of the recent actions component
@@ -121,7 +142,7 @@ function toggleRecentActions() {
  * Attempts to connect to the git repository using the details provided
  * @param saving
  */
-function connectToRepo(saving=false) {
+function connectToRepo(saving = false) {
     let httpRequest = new XMLHttpRequest();
 
     httpRequest.onreadystatechange = function () {
@@ -142,7 +163,7 @@ function connectToRepo(saving=false) {
                     'Content-Type': 'application/json',
                 },
             }).then(async (response) => {
-                const repo = await  response.json();
+                const repo = await response.json();
                 if (saving) {
                     if (!repo.hasOwnProperty('id')) {
                         document.getElementById("messageDanger").innerText = "Repo not found"
@@ -152,6 +173,11 @@ function connectToRepo(saving=false) {
 
 
                     document.getElementById("messageSuccess").innerText = "Connected to repo: " + repo.name
+                } else {
+                    if (!repo.hasOwnProperty('id')) {
+                        clearRecentActions()
+                        return
+                    }
                 }
 
                 if (repoName !== undefined) {
@@ -201,16 +227,32 @@ async function getRecentActions(repo) {
     });
 
     let events = await response.json();
+
     let recentActions = document.getElementById("recent-action-cards")
+
+    if (events == undefined) {
+        clearRecentActions()
+        return
+    }
+
     updateFilters(events);
     recentActions.innerHTML = ""
-    if(filterByUser.length > 0)
+    if (filterByUser.length > 0)
         events = events.filter(event => event.author_username === filterByUser)
 
-    if(filterByActionType.length > 0)
+    if (filterByActionType.length > 0)
         events = events.filter(event => event.action_name === filterByActionType)
 
-    events.forEach(event => {
+    if(currentPage > 0 && currentPage * 5 > events.length)
+        currentPage = 0
+
+    updatePages(events);
+
+    events = events.slice(currentPage * 4, (currentPage * 4) + 4)
+
+
+    events.forEach( (event) => {
+
         // Card
         let eventCard = document.createElement('div');
         recentActions.appendChild(eventCard);
@@ -354,7 +396,7 @@ function validateProjectID() {
 function addDate(element, event) {
     let timeContainer = document.createElement('div');
     element.appendChild(timeContainer)
-    timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute:'2-digit' })
+    timeContainer.innerText = new Date(event.created_at).toLocaleDateString("en-GB", { year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 /**
@@ -379,7 +421,10 @@ function saveRepoSettings(event) {
 
     let httpRequest = new XMLHttpRequest();
 
-    httpRequest.onreadystatechange = () => processAction(httpRequest)
+    httpRequest.onreadystatechange = () => {
+        processAction(httpRequest)
+        connectToRepo(true)
+    }
 
     httpRequest.open('POST', apiPrefix + `/repo/${groupId}/save`);
 
@@ -387,14 +432,15 @@ function saveRepoSettings(event) {
 
     httpRequest.send(formData);
 
-    connectToRepo(true)
+
+
 }
 
 /**
  * Replaces the old messages with the new one contained in the request
  * @param httpRequest Request containing a model view element
  */
- function processAction(httpRequest){
+function processAction(httpRequest) {
     if (httpRequest.readyState === XMLHttpRequest.DONE) {
         if (httpRequest.status === 200) {
             messageSuccess.hidden = false
@@ -415,74 +461,240 @@ function saveRepoSettings(event) {
 /**
  * Runs when the page is loaded
  */
- document.addEventListener('DOMContentLoaded', function() {
-    connectToRepo()
+document.addEventListener('DOMContentLoaded', function () {
+    if (document.getElementById('recent-actions-container') != undefined) {
+        connectToRepo()
+    }
 });
 
 /**
  * Updates the list of all the filters available for selection based on the events list passed
  */
- function updateFilters(events) {
-     let userFilter = document.getElementById('userFilter')
-     let actionType = document.getElementById('actionType')
+function updateFilters(events) {
+    let userFilter = document.getElementById('userFilter')
+    let actionType = document.getElementById('actionType')
 
-     const userSet = new Set();
-     const actionTypeSet = new Set();
+    const userSet = new Set();
+    const actionTypeSet = new Set();
 
-     userFilter.innerText = "";
-     actionType.innerText = "";
+    userFilter.innerText = "";
+    actionType.innerText = "";
 
-     events.forEach(event => {
-         userSet.add(event.author_username);
-         actionTypeSet.add(event.action_name);
-     })
+    events.forEach(event => {
+        userSet.add(event.author_username);
+        actionTypeSet.add(event.action_name);
+    })
 
-     if (filterByUser.length === 0) {
-         userFilter.innerHTML = `<option selected>Filter By User</option>`
-         userSet.forEach(user => userFilter.innerHTML += `<option>${user}</option>`)
+    if (filterByUser.length === 0) {
+        userFilter.innerHTML = `<option selected>Filter By User</option>`
+        userSet.forEach(user => userFilter.innerHTML += `<option>${user}</option>`)
 
-     } else {
-         userFilter.innerHTML += `<option>Clear Filter</option>`
-         userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>`: `<option>${user}</option>`)
-     }
+    } else {
+        userFilter.innerHTML += `<option>Clear Filter</option>`
+        userSet.forEach(user => userFilter.innerHTML += user === filterByUser ? `<option selected>${user}</option>` : `<option>${user}</option>`)
+    }
 
-     if (filterByActionType.length === 0) {
-         actionType.innerHTML = `<option selected>Filter By Action Type</option>`
-         actionTypeSet.forEach(action => actionType.innerHTML += `<option>${action}</option>`)
+    if (filterByActionType.length === 0) {
+        actionType.innerHTML = `<option selected>Filter By Action Type</option>`
+        actionTypeSet.forEach(action => actionType.innerHTML += `<option>${action}</option>`)
 
-     } else {
-         actionType.innerHTML += `<option>Clear Filter</option>`
-         actionTypeSet.forEach(action => actionType.innerHTML +=
-             action === filterByActionType ? `<option selected>${action}</option>` :`<option>${action}</option>`)
+    } else {
+        actionType.innerHTML += `<option>Clear Filter</option>`
+        actionTypeSet.forEach(action => actionType.innerHTML +=
+            action === filterByActionType ? `<option selected>${action}</option>` : `<option>${action}</option>`)
 
 
-     }
+    }
 
+}
+
+if (document.getElementById('recent-actions-container') != undefined) {
+    /**
+     * Event listener for change in the userFilter
+     */
+    document.getElementById('userFilter').addEventListener('change', function () {
+        if (this.value === 'Clear Filter') {
+            filterByUser = ""
+        } else {
+            filterByUser = this.value
+        }
+
+        getRecentActions(jsonRepo)
+
+    })
+    /**
+     * Event listener for change in the actionTypeFilter
+     */
+    document.getElementById('actionType').addEventListener('change', function () {
+        if (this.value === 'Clear Filter') {
+            filterByActionType = ""
+        } else{
+            filterByActionType = this.value
+        }
+
+        getRecentActions(jsonRepo)
+
+    })
+}
+
+
+
+/**
+ * Connects to the websocket server
+ */
+ function connect() {
+    let websocketProtocol = window.location.protocol === 'http:' ? 'ws://' : 'wss://'
+    let stompClient = new StompJs.Client({
+        brokerURL: websocketProtocol + window.location.host + apiPrefix + '/lensfolio-websocket',
+        debug: function (str) {
+            // console.log(str);
+        },
+        reconnectDelay: 5000,
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+    });
+
+    stompClient.onConnect = function () {
+        console.log('Active updating enabled');
+        subscribe(stompClient)
+        document.getElementById("websocket-status").value = "connected"
+    };
+
+    stompClient.onStompError = function () {
+        console.log('Websocket communication error')
+    }
+
+    stompClient.activate();
+}
+
+/**
+ * Subscribes to the required websocket notification channels
+ */
+function subscribe(stompClient) {
+    stompClient.subscribe(`/element/group/${groupId}`, updateGroup);
+    stompClient.subscribe(`/element/user/`, updateUser);
+}
+
+/**
+ * Replaces the group's title information
+ * @param message Message with sprint and edit type
+ */
+ function updateGroup(message) {
+    let array = message.body.split(' ')
+    let component = array[0]
+    let action = array[1]
+
+    if (component == "details" || action === "edited") {
+        updateTitle()
+    } else {
+        console.log("Unknown command: " + action)
+    }
+}
+
+/**
+ * Updates a user's information if it has changed
+ * @param message Message userId of changed user
+ */
+function updateUser(message) {
+    let array = message.body.split(' ')
+    let id = array[0]
+    let userElement = document.getElementById(`user` + id + `Row`);
+    if (userElement) {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                if (httpRequest.status === 200) {
+                    userElement.innerHTML = httpRequest.responseText;
+                } else if (httpRequest.status === 400) {
+                    messageDanger.hidden = false;
+                    messageSuccess.hidden = true;
+                    messageDanger.innerText = "Bad Request";
+                }
+            }
+        }
+
+        httpRequest.open('GET', apiPrefix + `/group/user/${id}`);
+        httpRequest.send();
+    }
+}
+
+function updateTitle() {
+    let httpRequest = new XMLHttpRequest();
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState === XMLHttpRequest.DONE) {
+            if (httpRequest.status === 200) {
+                document.getElementById("title").outerHTML = httpRequest.responseText;
+            } else if (httpRequest.status === 400) {
+                messageDanger.hidden = false;
+                messageSuccess.hidden = true;
+                messageDanger.innerText = "Bad Request";
+            }
+        }
+    }
+
+    httpRequest.open('GET', apiPrefix + `/group/${groupId}/title`);
+    httpRequest.send();
+}
+
+/**
+ * Runs the connect function when the document is loaded
+ */
+ document.addEventListener('DOMContentLoaded', function () {
+    connect();
+})
+
+
+
+/**
+ * Creates pagination based on the total number of pages
+ * @param events
+ */
+function updatePages(events) {
+     totalPages = Math.ceil(events.length / 4)
+
+     const paginationDiv = document.getElementById('actionPagination');
+     paginationDiv.innerHTML =
+        `<nav aria-label="Page navigation">
+            <ul class="pagination">
+            <li class="page-item ${(totalPages ===  1 || currentPage === 0) ? 'disabled' : ''}">
+                    <a class="page-link" aria-label="Last" onclick="updateCurrentPage(${0})">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">First</span>
+                  </a>
+                </li>
+                <li class="page-item ${currentPage === 0 ? 'disabled' : ''}" id="previousPage">
+                    <a class="page-link" aria-label="Previous" onclick="updateCurrentPage(${currentPage - 1})">
+                        <span aria-hidden="true">&lsaquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+                <li class="page-item active" id="page-${currentPage + 1}">
+                     <a class="page-link" onclick="updateCurrentPage(${currentPage})">${currentPage + 1}/${totalPages}</a></li>
+                <li class="page-item" id="page-${currentPage + 2}">
+                
+                <li class="page-item ${(totalPages ===  1 || currentPage + 1 === totalPages) ? 'disabled' : ''}" id="nextPage">
+                    <a class="page-link" aria-label="Next" onclick="updateCurrentPage(${currentPage + 1})">
+                        <span aria-hidden="true">&rsaquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+                <li class="page-item ${(totalPages ===  1 || currentPage + 1 === totalPages) ? 'disabled' : ''}">
+                    <a class="page-link" aria-label="Last" onclick="updateCurrentPage(${totalPages - 1})">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Last</span>
+                  </a>
+                </li>
+            </ul>
+        </nav>`
  }
 
 /**
- * Event listener for change in the userFilter
+ * updates the current page with the give page number if it is in the range of
+ * @param newPage the page to be updated to
  */
- document.getElementById('userFilter').addEventListener('change', function () {
-     if (this.value === 'Clear Filter')
-         filterByUser = ""
-     else
-         filterByUser = this.value
-
-     getRecentActions(jsonRepo)
-
- } )
-/**
- * Event listener for change in the actionTypeFilter
- */
-document.getElementById('actionType').addEventListener('change', function () {
-     if (this.value === 'Clear Filter')
-         filterByActionType = ""
-     else
-         filterByActionType = this.value
-
-     getRecentActions(jsonRepo)
-
- } )
-
-
+function updateCurrentPage(newPage) {
+     if (newPage >= 0 && newPage <= totalPages) {
+         currentPage = newPage
+         getRecentActions(jsonRepo).then()
+     }
+ }

@@ -21,16 +21,11 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Controller for the deadlines
@@ -65,12 +60,15 @@ public class DeadlineController {
     @GetMapping(path="/project/{projectId}/deadlines")
     public ModelAndView deadlines(@PathVariable("projectId") int projectId) {
         List<Deadline> listDeadlines = deadlineService.getDeadlineByProject(projectId);
+        listDeadlines.forEach(deadlineService::updateDeadlineColors);
+        Map<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
         Project project = new Project();
         project.setProjectId(projectId);
         ModelAndView mv = new ModelAndView("deadlineFragments::deadlineTab");
         mv.addObject("project", project);
         mv.addObject("listDeadlines", listDeadlines);
         mv.addObject("editDeadlineNotifications", editing);
+        mv.addObject("deadlineDateMapping", deadlineDateMapping);
         return mv;
     }
 
@@ -89,15 +87,13 @@ public class DeadlineController {
      * @param deadlineDTO DeadlineDTO object
      * @param principal Current user
      * @param projectId ID of the project
-     * @param ra Redirect Attribute frontend message object
      * @return the project page
      */
     @PostMapping(path = "/project/{projectId}/saveDeadline")
     public ResponseEntity<String> saveDeadline(
             @ModelAttribute DeadlineDTO deadlineDTO,
             @AuthenticationPrincipal AuthState principal,
-            @PathVariable ("projectId") int projectId,
-            RedirectAttributes ra) {
+            @PathVariable ("projectId") int projectId) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
         }
@@ -106,6 +102,7 @@ public class DeadlineController {
         try {
             deadline.setProject(projectService.getProjectById(projectId));
             deadlineService.verifyDeadline(deadline);
+            deadlineService.updateDeadlineColors(deadline);
             message = deadlineService.saveDeadline(deadline);
             logger.info("Deadline {} has been edited", deadline.getDeadlineId());
             notifyDeadline(projectId, deadline.getDeadlineId(), "edited");
@@ -118,20 +115,16 @@ public class DeadlineController {
 
     /**
      * Deletes the deadline and redirects back to project page
-     * @param model Of type {@link Model}
      * @param projectId Of type int
      * @param deadlineId Of type int
      * @param principal Of type {@link AuthState}
-     * @param ra Of type {@link RedirectAttributes}
-     * @return project.html or error.html
+     * @return response entity of request outcome
      */
-    @DeleteMapping(path="/{projectId}/deleteDeadline/{deadlineId}")
+    @DeleteMapping(path="/project/{projectId}/deadline/{deadlineId}/delete")
     public ResponseEntity<String> deleteDeadline(
             @PathVariable("deadlineId") int deadlineId,
-            Model model,
             @PathVariable int projectId,
-            @AuthenticationPrincipal AuthState principal,
-            RedirectAttributes ra) {
+            @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal))
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");
 

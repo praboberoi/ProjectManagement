@@ -26,6 +26,12 @@ Feature: U1 Events on the project details page
     When I type in an event name that is very long
     Then An error message is displayed showing that the event name has exceeded the maximum characters
 
+    Given I login as an admin
+    And I select the CypressProject project
+    And I select the create event button
+    When I enter an emoji for the event name
+    Then An error messages is displayed for using an emoji
+
   Scenario: AC7: I should be able to enter dates using a calendar widget to reduce errors.
   The calendar widget should only allow valid dates that are in the project range.
     Given I login as an admin
@@ -48,15 +54,18 @@ Feature: U1 Events on the project details page
     And I select the CypressProject project
     When I call delete event on "Cypress Websocket Delete Event"
     Then "Cypress Websocket Delete Event" doesn't exist
+    And "Cypress Websocket Edited Event" not in Sprint 1 accordion
 
   Scenario: AC 10: My page should display any updates/changes without me having to refresh the page. (edit)
     Given I login as an admin
     And I select the CypressProject project
     When I call edit event on "Cypress Websocket Edit Event"
     Then "Cypress Websocket Edited Event" exists
+    And "Cypress Websocket Edited Event" in Sprint 1 accordion
     
   Scenario: AC 10: My page should display any updates/changes without me having to refresh the page. (create)
     Given I login as an admin
     And I select the CypressProject project
     When I call create event on "Cypress Websocket Created Event"
     Then "Cypress Websocket Created Event" exists
+    And "Cypress Websocket Created Event" in Sprint 1 accordion

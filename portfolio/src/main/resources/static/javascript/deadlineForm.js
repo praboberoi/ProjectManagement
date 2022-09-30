@@ -5,6 +5,7 @@ let currentDeadlineId;
 let editingDeadline = false;
 
 
+
 /**
  * Function for error validation of Deadline Name field.
  * Display error message if input is invalid.
@@ -17,7 +18,7 @@ function checkDeadlineName() {
     charMessage.innerText = charCount + ' '
     if (deadlineName.value.length < 1) {
         deadlineName.classList.add("formError");
-        deadlineNameError.innerText = "Deadline Name must not be empty";
+        deadlineNameError.innerText = "Deadline name must not be empty";
         deadlineCreateBtn.disabled = true;
     } else if (deadlineName.value.length < 3){
         deadlineName.classList.add("formError");
@@ -25,7 +26,11 @@ function checkDeadlineName() {
         deadlineCreateBtn.disabled = true;
     } else if (deadlineName.value.length > 50){
         deadlineName.classList.add("formError");
-        deadlineNameError.innerText = "Deadline Name cannot exceed 50 characters";
+        deadlineNameError.innerText = "Deadline name cannot exceed 50 characters";
+        deadlineCreateBtn.disabled = true;
+    } else if (emojiRegx.test(deadlineName.value)) {
+        deadlineName.classList.add("formError");
+        deadlineNameError.innerText = "Deadline name must not contain an emoji";
         deadlineCreateBtn.disabled = true;
     } else {
         deadlineName.classList.remove("formError");

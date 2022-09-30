@@ -31,6 +31,7 @@ public class UserAccountClientService {
 
     private static Logger logger =LoggerFactory.getLogger(UserAccountClientService.class);
 
+
     /**
      * Sends a register request to the server
      * @param username New user's username (required)
@@ -172,10 +173,8 @@ public class UserAccountClientService {
      * @throws IOException Failure to upload the image
      */
     public void uploadImage(final int id, final String ext, final MultipartFile file) throws IOException {
-        // request observer from UserAccountServiceGrpc
         StreamObserver<UploadUserProfilePhotoRequest> streamObserver = this.userAccountServiceStub.uploadUserProfilePhoto(new UserAccountClientService.FileUploadObserver());
 
-        // build metadata from proto in user_accounts.proto
         UploadUserProfilePhotoRequest metadata = (UploadUserProfilePhotoRequest.newBuilder()
                 .setMetaData(ProfilePhotoUploadMetadata.newBuilder()
                         .setUserId(id)
@@ -184,7 +183,6 @@ public class UserAccountClientService {
 
         streamObserver.onNext(metadata);
 
-        // upload file in chunks and upload as a stream
         InputStream inputStream = file.getInputStream();
         byte[] bytes = new byte[4096];
         int size;
@@ -194,7 +192,7 @@ public class UserAccountClientService {
                     .build();
             streamObserver.onNext(uploadImage);
         }
-        // close stream
+
         inputStream.close();
         streamObserver.onCompleted();
     }

@@ -192,12 +192,12 @@ class DeadlineControllerTest {
      */
     @Test
     void givenBadDeadlineRequest_whenSubmitted_thenAppropriateMessageIsDisplayed() throws Exception {
-        when(deadlineService.saveDeadline(any())).thenThrow(new IncorrectDetailsException("Failure to save the deadline"));
+        when(deadlineService.saveDeadline(any())).thenThrow(new IncorrectDetailsException("Failed to save the deadline"));
         mockMvc.perform(MockMvcRequestBuilders
                         .post("/project/1/saveDeadline")
                         .flashAttr("deadlineDTO", toDTO(deadline3)))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("Failure to save the deadline"));
+                .andExpect(content().string("Failed to save the deadline"));
     }
 
     /**
@@ -209,7 +209,7 @@ class DeadlineControllerTest {
                 .thenReturn("Successfully deleted " + deadline.getName());
 
         result = this.mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/1/deleteDeadline/1")
+                        .delete("/project/1/deadline/1/delete")
                         .flashAttr("deadlineId", 1))
                     .andExpect(status().isOk())
                     .andReturn();
@@ -226,7 +226,7 @@ class DeadlineControllerTest {
                 .thenThrow(new IncorrectDetailsException("Failure deleting Deadline"));
 
         result = this.mockMvc.perform(MockMvcRequestBuilders
-                        .delete("/1/deleteDeadline/3")
+                        .delete("/project/1/deadline/3/delete")
                         .flashAttr("deadlineId", 3))
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -295,6 +295,25 @@ class DeadlineControllerTest {
                 .perform(get("/project/1/deadlines"))
                 .andExpect(status().isOk())
                 .andExpect(model().attribute("editDeadlineNotifications", expectedNotifications));
+    }
+
+    /**
+     * Test that date mappings are included and correct when a get call is made.
+     * @throws IncorrectDetailsException
+     */
+    @Test
+    void givenServer_WhenGetRequestMade_ThenDateMappingPresent() throws Exception {
+        HashMap<Integer, String> testData = new HashMap<Integer, String>();
+        String testName = "TestName 1";
+        testData.put(deadline.getDeadlineId(), testName);
+        when(deadlineService.getSprintOccurringOnDeadlines(any())).thenReturn(testData);
+
+
+        this.mockMvc
+                .perform(get("/project/1/deadlines"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("deadlineDateMapping", testData));
+
     }
 
     @AfterAll

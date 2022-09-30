@@ -5,7 +5,6 @@ import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -45,9 +44,8 @@ public class Event {
     @DateTimeFormat(pattern = "yyyy-MM-dd'T'HH:mm")
     private Date startDate;
 
-    @Column
     @ElementCollection
-    private final List<SprintColor> colors = new ArrayList<>();
+    private  List<SprintColor> colors;
 
 
     /**
@@ -130,14 +128,7 @@ public class Event {
         return this.colors;
     }
 
-    public void addColor(SprintColor color, int index) {
-        this.colors.add(index, color);
-    }
-
-    public void clearColourList() {
-        colors.clear();
-    }
-
+    public void setColors(List<SprintColor> eventColours) {this.colors = eventColours;}
 
     /**
      * Overrides for comparing event objects

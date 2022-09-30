@@ -20,7 +20,7 @@ import java.util.Objects;
 public class RepoService {
     @Autowired
     private RepoRepository repoRepository;
-    private final Logger logger = LoggerFactory.getLogger(EvidenceService.class);
+    private final Logger logger = LoggerFactory.getLogger(RepoService.class);
 
 
     public RepoService(RepoRepository repoRepository) {this.repoRepository = repoRepository;}

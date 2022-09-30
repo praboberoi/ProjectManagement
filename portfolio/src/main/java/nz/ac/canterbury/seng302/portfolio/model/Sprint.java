@@ -247,7 +247,7 @@ public class Sprint {
         if (this == o) return true;
         if (!(o instanceof Sprint)) return false;
         Sprint sprint = (Sprint) o;
-        return sprintId == sprint.sprintId && Objects.equals(project, sprint.project) && Objects.equals(sprintLabel, sprint.sprintLabel) && Objects.equals(sprintName, sprint.sprintName) && description.equals(sprint.description) && Objects.equals(startDate, sprint.startDate) && Objects.equals(endDate, sprint.endDate) && Objects.equals(color, sprint.color);
+        return sprintId == sprint.sprintId && Objects.equals(project, sprint.project) && Objects.equals(sprintLabel, sprint.sprintLabel) && Objects.equals(sprintName, sprint.sprintName) && Objects.equals(description, sprint.description) && Objects.equals(startDate, sprint.startDate) && Objects.equals(endDate, sprint.endDate) && Objects.equals(color, sprint.color);
     }
 
     @Override
@@ -262,6 +262,11 @@ public class Sprint {
                 ", endDate=" + endDate +
                 ", color=" + color +
                 '}';
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(sprintId, project, sprintLabel, sprintName, description, startDate, endDate, color);
     }
 
     /**

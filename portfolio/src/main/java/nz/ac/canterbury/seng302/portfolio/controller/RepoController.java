@@ -2,7 +2,6 @@ package nz.ac.canterbury.seng302.portfolio.controller;
 
 import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
-import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
@@ -20,13 +19,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import nz.ac.canterbury.seng302.portfolio.model.Groups;
-import nz.ac.canterbury.seng302.portfolio.model.Repo;
-import nz.ac.canterbury.seng302.portfolio.model.dto.RepoDTO;
-import nz.ac.canterbury.seng302.portfolio.service.GroupService;
-import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
-import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
-
 /**
  * Controller for repo components
  */
@@ -38,7 +30,6 @@ public class RepoController {
     @Autowired
     private RepoService repoService;
 
-
     /**
      * Gets the group's repo.
      *
@@ -48,6 +39,11 @@ public class RepoController {
     @GetMapping(path = "/repo/{groupId}")
     public ResponseEntity<Repo> repo(@PathVariable int groupId, @AuthenticationPrincipal AuthState principal) {
         Groups group = groupService.getGroupById(groupId);
+        if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) && group.getMembers().stream()
+                .noneMatch(user -> user.getUserId() == PrincipalUtils.getUserId(principal))) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
         if (group == null || group.getGroupId() == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
         }
@@ -84,19 +80,22 @@ public class RepoController {
 
     /**
      * Saves the group's repo to the provided information
-     * @param groupId The group id for the repo to save
-     * @param repoDTO Object containing new repo information
+     * 
+     * @param groupId   The group id for the repo to save
+     * @param repoDTO   Object containing new repo information
      * @param principal Authentication information containing user info
      * @return If the repo saving was successful
      */
     @PostMapping(path = "/repo/{groupId}/save")
-    public ResponseEntity<String> saveGroupRepo(@PathVariable int groupId, @ModelAttribute RepoDTO repoDTO, @AuthenticationPrincipal AuthState principal) {
+    public ResponseEntity<String> saveGroupRepo(@PathVariable int groupId, @ModelAttribute RepoDTO repoDTO,
+            @AuthenticationPrincipal AuthState principal) {
         Groups group = groupService.getGroupById(groupId);
         if (group == null || group.getGroupId() == 0) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Unable to find group");
         } else if (!(PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) && group.getMembers().stream()
                 .noneMatch(user -> user.getUserId() == PrincipalUtils.getUserId(principal))) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("You do not have permission to edit these repo settings");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You do not have permission to edit these repo settings");
         }
 
         try {

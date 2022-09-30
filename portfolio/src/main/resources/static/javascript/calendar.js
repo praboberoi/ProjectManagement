@@ -1,4 +1,3 @@
-
 const SPRINT_COLOURS = ['blue', 'skyblue', 'purple', 'orange', 'green', 'pink', 'navy'];
 const CALENDAR_MESSAGE = document.getElementById('calendarMessage');
 const CALENDAR_EL = document.getElementById('calendar');
@@ -95,6 +94,7 @@ function editEventDuration(info) {
                 CALENDAR_MESSAGE.classList.add("alert-success");
                 CALENDAR_MESSAGE.innerText =  "Sprint saved successfully";
                 loadEventCards();
+                loadDeadlineCards();
 
             } else {
                 CALENDAR_MESSAGE.hidden = false;
@@ -112,13 +112,9 @@ function editEventDuration(info) {
     let endDate = new Date(event.end);
     endDate.setDate(endDate.getDate() - 1);
     const startDate = new Date(event.start)
-    const startDateStr = startDate.toLocaleDateString().split('/').reverse().join('-');
-    const endDateStr = endDate.toLocaleDateString().split('/').reverse().join('-');
-
-
     var params = new FormData();
-    params.append('startDate', startDateStr);
-    params.append('endDate', endDateStr);
+    params.append('startDate', startDate.toLocaleDateString("en-CA"));
+    params.append('endDate', endDate.toLocaleDateString("en-CA"));
 
     httpRequest.send(params);
 
