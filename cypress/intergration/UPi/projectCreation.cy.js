@@ -5,7 +5,7 @@ When("I select Create Project", () => {
 })
 
 When("I enter {word} as a Project Name", (word) => {
-    cy.get('#project-name').clear().type(word)
+    cy.get('#project-name').clear().type(word, {delay:0})
 
 })
 
@@ -18,13 +18,12 @@ When("I enter {string} as the project end date", (date) => {
 })
 
 When("I enter {string} as the project description", (description) => {
-    cy.get('#projectFormDescription').type(description)
-    cy.get('#projectDescription').clear().type(description);
+    cy.get('#projectFormDescription').clear().type(description);
 })
 
 When("I enter a emojis for the project name and description", () => {
     cy.get('#project-name').clear().type('idsad😀')
-    cy.get('#projectDescription').clear().type('sudsiaudnasi😀');
+    cy.get('#projectFormDescription').clear().type('sudsiaudnasi😀');
 })
 Then("Error message is displayed for using emojis for both project name and description", () => {
     cy.get('#projectNameError').should('have.text',"Project name must not contain an emoji");
