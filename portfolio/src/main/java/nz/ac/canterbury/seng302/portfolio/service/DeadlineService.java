@@ -71,7 +71,7 @@ public class DeadlineService {
             if (sprint == null) {
                 sprintNames.add("(No Sprint)");
             } else {
-                sprintNames.add("(" + sprint.getSprintName() + ")");
+                sprintNames.add("(" + sprint.getSprintLabel() + ")");
             }
             deadlineDateMapping.put(deadline.getDeadlineId(), sprintNames.get(0));
         }

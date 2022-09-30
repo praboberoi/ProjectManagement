@@ -28,6 +28,7 @@
     <div class="page-title">
       <h2 id="name">[[${project.projectName}]]</h2>
       <input type="hidden" id="projectId" name="projectId" th:value="${project.projectId}">
+      <input type="hidden" id="apiPrefix" th:field="${apiPrefix}">
     </div>
     <div>
       <br>
@@ -126,11 +127,10 @@
   <div th:replace="forms :: milestoneForm"></div>
   <script th:inline="javascript">
     let userRoles = [[${ user.roles }]];
-    const projectId = [[${ project.projectId }]];
     let projectStartDate = [[${ project.startDate }]];
     let projectEndDate = [[${ project.endDate }]];
     const apiPrefix = [[${ apiPrefix }]];
-    const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
+    let DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
   </script>
   <script src="https://cdn.jsdelivr.net/npm/@stomp/stompjs@6.1.2/bundles/stomp.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"

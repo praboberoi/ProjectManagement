@@ -168,6 +168,62 @@ By default, the Portfolio will run on local port 9000 (`http://localhost:9000`)
 |Team 700|Cows Cows Cows|
 |Team 800|The Spartans|
 
+## Testing
+The application comes with 2 types of testing. Unit testing using junit and acceptance testing using cypress.
+
+### Unit Testing
+Running the unit tests is very similar to running the application itself. Starting from the project root run the following commands for IDP:
+
+On Linux:
+```
+cd identityprovider
+./gradlew test
+```
+
+On Windows:
+```
+cd identityprovider
+gradlew test
+```
+
+And on the Portfolio module:
+
+On Linux:
+```
+cd portfolio
+./gradlew test
+```
+
+On Windows:
+```
+cd portfolio
+gradlew test
+```
+
+### Acceptance Testing
+We are using Cypress for our acceptance testing. Please find the steps for installing and running this software below. All commands should be run in the parent project directory. These require the application to be running.
+
+```
+npm install
+```
+This will install Cypress and its dependencies
+
+To run the feature files one at a time run:
+```
+npx cypress open
+```
+Click E2E Testing
+
+Select your browser
+Click on the feature file that you are testing to run all the relevant tests
+
+Alternativly, to run all the tests at once:
+```
+npx cypress run
+```
+
+Note: Between tests you will need to rerun the application to reset the database. You can also run the contents of the cypress-data.sql file on your selected database.
+
 ## Contributors
 
 - SENG302 teaching team
@@ -208,7 +264,7 @@ Apache 2.0
 - `io.cucumber:cucumber-java:6.10.4`
 - `io.cucumber:cucumber-junit:6.10.4`
 - `junit:junit:4.13.1`
-- `org.springframework', name: 'spring-websocket', version: '5.3.22'`
+- `group: 'org.springframework', name: 'spring-websocket', version: '5.3.22'`
 - `group: 'org.springframework', name: 'spring-messaging', version: '5.3.22'`
 
 ### Identity Provider
