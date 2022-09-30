@@ -26,11 +26,11 @@ function checkEventName() {
     let charCount = trimmedEventName.length;
     charMessage.innerText = charCount + ' '
     if (charCount < 1) {
-        eventName.classList.add("eventFormError");
+        eventName.classList.add("formError");
         eventNameError.innerText = "Event Name must not be empty";
         document.getElementById("eventFormSubmitButton").disabled = true;
     } else if (charCount > 50){
-        eventName.classList.add("eventFormError");
+        eventName.classList.add("formError");
         eventNameError.innerText = "Event Name cannot exceed 50 characters";
         document.getElementById("eventFormSubmitButton").disabled = true;
     } else if (emojiRegx.test(eventName.value)) {
@@ -38,7 +38,7 @@ function checkEventName() {
         eventNameError.innerText = "Event name must not contain an emoji";
         document.getElementById("eventFormSubmitButton").disabled = true;
     } else {
-        eventName.classList.remove("eventFormError");
+        eventName.classList.remove("formError");
         eventNameError.innerText = null;
         document.getElementById("eventFormSubmitButton").disabled = false;
 
@@ -104,16 +104,16 @@ function checkEndDate() {
 
     if (endDate < new Date(projectStartDate + 'T00:00')) {
         eventEndDateError.innerText = "Event must start on or before the " + (new Date(projectStartDate)).toLocaleDateString('en-NZ', DATE_OPTIONS);
-        eventEndDateElement.classList.add("eventFormError");
+        eventEndDateElement.classList.add("formError");
         return;
     } else if (endDate > new Date(projectEndDate + 'T00:00')) {
         eventEndDateError.innerText = "Event must end on or before the " + (new Date(projectEndDate)).toLocaleDateString('en-NZ', DATE_OPTIONS);
-        eventEndDateElement.classList.add("eventFormError");
+        eventEndDateElement.classList.add("formError");
         return;
     }
 
     eventEndDateError.innerText = "";
-    eventEndDateElement.classList.remove("eventFormError")
+    eventEndDateElement.classList.remove("formError")
 }
 
 /**
