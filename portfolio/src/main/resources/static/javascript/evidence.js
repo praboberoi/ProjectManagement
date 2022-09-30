@@ -56,6 +56,7 @@ function updateEvidencePage(message) {
     const selectedEvidenceElement = document.getElementById('selectedEvidence')
     const selectedEvidenceIdElement = document.getElementById('selectedEvidenceId')
     const selectedEvidenceId = selectedEvidenceIdElement === null ? 0 : parseInt(selectedEvidenceIdElement.value)
+    console.log(message)
 
     if (action === "deleted" && selectedEvidenceId === evidenceId) {
         getEvidenceList()
@@ -69,7 +70,7 @@ function updateEvidencePage(message) {
         }
     } else if (action === "deleted") {
         getEvidenceList()
-    } else if (action === 'edited' && selectedEvidenceId === evidenceId || selectedEvidenceId == 0) {
+    } else if (action === 'edited' && (selectedEvidenceId === evidenceId || selectedEvidenceId == 0)) {
         getSelectedEvidence(evidenceId)
         getEvidenceList()
     } else if (action === 'edited' && selectedEvidenceElement.hidden == true) {

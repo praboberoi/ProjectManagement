@@ -46,7 +46,7 @@ function checkEvidenceTitle() {
     } else {
         evidenceTitleError.innerText = ""
     }
-    updateSubmissionButton()
+    checkCreateButton()
 }
 
 /**
@@ -62,7 +62,7 @@ function checkEvidenceDate() {
     } else {
         evidenceDateErrorElement.innerText = ""
     }
-    updateSubmissionButton();
+    checkCreateButton();
 }
 
 /**
