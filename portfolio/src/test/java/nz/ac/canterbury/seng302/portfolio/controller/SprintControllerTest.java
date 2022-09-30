@@ -1,5 +1,6 @@
 package nz.ac.canterbury.seng302.portfolio.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.model.dto.SprintDTO;
 import nz.ac.canterbury.seng302.portfolio.service.*;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.MediaType;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -152,10 +154,13 @@ public class SprintControllerTest {
     @Test
     void givenValidSprint_whenVerifySprint_thenStatusOk() throws Exception {
         LocalDate now = LocalDate.now();
-        Sprint sprint = new Sprint(1, new Project(), "Sprint 1", "Test Sprint", "This is a description",
+        SprintDTO sprint = new SprintDTO(1, null, "Test1", "Test Sprint", "This is a description",
                 java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(30)), SprintColor.BLUE);
 
-        this.mockMvc.perform(post("/project/1/verifySprint").flashAttr("sprintDTO", toDTO(sprint)))
+        String json  = new ObjectMapper().writeValueAsString(sprint);
+
+        this.mockMvc.perform(post("/project/1/verifySprint").contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().string(""));
     }
@@ -167,7 +172,13 @@ public class SprintControllerTest {
     @Test
     void givenStudentUser_whenVerifySprint_thenForbidden() throws Exception {
         when(PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(false);
-        this.mockMvc.perform(post("/project/1/verifySprint").flashAttr("sprintDTO", toDTO(new Sprint())))
+        LocalDate now = LocalDate.now();
+        SprintDTO sprint = new SprintDTO(1, null, "Sprint 1", "Test Sprint", "This is a description",
+                java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(30)), SprintColor.BLUE);
+
+        String json  = new ObjectMapper().writeValueAsString(sprint);
+        this.mockMvc.perform(post("/project/1/verifySprint").contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isForbidden());
     }
 
@@ -178,11 +189,15 @@ public class SprintControllerTest {
     @Test
     void givenInvalidSprint_whenVerifySprint_thenStatusInvalid() throws Exception {
         LocalDate now = LocalDate.now();
-        Sprint sprint = new Sprint(1, new Project(), "Sprint 1", "Test Sprint", "This is a description",
-        java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(30)), SprintColor.BLUE);
+        SprintDTO sprint = new SprintDTO(1, null, "Sprint 1", "Test Sprint", "This is a description",
+                java.sql.Date.valueOf(now), java.sql.Date.valueOf(now.plusDays(30)), SprintColor.BLUE);
+
+        String json  = new ObjectMapper().writeValueAsString(sprint);
+
         when(sprintService.verifySprint(any())).thenThrow(new IncorrectDetailsException("Invalid Sprint"));
 
-        this.mockMvc.perform(post("/project/1/verifySprint").flashAttr("sprintDTO", toDTO(sprint)))
+        this.mockMvc.perform(post("/project/1/verifySprint").contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("Invalid Sprint"));
     }
