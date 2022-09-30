@@ -601,9 +601,9 @@ class EventServiceTest {
                 .startDate(new Date(2020 - 1900, 11,2))
                 .endDate(new Date(2020 - 1900, 11,3))
                 .build();
-        Sprint sprint1 = new Sprint.Builder().sprintName("TestSprint 1")
+        Sprint sprint1 = new Sprint.Builder().sprintName("TestSprint 1").sprintLabel("TestSprint 1")
                 .build();
-        Sprint sprint2 = new Sprint.Builder().sprintName("TestSprint 2")
+        Sprint sprint2 = new Sprint.Builder().sprintName("TestSprint 2").sprintLabel("TestSprint 2")
                 .build();
         events.add(event);
         when(sprintRepository.findByDateAndProject(event.getProject(),
