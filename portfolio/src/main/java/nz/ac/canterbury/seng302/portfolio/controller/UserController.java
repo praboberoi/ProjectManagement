@@ -144,6 +144,7 @@ public class UserController {
      */
     private void notifyRoleChange(int userId) {
         template.convertAndSend("/element/user/" + userId + "/roles", "");
+        template.convertAndSend("/element/user/", userId);
     }
 
     /**
@@ -224,5 +225,33 @@ public class UserController {
 
         notifyRoleChange(userId);
         return new ResponseEntity<>("Successfully added " + newRole, HttpStatus.OK);
+    }
+
+    /**
+     * Returns a fragment for a user row in the group settings page
+     * @param userId The userId of the requested user
+     * @return A fragment containing a row for the changed user
+     */
+    @GetMapping(path="/group/user/{userId}")
+    public ModelAndView groupUser(@PathVariable int userId) {
+        ModelAndView mv = new ModelAndView("groupFragments::userFragment");
+        UserResponse response = userAccountClientService.getUser(userId);
+        User user = new User(response);
+        mv.addObject("user", user);
+        return mv;
+    }
+
+    /**
+     * Returns a fragment for a user row in the groups page
+     * @param userId The userId of the requested user
+     * @return A fragment containing a row for the changed user
+     */
+    @GetMapping(path="/groups/user/{userId}")
+    public ModelAndView groupsUser(@PathVariable int userId) {
+        ModelAndView mv = new ModelAndView("groupsFragments::userFragment");
+        UserResponse response = userAccountClientService.getUser(userId);
+        User user = new User(response);
+        mv.addObject("user", user);
+        return mv;
     }
 }
