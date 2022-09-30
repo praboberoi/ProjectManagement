@@ -2,19 +2,18 @@ package nz.ac.canterbury.seng302.portfolio.service;
 
 import nz.ac.canterbury.seng302.portfolio.model.*;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
-import org.junit.jupiter.api.Assertions;
+import nz.ac.canterbury.seng302.portfolio.utils.SprintColor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.PersistenceException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,6 +23,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for methods on DeadlineService class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class DeadlineServiceTest {
 
     @MockBean
@@ -65,6 +65,7 @@ class DeadlineServiceTest {
 
         sprint = new Sprint.Builder()
                 .sprintId(1)
+                .sprintName("Test Sprint")
                 .startDate(new java.sql.Date(2020, 1, 1))
                 .endDate(new java.sql.Date(2020, 5, 1))
                 .build();
@@ -108,7 +109,7 @@ class DeadlineServiceTest {
      void givenDeadlineDoesNotExist_whenDeadlineRequested_thenExceptionThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.getDeadline(2));
-        Assertions.assertEquals("Failed to locate deadline in the database" , exception.getMessage());
+        assertEquals("Failed to locate deadline in the database" , exception.getMessage());
 
     }
 
@@ -117,7 +118,7 @@ class DeadlineServiceTest {
      */
     @Test
      void givenDeadlineAndProjectExist_whenDeadlineByProjectRequested_thenAListOfDeadlinesIsReturned() {
-        Assertions.assertEquals(List.of(deadline), deadlineService.getDeadlineByProject(1));
+        assertEquals(List.of(deadline), deadlineService.getDeadlineByProject(1));
     }
 
     /**
@@ -126,7 +127,7 @@ class DeadlineServiceTest {
      */
     @Test
     void givenDeadlineAndSprintExist_whenDeadlineBySprintRequested_thenAListOfDeadlinesIsReturned() {
-        Assertions.assertEquals(List.of(deadline2), deadlineService.getDeadlineBySprint(1));
+        assertEquals(List.of(deadline2), deadlineService.getDeadlinesBySprintId(1));
     }
 
     /**
@@ -134,7 +135,7 @@ class DeadlineServiceTest {
      */
     @Test
      void givenDeadlineAndProjectDoesNotExist_whenDeadlineByProjectRequested_thenAnEmptyListIsReturned() {
-        Assertions.assertEquals(List.of(), deadlineService.getDeadlineByProject(2));
+        assertEquals(List.of(), deadlineService.getDeadlineByProject(2));
     }
 
     /**
@@ -143,7 +144,7 @@ class DeadlineServiceTest {
     @Test
      void givenDeadlineExists_whenDeleteDeadlineByIdRequested_thenAMessageIsReturned(){
         assertDoesNotThrow(() -> {
-            Assertions.assertEquals("Successfully deleted " + deadline.getName(), deadlineService.deleteDeadline(1));
+            assertEquals("Successfully deleted " + deadline.getName(), deadlineService.deleteDeadline(1));
         });
     }
 
@@ -154,12 +155,12 @@ class DeadlineServiceTest {
      void givenDeadlineDoesNotExist_whenDeleteDeadlineByIdRequested_thenAnExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.deleteDeadline(2));
-        Assertions.assertEquals("Could not find given Deadline" , exception.getMessage());
+        assertEquals("Could not find given Deadline" , exception.getMessage());
 
         when(deadlineRepository.findById(1)).thenThrow(PersistenceException.class);
         IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.deleteDeadline(1));
-        Assertions.assertEquals("Failure deleting Deadline" , exception1.getMessage());
+        assertEquals("Failure deleting Deadline" , exception1.getMessage());
     }
 
     /**
@@ -169,7 +170,7 @@ class DeadlineServiceTest {
      void givenDeadlineExist_whenSaveDeadlineRequested_successfulUpdateMessageDisplayed() {
         deadline.setName("Updated");
         try {
-            Assertions.assertEquals("Successfully Updated " + deadline.getName(), deadlineService.saveDeadline(deadline));
+            assertEquals("Successfully Updated " + deadline.getName(), deadlineService.saveDeadline(deadline));
         } catch (IncorrectDetailsException e) {
             e.printStackTrace();
         }
@@ -188,7 +189,7 @@ class DeadlineServiceTest {
                                     .build();
 
         try {
-            Assertions.assertEquals("Successfully Created " + deadline1.getName(), deadlineService.saveDeadline(deadline1));
+            assertEquals("Successfully Created " + deadline1.getName(), deadlineService.saveDeadline(deadline1));
         } catch (IncorrectDetailsException e) {
             e.printStackTrace();
         }
@@ -202,7 +203,7 @@ class DeadlineServiceTest {
      void givenADeadlineDoesNotExist_whenVerifyDeadlineRequested_thenAnExceptionIsThrown() {
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(null));
-        Assertions.assertEquals("No deadline", exception.getMessage());
+        assertEquals("No deadline", exception.getMessage());
     }
 
     /**
@@ -232,7 +233,7 @@ class DeadlineServiceTest {
         deadlines.forEach(currentDeadline -> {
             IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                     deadlineService.verifyDeadline(currentDeadline));
-            Assertions.assertEquals("Deadline values cannot be null", exception.getMessage());
+            assertEquals("Deadline values cannot be null", exception.getMessage());
                 });
     }
 
@@ -251,7 +252,7 @@ class DeadlineServiceTest {
 
         IncorrectDetailsException exception3 = assertThrows(IncorrectDetailsException.class, () ->
                 deadlineService.verifyDeadline(deadline1));
-        Assertions.assertEquals("Deadline name cannot exceed 50 characters", exception3.getMessage());
+        assertEquals("Deadline name cannot exceed 50 characters", exception3.getMessage());
 
     }
 
@@ -266,12 +267,12 @@ class DeadlineServiceTest {
             deadline.setDate(dateformat.parse("10/01/2024"));
             IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
                     deadlineService.verifyDeadline(deadline));
-            Assertions.assertEquals("Deadline date cannot be after project end date", exception.getMessage());
+            assertEquals("Deadline date cannot be after project end date", exception.getMessage());
 
             deadline.setDate(dateformat.parse("10/01/2000"));
             IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
                     deadlineService.verifyDeadline(deadline));
-            Assertions.assertEquals("Deadline date cannot be before project start date", exception1.getMessage());
+            assertEquals("Deadline date cannot be before project start date", exception1.getMessage());
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -310,6 +311,87 @@ class DeadlineServiceTest {
         when(deadlineRepository.save(deadline)).thenThrow(PersistenceException.class);
         IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
             deadlineService.saveDeadline(deadline));
-        Assertions.assertEquals("Failed to save the deadline", exception.getMessage());
+        assertEquals("Failed to save the deadline", exception.getMessage());
+    }
+
+    /**
+     * Tests that the correct sprint name is mapped the corresponding id of the deadline.
+     */
+    @Test
+    void givenDeadlinesExist_whenGetSprintOccurringOnDeadlinesCalled_thenAppropriateDataReturned() {
+        List<Deadline> deadlines = new ArrayList<Deadline>();
+        deadlines.add(deadline);
+        when(sprintRepository.findByDateAndProject(deadline.getProject(),
+                 new java.sql.Date(deadline.getDate().getTime()))).thenReturn(sprint);
+        Map<Integer, String> testData = deadlineService.getSprintOccurringOnDeadlines(deadlines);
+        assertEquals("(Test Sprint)", testData.get(deadline.getDeadlineId()));
+    }
+
+    /**
+     * Tests that if no sprint occurs on a deadline then this is mapped to the deadline.
+     */
+    @Test
+    void givenNoSprintExistsForDeadline_whenGetSprintOccurringOnDeadlinesCalled_thenNoSprintIsMappedToDeadline() {
+        List<Deadline> deadlines = new ArrayList<Deadline>();
+        deadlines.add(deadline2);
+        when(sprintRepository.findByDateAndProject(deadline2.getProject(),
+                new java.sql.Date(deadline2.getDate().getTime()))).thenReturn(null);
+        Map<Integer, String> testData = deadlineService.getSprintOccurringOnDeadlines(deadlines);
+        assertEquals("(No Sprint)", testData.get(deadline2.getDeadlineId()));
+    }
+
+
+    /**
+     * Test to check that when a deadline with an invalid name is verified an appropriate error is thrown
+     */
+    @Test
+    void givenInvalidDeadlineWithNameLessThanThreeCharactersExists_whenVerifyDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
+        Deadline deadline2 = new Deadline.Builder()
+                .deadlineId(1)
+                .name("Te")
+                .project(project)
+                .date(project.getStartDate())
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                deadlineService.verifyDeadline(deadline2));
+        assertEquals("Deadline name must be at least 3 characters", exception.getMessage());
+    }
+
+
+    /**
+     * Test to check when an invalid deadline with an emoji is passed for verification an inappropriate errror
+     * thrown
+     */
+    @Test
+    void givenInvalidDeadlineWithAnEmojiInName_whenVerifyDeadlineRequested_thenAnAppropriateExceptionIsThrown() {
+        Deadline deadline2 = new Deadline.Builder()
+                .deadlineId(1)
+                .name("Test 😀")
+                .project(project)
+                .date(project.getStartDate())
+                .build();
+
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                deadlineService.verifyDeadline(deadline2));
+        assertEquals("Deadline name must not contain an emoji", exception.getMessage());
+    }
+
+    /**
+     * Asserts that the colours for the given deadline is updated based on the given list of sprint
+     */
+    @Test
+    void givenDeadlineExists_whenUpdateDeadlineColorsIsRequested_thenDeadlineColorsIsUpdatedWithSprint() {
+
+        Sprint sprint1 = new Sprint.Builder().sprintName("Sprint 1").sprintId(1)
+                .startDate(new java.sql.Date(2020 - 1900, 11, 1))
+                .endDate(new java.sql.Date(2020 - 1900, 11, 2))
+                .color(SprintColor.BLUE).build();
+
+        when(sprintRepository.findSprintsByDeadline(deadline)).thenReturn(Optional.ofNullable(sprint1));
+        deadlineService.updateDeadlineColors(deadline);
+
+        assertEquals(SprintColor.BLUE, deadline.getColors());
+
     }
 }

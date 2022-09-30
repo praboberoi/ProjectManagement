@@ -36,8 +36,8 @@ public class Deadline {
     private Date date;
 
     @Column
-    @ElementCollection
-    private final List<SprintColor> colors = new ArrayList<>();
+    @Enumerated(value = EnumType.STRING)
+    private SprintColor color;
 
     /**
      * No args Constructor for the Deadline.
@@ -111,26 +111,22 @@ public class Deadline {
         return formatter.format(date);
     }
 
-    public List<SprintColor> getColors() {
-        return this.colors;
+    public SprintColor getColors() {
+        return this.color;
     }
 
-    public void addColor(SprintColor color, int index) {
-        this.colors.add(index, color);
-    }
-
-    public void clearColorList() {
-        colors.clear();
+    public void setColor(SprintColor color) {
+        this.color = color;
     }
 
     @Override
     public String toString() {
         return "Deadline{" +
                 "deadlineId=" + deadlineId +
-                ", projectId=" + project.getProjectId() +
+                ", project=" + project +
                 ", name='" + name + '\'' +
                 ", date=" + date +
-                ", colors= " + colors +
+                ", colors= " + color +
                 '}';
     }
 
@@ -138,7 +134,7 @@ public class Deadline {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (!(o instanceof Deadline deadline)) return false;
-        return deadlineId == deadline.deadlineId && project.equals(deadline.project) && name.equals(deadline.name) && date.equals(deadline.date);
+        return deadlineId == deadline.deadlineId && Objects.equals(project, deadline.project) && Objects.equals(name, deadline.name) && Objects.equals(date, deadline.date);
     }
 
     @Override

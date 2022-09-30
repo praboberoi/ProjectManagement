@@ -112,7 +112,6 @@
                                                 </th:block>
                                             </div>
                                         </h5>
-
                                         <b class="evidenceCardText">Project: </b>
                                         <p th:text="${evidence.project.projectName}" class="mb-0 evidenceCardText"></p>
                                         <br />
@@ -126,42 +125,12 @@
                     </th:block>
                 </div>
 
-                <div id="evidence-display" class="col-sm-12 col-md-8">
-                    <div id="selectedEvidence" th:fragment="selectedEvidence">
-                        <div class="card project-card"
-                        th:if="${selectedEvidence}">
-                        <div class="container-fluid">
-                            <div class="row">
-                                <div class="card-body">
-                                    <div class="container mb-2">
-                                        <div class="row">
-                                            <div class="col-auto me-auto">
-                                                <input type="hidden" id="selectedEvidenceId" th:value="${selectedEvidence.evidenceId}">
-                                                <h3 id="selectedEvidenceTitle" class="card-title" th:text="${selectedEvidence.title}" />
-                                                <b class="evidenceCardText">Project: </b>
-                                                <p th:text="${selectedEvidence.project.projectName}"
-                                                    class="mb-0 evidenceCardText"></p>
-                                                <br />
-                                                <br />
-                                                <b class="evidenceCardText">Date Created: </b>
-                                                <p class="evidenceCardText">
-                                                    [[${#dates.format(selectedEvidence.dateOccurred,'dd MMM yyyy')}]]
-                                                </p>
-                                                <br />
-                                                <br />
-                                                <p th:text="${selectedEvidence.description}"></p>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+            <div id="evidence-display" class="col-sm-12 col-md-8" th:insert="evidenceFragments::selectedEvidence">
+
             </div>
         </div>
     </div>
+</div>
 
     <div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
@@ -174,76 +143,76 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
-                    <!--                    Show evidence form-->
-                    <div id="evidenceForm" th:fragment="evidenceForm">
-                        <form id="createEvidenceForm" name="evidenceForm" onsubmit="return true"
-                            th:action="@{${apiPrefix} + '/evidence/' + ${evidence.ownerId} + '/saveEvidence'}"
-                            method="post" th:object="${evidence}">
-                            <input type="hidden" id="userId" th:field="*{ownerId}" />
-                            <input type="hidden" id="evidenceId" th:field="*{evidenceId}" />
-                            <div class="mb-3">
-                                <label for="evidence-title" class="col-form-label required">Evidence Title</label>
-                                <input type="text" class="form-control required" id="evidence-title" name="title"
-                                    th:field="*{title}" maxlength="50" oninput="checkEvidenceTitle()" required>
-                                <div>
-                                    <span id="evidenceCharCount" th:value="${charCount}">[[*{title.length}]] </span> /
-                                    50 characters used.
-                                </div>
-                                <p id="evidenceTitleError" th:text="${evidenceTitleError}" class="error-msg"></p>
+                <!--                    Show evidence form-->
+                <div id="evidenceForm" th:fragment="evidenceForm">
+                    <form id="createEvidenceForm" name="evidenceForm" onsubmit="return true"
+                          th:action="@{${apiPrefix} + '/evidence/' + ${evidence.ownerId} + '/saveEvidence'}"
+                          method="post" th:object="${evidence}">
+                        <input type="hidden" id="userId" th:field="*{ownerId}"/>
+                        <input type="hidden" id="evidenceId" th:field="*{evidenceId}"/>
+                        <div class="mb-3">
+                            <label for="evidence-title" class="col-form-label required">Evidence Title</label>
+                            <input type="text" class="form-control required" id="evidence-title" name="title"
+                                   th:field="*{title}" maxlength="50" oninput="checkEvidenceTitle()" required>
+                            <div>
+                                <span id="evidenceTitleCharCount" th:value="${charCountTitle}">[[*{title.length}]] </span> / 50 characters used.
                             </div>
+                            <p id="evidenceTitleError" th:text="${evidenceTitleError}" class="error-msg"></p>
+                        </div>
 
-                            <div class="mb-3">
-                                <label for="evidence-project" class="col-form-label required">Select Project</label>
-                                <select type="text" class="form-select required" id="evidence-project"
-                                    th:field="*{project}" required onchange="updateSubmissionButton()">
-                                    <th:block th:each="project : ${listProjects}">
-                                        <option th:id="'project-' + ${project.projectId}" th:value="${project.projectId}">
-                                            [[${project.projectName}]]</option>
-                                    </th:block>
+                        <div class="mb-3">
+                            <label for="evidence-project" class="col-form-label required">Select Project</label>
+                            <select type="text" class="form-select required" id="evidence-project"
+                                    th:field="*{project}" onchange="evidenceProjectChange()" required>
+                                <th:block th:each="project : ${listProjects}">
+                                    <option  id="selectedProject" th:id="'project-' + ${project.projectId}" th:value="${project.projectId}"
+                                             th:data-startDate="${project.startDate}" th:data-endDate="${project.endDate}">
+                                        [[${project.projectName}]]</option>
+                                </th:block>
 
-                                </select>
-                                <p id="evidenceProjectError" th:text="${evidenceTitleError}" class="error-msg"></p>
+                            </select>
+                            <p id="evidenceProjectError" th:text="${evidenceTitleError}" class="error-msg"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="evidence-date" class="col-form-label required">Date</label>
+                            <span data-bs-toggle="tooltip" data-bs-placement="top"
+                                  aria-label="The date of evidence creation." title="The date of evidence creation.">
+                                <img class="icon img-color-primary"
+                                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
+                            </span>
+                            <input type="date" class="form-control required" id="evidence-date"
+                                   th:field="*{dateOccurred}" oninput="checkEvidenceDate()" required>
+                            <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="evidence-description" class="col-form-label required">Description</label>
+                            <textarea type="evidence-description" class="form-control required" name="description"
+                                      id="evidence-description" th:field="*{description}" oninput="checkEvidenceDescription()" maxlength="200" required></textarea>
+                            <div>
+                                <span id="evidenceDescriptionCharCount" th:value="${charCountDescription}">[[*{description.length}]] </span> / 200 characters used.
                             </div>
-
-                            <div class="mb-3">
-                                <label for="evidence-date" class="col-form-label required">Date</label>
-                                <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                    aria-label="The date of evidence creation." title="The date of evidence creation.">
-                                    <img class="icon img-color-primary"
-                                        th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
-                                </span>
-                                <input type="date" class="form-control required" id="evidence-date" oninput="updateSubmissionButton()"
-                                    th:field="*{dateOccurred}" required>
-                                <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
-                            </div>
-
-                            <div class="mb-3">
-                                <label for="evidence-description" class="col-form-label required">Description</label>
-                                <textarea type="evidence-description" class="form-control required"
-                                    id="evidence-description" oninput="updateSubmissionButton()" th:field="*{description}" required></textarea>
-                                <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}"
-                                    class="error-msg"></p>
-                            </div>
+                            <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}" class="error-msg"></p>
+                        </div>
 
 
-                            <div class="row">
-                            </div>
-                            <br>
-                            <div class="modal-footer">
-                                <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" onclick="updateEditMessage()" disabled>
-                                    <img class="icon img-color-secondary" id="evidenceFromSubmitImg"
-                                        th:src="${submissionImg}" />
-                                    <span id="evidenceFormSubmitLabel" >[[${submissionName}]]</span></button>
-                                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="updateEditMessage()">
-                                    <img class="icon img-color-secondary"
-                                        th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
-                                    <span>Close</span></button>
-                            </div>
-                        </form>
-                    </div>
+                        <div class="row">
+                        </div>
+                        <br>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" onclick="updateEditMessage()" disabled>
+                                <img class="icon img-color-secondary" id="evidenceFromSubmitImg"
+                                     th:src="${submissionImg}" />
+                                <span id="evidenceFormSubmitLabel" >[[${submissionName}]]</span></button>
+                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="updateEditMessage()">
+                                <img class="icon img-color-secondary"
+                                     th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
+                                <span>Close</span></button>
+                        </div>
+                    </form>
                 </div>
-
+                </div>
             </div>
         </div>
     </div>
@@ -288,5 +257,4 @@
     <script th:src="@{{apiPrefix}/javascript/evidenceForm.js(apiPrefix=${apiPrefix})}"></script>
 
 </body>
-
 </html>

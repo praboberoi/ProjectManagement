@@ -51,11 +51,23 @@ When("I create the group {string}, {string}", (groupName, groupLongName) => {
 
     cy.get('#create-btn').click()
     cy.get('#shortName').clear().type(groupName, { delay: 0 })
+
     cy.get('#longName').clear().type(groupLongName, { delay: 0 })
     cy.get('#save-submit-button').contains("Create").should('be.visible').click()
     cy.get('#messageSuccess').should('contain', `Group created successfully`)
 
     cy.wait('@update')
+})
+
+When("I enter an emoji for the group short and long name", ()=> {
+    cy.get('#shortName').clear().type('dfg😀', {delay: 0})
+    cy.get('#longName').clear().type('dfg😀', { delay: 0 })
+
+})
+
+Then("Error messages are displayed for using an emojis for both short and long names", () => {
+    cy.get('#shortNameError').should('have.text', "Group short name must not contain an emoji");
+    cy.get('#longNameError').should('have.text', "Group long name must not contain an emoji");
 })
 
 When("I change the group name to {string}", (newName) => {

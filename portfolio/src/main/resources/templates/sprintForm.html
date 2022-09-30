@@ -28,7 +28,7 @@
         <h2>[[${pageTitle}]]</h2>
     </div>
     <div class="projectForm">
-        <form id="createSprintForm" onsubmit="return validateForm()" action="#" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/saveSprint'}" th:object="${sprint}" method="post">
+        <form id="createSprintForm" onsubmit="return validateForm()" action="#" th:action="@{${apiPrefix} + '/project/' + ${project.projectId} + '/sprint'}" th:object="${sprint}" method="post">
             <input type="hidden" id="projectId" th:field="${project.projectId}"/>
             <input type="hidden" id="sprintId" th:field="*{sprintId}" />
             <input type="hidden" id="sprintColor" th:field="*{color}" />

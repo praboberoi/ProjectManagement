@@ -191,8 +191,7 @@ a.project-name {
 }
 
 #detailsCard, #calendarOb {
-    overflow-y: auto;
-    height: 300px;
+    height: 340px;
 }
 
 td.hiddenRow {
@@ -200,7 +199,9 @@ td.hiddenRow {
 }
 
 
-#myTabContent{
+#e-container, #d-container, #m-container {
+    height: 240px;
+    margin-top: 10px;
     overflow-y: auto;
 }
 
@@ -335,7 +336,20 @@ a.desc.sort:after {
     border: unset;
 }
 
-#groupDropdown {
+.dropdown-toggle {
+    align-content: center;
+    padding-top: 5px;
+}
+
+#group-dropdown {
+    display: none;
+}
+
+#evidence-dropdown {
+    display: none;
+}
+
+#evidence-options {
     display: none;
 }
 
@@ -357,11 +371,11 @@ a.desc.sort:after {
 
 
 @media only screen and (max-width: 768px) {
-    #groupDropdown {
+    #group-dropdown {
         display: initial;
     }
 
-    #groupName {
+    #group-name {
         display: none;
     }
 
@@ -369,6 +383,21 @@ a.desc.sort:after {
         display: none;
     }
 
+    #evidence-dropdown {
+        display: initial;
+    }
+
+    #evidence-name {
+        display: none;
+    }
+
+    #evidence-list {
+        display: none;
+    }
+
+    #evidence-options {
+        display: initial;
+    }
 }
 
 #userListDataTable .dropdown-toggle::after {

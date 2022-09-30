@@ -4,7 +4,6 @@ import nz.ac.canterbury.seng302.portfolio.model.Groups;
 import nz.ac.canterbury.seng302.portfolio.model.Repo;
 import nz.ac.canterbury.seng302.portfolio.model.RepoRepository;
 import nz.ac.canterbury.seng302.portfolio.service.GroupService;
-import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.portfolio.utils.PrincipalUtils;
 import nz.ac.canterbury.seng302.shared.identityprovider.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,9 +31,6 @@ import java.util.stream.Stream;
 public class GroupController {
     @Autowired
     private GroupService groupService;
-
-    @Autowired
-    private UserAccountClientService userAccountClientService;
 
     @Autowired
     private RepoRepository repoRepository;
@@ -264,6 +260,11 @@ public class GroupController {
 
         RemoveGroupMembersResponse response = groupService.removeGroupMembers(userIds, groupId);
         if (response.getIsSuccess() && "".equals(additionalInfo)) {
+            if (groupId == -1) {
+                for (int userId : userIds) {
+                    notifyRoleChange(userId);
+                }
+            }
             notifyGroup(groupId, "members", "removed");
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
@@ -300,6 +301,11 @@ public class GroupController {
         AddGroupMembersResponse response = groupService.addGroupMembers(userIds, groupId);
         if (response.getIsSuccess()) {
             notifyGroup(groupId, "members", "added");
+            if (groupId == -1) {
+                for (int userId : userIds) {
+                    notifyRoleChange(userId);
+                }
+            }
             return ResponseEntity.status(HttpStatus.OK).body(response.getMessage());
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getMessage());
@@ -331,20 +337,19 @@ public class GroupController {
 
         model.addAttribute(GROUP, group);
         model.addAttribute("repo", repo);
-        return GROUP;
+        return "groupSetting";
     }
 
     /**
      * Gets the individual group's title.
      * 
      * @param groupId The pages group id for future implementation
-     * @param model   Parameters sent to thymeleaf template to be rendered into HTML
      * @return The group page
      */
     @GetMapping(path = "/group/{groupId}/title")
     public ModelAndView groupPageTitle(@PathVariable int groupId) {
         Groups group = groupService.getGroupById(groupId);
-        ModelAndView mv = new ModelAndView("group::groupTitle");
+        ModelAndView mv = new ModelAndView("groupSetting::groupTitle");
         mv.addObject("group", group);
         return mv;
     }
@@ -357,6 +362,16 @@ public class GroupController {
      * @param action    The action taken (deleted, created, edited)
      */
     private void notifyGroup(int groupId, String component, String action) {
+        template.convertAndSend("/element/group/" + groupId, (component + " " + action));
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
+    }
+
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of user that has been updated
+     */
+    private void notifyRoleChange(int userId) {
+        template.convertAndSend("/element/user/" + userId + "/roles", "");
     }
 }

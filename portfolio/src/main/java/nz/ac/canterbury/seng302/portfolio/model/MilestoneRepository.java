@@ -25,7 +25,7 @@ public interface MilestoneRepository extends CrudRepository<Milestone, Integer> 
      */
 
     @Query(value = "SELECT DISTINCT milestone from Milestone milestone where milestone.date between :#{#sprint.startDate} " +
-            "and :#{#sprint.endDate}")
+            "and :#{#sprint.endDate} AND milestone.project = :#{#sprint.project}")
     List<Milestone> findMilestonesBySprint(@Param("sprint") Sprint sprint);
 
 

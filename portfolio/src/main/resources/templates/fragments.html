@@ -66,23 +66,23 @@
       <div class="sidebar">
         <ul class="nav nav-pills flex-column " id="sidebar-2" >
           <li class="nav-item"  >
-            <a class="nav-link" style="justify-content: center" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/dashboard') ? 'active':''}" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
+            <a class="nav-link" style="justify-content: center" th:classappend="${#httpServletRequest.getRequestURI().contains('/dashboard') ? 'active':''}" th:href="@{{apiPrefix}/dashboard(apiPrefix=${apiPrefix})}">
               Dashboard
             </a>
           </li>
           <li class="nav-item"  >
-            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/users') ? 'active':''}" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains('/users') ? 'active':''}" th:href="@{{apiPrefix}/users(apiPrefix=${apiPrefix})}">
               Users
             </a>
           </li>
           <li class="nav-item"  >
-            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/groups') ? 'active':''}" th:href="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}">
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains('/groups') ? 'active':''}" th:href="@{{apiPrefix}/groups(apiPrefix=${apiPrefix})}">
               Groups
             </a>
           </li>
 
           <li class="nav-item"  >
-            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains(apiPrefix + '/evidence/{user.userId}') ? 'active':''}" th:href="@{{apiPrefix}/evidence/{userId}(apiPrefix=${apiPrefix}, userId=${user.userId})}">
+            <a class="nav-link" th:classappend="${#httpServletRequest.getRequestURI().contains('/evidence/{user.userId}') ? 'active':''}" th:href="@{{apiPrefix}/evidence/{userId}(apiPrefix=${apiPrefix}, userId=${user.userId})}">
               My Evidence
             </a>
           </li>

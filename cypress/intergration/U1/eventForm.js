@@ -36,6 +36,14 @@ When("I type in an event name that is very long", ()=> {
     cy.get('#event-name').clear().type('Shared lunch will all of the seng302 students to celebrate the end of the year', {"delay":0})
 })
 
+When("I enter an emoji for the event name", () => {
+    cy.get('#event-name').clear().type('fosp😀', {"delay":0})
+})
+
+Then("An error messages is displayed for using an emoji", () => {
+    cy.get('#eventNameError').should('have.text', 'Event name must not contain an emoji')
+})
+
 Then('An error message is displayed showing that the event name has exceeded the maximum characters', ()=> {
     cy.get('#eventNameError').should('have.text', 'Event Name cannot exceed 50 characters')
 })
@@ -60,4 +68,12 @@ When("I enter the valid date and times for the event", () => {
 
 Then("The event is successfully saved", ()=> {
     cy.get('.alert-success').should('contain.text', 'Successfully Created New Event')
+})
+
+Then("{string} in Sprint {int} accordion", (element, label) => {
+    cy.get("button").contains("Sprint " + label).parents("tbody").should('contain.text', element)
+})
+
+Then("{string} not in Sprint {int} accordion", (element, label) => {
+    cy.get("button").contains("Sprint " + label).parents("tbody").should('not.contain.text', element)
 })

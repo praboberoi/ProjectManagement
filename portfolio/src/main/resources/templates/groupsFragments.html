@@ -35,9 +35,9 @@
                 <div class="container mb-2">
                     <div class="row">
                         <div class="col-auto me-auto">
-                            <h3 id="groupName" class="card-title" th:text="${group.shortName}" />
+                            <h3 id="group-name" class="card-title" th:text="${group.shortName}" />
 
-                            <div id="groupDropdown" class="dropdown">
+                            <div id="group-dropdown" class="dropdown">
                                 <button class="btn btn-secondary" href="javascript:void(0);" data-bs-toggle="dropdown"
                                     aria-expanded="false">
                                     <h5 class="dropdown-toggle" th:text="${group.shortName}" role="button"></h5>
@@ -101,17 +101,22 @@
                                 </ul>
                             </div>
                         </div>
-                        <div th:if="${group.groupId != 0 && adminOrTeacher}" class="container-fluid my-2 p-0 d-none d-md-block">
-                            <button id="remove-users" type="button" class="btn btn-outline-secondary"
-                                th:onclick="'removeUsers(' + ${group.groupId} + ')'" disabled>
-                                Remove selected users
-                            </button>
-                        </div>
-                        <div th:if="${group.shortName.contains('Teaching Staff') && adminOrTeacher}" class="container-fluid p-0 my-2">
-                            <button id="remove-users" type="button" class="btn btn-outline-secondary"
-                                th:onclick="'removeUsers(-1)'" disabled>
-                                Remove selected users
-                            </button>
+                        <div class="row">
+                            <div th:if="${group.groupId != 0 && adminOrTeacher}"
+                                class="container-fluid my-2 p-0 col-12 col-md-6">
+                                <button id="remove-users" type="button" class="btn btn-outline-secondary"
+                                    th:onclick="'removeUsers(' + ${group.groupId} + ')'" disabled>
+                                    Remove selected users
+                                </button>
+                            </div>
+                            <div th:if="${group.shortName.contains('Teaching Staff') && adminOrTeacher}"
+                                class="container-fluid p-0 my-2 col-12 col-md-6">
+                                <button id="remove-users" type="button" class="btn btn-outline-secondary"
+                                    th:onclick="'removeUsers(-1)'" disabled>
+                                    Remove selected users
+                                </button>
+                            </div>
+                            <div th:replace="::moveUsers"></div>
                         </div>
                     </div>
                 </div>
@@ -154,6 +159,7 @@
     <div id="groupModals">
         <span th:replace="::deleteGroupModal"></span>
         <span th:replace="::editGroupModal"></span>
+        <span th:replace="::moveGroupModal"></span>
     </div>
 </div>
 
@@ -267,12 +273,11 @@
 </div>
 
 <div th:fragment="groupFormSharedContent(formGroup)">
-
     <div class="mb-3">
         <label class="col-form-label required">Group Short Name</label>
-        <input type="text" class="form-control required" name="shortName" oninput="checkShortName(event)"
-            th:value="${formGroup!=null?formGroup.shortName:''}" id="shortName" maxlength="50"
-            placeholder="Short Group Name" required>
+        <input th:readonly="${!adminOrTeacher}" type="text" class="form-control required" name="shortName"
+            oninput="checkShortName(event)" th:value="${formGroup!=null?formGroup.shortName:''}" id="shortName"
+            maxlength="50" placeholder="Short Group Name" required>
         <span id="charCount" th:value="${charCount}"
             th:text="${formGroup!=null?#strings.length(formGroup.shortName):0}"> </span> / 50
         characters used.
@@ -288,5 +293,56 @@
         </span> / 100 characters used.
         <p id="longNameError" th:text="${longNameError}" class="error-msg">
         </p>
+    </div>
+</div>
+
+<div th:if="${adminOrTeacher}" class="container-fluid p-0 my-2 col-12 col-md-6" th:fragment="moveUsers">
+    <button id="move-users" type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+        data-bs-target="#moveModal" disabled>
+        Add selected users to group...
+    </button>
+</div>
+
+<div class="modal fade" id="moveModal" tabindex="-1" role="dialog" aria-labelledby="moveModalCenterTitle"
+    aria-hidden="true" th:fragment="moveGroupModal">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="conformationModalLongTitle">Add To Group</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="move-message">Select the group to move the selected users into</p>
+                <div id="moveGroupDropdown" class="dropdown">
+                    <button class="btn btn-secondary" data-bs-toggle="dropdown"
+                        aria-expanded="false">
+                        <h5 class="dropdown-toggle" role="button"> Select group</h5>
+                    </button>
+                    <ul class="dropdown-menu">
+                        <th:block th:each="groupDropdown : ${listGroups}">
+                            <li class="dropdown-item"
+                                th:if="${groupDropdown.getGroupId() == 0} and ${groupDropdown.shortName.contains('Teaching Staff')}">
+                                <a role="button" class="project-name" href="javascript:void(0);"
+                                    th:onclick="'addUsers(-1, ' + ${group.groupId} + ')'"
+                                    th:text="${groupDropdown.shortName}" data-bs-dismiss="modal"></a>
+                            </li>
+                            <li class="dropdown-item" th:if="${groupDropdown.getGroupId() != 0}">
+                                <a role="button" class="project-name" href="javascript:void(0);"
+                                    th:onclick="'addUsers(' + ${groupDropdown.groupId} + ', ' + ${group.groupId} + ')'"
+                                    th:text="${groupDropdown.shortName}" data-bs-dismiss="modal"></a>
+                            </li>
+                        </th:block>
+                    </ul>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                    <img class="icon img-color-secondary"
+                        th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
+                    Cancel</button>
+            </div>
+        </div>
     </div>
 </div>
