@@ -34,7 +34,7 @@
 
         <div class="" id="settings-container">
             <div class="row mt-3">
-                <div id="main-content" class="col-12 col-lg-8" th:fragment="groupList">
+                <div id="main-content" class="col-12" th:classappend="${adminOrTeacher || group.members.contains(user)} ? col-lg-8" th:fragment="groupList">
                     <div class="card project-card mb-3">
                         <div class="container-fluid">
                             <div class="row">
@@ -54,7 +54,8 @@
                                         </li>
                                     </ul>
 
-                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab2" role="tablist">
+                                    <ul class="nav nav-tabs d-none d-lg-block" id="myTab2" role="tablist"
+                                        th:if="${adminOrTeacher || group.members.contains(user)}">
                                         <li class="nav-item" role="presentation">
                                             <button class="nav-link active" id="actions-toggle-tab" type="button"
                                                 role="tab" onclick="toggleRecentActions()">Recent Actions</button>
@@ -75,7 +76,7 @@
                         </div>
                     </div>
                 </div>
-                <div id="recent-actions-container" class="col-12 col-lg-4" th:fragment="groupList">
+                <div id="recent-actions-container" class="col-12 col-lg-4" th:fragment="groupList" th:if="${adminOrTeacher || group.members.contains(user)}">
                     <div class="card project-card mb-3">
                         <div class="container-fluid">
                             <div class="row">
