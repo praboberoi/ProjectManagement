@@ -109,8 +109,6 @@ function createGroup() {
  * @param event Form submit request
  */
 function saveGroup() {
-
-    if (validateForm()) {
         let httpRequest = new XMLHttpRequest();
 
         let editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
@@ -123,7 +121,6 @@ function saveGroup() {
         let formData = new FormData(document.forms.editGroupForm)
 
         httpRequest.send(formData);
-    }
 }
 
 /**

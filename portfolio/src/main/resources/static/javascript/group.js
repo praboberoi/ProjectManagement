@@ -69,18 +69,18 @@ function checkLongName(event) {
  * @param event Form submit request
  */
 function saveGroup() {
-    let httpRequest = new XMLHttpRequest();
+        let httpRequest = new XMLHttpRequest();
 
-    let editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
-    let modalError = document.getElementById('editModalError')
+        let editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
+        let modalError = document.getElementById('editModalError')
 
-    httpRequest.onreadystatechange = () => updateModal(httpRequest, editModal, modalError)
+        httpRequest.onreadystatechange = () => updateModal(httpRequest, editModal, modalError)
 
-    httpRequest.open('POST', apiPrefix + `/groups`);
+        httpRequest.open('POST', apiPrefix + `/groups`);
 
-    let formData = new FormData(document.forms.editGroupForm)
+        let formData = new FormData(document.forms.editGroupForm)
 
-    httpRequest.send(formData);
+        httpRequest.send(formData);
 }
 
 /**
