@@ -170,7 +170,7 @@ function createNewEvidence() {
     evidenceProjectIdEditing = null;
 
     let httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', `/evidence/getNewEvidence`)
+    httpRequest.open('GET', apiPrefix + `/evidence/getNewEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, "Create New Evidence");
     httpRequest.send();
 }
@@ -181,7 +181,7 @@ function createNewEvidence() {
  */
 function editEvidence(evidenceId) {
     let httpRequest = new XMLHttpRequest();
-    httpRequest.open('GET', `/evidence/${evidenceId}/editEvidence`)
+    httpRequest.open('GET', apiPrefix + `/evidence/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, "Update Evidence");
     httpRequest.send();
 

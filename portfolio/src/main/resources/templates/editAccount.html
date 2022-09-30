@@ -35,7 +35,6 @@
         </div>
 
         <div class="contentContainer">
-            <!--                <nav id="sidebar" class="sidebar"></nav>-->
             <div id="content">
                 <br>
                 <h4>Edit your account details </span></h4>
@@ -74,14 +73,14 @@
 
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="firstName" class = "required col-sm-2 col-form-label"><h6>First Name: <span class="asterisk">*</span></h6></label>
+                                    <label for="firstName" class = "required col-sm-2 col-form-label"><h6>First Name: </h6></label>
                                     <div class = "col-sm-6">
                                         <input type="text" id="firstName" name="firstName" class="form-control" th:value="${user.firstName}" oninput="checkFirstName();" required>
                                         <p id="firstNameError" th:text="${firstNameError}" class="error-msg"></p>
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="lastName" class = "required col-sm-2 col-form-label"><h6>Last Name: <span class="asterisk">*</span></h6></label>
+                                    <label for="lastName" class = "required col-sm-2 col-form-label"><h6>Last Name: </h6></label>
                                     <div class = "col-sm-6">
                                         <input type="text" id="lastName" name="lastName" class="form-control " th:value="${user.lastName}"  oninput="checkLastName();" required>
                                         <p id="lastNameError" th:text="${lastNameError}" class="error-msg"></p>
@@ -102,7 +101,7 @@
                                     </div>
                                 </div>
                                 <div class="row mb-3">
-                                    <label for="email" class = "required col-sm-2 col-form-label"><h6>Email: <span class="asterisk">*</span></h6></label>
+                                    <label for="email" class = "required col-sm-2 col-form-label"><h6>Email: </h6></label>
                                     <div class = "col-sm-6">
                                         <input type="email" id="email" name="email" class="form-control" th:value="${user.email}"oninput="checkEmail();" required>
                                         <p id="emailError" th:text="${emailError}" class="error-msg"></p>

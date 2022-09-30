@@ -20,10 +20,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -160,13 +157,13 @@ public class SprintController {
      * 
      * @param projectId ID of the project to check
      * @param principal Current user
-     * @param sprint    Current sprint
+     * @param sprintDTO    Current sprint
      * @return ResponseEntity containing a string message
      */
     @PostMapping("/project/{projectId}/verifySprint")
     public ResponseEntity<String> verifySprint(
             @PathVariable int projectId,
-            @ModelAttribute SprintDTO sprintDTO,
+            @RequestBody SprintDTO sprintDTO,
             @AuthenticationPrincipal AuthState principal) {
         if (!PrincipalUtils.checkUserIsTeacherOrAdmin(principal)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Insufficient Permissions");

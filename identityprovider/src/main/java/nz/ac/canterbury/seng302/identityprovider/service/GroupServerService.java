@@ -1,6 +1,7 @@
 package nz.ac.canterbury.seng302.identityprovider.service;
 
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -121,6 +122,12 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
         } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null) {
             reply.setIsSuccess(false);
             reply.setMessage(String.format("Group with long name %s already exists", request.getLongName()));
+        } else if (request.getShortName().equalsIgnoreCase("teaching staff")){
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("Group short name cannot be the same as 'Teaching Staff'"));
+        } else if (request.getShortName().equalsIgnoreCase("members without a group")){
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("Group short name cannot be the same as 'Members without a group'"));
         } else {
             try {
                 Groups newGroup = new Groups(request.getShortName(), request.getLongName());
@@ -169,9 +176,16 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             } else {
                 reply.setMessage(String.format("Group with short name %s already exists", request.getShortName()));
             }
+
         } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null && !request.getLongName().equals(group.getLongName())) {
             reply.setIsSuccess(false);
             reply.setMessage(String.format("Group with long name %s already exists", request.getLongName()));
+        } else if (request.getShortName().equalsIgnoreCase("teaching staff")){
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("Group short name cannot be the same as 'Teaching Staff'"));
+        } else if (request.getShortName().equalsIgnoreCase("members without a group")){
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("Group short name cannot be the same as 'Members without a group'"));
         } else {
             try {
                 group.setShortName(request.getShortName());
