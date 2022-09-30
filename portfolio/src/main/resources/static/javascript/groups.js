@@ -194,8 +194,12 @@ function deleteGroup(groupId) {
  */
 function selectUser(event) {
     let removeUserButton = document.querySelector('#remove-users')
+    let moveUserButton = document.querySelector('#move-users')
     if (removeUserButton != null) {
         removeUserButton.disabled = false
+    }
+    if (moveUserButton != null) {
+        moveUserButton.disabled = false
     }
     let userTable = document.querySelectorAll("#userListDataTable tr")
 
