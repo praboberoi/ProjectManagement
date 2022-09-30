@@ -12,30 +12,32 @@ Endpoints implemented <br />
 
 ### Account
 - "/account" GET – Returns an account page with the user’s information.
+- "/account/roles" GET - Returns a list of roles the user has.
 - "/editAccount" GET - Populates the edit page with a user's details. 
 - "/editAccount" POST – Modifies the user’s information to match those provided.<br/>
 
+
 ### Dashboard
 - "/dashboard" GET – Returns the dashboard page with the projects the user is enrolled in.
-- "/dashboard/newProject" GET – Returns a page with a form used to create a new project.
-- "dashboard/saveProject" POST – Saves or creates a new project with the provided details.<br/>
-
-
-- "dashboard/editProject/{projectId}" GET – Returns a form to modify a projects information.
-- "dashboard/deleteProject/{projectId}" POST - Deletes the project with the specified id from the database.<br/>
 
 
 ### Project
-- "/project/{projectId}" GET – Returns the project page with the projects information.
+- "/project" GET - Returns the list of projects
+- "/project" POST - Saves project object with the provided details
+- "/verifyProject/{projectId}" POST - Validates the projects details from user input.
+- "/project/{projectId}" GET – Returns the project page with the projects' information.
+- "/project/{projectId}" DELETE - Delete the specified project.
+
+
+### Sprint
 - "/project/{projectId}/sprint" POST - Saves or creates a new sprint with the provided details.
-- "/project/{projectId}/editSprint/{sprintId}" GET – Returns a form to modify a sprints information.
+- "/project/{projectId}/newSprint" GET - Returns new page for creating a sprint.
+- "/sprint/{sprintId}/editSprint" POST - Saves a sprint's start and end date with the provided dates.
+- "/project/{projectId}/editSprint/{sprintId}" GET – Returns a form to modify a sprints' information.
 - "/project/{projectId}/deleteSprint/{sprintId}" GET - Deletes the sprint with the specified id from the database.
 - "/project/{projectId}/getAllSprints" GET - Retrieves all the sprints for a specific project.
 - "/project/{projectId}/verifySprint" POST - Verifies the sprint details from user input.
-
-### Sprint
-- "/sprint/{sprintId}/editSprint" 
-- "/verifyProject/{projectId}" POST - Validates the projects details from user input.
+- "/project/{projectId}/sprint/{sprintId}/accordion" - GET - Returns the sprint with the specified project Id.
 - "/error" GET - Returns the Error page.
 
 ### Users
@@ -43,6 +45,7 @@ Endpoints implemented <br />
 - "/usersList" GET - Get the current table page of users. 
 - "/usersList/removeRole" DELETE - Remove the selected role from a user.
 - "/user/{userId}/addRole" POST - Add the selected role to a user.
+- 
 
 ### Groups
 - "/groups" GET - Get the groups page.
@@ -55,6 +58,7 @@ Endpoints implemented <br />
 - "/groups/{groupId}/removeMembers" POST - Remove selected members from a group but not as users of LENSFolio.
 - "/groups/{groupId}/addMembers" POST - Add selected members to a group.
 - "/groups/{groupId}/addMembers" POST - Add selected members to a group.
+- "/group/user/{userId}" GET - Gets the fragment for a user row in the group settings page.
 
 ### Events
 - "/project/{projectId}/events" GET - Get all the events related to the specified project.
@@ -77,8 +81,12 @@ Endpoints implemented <br />
 ### Evidence
 - "evidence/{userId}" GET- Get all the evidence for a specific user.
 - "/evidence/{userId}/{evidenceId}" GET - Get a user's specific piece of evidence.
+- "/evidence/{userId}/getNewEvidence" GET - Gets a user's newly created evidence.
 - "/evidence/{userId}/saveEvidence" POST - Save the updated/new details of a piece of evidence.
 - "/evidence/{userId}/{evidenceId}/editEvidence" GET - Updates the evidence with the specified details.
+- "/evidence/{userId}/{evidenceId}/deleteEvidence" DELETE - Delete the specified evidence.
+- "/evidence/{userId}/getEvidenceList" GET - Gets the evidence list of the user with the given user ID.
+- "evidence/edit" Message Mapping - Websocket End Point for editing Evidence.
 
 ### Repo
 - "/repo/{groupId}" GET - Get the repository for the specified group.
