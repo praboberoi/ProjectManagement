@@ -1,5 +1,15 @@
 # LENSfolio - by Bolt Development
 
+LENSfolio is an application to manage 
+LENSfolio manages projects, events, deadlines and documentation in one place. It is a compact web application compatible on all devices, ideal for  students and teachers to manage projects in a learning environment. 
+
+**Key Features:**
+- Teachers and Course Administrators have the ability to set up projects, add events, deadlines and milestones.
+- Customised groups can be created with members added. 
+- Groups can connect their GitLab repository to follow its activity within LENSfolio. 
+- Students can add evidence linked to a project. 
+- A list of users can be viewed, as well as other users evidence pages.
+
 ## Contributors
 
 - SENG302 teaching team
@@ -13,16 +23,6 @@
 
 ## License
 Apache 2.0
-
-LENSfolio is an application to manage 
-LENSfolio manages projects, events, deadlines and documentation in one place. It is a compact web application compatible on all devices, ideal for  students and teachers to manage projects in a learning environment. 
-
-**Key Features:**
-- Teachers and Course Administrators have the ability to set up projects, add events, deadlines and milestones.
-- Customised groups can be created with members added. 
-- Groups can connect their GitLab repository to follow its activity within LENSfolio. 
-- Students can add evidence linked to a project. 
-- A list of users can be viewed, as well as other users evidence pages.
 
 ## How to run
 
@@ -177,61 +177,7 @@ npx cypress run
 
 Note: Between tests you will need to rerun the application to reset the database. You can also run the contents of the cypress-data.sql file on your selected database.
 
-
-
-
-## Dependencies
-### Shared
-- `io.grpc:grpc-netty-shaded:1.40.1`
-- `io.grpc:grpc-protobuf:1.40.1`
-- `io.grpc:grpc-stub:1.40.1`
-- `org.jetbrains:annotations:20.1.0`
-- `com.h2database:h2:1.4.200`
-- `org.springframework.boot:spring-boot-starter-data-jpa`
-- `jakarta.annotation:jakarta.annotation-api:1.3.5`
-
-### Portfolio
-- `org.springframework.boot:spring-boot-starter-web`
-- `org.springframework.boot:spring-boot-starter-thymeleaf`
-- `org.springframework.boot:spring-boot-starter-security`
-- `org.springframework.boot:spring-boot-starter-data-jpa`
-- `com.h2database:h2:1.4.200`
-- `nz.ac.canterbury.seng302:shared:1.0`
-- `net.devh:grpc-client-spring-boot-starter:2.13.1.RELEASE`
-- `io.jsonwebtoken:jjwt-api:0.11.0`
-- `group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.6.4'`
-- `group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.0.4'`
-- `org.springframework.boot:spring-boot-devtools`
-- `org.springframework.boot:spring-boot-starter-test`
-- `io.cucumber:cucumber-java:6.10.4`
-- `io.cucumber:cucumber-junit:6.10.4`
-- `junit:junit:4.13.1`
-- `group: 'org.springframework', name: 'spring-websocket', version: '5.3.22'`
-- `group: 'org.springframework', name: 'spring-messaging', version: '5.3.22'`
-
-### Identity Provider
-- `org.springframework:spring-web`
-- `'org.springframework.boot:spring-boot-starter-web'`
-- `'org.springframework.boot:spring-boot-starter'`
-- `'org.springframework.boot:spring-boot-starter-data-jpa'`
-- `'com.h2database:h2:1.4.200'`
-- `nz.ac.canterbury.seng302:shared:1.0`
-- `net.devh:grpc-spring-boot-starter:2.13.1.RELEASE`
-- `io.jsonwebtoken:jjwt-api:0.11.0`
-- `io.jsonwebtoken:jjwt-impl:0.11.0`
-- `io.jsonwebtoken:jjwt-jackson:0.11.0`
-- `nz.ac.canterbury.seng302:shared:1.0`
-- `org.mariadb.jdbc:mariadb-java-client:2.1.2`
-- `org.springframework.boot:spring-boot-devtools`
-- `org.springframework.boot:spring-boot-starter-test`
-- `io.grpc:grpc-testing:1.45.0`
-- `io.cucumber:cucumber-java:6.10.4`
-- `io.cucumber:cucumber-junit:6.10.4`
-
-## StompJS License
-Apache 2.0 License
-
-Endpoints implemented <br />
+## Endpoints implemented <br />
 
 ### Login
 - "/login" GET - Returns the login page.
@@ -325,6 +271,56 @@ Endpoints implemented <br />
 - "/repo/{groupId}/settings" GET - Get the setting components of a group's repository.
 - "/repo/{groupId}/save" POST - Save the group's repository with the provided information.
 
+
+## Dependencies
+### Shared
+- `io.grpc:grpc-netty-shaded:1.40.1`
+- `io.grpc:grpc-protobuf:1.40.1`
+- `io.grpc:grpc-stub:1.40.1`
+- `org.jetbrains:annotations:20.1.0`
+- `com.h2database:h2:1.4.200`
+- `org.springframework.boot:spring-boot-starter-data-jpa`
+- `jakarta.annotation:jakarta.annotation-api:1.3.5`
+
+### Portfolio
+- `org.springframework.boot:spring-boot-starter-web`
+- `org.springframework.boot:spring-boot-starter-thymeleaf`
+- `org.springframework.boot:spring-boot-starter-security`
+- `org.springframework.boot:spring-boot-starter-data-jpa`
+- `com.h2database:h2:1.4.200`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `net.devh:grpc-client-spring-boot-starter:2.13.1.RELEASE`
+- `io.jsonwebtoken:jjwt-api:0.11.0`
+- `group: 'org.springframework.boot', name: 'spring-boot-starter-validation', version: '2.6.4'`
+- `group: 'org.mariadb.jdbc', name: 'mariadb-java-client', version: '3.0.4'`
+- `org.springframework.boot:spring-boot-devtools`
+- `org.springframework.boot:spring-boot-starter-test`
+- `io.cucumber:cucumber-java:6.10.4`
+- `io.cucumber:cucumber-junit:6.10.4`
+- `junit:junit:4.13.1`
+- `group: 'org.springframework', name: 'spring-websocket', version: '5.3.22'`
+- `group: 'org.springframework', name: 'spring-messaging', version: '5.3.22'`
+
+### Identity Provider
+- `org.springframework:spring-web`
+- `'org.springframework.boot:spring-boot-starter-web'`
+- `'org.springframework.boot:spring-boot-starter'`
+- `'org.springframework.boot:spring-boot-starter-data-jpa'`
+- `'com.h2database:h2:1.4.200'`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `net.devh:grpc-spring-boot-starter:2.13.1.RELEASE`
+- `io.jsonwebtoken:jjwt-api:0.11.0`
+- `io.jsonwebtoken:jjwt-impl:0.11.0`
+- `io.jsonwebtoken:jjwt-jackson:0.11.0`
+- `nz.ac.canterbury.seng302:shared:1.0`
+- `org.mariadb.jdbc:mariadb-java-client:2.1.2`
+- `org.springframework.boot:spring-boot-devtools`
+- `org.springframework.boot:spring-boot-starter-test`
+- `io.grpc:grpc-testing:1.45.0`
+- `io.cucumber:cucumber-java:6.10.4`
+- `io.cucumber:cucumber-junit:6.10.4`
+
+StompJS License: Apache 2.0 License
 
 ## References
 
