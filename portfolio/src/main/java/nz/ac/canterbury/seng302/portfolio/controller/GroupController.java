@@ -338,7 +338,7 @@ public class GroupController {
 
         model.addAttribute(GROUP, group);
         model.addAttribute("repo", repo);
-        return GROUP;
+        return "groupSetting";
     }
 
     /**
@@ -350,7 +350,7 @@ public class GroupController {
     @GetMapping(path = "/group/{groupId}/title")
     public ModelAndView groupPageTitle(@PathVariable int groupId) {
         Groups group = groupService.getGroupById(groupId);
-        ModelAndView mv = new ModelAndView("group::groupTitle");
+        ModelAndView mv = new ModelAndView("groupSetting::groupTitle");
         mv.addObject(GROUP, group);
         return mv;
     }
@@ -366,6 +366,7 @@ public class GroupController {
         template.convertAndSend("/element/group/" + groupId, (component + " " + action));
         template.convertAndSend("/element/groups/", ("group " + groupId + " " + component + " " + action));
     }
+
 
     /**
      * Sends an update message to all clients connected to the websocket

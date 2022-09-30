@@ -194,8 +194,12 @@ function deleteGroup(groupId) {
  */
 function selectUser(event) {
     let removeUserButton = document.querySelector('#remove-users')
+    let moveUserButton = document.querySelector('#move-users')
     if (removeUserButton != null) {
         removeUserButton.disabled = false
+    }
+    if (moveUserButton != null) {
+        moveUserButton.disabled = false
     }
     let userTable = document.querySelectorAll("#userListDataTable tr")
 
@@ -427,6 +431,34 @@ function connect() {
  */
 function subscribe(stompClient) {
     stompClient.subscribe('/element/groups/', updateGroup);
+    stompClient.subscribe(`/element/user/nameOnly`, updateUser);
+}
+
+/**
+ * Updates a user's information if it has changed
+ * @param message Message userId of changed user
+ */
+function updateUser(message) {
+    let array = message.body.split(' ')
+    let id = array[0]
+    let userElement = document.getElementById(`user` + id + `Row`);
+    if (userElement) {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                if (httpRequest.status === 200) {
+                    userElement.innerHTML = httpRequest.responseText;
+                } else if (httpRequest.status === 400) {
+                    messageDanger.hidden = false;
+                    messageSuccess.hidden = true;
+                    messageDanger.innerText = "Bad Request";
+                }
+            }
+        }
+
+        httpRequest.open('GET', apiPrefix + `/groups/user/${id}`);
+        httpRequest.send();
+    }
 }
 
 /**

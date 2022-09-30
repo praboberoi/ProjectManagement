@@ -41,10 +41,12 @@ function checkEvidenceTitle() {
         evidenceTitleError.innerText = "Evidence title must be at least 2 characters"
     } else if (!/[a-zA-Z]/.test(evidenceTitleStrip)) {
         evidenceTitleError.innerText = "Evidence title must contain some letters"
+    } else if (emojiRegx.test(evidenceTitleStrip)){
+        evidenceTitleError.innerText = "Evidence title must contain an emoji"
     } else {
         evidenceTitleError.innerText = ""
     }
-    checkCreateButton();
+    updateSubmissionButton()
 }
 
 /**
@@ -60,7 +62,7 @@ function checkEvidenceDate() {
     } else {
         evidenceDateErrorElement.innerText = ""
     }
-    checkCreateButton();
+    updateSubmissionButton();
 }
 
 /**
@@ -120,6 +122,8 @@ function checkEvidenceDescription() {
         evidenceDescriptionError.innerText = "Evidence description must be at least 2 characters"
     } else if (evidenceDescriptionStrip.length > 200) {
         evidenceDescriptionError.innerText = "Evidence description must be equal or less that 200 characters"
+    } else if (emojiRegx.test(evidenceDescriptionStrip)){
+        evidenceDescriptionError.innerText = "Evidence description must contain an emoji"
     } else {
         evidenceDescriptionError.innerText = ""
     }
@@ -174,10 +178,6 @@ function createNewEvidence() {
 /**
  * Obtains the evidence from the server to update an existing evidence
  * @param evidenceId the ID of the evidence selected
- * @param evidenceProjectId the project ID of the evidence
- * @param evidenceTitle title of selected evidence
- * @param evidenceDate date of the selected evidence
- * @param evidenceDescription description of the selected evidence
  */
 function editEvidence(evidenceId) {
     let httpRequest = new XMLHttpRequest();
