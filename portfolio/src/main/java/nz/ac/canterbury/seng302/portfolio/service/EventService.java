@@ -94,12 +94,12 @@ public class EventService {
             if (start == null) {
                 sprintNames.add("(No Sprint)");
             } else {
-                sprintNames.add("(" + start.getSprintName() + ")");
+                sprintNames.add("(" + start.getSprintLabel() + ")");
             }
             if (end == null) {
                 sprintNames.add("(No Sprint)");
             } else {
-                sprintNames.add("(" + end.getSprintName() + ")");
+                sprintNames.add("(" + end.getSprintLabel() + ")");
             }
             eventDateMappingDictionary.put(event.getEventId(), sprintNames);
         }
