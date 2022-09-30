@@ -638,11 +638,11 @@ function updatePages(events) {
                     </a>
                 </li>
                 <li class="page-item active" id="page-${currentPage + 1}">
-                     <a class="page-link" onclick="updateCurrentPage(${currentPage})">${currentPage + 1}</a></li>
+                     <a class="page-link" onclick="updateCurrentPage(${currentPage})">${currentPage + 1}/${totalPages}</a></li>
                 <li class="page-item" id="page-${currentPage + 2}">
                 
                 <li class="page-item ${(totalPages ===  1 || currentPage + 1 === totalPages) ? 'disabled' : ''}" id="nextPage">
-                    <a class="page-link" aria-label="Next">
+                    <a class="page-link" aria-label="Next" onclick="updateCurrentPage(${currentPage + 1})">
                         <span aria-hidden="true">&rsaquo;</span>
                         <span class="sr-only">Next</span>
                     </a>
