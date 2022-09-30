@@ -264,6 +264,11 @@ public class Sprint {
                 '}';
     }
 
+    @Override
+    public int hashCode() {
+        return Objects.hash(sprintId, project, sprintLabel, sprintName, description, startDate, endDate, color);
+    }
+
     /**
      * Builder class to build the sprint
      */

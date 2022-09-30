@@ -61,8 +61,8 @@ Endpoints implemented <br />
 
 
 - "evidence/{userId}" GET- Get all the evidence for a specific user.
-- "/evidence/{userId}/{evidenceId}" GET - Get a user's specific piece of evidence.
-- "/evidence/{userId}/saveEvidence" POST - Save the updated/new details of a pieve of evidence.
+- "/evidence/{evidenceId}" GET - Get a user's specific piece of evidence.
+- "/evidence" POST - Save the updated/new details of a piece of evidence.
 
 - "/repo/{groupId}" GET - Get the repository for the specified group.
 - "/repo/{groupId}/settings" GET - Get the setting components of a group's repository.
