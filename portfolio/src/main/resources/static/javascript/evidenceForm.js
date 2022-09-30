@@ -2,9 +2,7 @@ let tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
-let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
 
-evidenceCreateBtn.disabled = true;
 let evidenceTitleEditing = null;
 let evidenceDateEditing = null;
 let evidenceDescriptionEditing = null;
@@ -40,10 +38,12 @@ function checkEvidenceTitle() {
         evidenceTitleError.innerText = "Evidence title must be at least 2 characters"
     } else if (!/[a-zA-Z]/.test(evidenceTitleStrip)) {
         evidenceTitleError.innerText = "Evidence title must contain some letters"
+    } else if (emojiRegx.test(evidenceTitleStrip)){
+        evidenceTitleError.innerText = "Evidence title must contain an emoji"
     } else {
         evidenceTitleError.innerText = ""
     }
-    checkCreateButton();
+    updateSubmissionButton()
 }
 
 /**
@@ -59,7 +59,7 @@ function checkEvidenceDate() {
     } else {
         evidenceDateErrorElement.innerText = ""
     }
-    checkCreateButton();
+    updateSubmissionButton();
 }
 
 /**
@@ -123,36 +123,12 @@ function checkEvidenceDescription() {
         evidenceDescriptionError.innerText = "Evidence description must be at least 2 characters"
     } else if (evidenceDescriptionStrip.length > 200) {
         evidenceDescriptionError.innerText = "Evidence description must be equal or less that 200 characters"
+    } else if (emojiRegx.test(evidenceDescriptionStrip)){
+        evidenceDescriptionError.innerText = "Evidence description must contain an emoji"
     } else {
         evidenceDescriptionError.innerText = ""
     }
-    checkCreateButton();
-}
-/**
- * Disables or enables the create button
- */
-function checkCreateButton() {
-    let evidenceCreateBtn = document.getElementById('evidenceFormSubmitButton')
-    let evidenceTitleError = document.getElementById('evidenceTitleError')
-    let evidenceDescriptionError = document.getElementById('evidenceDescriptionError');
-    let evidenceDescription = document.getElementById('evidence-description');
-    let evidenceDateErrorElement = document.getElementById("evidenceDateError");
-    let evidenceDescriptionStrip = evidenceDescription.value.trim()
-    evidenceCreateBtn.disabled = false;
-
-    if (evidenceTitleError.innerText !== "") {
-        console.log("1")
-        evidenceCreateBtn.disabled = true;
-    } else if (evidenceDescriptionError.innerText !== "" || evidenceDescriptionStrip.length < 2) {
-        console.log("2")
-
-        evidenceCreateBtn.disabled = true;
-    } else if (evidenceDateErrorElement.innerText !== "") {
-        console.log("3")
-
-        evidenceCreateBtn.disabled = true;
-    }
-
+    updateSubmissionButton();
 }
 
 /**
@@ -177,7 +153,7 @@ function editEvidence(evidenceId, evidenceProjectId, evidenceTitle, evidenceDate
     evidenceTitleEditing = evidenceTitle;
     evidenceDateEditing = evidenceDate.substring(0, 10);
     evidenceDescriptionEditing = evidenceDescription;
-    evidenceProjectIdEditing = document.getElementById('evidence-project').value;
+    evidenceProjectIdEditing = evidenceProjectId;
     let httpRequest = new XMLHttpRequest();
     httpRequest.open('GET', `${window.location.pathname}/${evidenceId}/editEvidence`)
     httpRequest.onreadystatechange = () => updateEvidenceModalForm(httpRequest, evidenceProjectId, "Update Evidence");
@@ -222,3 +198,20 @@ function updateDeleteDetails(evidenceId, evidenceTitle) {
 
 }
 
+/**
+ * Updates the status of submission button based on the input values entered
+ */
+function updateSubmissionButton() {
+    const date = document.getElementById('evidence-date').value;
+    const description = document.getElementById('evidence-description').value.trim();
+    const title = document.getElementById('evidence-title').value.trim();
+    const projectId = document.getElementById('evidence-project').value;
+
+    if (date.length === 0 || description.length === 0 || title.length === 0 || emojiRegx.test(title)  || emojiRegx.test(description) ||
+        (date === evidenceDateEditing && description === evidenceDescriptionEditing && title === evidenceTitleEditing && projectId === evidenceProjectIdEditing))
+
+        document.getElementById('evidenceFormSubmitButton').disabled = true
+
+    else
+        document.getElementById('evidenceFormSubmitButton').disabled = false
+}
