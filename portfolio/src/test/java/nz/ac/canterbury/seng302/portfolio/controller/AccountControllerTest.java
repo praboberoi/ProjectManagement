@@ -35,6 +35,8 @@ import static nz.ac.canterbury.seng302.shared.identityprovider.UserRole.STUDENT;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
@@ -91,6 +93,13 @@ class AccountControllerTest {
                 .setSeconds(user.getDateCreated().getTime())
                 .build());
     }
+
+    @BeforeAll
+    private static void beforeAllInit() {
+        utilities = Mockito.mockStatic(PrincipalUtils.class);
+        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
+    }
+
 
     /**
      * Test's the getTimePassed function of Account Controller, in this we are testing the blue sky that everything
@@ -233,8 +242,9 @@ class AccountControllerTest {
         UserAccountClientService mockUserAccountClientService = Mockito.mock(UserAccountClientService.class);
         EditUserResponse editUserResponse = EditUserResponse.newBuilder().setIsSuccess(true).build();
 
-        when(mockUserAccountClientService.edit(anyInt(), any(), any(), any(), any(), any(), any())).thenReturn(editUserResponse);
-        when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
+        when(userAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
+        when(userAccountClientService.getUser(any())).thenReturn(reply.build());
+        when(mockUserAccountClientService.edit(anyInt(), any(), any(), any(), any(), any(), any())).thenReturn(editUserResponse);when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
 
         when(PrincipalUtils.getUserId(any())).thenReturn(-1);
 

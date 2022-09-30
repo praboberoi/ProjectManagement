@@ -29,7 +29,12 @@ import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.StompSubProtocolHandler;
 
+import java.sql.Date;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.*;
 
 import static org.hamcrest.Matchers.nullValue;
@@ -69,7 +74,6 @@ public class EvidenceControllerTest {
     private static MockedStatic<PrincipalUtils> utilities;
 
     private static WebSocketPrincipal mockedWebSocketPrincipal;
-
 
     /**
      * Helper function which creates a new user for testing with
@@ -183,7 +187,8 @@ public class EvidenceControllerTest {
     void givenEvidenceObject_whenEvidenceListCalled_thenCorrectModelViewObjectReturned() throws Exception {
         UserResponse user = createTestUserResponse(99).addRoles(UserRole.COURSE_ADMINISTRATOR).build();
         when(userAccountClientService.getUser(any())).thenReturn(user);
-        ArrayList<Project> projectList = new ArrayList<>();
+        Project project = new Project.Builder().startDate(new Date(2022)).endDate(new Date(2022)).build();
+        List<Project> projectList =  List.of(project);
         when(projectService.getAllProjects()).thenReturn(projectList);
         when(evidenceService.getEvidenceByUserId(99)).thenReturn(List.of(evidence, evidence1));
         when(evidenceService.getNewEvidence(99)).thenReturn(evidence);

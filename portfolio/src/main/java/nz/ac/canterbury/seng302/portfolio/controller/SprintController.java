@@ -103,7 +103,7 @@ public class SprintController {
         List<Deadline> listDeadlines = deadlineService.getDeadlinesBySprintId(sprintId);
         listDeadlines.forEach(deadlineService::updateDeadlineColors);
         Map<Integer, String> deadlineDateMapping = deadlineService.getSprintOccurringOnDeadlines(listDeadlines);
-        
+
 
         mv = new ModelAndView("projectFragments::sprintAccordion");
         mv.addObject(SPRINT_OBJECT, sprint);
@@ -313,7 +313,7 @@ public class SprintController {
 
     /**
      * Directs to page for editing a sprint
-     * 
+     *
      * @param sprintId  ID for sprint being edited
      * @param projectId ID of the project
      * @param model
@@ -352,7 +352,7 @@ public class SprintController {
 
     /**
      * Sends an update message to all clients connected to the websocket
-     * 
+     *
      * @param projectId Id of the sprint's project updated
      * @param sprintId  Id of the sprint edited
      * @param action    The action taken (delete, created, edited)

@@ -45,7 +45,6 @@ public class AccountController {
     private SimpMessagingTemplate template;
 
     private static final String EDIT_ACCOUNT_PAGE = "editAccount";
-
     private static final String ACCOUNT_PAGE = "account";
 
     public AccountController (UserAccountClientService userAccountClientService, SimpMessagingTemplate template) {
@@ -143,6 +142,16 @@ public class AccountController {
     }
 
     /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId ID of the changed user
+     */
+    private void notifyUserInfoChange(int userId) {
+        template.convertAndSend("/element/user/", userId);
+        template.convertAndSend("/element/user/nameOnly", userId);
+    }
+
+
+    /**
      * The mapping for a Post request relating to editing a user
      * @param principal  Authentication information containing user info
      * @param multipartFile  The image file of the user
@@ -175,11 +184,8 @@ public class AccountController {
             bio,
             pronouns,
             email);
-//        Start of image upload functionality
         if (!multipartFile.isEmpty()) {
-            // original filename of image user has uploaded
             String extension = multipartFile.getContentType();
-            // check if file is an accepted image type
             ArrayList<String> acceptedFileTypes = new ArrayList<>(Arrays.asList(MediaType.IMAGE_GIF_VALUE, MediaType.IMAGE_JPEG_VALUE,MediaType.IMAGE_PNG_VALUE));
             if (acceptedFileTypes.contains(extension)) {
                 if (MediaType.IMAGE_GIF_VALUE.equals(multipartFile.getContentType())) {
@@ -201,14 +207,15 @@ public class AccountController {
 
         addAttributesToModel(principal, model);
         if (idpResponse.getIsSuccess()) {
-            notifyUserInfoChange(userId);
             String msgString;
+            notifyUserInfoChange(userId);
             msgString = "Successfully updated details";
             ra.addFlashAttribute("messageSuccess", msgString);
             return "redirect:" + ACCOUNT_PAGE;
         }
         List<ValidationError> validationErrors = idpResponse.getValidationErrorsList();
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
+
         return EDIT_ACCOUNT_PAGE;
     }
 
@@ -236,7 +243,6 @@ public class AccountController {
         model.addAttribute("roles",
                 !user.getRoles().isEmpty() ? roles.substring(0, roles.length() - 2): user.getRoles());
 
-        // Convert Date into LocalDate
         LocalDate creationDate = user.getDateCreated()
                 .toInstant()
                 .atZone(ZoneId.systemDefault())

@@ -1,8 +1,22 @@
-const eventStartDateElement = document.getElementById('eventStartDate');
-const eventEndDateElement = document.getElementById('eventEndDate');
-const startDateError = document.getElementById('eventStartDateError');
-const endDateError = document.getElementById('eventEndDateError');
-let currentEventId;
+// Regular expression for Sprint Name field. No leading white spaces or empty field.
+const eventNameRegex = /^\S/
+const eventNameSpacesRegex = /^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$/
+
+const projectId = document.getElementById("projectId").value;
+const startDateElement = document.getElementById('startDate');
+const endDateElement = document.getElementById('endDate');
+const startDateError = document.getElementById('startDateError');
+const endDateError = document.getElementById('endDateError');
+const projectStartDate = new Date(document.getElementById("projectStartDate").value);
+const projectEndDate = new Date(document.getElementById("projectEndDate").value);
+const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
+
+const startTimeElement = document.querySelector('#startTime');
+const endTimeElement = document.querySelector('#endTime');
+
+const startTimeError = document.getElementById('startTimeError');
+const endTimeError = document.getElementById('endTimeError');
+
 /**
  * Function for error validation of Event Name field.
  * Display error message if input is invalid.
@@ -21,6 +35,10 @@ function checkEventName() {
     } else if (charCount > 50){
         eventName.classList.add("eventFormError");
         eventNameError.innerText = "Event Name cannot exceed 50 characters";
+        document.getElementById("eventFormSubmitButton").disabled = true;
+    } else if (emojiRegx.test(eventName.value)) {
+        eventName.classList.add("formError");
+        eventNameError.innerText = "Event name must not contain an emoji";
         document.getElementById("eventFormSubmitButton").disabled = true;
     } else {
         eventName.classList.remove("eventFormError");

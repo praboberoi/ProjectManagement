@@ -1,3 +1,5 @@
+const emojiRegx = /\p{Extended_Pictographic}/u;
+
 /**
  * Count down the characters remaining in the Group Short name, and check the length is between 3 and 50 characters.
  */
@@ -11,6 +13,12 @@ function checkShortName(event) {
         groupShortNameElement.classList.add('formError');
         groupShortNameErrorElement.innerText = "Group short name must be between 3 and 50 characters."
         groupShortNameElement.setCustomValidity("Invalid Field")
+
+    } else if (emojiRegx.test(groupShortNameElement.value)) {
+        groupShortNameElement.classList.add("formError");
+        groupShortNameErrorElement.innerText = "Group short name must not contain an emoji";
+        groupShortNameElement.setCustomValidity("Invalid Field")
+
     } else {
         groupShortNameElement.classList.remove("formError");
         groupShortNameErrorElement.innerText = null;
@@ -26,10 +34,17 @@ function checkLongName(event) {
     let groupLongNameErrorElement = groupLongNameElement.parentNode.querySelector("#longNameError")
     let charMessage = groupLongNameElement.parentNode.querySelector("#charCountLong");
     let charCount = groupLongNameElement.value.length;
+
     if (charCount < 3 || charCount > 100) {
         groupLongNameElement.classList.add('formError');
         groupLongNameErrorElement.innerText = "Group long name must be between 3 and 100 characters."
         groupLongNameElement.setCustomValidity("Invalid Field")
+
+    } else if (emojiRegx.test(groupLongNameElement.value)) {
+        groupLongNameElement.classList.add("formError");
+        groupLongNameErrorElement.innerText = "Group long name must not contain an emoji";
+        groupLongNameElement.setCustomValidity("Invalid Field")
+
     } else {
         groupLongNameElement.classList.remove("formError");
         groupLongNameErrorElement.innerText = null;
@@ -179,8 +194,12 @@ function deleteGroup(groupId) {
  */
 function selectUser(event) {
     let removeUserButton = document.querySelector('#remove-users')
+    let moveUserButton = document.querySelector('#move-users')
     if (removeUserButton != null) {
         removeUserButton.disabled = false
+    }
+    if (moveUserButton != null) {
+        moveUserButton.disabled = false
     }
     let userTable = document.querySelectorAll("#userListDataTable tr")
 
@@ -412,6 +431,34 @@ function connect() {
  */
 function subscribe(stompClient) {
     stompClient.subscribe('/element/groups/', updateGroup);
+    stompClient.subscribe(`/element/user/nameOnly`, updateUser);
+}
+
+/**
+ * Updates a user's information if it has changed
+ * @param message Message userId of changed user
+ */
+function updateUser(message) {
+    let array = message.body.split(' ')
+    let id = array[0]
+    let userElement = document.getElementById(`user` + id + `Row`);
+    if (userElement) {
+        let httpRequest = new XMLHttpRequest();
+        httpRequest.onreadystatechange = function () {
+            if (httpRequest.readyState === XMLHttpRequest.DONE) {
+                if (httpRequest.status === 200) {
+                    userElement.innerHTML = httpRequest.responseText;
+                } else if (httpRequest.status === 400) {
+                    messageDanger.hidden = false;
+                    messageSuccess.hidden = true;
+                    messageDanger.innerText = "Bad Request";
+                }
+            }
+        }
+
+        httpRequest.open('GET', apiPrefix + `/groups/user/${id}`);
+        httpRequest.send();
+    }
 }
 
 /**

@@ -54,6 +54,7 @@ public class UserControllerTest {
     @Mock
     User user;
 
+
     private static MockedStatic<PrincipalUtils> mockedUtil;
 
     UserResponse.Builder reply;
@@ -313,6 +314,41 @@ public class UserControllerTest {
             .andExpect(status().isNotFound())
             .andExpect(content().string("User could not be found."));
    }
+
+    /**
+     * Tests that if a user exists the correct information is returned when requested for a group settings page row.
+     * @throws Exception An exception that can be thrown during mockMvc run.
+     */
+    @Test
+    void givenUserExists_whenGroupRowRequested_thenCorrectInfoReturned() throws Exception {
+        UserResponse userResponse =
+                createTestUserResponse(1).addRoles(UserRole.STUDENT).setUsername("Test").setFirstName("Test").setLastName("Test").setNickname("Test").build();
+        when(userAccountClientService.getUser(1)).thenReturn(userResponse);
+        User user = new User(userResponse);
+        when(userAccountClientService.getUser(null)).thenReturn(userResponse);
+        this.mockMvc
+                .perform(get("/group/user/1"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("user", user));
+    }
+
+    /**
+     * Tests that if a user exists the correct information is returned when requested for a groups page user row.
+     * @throws Exception An exception that can be thrown during mockMvc run.
+     */
+    @Test
+    void givenUserExists_whenGroupsRowRequested_thenCorrectInfoReturned() throws Exception {
+        UserResponse userResponse =
+                createTestUserResponse(1).addRoles(UserRole.STUDENT).setUsername("Test").setFirstName("Test").setLastName("Test").setNickname("Test").build();
+        when(userAccountClientService.getUser(1)).thenReturn(userResponse);
+        User user = new User(userResponse);
+        when(userAccountClientService.getUser(null)).thenReturn(userResponse);
+        this.mockMvc
+                .perform(get("/groups/user/1"))
+                .andExpect(status().isOk())
+                .andExpect(model().attribute("user", user));
+    }
+
 
     /**
      * Tests that if a user exists the correct information is returned when requested.

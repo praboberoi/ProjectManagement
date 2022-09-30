@@ -4,6 +4,7 @@ import nz.ac.canterbury.seng302.portfolio.model.Project;
 import nz.ac.canterbury.seng302.portfolio.model.ProjectRepository;
 import nz.ac.canterbury.seng302.portfolio.model.Sprint;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -128,6 +129,12 @@ public class ProjectService {
         }
         if (project.getDescription().length() > 250) {
             throw new IncorrectDetailsException("Project description cannot exceed 250 characters");
+        }
+        if (ValidationUtilities.hasEmoji(project.getProjectName())) {
+            throw new IncorrectDetailsException("Project name must not contain an emoji");
+        }
+        if (ValidationUtilities.hasEmoji(project.getDescription())) {
+            throw new IncorrectDetailsException("Project description must not contain an emoji");
         }
     }
 }

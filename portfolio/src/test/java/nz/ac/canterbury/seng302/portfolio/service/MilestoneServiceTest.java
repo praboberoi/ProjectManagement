@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ import static org.mockito.Mockito.when;
  * Unit tests for methods on MilestoneService class
  */
 @SpringBootTest
+@ActiveProfiles("test")
 class MilestoneServiceTest {
 
     @MockBean
@@ -143,5 +145,30 @@ class MilestoneServiceTest {
         List<Milestone> milestones = milestoneService.getMilestonesByProject(project);
 
         assertEquals(milestone2, milestones.get(0));
+    }
+
+    /**
+     * Test to make sure that no exception is thrown when a milestone is deleted and an appropriate message is received
+     */
+    @Test
+    void givenMilestoneExists_whenDeleteMilestoneByIdRequested_thenAMessageIsReturned(){
+        assertDoesNotThrow(() -> {
+            Assertions.assertEquals("Successfully deleted " + milestone.getName(), milestoneService.deleteMilestone(1));
+        });
+    }
+
+    /**
+     * Test to ensure an exception is thrown when a milestone that does not exist is requested.
+     */
+    @Test
+    void givenMilestoneDoesNotExist_whenDeleteMilestoneByIdRequested_thenAnExceptionIsThrown() {
+        IncorrectDetailsException exception = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.deleteMilestone(2));
+        Assertions.assertEquals("Could not find given Milestone" , exception.getMessage());
+
+        when(milestoneRepository.findById(1)).thenThrow(PersistenceException.class);
+        IncorrectDetailsException exception1 = assertThrows(IncorrectDetailsException.class, () ->
+                milestoneService.deleteMilestone(1));
+        Assertions.assertEquals("Failure deleting Milestone" , exception1.getMessage());
     }
 }

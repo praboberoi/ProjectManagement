@@ -3,6 +3,7 @@ package nz.ac.canterbury.seng302.portfolio.service;
 import nz.ac.canterbury.seng302.portfolio.model.Evidence;
 import nz.ac.canterbury.seng302.portfolio.model.EvidenceRepository;
 import nz.ac.canterbury.seng302.portfolio.utils.IncorrectDetailsException;
+import nz.ac.canterbury.seng302.portfolio.utils.ValidationUtilities;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,8 @@ import org.springframework.stereotype.Service;
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Client service used to communicate to the database and perform business logic
@@ -87,14 +90,35 @@ public class EvidenceService {
                 evidence.getTitle() == null || evidence.getProject() == null)
             throw new IncorrectDetailsException("Evidence values are null");
 
-        // Removes leading and trailing white spaces from the title
-        evidence.setTitle(evidence.getTitle().strip());
+        evidence.setTitle(evidence.getTitle().strip()); // Removes leading and trailing white spaces from the title
 
-        if (evidence.getTitle().length() < 1)
+        String regex = ".*[a-zA-Z].*";  // regex to check if string contains any letters
+        // find match between given string and pattern
+        Matcher matcherText = Pattern.compile(regex).matcher(evidence.getTitle());
+
+        if (evidence.getTitle().length() < 2)
+            throw new IncorrectDetailsException("Evidence title must be at least 2 characters");
+
+        else if (ValidationUtilities.hasEmoji(evidence.getTitle()))
+            throw new IncorrectDetailsException("Evidence title must not contain an emoji");
+
+        else if (ValidationUtilities.hasEmoji(evidence.getDescription()))
+            throw new IncorrectDetailsException("Evidence description must not contain an emoji");
+
+        else if (evidence.getTitle().length() < 1)
             throw new IncorrectDetailsException("Evidence title must not be empty");
 
         else if (evidence.getTitle().length() > 50)
             throw new IncorrectDetailsException("Evidence title cannot be more than 50 characters");
+
+        else if (!matcherText.matches())
+            throw new IncorrectDetailsException("Evidence title must contain some letters");
+
+        else if (evidence.getDescription().length() < 2)
+            throw new IncorrectDetailsException("Evidence description must be at least 2 characters");
+
+        else if (evidence.getDescription().length() > 200)
+            throw new IncorrectDetailsException("Evidence description must be equal or less that 200 characters");
 
         else if (evidence.getDateOccurred().before(evidence.getProject().getStartDate()))
             throw new IncorrectDetailsException("The evidence cannot exist before the project date");

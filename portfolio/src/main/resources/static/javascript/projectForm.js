@@ -5,6 +5,7 @@
 
 // Regular expression for Project Name field. No leading white spaces or empty field.
 const projectNameRegex = /^\S/
+const emojiRegx = /\p{Extended_Pictographic}/u
 
 let projectFormUpdate = false
 
@@ -171,16 +172,44 @@ function checkProjectDescription() {
 
     if (projectName.value.length < 1 || projectName.value.length > 50) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project Name must not be empty or greater than 50 characters";
-    } else if (!projectNameRegex.test(projectName.value)) {
+        projectNameError.innerText = "Project name must not be empty or greater than 32 characters";
+    } else if (! projectNameRegex.test(projectName.value)) {
         projectName.classList.add("formError");
-        projectNameError.innerText = "Project Name must not start with space characters";
+        projectNameError.innerText = "Project name must not start with space characters";
+    } else if (emojiRegx.test(projectName.value)) {
+        projectName.classList.add("formError");
+        projectNameError.innerText = "Project name must not contain an emoji";
     } else {
         projectName.classList.remove("formError");
         projectNameError.innerText = null;
-        return true
     }
-    return false
+}
+
+/**
+ * Updates the characters remaining in the description.
+ */
+function checkProjectDescription () {
+    let descriptionElement = document.getElementById("projectDescription");
+    let descErrorElement = document.getElementById("descriptionError");
+
+    let charMessage = document.getElementById("charCount");
+    let charCount = descriptionElement.value.length;
+    charMessage.innerText = charCount + ' '
+
+    if (descriptionElement.value.length > 250)
+    {
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Description must be less than 250 characters."
+
+    } else if ( emojiRegx.test(descriptionElement.value)) {
+        descErrorElement.classList.add("formError");
+        descErrorElement.innerText = "Project description must not contain an emoji";
+
+    } else {
+        descErrorElement.classList.remove("formError");
+        descErrorElement.innerText = null;
+    }
+
 }
 
 
@@ -219,7 +248,7 @@ function verifyOverlap(startDate, endDate) {
 
 /**
  * Initilises the delete modal for deleting a project
- * @param {int} projectId 
+ * @param {int} projectId
  */
  function projectDeleteModalInit(projectId) {
     let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].innerText
@@ -229,37 +258,37 @@ function verifyOverlap(startDate, endDate) {
 
 /**
  * Initilises the project modal for editing the selected project
- * @param {int} projectId 
+ * @param {int} projectId
  */
 function editProjectModalInit(projectId) {
     let projectName = document.getElementById(`project${projectId}-card`).getElementsByClassName('project-name')[0].innerText
-    
+
     document.getElementById('projectFormModalError').innerText = ""
     document.getElementById('projectFormTitle').innerText = "Edit " + projectName
-    
+
     document.getElementById('projectFormProjectId').value = projectId
-    
+
     document.getElementById('project-name').value = projectName;
 
-    
+
     let projectStartDate = new Date(document.getElementById(`project${projectId}-startDate`).value)
     document.getElementById('projectFormStartDate').value = new Date(projectStartDate).toLocaleDateString("en-CA");
 
-    
+
     let projectEndDate = new Date(document.getElementById(`project${projectId}-endDate`).value)
     document.getElementById('projectFormEndDate').value = projectEndDate.toLocaleDateString("en-CA");
-    
+
 
     let minStartDate = new Date();
     minStartDate.setFullYear(minStartDate.getFullYear() - 1);
 
     let maxEndDate = new Date();
     maxEndDate.setFullYear(maxEndDate.getFullYear() + 10);
-    
+
 
     document.getElementById('projectFormStartDate').setAttribute("min", new Date(Math.min(minStartDate, projectStartDate)).toLocaleDateString("en-CA"));
     document.getElementById('projectFormStartDate').setAttribute("max", new Date(Math.max(maxEndDate, projectEndDate)).toLocaleDateString("en-CA"));
-    
+
     document.getElementById('projectFormEndDate').setAttribute("min", new Date(Math.min(minStartDate, projectStartDate)).toLocaleDateString("en-CA"));
     document.getElementById('projectFormEndDate').setAttribute("max", new Date(Math.max(maxEndDate, projectEndDate)).toLocaleDateString("en-CA"));
 
@@ -278,9 +307,9 @@ function editProjectModalInit(projectId) {
 function createProjectModalInit() {
     document.getElementById('projectFormModalError').innerText = ""
     document.getElementById('projectFormTitle').innerText = "Create New Project"
-    
+
     document.getElementById('projectFormProjectId').value = 0
-    
+
     document.getElementById('project-name').value = "Project " + new Date().getFullYear();
 
     let minStartDate = new Date();
@@ -343,7 +372,7 @@ function saveProject() {
 
 /**
  * Sends a delete request to the server and updates the delete modal
- * @param {int} projectId 
+ * @param {int} projectId
  */
  function deleteProject(projectId) {
     let httpRequest = new XMLHttpRequest();
