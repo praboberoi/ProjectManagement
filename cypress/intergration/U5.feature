@@ -94,9 +94,10 @@ Feature: U5. Groups and group membership
     When I create the group "Cypress create", "Cypress create long name"
     And Group "Cypress create" exists
 
+  Scenario: Misc. emojis cause a failure
     Given I login as an admin
     And I navigate to 'Groups'
-    When I enter an emoji for the group short and long name
+    When I try create the group "dfg😀", "dfg😀"
     Then Error messages are displayed for using an emojis for both short and long names
 
   Scenario: Editing a group
