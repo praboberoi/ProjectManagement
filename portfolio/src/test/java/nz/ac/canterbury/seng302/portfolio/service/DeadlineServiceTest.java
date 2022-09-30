@@ -66,6 +66,7 @@ class DeadlineServiceTest {
         sprint = new Sprint.Builder()
                 .sprintId(1)
                 .sprintName("Test Sprint")
+                .sprintLabel("Test Sprint")
                 .startDate(new java.sql.Date(2020, 1, 1))
                 .endDate(new java.sql.Date(2020, 5, 1))
                 .build();
