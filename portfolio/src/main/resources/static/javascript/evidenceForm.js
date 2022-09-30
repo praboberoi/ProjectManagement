@@ -38,6 +38,8 @@ function checkEvidenceTitle() {
         evidenceTitleError.innerText = "Evidence title must be at least 2 characters"
     } else if (!/[a-zA-Z]/.test(evidenceTitleStrip)) {
         evidenceTitleError.innerText = "Evidence title must contain some letters"
+    } else if (emojiRegx.test(evidenceTitleStrip)){
+        evidenceTitleError.innerText = "Evidence title must contain an emoji"
     } else {
         evidenceTitleError.innerText = ""
     }
@@ -121,6 +123,8 @@ function checkEvidenceDescription() {
         evidenceDescriptionError.innerText = "Evidence description must be at least 2 characters"
     } else if (evidenceDescriptionStrip.length > 200) {
         evidenceDescriptionError.innerText = "Evidence description must be equal or less that 200 characters"
+    } else if (emojiRegx.test(evidenceDescriptionStrip)){
+        evidenceDescriptionError.innerText = "Evidence description must contain an emoji"
     } else {
         evidenceDescriptionError.innerText = ""
     }
