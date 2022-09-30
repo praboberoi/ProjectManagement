@@ -5,6 +5,7 @@ let projectIdValidate = /^\d+$/;
 let jsonRepo;
 // Regular expression for Group Name field. No leading white spaces or empty field.
 const groupNameRegex = /^\S/
+const emojiRegx = /\p{Extended_Pictographic}/u;
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
@@ -25,6 +26,10 @@ function checkShortName(event) {
     } else if (groupShortNameElement.value == "Teaching Staff" || groupShortNameElement.value == "Members without a group"){
         groupShortNameElement.classList.add('formError');
         groupShortNameErrorElement.innerText = "Group short cannot be the same as a system group name."
+        groupShortNameElement.setCustomValidity("Invalid Field")
+    } else if (! groupNameRegex.test(groupShortNameElement.value)) {
+        groupShortNameElement.classList.add("formError");
+        groupShortNameErrorElement.innerText = "Group short name must not start with space characters";
         groupShortNameElement.setCustomValidity("Invalid Field")
     } else if (! groupNameRegex.test(groupShortNameElement.value)) {
         groupShortNameElement.classList.add("formError");
@@ -52,6 +57,10 @@ function checkLongName(event) {
     } else if (! groupNameRegex.test(groupLongNameElement.value)) {
         groupLongNameElement.classList.add("formError");
         groupLongNameErrorElement.innerText = "Group long name must not start with space characters";
+        groupLongNameElement.setCustomValidity("Invalid Field")
+    } else if (emojiRegx.test(groupLongNameElement.value)) {
+        groupLongNameElement.classList.add("formError");
+        groupLongNameErrorElement.innerText = "Group long name must not contain an emoji";
         groupLongNameElement.setCustomValidity("Invalid Field")
     } else {
         groupLongNameElement.classList.remove("formError");
