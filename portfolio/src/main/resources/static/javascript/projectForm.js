@@ -182,14 +182,16 @@ function checkProjectDescription() {
     } else {
         projectName.classList.remove("formError");
         projectNameError.innerText = null;
+        return true
     }
+    return false
 }
 
 /**
  * Updates the characters remaining in the description.
  */
 function checkProjectDescription () {
-    let descriptionElement = document.getElementById("projectDescription");
+    let descriptionElement = document.getElementById("projectFormDescription");
     let descErrorElement = document.getElementById("descriptionError");
 
     let charMessage = document.getElementById("charCount");
@@ -208,8 +210,9 @@ function checkProjectDescription () {
     } else {
         descErrorElement.classList.remove("formError");
         descErrorElement.innerText = null;
+        return true
     }
-
+    return false
 }
 
 
@@ -230,20 +233,26 @@ function verifyOverlap(startDate, endDate) {
             if (httpRequest.status === 200) {
                 if (httpRequest.response != "") {
                     if (httpRequest.response.includes("ends")) {
+                    if (!httpRequest.response.includes("year") && !httpRequest.response.includes("sprint")) {
+                        return
+                    } else if (httpRequest.response.includes("ends")) {
                         endDateError.innerText = httpRequest.response;
+                        startDateElement.classList.add("formError");
+                        endDateElement.classList.add("formError");
                     } else {
                         startDateError.innerText = httpRequest.response;
                     }
-                    startDateElement.classList.add("formError");
-                    endDateElement.classList.add("formError");
+                        startDateElement.classList.add("formError");
+                        endDateElement.classList.add("formError");
+                    }
                 }
             }
         }
     }
 
     httpRequest.open('POST', '/verifyProject/' + projectId, true);
-    httpRequest.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
-    httpRequest.send("startDate=" + startDate + "&endDate=" + endDate);
+    let formData = new FormData(document.forms.createProjectForm)
+    httpRequest.send(formData);
 }
 
 /**
