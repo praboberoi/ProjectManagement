@@ -176,9 +176,16 @@ public class GroupServerService extends GroupsServiceGrpc.GroupsServiceImplBase 
             } else {
                 reply.setMessage(String.format("Group with short name %s already exists", request.getShortName()));
             }
+
         } else if (groupsRepository.getAllByLongNameEquals(request.getLongName()) != null && !request.getLongName().equals(group.getLongName())) {
             reply.setIsSuccess(false);
             reply.setMessage(String.format("Group with long name %s already exists", request.getLongName()));
+        } else if (request.getShortName().equalsIgnoreCase("teaching staff")){
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("Group short name cannot be the same as 'Teaching Staff'"));
+        } else if (request.getShortName().equalsIgnoreCase("members without a group")){
+            reply.setIsSuccess(false);
+            reply.setMessage(String.format("Group short name cannot be the same as 'Members without a group'"));
         } else {
             try {
                 group.setShortName(request.getShortName());
