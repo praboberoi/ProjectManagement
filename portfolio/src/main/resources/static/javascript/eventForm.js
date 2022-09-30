@@ -7,9 +7,6 @@ const startDateElement = document.getElementById('startDate');
 const endDateElement = document.getElementById('endDate');
 const startDateError = document.getElementById('startDateError');
 const endDateError = document.getElementById('endDateError');
-const projectStartDate = new Date(document.getElementById("projectStartDate").value);
-const projectEndDate = new Date(document.getElementById("projectEndDate").value);
-const DATE_OPTIONS = { year: 'numeric', month: 'short', day: 'numeric' };
 
 const startTimeElement = document.querySelector('#startTime');
 const endTimeElement = document.querySelector('#endTime');
