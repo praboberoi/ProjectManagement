@@ -12,6 +12,7 @@ import nz.ac.canterbury.seng302.portfolio.service.UserAccountClientService;
 import nz.ac.canterbury.seng302.shared.identityprovider.AuthState;
 import nz.ac.canterbury.seng302.shared.identityprovider.EditUserResponse;
 import nz.ac.canterbury.seng302.shared.identityprovider.UserResponse;
+
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -40,7 +41,6 @@ public class checkFileTypeTest {
 
     @Mock
     private SimpMessagingTemplate template;
-
 
     @Before
     public void startUp() {
@@ -91,7 +91,6 @@ public class checkFileTypeTest {
             assertFalse(false);
         }
     }
-
 
     @When("The file is not an accepted type")
     public void the_file_is_not_an_accepted_type() {

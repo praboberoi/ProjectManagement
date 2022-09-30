@@ -40,7 +40,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+/**
+ * This class contains the tests for the account controller class.
+ */
 @WebMvcTest(controllers = AccountController.class)
 @AutoConfigureMockMvc(addFilters = false)
 class AccountControllerTest {
@@ -50,17 +52,18 @@ class AccountControllerTest {
     @MockBean
     private UserAccountClientService userAccountClientService;
 
-    @InjectMocks
-    private ControllerAdvisor controllerAdvisor;
-
     @MockBean
     private SimpMessagingTemplate template;
 
+    @InjectMocks
+    private ControllerAdvisor controllerAdvisor;
+
     User user;
+
+    private static MockedStatic<PrincipalUtils> utilities;
 
     UserResponse.Builder reply;
 
-    private static MockedStatic<PrincipalUtils> utilities;
 
     @BeforeEach
     public void init() {
@@ -233,8 +236,7 @@ class AccountControllerTest {
 
         when(userAccountClientService.edit(-1, "", "", "", "", "", "")).thenReturn(editUserResponse);
         when(userAccountClientService.getUser(any())).thenReturn(reply.build());
-        when(mockUserAccountClientService.edit(anyInt(), any(), any(), any(), any(), any(), any())).thenReturn(editUserResponse);
-        when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
+        when(mockUserAccountClientService.edit(anyInt(), any(), any(), any(), any(), any(), any())).thenReturn(editUserResponse);when(mockUserAccountClientService.getUser(any())).thenReturn(reply.build());
 
         when(PrincipalUtils.getUserId(any())).thenReturn(-1);
 
@@ -249,6 +251,10 @@ class AccountControllerTest {
                 testString, testString, testString, testString, testString, false, mockModel, ra ));
     }
 
+    @AfterAll
+    public static void afterAll() {
+        utilities.close();
+    }
 
     /**
      * Tests that the role fragment returned from the controller contains the right values.
@@ -305,10 +311,4 @@ class AccountControllerTest {
                 .andExpect(model().attribute("roles", roles.substring(0, roles.length() - 2)));
 
     }
-
-    @AfterAll
-    public static void afterAll() {
-        utilities.close();
-    }
-
 }

@@ -143,8 +143,8 @@ public class UserController {
      * @param userId Id of user that has been updated
      */
     private void notifyRoleChange(int userId) {
-        template.convertAndSend("/element/user/" + userId + "/roles", "");
         template.convertAndSend("/element/user/", userId);
+        template.convertAndSend("/element/user/" + userId + "/roles", "");
     }
 
     /**
@@ -225,6 +225,26 @@ public class UserController {
 
         notifyRoleChange(userId);
         return new ResponseEntity<>("Successfully added " + newRole, HttpStatus.OK);
+    }
+
+    /**
+     * Returns a fragment containing information about a specific user
+     * @param userId The id of the user the information is wanted about
+     * @return A html fragment containing the user's information.
+     */
+    @GetMapping(path="/users/{userId}/info")
+    public ModelAndView userInfo(@PathVariable("userId") int userId, @AuthenticationPrincipal AuthState principal ) {
+        ModelAndView mv = new ModelAndView("userFragment::userFragment");
+        UserResponse userResponse = userAccountClientService.getUser(userId);
+        User user = new User(userResponse);
+        List<UserRole> roleList = Arrays.asList(UserRole.values())
+                .stream().filter(role ->
+                        role.ordinal() <= Collections.max(user.getRoles()).ordinal())
+                .toList();
+        mv.addObject("roleList", roleList);
+        mv.addObject("user", user);
+        mv.addObject("currentUser", userAccountClientService.getUser(principal));
+        return mv;
     }
 
     /**
