@@ -1,3 +1,7 @@
+// Regular expression for Group Name field. No leading white spaces or empty field.
+const groupNameRegex = /^\S/
+const emojiRegx = /\p{Extended_Pictographic}/u;
+
 /**
  * Count down the characters remaining in the Group Short name, and check the length is between 3 and 50 characters.
  */
@@ -14,6 +18,14 @@ function checkShortName(event) {
     } else if (groupShortNameElement.value == "Teaching Staff" || groupShortNameElement.value == "Members without a group"){
         groupShortNameElement.classList.add('formError');
         groupShortNameErrorElement.innerText = "Group short cannot be the same as a system group name."
+        groupShortNameElement.setCustomValidity("Invalid Field")
+    } else if (! groupNameRegex.test(groupShortNameElement.value)) {
+        groupShortNameElement.classList.add("formError");
+        groupShortNameErrorElement.innerText = "Group short name must not start with space characters";
+        groupShortNameElement.setCustomValidity("Invalid Field")
+    } else if (emojiRegx.test(groupShortNameElement.value)) {
+        groupShortNameElement.classList.add("formError");
+        groupShortNameErrorElement.innerText = "Group short name must not contain an emoji";
         groupShortNameElement.setCustomValidity("Invalid Field")
     } else {
         groupShortNameElement.classList.remove("formError");
@@ -33,6 +45,14 @@ function checkLongName(event) {
     if (charCount < 3 || charCount > 100) {
         groupLongNameElement.classList.add('formError');
         groupLongNameErrorElement.innerText = "Group long name must be between 3 and 100 characters."
+        groupLongNameElement.setCustomValidity("Invalid Field")
+    } else if (! groupNameRegex.test(groupLongNameElement.value)) {
+        groupLongNameElement.classList.add("formError");
+        groupLongNameErrorElement.innerText = "Group long name must not start with space characters";
+        groupLongNameElement.setCustomValidity("Invalid Field")
+    } else if (emojiRegx.test(groupLongNameElement.value)) {
+        groupLongNameElement.classList.add("formError");
+        groupLongNameErrorElement.innerText = "Group long name must not contain an emoji";
         groupLongNameElement.setCustomValidity("Invalid Field")
     } else {
         groupLongNameElement.classList.remove("formError");
@@ -87,18 +107,21 @@ function createGroup() {
  * @param event Form submit request
  */
 function saveGroup() {
-    let httpRequest = new XMLHttpRequest();
 
-    let editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
-    let modalError = document.getElementById('editModalError')
+    if (validateForm()) {
+        let httpRequest = new XMLHttpRequest();
 
-    httpRequest.onreadystatechange = () => updateModal(httpRequest, editModal, modalError)
+        let editModal = bootstrap.Modal.getOrCreateInstance(document.getElementById('editModal'))
+        let modalError = document.getElementById('editModalError')
 
-    httpRequest.open('POST', apiPrefix + `/groups`);
+        httpRequest.onreadystatechange = () => updateModal(httpRequest, editModal, modalError)
 
-    let formData = new FormData(document.forms.editGroupForm)
+        httpRequest.open('POST', apiPrefix + `/groups`);
 
-    httpRequest.send(formData);
+        let formData = new FormData(document.forms.editGroupForm)
+
+        httpRequest.send(formData);
+    }
 }
 
 /**

@@ -3,6 +3,8 @@ let filterByUser = ""
 let filterByActionType = ""
 let projectIdValidate = /^\d+$/;
 let jsonRepo;
+// Regular expression for Group Name field. No leading white spaces or empty field.
+const groupNameRegex = /^\S/
 let tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
     return new bootstrap.Tooltip(tooltipTriggerEl)
 })
@@ -24,6 +26,10 @@ function checkShortName(event) {
         groupShortNameElement.classList.add('formError');
         groupShortNameErrorElement.innerText = "Group short cannot be the same as a system group name."
         groupShortNameElement.setCustomValidity("Invalid Field")
+    } else if (! groupNameRegex.test(groupShortNameElement.value)) {
+        groupShortNameElement.classList.add("formError");
+        groupShortNameErrorElement.innerText = "Group short name must not start with space characters";
+        groupShortNameElement.setCustomValidity("Invalid Field")
     } else {
         groupShortNameElement.classList.remove("formError");
         groupShortNameErrorElement.innerText = null;
@@ -42,6 +48,10 @@ function checkLongName(event) {
     if (charCount < 3 || charCount > 100) {
         groupLongNameElement.classList.add('formError');
         groupLongNameErrorElement.innerText = "Group long name must be between 3 and 100 characters."
+        groupLongNameElement.setCustomValidity("Invalid Field")
+    } else if (! groupNameRegex.test(groupLongNameElement.value)) {
+        groupLongNameElement.classList.add("formError");
+        groupLongNameErrorElement.innerText = "Group long name must not start with space characters";
         groupLongNameElement.setCustomValidity("Invalid Field")
     } else {
         groupLongNameElement.classList.remove("formError");

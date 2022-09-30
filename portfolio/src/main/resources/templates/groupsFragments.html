@@ -218,8 +218,7 @@
                         <input hidden type="number" name="groupId" th:value="${group.groupId}" required>
                         <span th:replace="::groupFormSharedContent(${group})"></span>
                         <div class="modal-footer">
-                            <button type="submit" id="save-submit-button" class="btn btn-outline-primary me-3"
-                                data-bs-dismiss="modal">
+                            <button type="submit" id="save-submit-button" class="btn btn-outline-primary me-3">
                                 <img class="icon img-color-primary"
                                     th:src="@{{apiPrefix}/icons/save-icon.svg(apiPrefix=${apiPrefix})}" />
                                 Save</button>
