@@ -3,16 +3,16 @@ const eventNameRegex = /^\S/
 const eventNameSpacesRegex = /^[A-Za-z0-9]+(?: +[A-Za-z0-9]+)*$/
 
 const projectId = document.getElementById("projectId").value;
-const startDateElement = document.getElementById('startDate');
-const endDateElement = document.getElementById('endDate');
-const startDateError = document.getElementById('startDateError');
-const endDateError = document.getElementById('endDateError');
+const eventStartDateElement = document.getElementById('eventStartDate');
+const eventEndDateElement = document.getElementById('eventEndDate');
+const eventStartDateError = document.getElementById('eventStartDateError');
+const eventEndDateError = document.getElementById('eventEndDateError');
 
-const startTimeElement = document.querySelector('#startTime');
-const endTimeElement = document.querySelector('#endTime');
+const eventStartTimeElement = document.querySelector('#eventStartTime');
+const eventEndTimeElement = document.querySelector('#eventEndTime');
 
-const startTimeError = document.getElementById('startTimeError');
-const endTimeError = document.getElementById('endTimeError');
+const eventStartTimeError = document.getElementById('eventStartTimeError');
+const eventEndTimeError = document.getElementById('eventEndTimeError');
 
 /**
  * Function for error validation of Event Name field.
@@ -59,7 +59,7 @@ function checkEventDates() {
 
     checkEndDate();
 
-    if(eventStartDateElement.classList.contains("eventFormError") || eventEndDateElement.classList.contains("eventFormError")) {
+    if(eventStartDateElement.classList.contains("formError") || eventEndDateElement.classList.contains("formError")) {
         document.getElementById("eventFormSubmitButton").disabled = true;
         return;
     } else {
@@ -67,10 +67,10 @@ function checkEventDates() {
     }
 
     if (startDate >= endDate ) {
-        startDateError.innerText = "Start Date must be before the End Date";
-        endDateError.innerText = "End Date must be after the Start Date";
-        eventStartDateElement.classList.add("eventFormError");
-        eventEndDateElement.classList.add("eventFormError");
+        eventStartDateError.innerText = "Start Date must be before the End Date";
+        eventEndDateError.innerText = "End Date must be after the Start Date";
+        eventStartDateElement.classList.add("formError");
+        eventEndDateElement.classList.add("formError");
         document.getElementById("eventFormSubmitButton").disabled = true;
         return;
     }
@@ -83,17 +83,17 @@ function checkEventDates() {
 function checkStartDate() {
     const startDate = new Date(eventStartDateElement.value);
     if (startDate < new Date(projectStartDate + 'T00:00')) {
-        startDateError.innerText = "Event must start on or after the " + (new Date(projectStartDate)).toLocaleDateString('en-NZ', DATE_OPTIONS);
-        eventStartDateElement.classList.add("eventFormError");
+        eventStartDateError.innerText = "Event must start on or after the " + (new Date(projectStartDate)).toLocaleDateString('en-NZ', DATE_OPTIONS);
+        eventStartDateElement.classList.add("formError");
         return;
     } else if (startDate > new Date(projectEndDate + 'T00:00')) {
-        startDateError.innerText = "Event must start before the project ends";
-        eventStartDateElement.classList.add("eventFormError")
+        eventStartDateError.innerText = "Event must start before the project ends";
+        eventStartDateElement.classList.add("formError")
         return;
     }
 
-    startDateError.innerText = "";
-    eventStartDateElement.classList.remove("eventFormError")
+    eventStartDateError.innerText = "";
+    eventStartDateElement.classList.remove("formError")
 }
 
 /**
@@ -103,16 +103,16 @@ function checkEndDate() {
     const endDate = new Date(eventEndDateElement.value);
 
     if (endDate < new Date(projectStartDate + 'T00:00')) {
-        endDateError.innerText = "Event must start on or before the " + (new Date(projectStartDate)).toLocaleDateString('en-NZ', DATE_OPTIONS);
+        eventEndDateError.innerText = "Event must start on or before the " + (new Date(projectStartDate)).toLocaleDateString('en-NZ', DATE_OPTIONS);
         eventEndDateElement.classList.add("eventFormError");
         return;
     } else if (endDate > new Date(projectEndDate + 'T00:00')) {
-        endDateError.innerText = "Event must end on or before the " + (new Date(projectEndDate)).toLocaleDateString('en-NZ', DATE_OPTIONS);
+        eventEndDateError.innerText = "Event must end on or before the " + (new Date(projectEndDate)).toLocaleDateString('en-NZ', DATE_OPTIONS);
         eventEndDateElement.classList.add("eventFormError");
         return;
     }
 
-    endDateError.innerText = "";
+    eventEndDateError.innerText = "";
     eventEndDateElement.classList.remove("eventFormError")
 }
 
