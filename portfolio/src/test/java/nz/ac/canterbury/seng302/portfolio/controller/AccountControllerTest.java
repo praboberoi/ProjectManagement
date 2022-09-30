@@ -36,8 +36,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.model;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,12 +63,6 @@ class AccountControllerTest {
     private static MockedStatic<PrincipalUtils> utilities;
 
     UserResponse.Builder reply;
-
-    @BeforeAll
-    private static void beforeAllInit() {
-        utilities = Mockito.mockStatic(PrincipalUtils.class);
-        utilities.when(() -> PrincipalUtils.checkUserIsTeacherOrAdmin(any())).thenReturn(true);
-    }
 
 
     @BeforeEach

@@ -141,14 +141,6 @@ public class AccountController {
         return EDIT_ACCOUNT_PAGE;
     }
 
-    /**
-     * Sends an update message to all clients connected to the websocket
-     * @param userId ID of the changed user
-     */
-    private void notifyUserInfoChange(int userId) {
-        template.convertAndSend("/element/user/", userId);
-        template.convertAndSend("/element/user/nameOnly", userId);
-    }
 
 
     /**
