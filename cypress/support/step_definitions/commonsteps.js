@@ -10,7 +10,7 @@ Given("I login as a student", () => {
 
 Given("I navigate to {string}", (location) => {
     cy.contains(".nav-link", location).click()
-    if (location == "Groups") {
+    if (location == "Groups" || location == "My Evidence") {
         waitForWebSocket()
     }
 });

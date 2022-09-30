@@ -65,7 +65,7 @@ public class DeadlineService {
     public Map<Integer, String> getSprintOccurringOnDeadlines(List<Deadline> deadlineList) {
         HashMap<Integer, String> deadlineDateMapping = new HashMap<>();
         for (Deadline deadline : deadlineList) {
-            List<String> sprintNames = new ArrayList<String>();
+            List<String> sprintNames = new ArrayList<>();
             java.sql.Date date = new Date(deadline.getDate().getTime());
             Sprint sprint = sprintRepository.findByDateAndProject(deadline.getProject(), date);
             if (sprint == null) {

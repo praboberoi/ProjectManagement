@@ -38,7 +38,9 @@ import java.util.List;
 public class AccountController {
 
     private UserAccountClientService userAccountClientService;
-    @Value("${apiPrefix}") private String apiPrefix;
+
+    @Value("${apiPrefix}")
+    private String apiPrefix;
 
     private SimpMessagingTemplate template;
 
@@ -139,14 +141,6 @@ public class AccountController {
         return EDIT_ACCOUNT_PAGE;
     }
 
-    /**
-     * Sends an update message to all clients connected to the websocket
-     * @param userId ID of the changed user
-     */
-    private void notifyUserInfoChange(int userId) {
-        template.convertAndSend("/element/user/", userId);
-        template.convertAndSend("/element/user/nameOnly", userId);
-    }
 
 
     /**
@@ -215,6 +209,14 @@ public class AccountController {
         validationErrors.stream().forEach(error -> model.addAttribute(error.getFieldName(), error.getErrorText()));
 
         return EDIT_ACCOUNT_PAGE;
+    }
+
+    /**
+     * Sends an update message to all clients connected to the websocket
+     * @param userId Id of the changed user
+     */
+    private void notifyUserInfoChange(int userId) {
+        template.convertAndSend("/element/user/", userId);
     }
 
 

@@ -12,7 +12,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 public class EvidenceDTO {
 
-
     private int evidenceId;
 
     private Project project;

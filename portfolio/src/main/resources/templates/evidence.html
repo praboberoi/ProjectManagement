@@ -21,22 +21,21 @@
 <div th:replace="fragments :: sidebar"></div>
 
 <body>
-<div class="main">
-    <br>
-    <div class="page-title">
-        <h2 id="name">Evidence Owner: [[${userFirstName}]]</h2>
-    </div>
-    <div id="toRefresh">
+    <div class="main">
         <br>
-        <div id="messageSuccess" class="alert alert-success text-center">[[${messageSuccess}]]</div>
-        <div id="messageDanger" class="alert alert-danger text-center">[[${messageDanger}]]</div>
-    </div>
-    <br>
+        <div class="page-title">
+            <h2 id="name">Evidence Owner: [[${userFirstName}]]</h2>
+        </div>
+        <div id="toRefresh">
+            <br>
+            <div id="messageSuccess" class="alert alert-success text-center">[[${messageSuccess}]]</div>
+            <div id="messageDanger" class="alert alert-danger text-center">[[${messageDanger}]]</div>
+        </div>
+        <br>
 
 
         <div th:if="${isCurrentUserEvidence}" class="createBtn">
-            <button class="btn btn-outline-primary ms-0 mb-1" id="create-evidence-btn" data-bs-toggle="modal"
-                data-bs-target="#evidenceFormModal" onclick="createNewEvidence()">
+            <button class="btn btn-outline-primary ms-0 mb-1" id="create-evidence-btn" onclick="createNewEvidence()">
                 <img class="icon img-color-primary"
                     th:src="@{{apiPrefix}/icons/create-icon.svg(apiPrefix=${apiPrefix})}" /> Create Evidence</button>
         </div>
@@ -45,9 +44,8 @@
             <div class="row mt-3">
                 <div id="evidence-list" class="col-4" th:fragment="evidenceList">
                     <th:block th:each="evidence : ${listEvidence}">
-                        <div class="card project-card mb-3" th:id="'evidence' + ${evidence.evidenceId} + 'Card'"
-                            th:ondrop="'dropUsers(event, ' + ${evidence.evidenceId} + ')'"
-                            ondragover="allowDrop(event)">
+                        <div class="card project-card mb-3" th:id="'evidence' + ${evidence.evidenceId} + 'Card'">
+                            <input type="hidden" class="evidenceId" th:value="${evidence.evidenceId}">
                             <div class="container-fluid">
                                 <div class="row">
                                     <div class="card-body">
@@ -57,57 +55,63 @@
                                                     th:onclick="'getSelectedEvidence(' + ${evidence.evidenceId} + ')'"
                                                     th:text="${evidence.title}"></a>
                                                 <th:block th:if="${notifications.get(evidence.evidenceId) == null}">
-                                                    <div th:if="${isCurrentUserEvidence || adminOrTeacher}" th:id="'evidence-' + ${evidence.evidenceId} + '-btns-div'">
+                                                    <div th:if="${isCurrentUserEvidence || adminOrTeacher}"
+                                                        th:id="'evidence-' + ${evidence.evidenceId} + '-btns-div'">
                                                         <button class="btn btn-outline-primary btn-sm"
-                                                                th:data-id="${evidence.evidenceId}"
-                                                                th:data-projectid="${evidence.project.projectId}"
-                                                                th:data-title="${evidence.title}"
-                                                                th:data-date="${evidence.dateOccurred}"
-                                                                th:data-description="${evidence.description}"
-                                                                th:onclick="editEvidence(this.getAttribute('data-id'),
-                                                                                          this.getAttribute('data-projectid'),
-                                                                                          this.getAttribute('data-title'),
-                                                                                          this.getAttribute('data-date'),
-                                                                                          this.getAttribute('data-description'))">
-                                                            <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                                            th:data-id="${evidence.evidenceId}"
+                                                            th:data-projectid="${evidence.project.projectId}"
+                                                            th:data-title="${evidence.title}"
+                                                            th:data-date="${evidence.dateOccurred}"
+                                                            th:data-description="${evidence.description}"
+                                                            th:onclick="'editEvidence(' + ${evidence.evidenceId} + ')'">
+                                                            <img class="icon img-color-primary"
+                                                                th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
                                                             Edit
                                                         </button>
                                                         <button class="btn btn-outline-secondary btn-sm"
-                                                                data-bs-toggle="modal"
-                                                                th:data-id="${evidence.evidenceId}"
-                                                                th:data-title="${evidence.title}"
-                                                                data-bs-target="#deleteEvidenceConformationModal"
-                                                                th:onclick="updateDeleteDetails(this.getAttribute('data-id'),
+                                                            data-bs-toggle="modal" th:data-id="${evidence.evidenceId}"
+                                                            th:data-title="${evidence.title}"
+                                                            data-bs-target="#deleteEvidenceConformationModal"
+                                                            th:onclick="updateDeleteDetails(this.getAttribute('data-id'),
                                                                                           this.getAttribute('data-title'))">
-                                                            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                                            <img class="icon img-color-secondary"
+                                                                th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
                                                             Delete
                                                         </button>
                                                     </div>
-                                                    <div th:if="${isCurrentUserEvidence || adminOrTeacher}" th:id="'evidence-' + ${evidence.evidenceId} + '-message-div'" hidden></div>
+                                                    <div th:if="${isCurrentUserEvidence || adminOrTeacher}"
+                                                        th:id="'evidence-' + ${evidence.evidenceId} + '-message-div'"
+                                                        hidden></div>
                                                 </th:block>
                                                 <th:block th:if="${notifications.get(evidence.evidenceId) != null}">
-                                                    <div th:if="${isCurrentUserEvidence || adminOrTeacher}" th:id="'evidence-' + ${evidence.evidenceId} + '-btns-div'" hidden>
+                                                    <div th:if="${isCurrentUserEvidence || adminOrTeacher}"
+                                                        th:id="'evidence-' + ${evidence.evidenceId} + '-btns-div'"
+                                                        hidden>
                                                         <button class="btn btn-outline-primary btn-sm"
-                                                                th:data-id="${evidence.evidenceId}"
-                                                                th:data-projectid="${evidence.project.projectId}"
-                                                                th:onclick="editEvidence(this.getAttribute('data-id'),
+                                                            th:data-id="${evidence.evidenceId}"
+                                                            th:data-projectid="${evidence.project.projectId}"
+                                                            th:onclick="editEvidence(this.getAttribute('data-id'),
                                                                                           this.getAttribute('data-projectid'))">
-                                                            <img class="icon img-color-primary" th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                                            <img class="icon img-color-primary"
+                                                                th:src="@{{apiPrefix}/icons/edit-icon.svg(apiPrefix=${apiPrefix})}" />
                                                             Edit
                                                         </button>
                                                         <button class="btn btn-outline-secondary btn-sm"
-                                                                data-bs-toggle="modal"
-                                                                th:data-id="${evidence.evidenceId}"
-                                                                th:data-title="${evidence.title}"
-                                                                data-bs-target="#deleteEvidenceConformationModal"
-                                                                th:onclick="updateDeleteDetails(this.getAttribute('data-id'),
+                                                            data-bs-toggle="modal" th:data-id="${evidence.evidenceId}"
+                                                            th:data-title="${evidence.title}"
+                                                            data-bs-target="#deleteEvidenceConformationModal"
+                                                            th:onclick="updateDeleteDetails(this.getAttribute('data-id'),
                                                                                           this.getAttribute('data-title'))">
-                                                            <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}"/>
+                                                            <img class="icon img-color-secondary"
+                                                                th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
                                                             Delete
                                                         </button>
                                                     </div>
-                                                    <div th:if="${isCurrentUserEvidence || adminOrTeacher}" th:id="'evidence-' + ${evidence.evidenceId} + '-message-div'">
-                                                        <p class="h6 text-align-start font-italic text-black-50" th:text="${notifications.get(evidence.evidenceId).userUpdating} + ' is currently editing'"></p>
+                                                    <div th:if="${isCurrentUserEvidence || adminOrTeacher}"
+                                                        th:id="'evidence-' + ${evidence.evidenceId} + '-message-div'">
+                                                        <p class="h6 text-align-start font-italic text-black-50"
+                                                            th:text="${notifications.get(evidence.evidenceId).username} + ' is currently editing'">
+                                                        </p>
                                                     </div>
                                                 </th:block>
                                             </div>
@@ -125,12 +129,13 @@
                     </th:block>
                 </div>
 
-            <div id="evidence-display" class="col-sm-12 col-md-8" th:insert="evidenceFragments::selectedEvidence">
+                <div id="evidence-display" class="col-sm-12 col-md-8" th:insert="evidenceFragments::selectedEvidence"
+                    th:hidden="${selectedEvidence == null}">
 
+                </div>
             </div>
         </div>
     </div>
-</div>
 
     <div class="modal fade" id="evidenceFormModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
@@ -138,86 +143,22 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="evidenceFormTitle">Create New Evidence</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close" onclick="updateEditMessage()">
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close"
+                        onclick="updateEditMessage()">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
-                <!--                    Show evidence form-->
-                <div id="evidenceForm" th:fragment="evidenceForm">
-                    <form id="createEvidenceForm" name="evidenceForm" onsubmit="return true"
-                          th:action="@{${apiPrefix} + '/evidence/' + ${evidence.ownerId} + '/saveEvidence'}"
-                          method="post" th:object="${evidence}">
-                        <input type="hidden" id="userId" th:field="*{ownerId}"/>
-                        <input type="hidden" id="evidenceId" th:field="*{evidenceId}"/>
-                        <div class="mb-3">
-                            <label for="evidence-title" class="col-form-label required">Evidence Title</label>
-                            <input type="text" class="form-control required" id="evidence-title" name="title"
-                                   th:field="*{title}" maxlength="50" oninput="checkEvidenceTitle()" required>
-                            <div>
-                                <span id="evidenceTitleCharCount" th:value="${charCountTitle}">[[*{title.length}]] </span> / 50 characters used.
-                            </div>
-                            <p id="evidenceTitleError" th:text="${evidenceTitleError}" class="error-msg"></p>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="evidence-project" class="col-form-label required">Select Project</label>
-                            <select type="text" class="form-select required" id="evidence-project"
-                                    th:field="*{project}" onchange="evidenceProjectChange()" required>
-                                <th:block th:each="project : ${listProjects}">
-                                    <option  id="selectedProject" th:id="'project-' + ${project.projectId}" th:value="${project.projectId}"
-                                             th:data-startDate="${project.startDate}" th:data-endDate="${project.endDate}">
-                                        [[${project.projectName}]]</option>
-                                </th:block>
-
-                            </select>
-                            <p id="evidenceProjectError" th:text="${evidenceTitleError}" class="error-msg"></p>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="evidence-date" class="col-form-label required">Date</label>
-                            <span data-bs-toggle="tooltip" data-bs-placement="top"
-                                  aria-label="The date of evidence creation." title="The date of evidence creation.">
-                                <img class="icon img-color-primary"
-                                     th:src="@{{apiPrefix}/icons/question-circle.svg(apiPrefix=${apiPrefix})}">
-                            </span>
-                            <input type="date" class="form-control required" id="evidence-date"
-                                   th:field="*{dateOccurred}" oninput="checkEvidenceDate()" required>
-                            <p id="evidenceDateError" th:text="${evidenceDateError}" class="error-msg"></p>
-                        </div>
-
-                        <div class="mb-3">
-                            <label for="evidence-description" class="col-form-label required">Description</label>
-                            <textarea type="evidence-description" class="form-control required" name="description"
-                                      id="evidence-description" th:field="*{description}" oninput="checkEvidenceDescription()" maxlength="200" required></textarea>
-                            <div>
-                                <span id="evidenceDescriptionCharCount" th:value="${charCountDescription}">[[*{description.length}]] </span> / 200 characters used.
-                            </div>
-                            <p id="evidenceDescriptionError" th:text="${evidenceDescriptionError}" class="error-msg"></p>
-                        </div>
-
-
-                        <div class="row">
-                        </div>
-                        <br>
-                        <div class="modal-footer">
-                            <button type="submit" class="btn btn-outline-primary" id="evidenceFormSubmitButton" onclick="updateEditMessage()" disabled>
-                                <img class="icon img-color-secondary" id="evidenceFromSubmitImg"
-                                     th:src="${submissionImg}" />
-                                <span id="evidenceFormSubmitLabel" >[[${submissionName}]]</span></button>
-                            <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal" onclick="updateEditMessage()">
-                                <img class="icon img-color-secondary"
-                                     th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
-                                <span>Close</span></button>
-                        </div>
-                    </form>
-                </div>
+                    <div class="alert alert-danger text-center" id="evidenceFormModalError"></div>
+                    <!--                    Show evidence form-->
+                    <div id="evidenceForm">
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     <div class="modal fade" id="deleteEvidenceConformationModal" tabindex="-1"
-         aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
+        aria-labelledby="conformationModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -230,17 +171,16 @@
                     <p id="deleteMessage"></p>
                 </div>
                 <div class="modal-footer">
-                    <form id="deleteEvidenceForm" method="post">
-                        <button type="submit" id="evidenceModalDeleteBtn" class="btn btn-outline-primary" data-bs-dismiss="modal">
-                            <img class="icon img-color-primary"
-                                 th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
-                            <span>Delete</span>
-                        </button>
-                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                            <img class="icon img-color-secondary"
-                                 th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
-                            <span>Close</span></button>
-                    </form>
+                    <button type="submit" id="evidenceModalDeleteBtn" class="btn btn-outline-primary"
+                        data-bs-dismiss="modal">
+                        <img class="icon img-color-primary"
+                            th:src="@{{apiPrefix}/icons/trash-icon.svg(apiPrefix=${apiPrefix})}" />
+                        Delete
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        <img class="icon img-color-secondary"
+                            th:src="@{{apiPrefix}/icons/close-icon.svg(apiPrefix=${apiPrefix})}" />
+                        Close</button>
                 </div>
             </div>
         </div>
@@ -257,4 +197,5 @@
     <script th:src="@{{apiPrefix}/javascript/evidenceForm.js(apiPrefix=${apiPrefix})}"></script>
 
 </body>
+
 </html>
