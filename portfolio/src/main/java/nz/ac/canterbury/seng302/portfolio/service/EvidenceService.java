@@ -93,7 +93,7 @@ public class EvidenceService {
         evidence.setTitle(evidence.getTitle().strip()); // Removes leading and trailing white spaces from the title
 
         // find match between given string and pattern
-        Matcher matcherText = Pattern.compile(".*[a-zA-Z].*").matcher(evidence.getTitle());
+        Matcher matcherText = Pattern.compile("/[a-zA-Z]/").matcher(evidence.getTitle());
 
         if (evidence.getTitle().length() < 2)
             throw new IncorrectDetailsException("Evidence title must be at least 2 characters");
