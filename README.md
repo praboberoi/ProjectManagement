@@ -1,15 +1,21 @@
 # Team300 Bolt Development's README
 Endpoints implemented <br />
 
+### Login
 - "/login" GET - Returns the login page.
 - "/login" POST – Authenticates the provided username and password of the user. If this is correct, a token is provided as a cookie and the user is sent to their dashboard. <br/>
 
+### Register
+- "/register" GET – Returns the registration page.
+- "/register" POST – Creates a new user with the provided information. <br/>
 
+
+### Account
 - "/account" GET – Returns an account page with the user’s information.
 - "/editAccount" GET - Populates the edit page with a user's details. 
 - "/editAccount" POST – Modifies the user’s information to match those provided.<br/>
 
-
+### Dashboard
 - "/dashboard" GET – Returns the dashboard page with the projects the user is enrolled in.
 - "/dashboard/newProject" GET – Returns a page with a form used to create a new project.
 - "dashboard/saveProject" POST – Saves or creates a new project with the provided details.<br/>
@@ -19,10 +25,7 @@ Endpoints implemented <br />
 - "dashboard/deleteProject/{projectId}" POST - Deletes the project with the specified id from the database.<br/>
 
 
-- "/register" GET – Returns the registration page.
-- "/register" POST – Creates a new user with the provided information. <br/>
-
-
+### Project
 - "/project/{projectId}" GET – Returns the project page with the projects information.
 - "/project/{projectId}/sprint" POST - Saves or creates a new sprint with the provided details.
 - "/project/{projectId}/editSprint/{sprintId}" GET – Returns a form to modify a sprints information.
@@ -30,16 +33,18 @@ Endpoints implemented <br />
 - "/project/{projectId}/getAllSprints" GET - Retrieves all the sprints for a specific project.
 - "/project/{projectId}/verifySprint" POST - Verifies the sprint details from user input.
 
-
+### Sprint
 - "/sprint/{sprintId}/editSprint" 
 - "/verifyProject/{projectId}" POST - Validates the projects details from user input.
 - "/error" GET - Returns the Error page.
 
-
+### Users
 - "/users" GET - Get the list of users page.
 - "/usersList" GET - Get the current table page of users. 
 - "/usersList/removeRole" DELETE - Remove the selected role from a user.
 - "/user/{userId}/addRole" POST - Add the selected role to a user.
+
+### Groups
 - "/groups" GET - Get the groups page.
 - "/groups/list" GET - Get the list of groups.
 - "/groups/{groupId}" DELETE - Delete the selected group but not the members within the group.
@@ -51,26 +56,38 @@ Endpoints implemented <br />
 - "/groups/{groupId}/addMembers" POST - Add selected members to a group.
 - "/groups/{groupId}/addMembers" POST - Add selected members to a group.
 
-- "/project/{projectId}/deadlines" GET - Get all the deadlines related to the specified project.
-- "/project/{projectId}/saveDeadline" POST - Save the deadline's new or updated details.
-- "/{projectId}/deleteDeadline/{deadlineId}" DELETE - Delete te specified deadline.
-
+### Events
 - "/project/{projectId}/events" GET - Get all the events related to the specified project.
 - "/project/{projectId}/saveEvent" POST - Save the event's new or updated details.
 - "project/{projectId}/event/{eventId}/delete" DELETE - Delete the specified deadline.
+- "event/edit" Message Mapping - Websocket End Point for editing Event.
 
+### Deadlines
+- "/project/{projectId}/deadlines" GET - Get all the deadlines related to the specified project.
+- "/project/{projectId}/saveDeadline" POST - Save the deadline's new or updated details.
+- "/{projectId}/deleteDeadline/{deadlineId}" DELETE - Delete te specified deadline.
+- "deadline/edit" Message Mapping - Websocket End Point for editing Deadline.
 
+### Milestones
+- "/project/{projectId}/milestones" GET - Get all the milestones related to the specified project.
+- "/project/{projectId}/milestone" POST - Save the milestone's new or updated details.
+- "/project/{projectId}/milestone/{milestoneId}/delete" DELETE - Delete the specified milestone.
+- "/milestone/edit" - Message Mapping - Websocket End Point for editing Milestone
+
+### Evidence
 - "evidence/{userId}" GET- Get all the evidence for a specific user.
 - "/evidence/{userId}/{evidenceId}" GET - Get a user's specific piece of evidence.
-- "/evidence/{userId}/saveEvidence" POST - Save the updated/new details of a pieve of evidence.
+- "/evidence/{userId}/saveEvidence" POST - Save the updated/new details of a piece of evidence.
+- "/evidence/{userId}/{evidenceId}/editEvidence" GET - Updates the evidence with the specified details.
 
+### Repo
 - "/repo/{groupId}" GET - Get the repository for the specified group.
 - "/repo/{groupId}/settings" GET - Get the setting components of a group's repository.
 - "/repo/{groupId}/save" POST - Save the group's repository with the provided information.
 - 
 
-- "deadline/edit" Message Mapping - Websocket End Point for editing Deadline.
-- "event/edit" Message Mapping - Websocket End Point for editing Event.
+
+
 
 
 Basic project template using `gradle`, `Spring Boot`, `Thymeleaf` and `Gitlab CI`.
