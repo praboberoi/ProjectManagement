@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import javax.persistence.PersistenceException;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
@@ -92,9 +91,6 @@ public class EvidenceService {
 
         evidence.setTitle(evidence.getTitle().strip()); // Removes leading and trailing white spaces from the title
 
-        // find match between given string and pattern
-        Matcher matcherText = Pattern.compile("/[a-zA-Z]/").matcher(evidence.getTitle());
-
         if (evidence.getTitle().length() < 2)
             throw new IncorrectDetailsException("Evidence title must be at least 2 characters");
 
@@ -110,9 +106,6 @@ public class EvidenceService {
         else if (evidence.getTitle().length() > 50)
             throw new IncorrectDetailsException("Evidence title cannot be more than 50 characters");
 
-        else if (!matcherText.matches())
-            throw new IncorrectDetailsException("Evidence title must contain some letters");
-
         else if (evidence.getDescription().length() < 2)
             throw new IncorrectDetailsException("Evidence description must be at least 2 characters");
 
@@ -125,6 +118,8 @@ public class EvidenceService {
         else if (evidence.getDateOccurred().after(evidence.getProject().getEndDate()))
             throw new IncorrectDetailsException("The evidence cannot exist after the project date");
 
+        if (!Pattern.compile(".*[a-zA-Z].*").matcher(evidence.getTitle()).matches())
+            throw new IncorrectDetailsException("Evidence title must contain some letters");
     }
 
     /**
