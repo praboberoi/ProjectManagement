@@ -5,6 +5,7 @@ let currentDeadlineId;
 let editingDeadline = false;
 
 
+
 /**
  * Function for error validation of Deadline Name field.
  * Display error message if input is invalid.
