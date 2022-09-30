@@ -15,7 +15,7 @@ function checkShortName(event) {
         groupShortNameElement.classList.add('formError');
         groupShortNameErrorElement.innerText = "Group short name must be between 3 and 50 characters."
         groupShortNameElement.setCustomValidity("Invalid Field")
-    } else if (groupShortNameElement.value == "Teaching Staff" || groupShortNameElement.value == "Members without a group"){
+    } else if (groupShortNameElement.value.toLowerCase() == "teaching staff" || groupShortNameElement.value.toLowerCase() == "members without a group"){
         groupShortNameElement.classList.add('formError');
         groupShortNameErrorElement.innerText = "Group short cannot be the same as a system group name."
         groupShortNameElement.setCustomValidity("Invalid Field")
