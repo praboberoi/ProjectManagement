@@ -79,7 +79,7 @@
                     </li>
                   </ul>
                 <td th:id="'user' + ${user.userId} + 'Action'">
-                <a class="nav-link btn btn-outline-primary btn-evidence" th:href="@{{apiPrefix}user/{userId}/evidence(apiPrefix=${apiPrefix}, userId=${user.userId})}">
+                <a class="nav-link btn btn-outline-primary btn-evidence" th:href="@{{apiPrefix}/user/{userId}/evidence(apiPrefix=${apiPrefix}, userId=${user.userId})}">
                   <img class="icon img-color-secondary" th:src="@{{apiPrefix}/icons/file-earmark-text.svg(apiPrefix=${apiPrefix})}"/>
                   Evidence
                 </a>
